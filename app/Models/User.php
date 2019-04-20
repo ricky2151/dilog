@@ -53,4 +53,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->belongsTo('App\Models\Role');
     }
+
+    public function warehouse()
+    {
+        return $this->belongsTo('App\Models\Warehouse');
+    }
 }
