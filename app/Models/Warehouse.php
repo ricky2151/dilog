@@ -11,8 +11,12 @@ class Warehouse extends Model
         'name', 'address','lat','lng','telp','email','pic'
     ];
 
-    public function users()
+    public function user()
     {
-        return $this->hasMany('App\Models\User');
+        return $this->hasOne('App\Models\User');
+    }
+
+    public function racks(){
+        return $this->hasMany('App\Models\Rack');
     }
 }
