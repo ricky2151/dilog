@@ -3,6 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
+use App\Models\Role;
+use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\LoginUser;
+use App\Http\Requests\RegisterUser;
 use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
@@ -14,7 +20,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('jwt.auth', ['except' => ['login']]);
+        $this->middleware('jwt.auth', ['except' => ['login','register']]);
     }
 
     /**
@@ -22,14 +28,33 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function login()
+    public function login(LoginUser $request)
     {
-        $credentials = request(['email', 'password']);
-
+        $credentials = $request->validated();
         if (! $token = auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Invalid Email/Password'], 401);
         }
-        $token = auth('api')->claims(["name"=>"thomas"])->attempt($credentials);
+        // $token = auth('api')->claims(["name"=>"thomas"])->attempt($credentials);
+        return $this->respondWithToken($token);
+        
+    }
+
+
+    /**
+     * Register new User and get a JWT via new user.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function register(RegisterUser $request){
+        
+        $data = $request->validated();
+        $data["password"] = Hash::make($data["password"]);
+        
+        $user = new User;
+        $user = $user->create($data);
+
+        $token = auth('api')->fromUser($user);
+
         return $this->respondWithToken($token);
     }
 
@@ -40,8 +65,7 @@ class AuthController extends Controller
      */
     public function me()
     {
-        $var = auth('api')->user();
-        return response()->json(auth('api')->user());
+        return response()->json(auth('api')->user()->warehouse);
     }
 
     /**
