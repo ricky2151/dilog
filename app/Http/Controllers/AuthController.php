@@ -32,7 +32,7 @@ class AuthController extends Controller
     {
         $credentials = $request->validated();
         if (! $token = auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Invalid Email/Password'], 401);
+            return response()->json(['authenticate' => false, 'message' => 'Invalid Email/Password'], 401);
         }
         // $token = auth('api')->claims(["name"=>"thomas"])->attempt($credentials);
         return $this->respondWithToken($token);
@@ -47,15 +47,18 @@ class AuthController extends Controller
      */
     public function register(RegisterUser $request){
         
-        $data = $request->validated();
-        $data["password"] = Hash::make($data["password"]);
+        $data = $request;
+        if($data->fails()){
+            return "error";
+        }
+        // $data["password"] = Hash::make($data["password"]);
         
-        $user = new User;
-        $user = $user->create($data);
+        // $user = new User;
+        // $user = $user->create($data);
 
-        $token = auth('api')->fromUser($user);
+        // $token = auth('api')->fromUser($user);
 
-        return $this->respondWithToken($token);
+        // return $this->respondWithToken($token);
     }
 
     /**
@@ -104,9 +107,9 @@ class AuthController extends Controller
     protected function respondWithToken($token)
     {
         return response()->json([
+            'authenticate' => true,
             'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth('api')->factory()->getTTL() * 60
+            'user' => auth('api')->user()
         ]);
     }
 }
