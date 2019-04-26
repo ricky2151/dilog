@@ -6,6 +6,13 @@ import Authenticated from './views/Authenticated'
 
 import Home from './views/Home'
 import Warehouse from './views/Warehouse'
+import Goods from './views/Goods'
+import Type from './views/Type'
+import Categorypriceselling from './views/Categorypriceselling'
+import Category from './views/Category'
+import Attribute from './views/Attribute'
+import Unit from './views/Unit'
+import Source from './views/Source'
 
 import Login from './views/Login'
 
@@ -25,6 +32,13 @@ const routes = [
         children: [
             { path: '/', component: Home },
             { path: '/warehouse', component: Warehouse },
+            { path: '/goods', component: Goods },
+            { path: '/type', component: Type},
+            { path: '/categorypriceselling', component: Categorypriceselling},
+            { path: '/category', component: Category},
+            { path: '/attribute', component: Attribute},
+            { path: '/unit', component: Unit},
+            { path: '/source', component: Source},
         ],
     },
 ]

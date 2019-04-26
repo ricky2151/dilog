@@ -100,6 +100,44 @@ export default {
                     title: "Warehouse",
                     route: "/warehouse",
                 },
+                {
+                    icon: "widgets",
+                    title : "Goods",
+                    route : "/goods",
+                },
+                {
+                    icon: "bookmarks",
+                    title : "Type",
+                    route : "/type", 
+                },
+                {
+                    icon: "compare_arrows",
+                    title : "Category Price Selling",
+                    route : "/categorypriceselling", 
+                },
+                {
+                    icon: "category",
+                    title : "Category",
+                    route : "/category", 
+                },
+                {
+                    icon: "build",
+                    title : "Attribute",
+                    route : "/attribute", 
+                },
+                {
+                    icon: "dns",
+                    title : "Unit",
+                    route : "/unit", 
+                },
+                {
+                    icon: "description",
+                    title : "Source",
+                    route : "/source", 
+                }
+
+
+               
             ],
             toolbarMenu: [
                 {
