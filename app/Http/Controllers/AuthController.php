@@ -47,18 +47,15 @@ class AuthController extends Controller
      */
     public function register(RegisterUser $request){
         
-        $data = $request;
-        if($data->fails()){
-            return "error";
-        }
-        // $data["password"] = Hash::make($data["password"]);
+        $data = $request->validated();
         
-        // $user = new User;
-        // $user = $user->create($data);
+        $user = new User;
 
-        // $token = auth('api')->fromUser($user);
+        $user = $user->create($data);
 
-        // return $this->respondWithToken($token);
+        $token = auth('api')->fromUser($user);
+
+        return $this->respondWithToken($token);
     }
 
     /**
