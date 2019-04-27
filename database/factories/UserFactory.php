@@ -19,7 +19,6 @@ $factory->define(User::class, function (Faker $faker) {
     return [
         'name' => $faker->name,
         'email' => $faker->unique()->safeEmail,
-        'email_verified_at' => now(),
         'job_title' => "Admin",
         'role_id' => rand(1,4),
         'warehouse_id' => rand(1,4),
