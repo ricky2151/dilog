@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
+use App\Exceptions\InvalidRequestParameter; 
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterUser extends FormRequest
@@ -31,5 +33,9 @@ class RegisterUser extends FormRequest
             'warehouse_id' => "required|integer|min:1",
             'job_title' => "required|string"
         ];
+    }
+    
+    protected function failedValidation(Validator $validator) {
+        throw new InvalidRequestParameter($validator->errors()); 
     }
 }

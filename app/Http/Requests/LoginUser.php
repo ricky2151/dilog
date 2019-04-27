@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
+use App\Exceptions\InvalidRequestParameter;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginUser extends FormRequest
@@ -27,5 +29,9 @@ class LoginUser extends FormRequest
             'email' => 'required|email',
             'password' => 'required',
         ];
+    }
+
+    protected function failedValidation(Validator $validator) {
+        throw new InvalidRequestParameter($validator->errors()); 
     }
 }

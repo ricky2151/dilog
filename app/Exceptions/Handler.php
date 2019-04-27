@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use App\Exceptions\InvalidRequestParameter; 
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\JWTException;
@@ -57,22 +58,22 @@ class Handler extends ExceptionHandler
             $preException = $exception->getPrevious();
         
             if ($preException instanceof TokenInvalidException) {
-                return response()->json(['error' => 'Token is Invalid'],400);
+                return response()->json(['error' => true,'message' => ["token"=>"Invalid Token"]],400);
             }
             elseif ($preException instanceof TokenExpiredException) {
-                return response()->json(['error' => 'Token is Expired'],400);
+                return response()->json(['error' => true, 'message' => ["token"=>"Token is Expired"]],400);
             }
             elseif ($preException instanceof TokenBlacklistedException) {
-                return response()->json(['error' => 'Token is Blacklist'],400);
-            }
-            elseif ($preException instanceof JWTException) {
-                return response()->json(['error' => 'There is problem with your token'],400);
+                return response()->json(['error' => true, 'message' => ["token"=>'Token is Blacklist']],400);
             }
             
         
            if ($exception->getMessage() === 'Token not provided') {
-               return response()->json(['error' => 'Token not provided']);
+               return response()->json(['error' => true, 'message' => ["token"=>'Token not provided']]);
            }
+        }
+        elseif($exception instanceof InvalidRequestParameter){
+            return InvalidRequestParameter::render($exception->getMessage());
         }
         return parent::render($request, $exception);
     }
