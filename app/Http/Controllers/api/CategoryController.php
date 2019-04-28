@@ -13,9 +13,10 @@ class CategoryController extends Controller
 {
     protected $categoryService;
 
-    public function __construct(CategoryService $categoryService)
+    public function __construct(CategoryService $categoryService, Category $category)
     {
         $this->categoryService = $categoryService;
+        $this->category = $category;
     }
     /**
      * Display a listing of the category.
@@ -25,8 +26,8 @@ class CategoryController extends Controller
     public function index()
     {
         $this->categoryService->handleEmptyModel();
-        $categories = Category::all();
-        return $this->formatResponse(false,(["categories"=>$categories]));
+        $categories = $this->category->all();
+        return formatResponse(false,(["categories"=>$categories]));
     }
 
 
@@ -39,10 +40,9 @@ class CategoryController extends Controller
     public function store(StoreCategory $request)
     {
         $data = $request->validated();
-        $category = new Category;
-        $category = $category->create($data);
+        $this->category->create($data);
 
-        return $this->formatResponse(false,(["category"=>["Category successfully created"]]));
+        return formatResponse(false,(["category"=>["Category successfully created"]]));
     }
 
     /**
@@ -56,8 +56,8 @@ class CategoryController extends Controller
         $this->categoryService->handleInvalidParameter($id);
         $this->categoryService->handleModelNotFound($id);
 
-        $category = Category::find($id);
-        return $this->formatResponse(false,(["category"=>$category]));
+        $category = $this->category->find($id);
+        return formatResponse(false,(["category"=>$category]));
     }
 
     /**
@@ -72,9 +72,8 @@ class CategoryController extends Controller
         $this->categoryService->handleInvalidParameter($id);
         $this->categoryService->handleModelNotFound($id);
 
-        $category = Category::find($id);
-        $category->update($request->validated());
-        return $this->formatResponse(false,(["category"=>["category was successfully updated"]]));
+        $category = $this->category->find($id)->update($request->validated());
+        return formatResponse(false,(["category"=>["category was successfully updated"]]));
     }
 
     /**
@@ -87,24 +86,8 @@ class CategoryController extends Controller
     {
         $this->categoryService->handleInvalidParameter($id);
         $this->categoryService->handleModelNotFound($id);
-        
-        $category = Category::find($id);
-        $category->delete();
-        return $this->formatResponse(false,(["category"=>["category deleted successfully"]]));
-    }
 
-
-    /**
-     * Format Response User Controller
-     *
-     * @param  bool  $error
-     * @param  array $array
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function formatResponse(bool $error, array $array){
-        return response()->json([
-            "error" => $error,
-            ($error == false ? "data" : "message") => $array
-        ]);
+        $this->category->find($id)->delete();
+        return formatResponse(false,(["category"=>["category deleted successfully"]]));
     }
 }

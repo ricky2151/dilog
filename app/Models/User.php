@@ -49,20 +49,20 @@ class User extends Authenticatable implements JWTSubject
 
 
     public static function findEmail($email){
-        $user = User::where("email",$email)->first();
+        $user = $this->where("email",$email)->first();
         return ($user != null ? $user : false);
     }
 
     public function getJWTIdentifier() {
 
         return $this->getKey();
-    
+
     }
-    
+
     public function getJWTCustomClaims() {
-    
+
         return [];
-    
+
     }
     public function role()
     {
