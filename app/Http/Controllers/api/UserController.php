@@ -17,9 +17,10 @@ class UserController extends Controller
 {
     protected $userService;
 
-    public function __construct(UserService $userService)
+    public function __construct(UserService $userService, User $user)
     {
         $this->userService = $userService;
+        $this->user = $user;
     }
 
     /**
@@ -28,9 +29,9 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function index()
-    {   
-        $user = User::all();
-        return $this->formatResponse(false,(["users"=>$user]));
+    {
+        $user = $this->user->all();
+        return formatResponse(false,(["users"=>$user]));
     }
 
     /**
@@ -44,10 +45,9 @@ class UserController extends Controller
         $data = $request->validated();
         $data["password"] = bcrypt($data["password"]);
 
-        $user = new User;
-        $user = $user->create($data);
+        $this->user->create($data);
 
-        return $this->formatResponse(false,(["user"=>["User successfully created"]]));
+        return formatResponse(false,(["user"=>["User successfully created"]]));
     }
 
     /**
@@ -61,8 +61,8 @@ class UserController extends Controller
         $this->userService->handleInvalidParameter($id,1);
         $this->userService->handleModelNotFound($id);
 
-        $user = User::find($id);
-        return $this->formatResponse(false,(["user"=>$user]));
+        $user = $this->user->find($id);
+        return formatResponse(false,(["user"=>$user]));
     }
 
 
@@ -78,9 +78,8 @@ class UserController extends Controller
         $this->userService->handleInvalidParameter($id,1);
         $this->userService->handleModelNotFound($id);
 
-        $user = User::find($id);
-        $user->update($request->validated());
-        return $this->formatResponse(false,(["user"=>["user was successfully updated"]]));
+        $this->user->find($id)->update($request->validated());
+        return formatResponse(false,(["user"=>["user was successfully updated"]]));
     }
 
     /**
@@ -94,9 +93,8 @@ class UserController extends Controller
         $this->userService->handleInvalidParameter($id,1);
         $this->userService->handleModelNotFound($id);
 
-        $user = User::find($id);
-        $user->delete();
-        return $this->formatResponse(false,(["user"=>["User deleted successfully"]]));
+        $this->user->find($id)->delete();
+        return formatResponse(false,(["user"=>["User deleted successfully"]]));
     }
 
     /**
@@ -112,23 +110,7 @@ class UserController extends Controller
 
         $request = $request->validated();
         $request["password"] = bcrypt($request["password"]);
-        $user = User::findEmail($email);
-        $user->update($request);
-        return $this->formatResponse(false,(["user"=>["User password successfully reset"]]));
-    }
-
-
-    /**
-     * Format Response User Controller
-     *
-     * @param  bool  $error
-     * @param  array $array
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function formatResponse(bool $error, array $array){
-        return response()->json([
-            "error" => $error,
-            ($error == false ? "data" : "message") => $array
-        ]);
+        $this->user->findEmail($email)->update($request);
+        return formatResponse(false,(["user"=>["User password successfully reset"]]));
     }
 }

@@ -13,9 +13,10 @@ class UnitController extends Controller
 {
     protected $unitService;
 
-    public function __construct(UnitService $unitService)
+    public function __construct(UnitService $unitService, Unit $unit)
     {
         $this->unitService = $unitService;
+        $this->unit = $unit;
     }
 
     /**
@@ -27,8 +28,8 @@ class UnitController extends Controller
     {
         $this->unitService->handleEmptyModel();
 
-        $units = Unit::all();
-        return $this->formatResponse(false,(["units"=>$units]));
+        $units = $this->unit->all();
+        return formatResponse(false,(["units"=>$units]));
     }
 
     /**
@@ -40,10 +41,9 @@ class UnitController extends Controller
     public function store(StoreUnit $request)
     {
         $data = $request->validated();
-        $unit = new Unit;
-        $unit = $unit->create($data);
 
-        return $this->formatResponse(false,(["unit"=>["unit successfully created"]]));
+        $this->unit->create($data);
+        return formatResponse(false,(["unit"=>["unit successfully created"]]));
     }
 
     /**
@@ -57,8 +57,8 @@ class UnitController extends Controller
         $this->unitService->handleInvalidParameter($id);
         $this->unitService->handleModelNotFound($id);
 
-        $unit = Unit::find($id);
-        return $this->formatResponse(false,(["unit"=>$unit]));
+        $unit = $this->unit->find($id);
+        return formatResponse(false,(["unit"=>$unit]));
     }
 
     /**
@@ -73,9 +73,8 @@ class UnitController extends Controller
         $this->unitService->handleInvalidParameter($id);
         $this->unitService->handleModelNotFound($id);
 
-        $unit = Unit::find($id);
-        $unit->update($request->validated());
-        return $this->formatResponse(false,(["unit"=>["unit was successfully updated"]]));
+        $this->unit->find($id)->update($request->validated());
+        return formatResponse(false,(["unit"=>["unit was successfully updated"]]));
     }
 
     /**
@@ -88,23 +87,8 @@ class UnitController extends Controller
     {
         $this->unitService->handleInvalidParameter($id);
         $this->unitService->handleModelNotFound($id);
-        
-        $unit = Unit::find($id);
-        $unit->delete();
-        return $this->formatResponse(false,(["unit"=>["unit deleted successfully"]]));
-    }
 
-    /**
-     * Format Response User Controller
-     *
-     * @param  bool  $error
-     * @param  array $array
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function formatResponse(bool $error, array $array){
-        return response()->json([
-            "error" => $error,
-            ($error == false ? "data" : "message") => $array
-        ]);
+        $this->unit->find($id)->delete();
+        return formatResponse(false,(["unit"=>["unit deleted successfully"]]));
     }
 }
