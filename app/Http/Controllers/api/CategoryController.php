@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 
 class CategoryController extends Controller
 {
-    protected $categoryService;
+    private $categoryService, $category;
 
     public function __construct(CategoryService $categoryService, Category $category)
     {

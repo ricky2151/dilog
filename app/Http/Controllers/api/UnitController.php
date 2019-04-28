@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 
 class UnitController extends Controller
 {
-    protected $unitService;
+    private $unitService,$unit;
 
     public function __construct(UnitService $unitService, Unit $unit)
     {

@@ -15,7 +15,7 @@ use App\Exceptions\InvalidParameterException;
 
 class UserController extends Controller
 {
-    protected $userService;
+    private $userService,$user;
 
     public function __construct(UserService $userService, User $user)
     {
