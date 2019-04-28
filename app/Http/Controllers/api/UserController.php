@@ -80,7 +80,7 @@ class UserController extends Controller
 
         $user = User::find($id);
         $user->update($request->validated());
-        return $this->formatResponse(false,(["user"=>"user was successfully updated"]));
+        return $this->formatResponse(false,(["user"=>["user was successfully updated"]]));
     }
 
     /**
@@ -96,7 +96,7 @@ class UserController extends Controller
 
         $user = User::find($id);
         $user->delete();
-        return $this->formatResponse(false,(["user"=>"User deleted successfully"]));
+        return $this->formatResponse(false,(["user"=>["User deleted successfully"]]));
     }
 
     /**
@@ -114,7 +114,7 @@ class UserController extends Controller
         $request["password"] = bcrypt($request["password"]);
         $user = User::findEmail($email);
         $user->update($request);
-        return $this->formatResponse(false,(["user"=>"User password successfully reset"]));
+        return $this->formatResponse(false,(["user"=>["User password successfully reset"]]));
     }
 
 

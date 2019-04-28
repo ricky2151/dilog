@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 use App\Exceptions\InvalidParameterException; 
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
@@ -81,6 +82,9 @@ class Handler extends ExceptionHandler
         }
         elseif($exception instanceof ModelNotFoundException){
             return ModelNotFoundException::render($exception->getMessage());
+        }
+        elseif($exception instanceof MethodNotAllowedHttpException){
+            return response()->json(['error' => true, 'message' => ["route"=>'Method not allowed']]);
         }
         return parent::render($request, $exception);
     }

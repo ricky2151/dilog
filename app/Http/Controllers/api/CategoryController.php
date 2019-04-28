@@ -74,7 +74,7 @@ class CategoryController extends Controller
 
         $category = Category::find($id);
         $category->update($request->validated());
-        return $this->formatResponse(false,(["category"=>"category was successfully updated"]));
+        return $this->formatResponse(false,(["category"=>["category was successfully updated"]]));
     }
 
     /**
@@ -90,7 +90,7 @@ class CategoryController extends Controller
         
         $category = Category::find($id);
         $category->delete();
-        return $this->formatResponse(false,(["category"=>"category deleted successfully"]));
+        return $this->formatResponse(false,(["category"=>["category deleted successfully"]]));
     }
 
 

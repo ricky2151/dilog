@@ -29,5 +29,12 @@ Route::group([
     Route::get('/categories/{id}','CategoryController@show');
     Route::patch('/categories/{id}','CategoryController@update');
     Route::delete('/categories/{id}','CategoryController@destroy');
+
+    //Route Unit
+    Route::get('/units','UnitController@index');
+    Route::post('/units','UnitController@store');
+    Route::get('/units/{id}','UnitController@show');
+    Route::patch('/units/{id}','UnitController@update');
+    Route::delete('/units/{id}','UnitController@destroy');
 });
 

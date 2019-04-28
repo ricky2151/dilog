@@ -19,7 +19,8 @@ class DatabaseSeeder extends Seeder
             RolesTableSeeder::class,
             WarehousesTableSeeder::class,
             RacksTableSeeder::class,
-            CategoryTableSeeder::class
+            CategoryTableSeeder::class,
+            UnitTableSeeder::class
         ]);
     }
 }
