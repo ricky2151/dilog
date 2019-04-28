@@ -6,14 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Dilog</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" href="{{ asset('favicon.png') }}">
-    <meta name="theme-color" content="#F5BF0E">
-    <link rel="stylesheet" href="{{ asset('/css/app.css') }}">
+    <link rel="icon" href="{{ asset('favicon.png', true) }}">
+    <meta name="theme-color" content="#F44336">
+    <link rel="stylesheet" href="{{ asset(mix('/css/app.css'), true) }}">
 </head>
 <body>
     <div id="app">
         <dilog-app></dilog-app>
     </div>
-  <script src="{{ asset('/js/app.js') }}"></script>
+  <script src="{{ asset(mix('/js/app.js'), true) }}"></script>
 </body>
 </html>
