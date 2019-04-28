@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class InvalidRequestParameter extends Exception
+class InvalidParameterException extends Exception
 {
     /**
      * Generating invalid parameter response(s)
@@ -12,7 +12,6 @@ class InvalidRequestParameter extends Exception
      * @param  \string  $error
      * @return \Illuminate\Http\JsonResponse
      */
-
     public static function render(string $error){
         return response()->json([
             "error" => true,

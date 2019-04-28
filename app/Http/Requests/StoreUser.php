@@ -3,10 +3,10 @@
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
-use App\Exceptions\InvalidRequestParameter; 
+use App\Exceptions\InvalidParameterException; 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterUser extends FormRequest
+class StoreUser extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -36,6 +36,6 @@ class RegisterUser extends FormRequest
     }
     
     protected function failedValidation(Validator $validator) {
-        throw new InvalidRequestParameter($validator->errors()); 
+        throw new InvalidParameterException($validator->errors()); 
     }
 }

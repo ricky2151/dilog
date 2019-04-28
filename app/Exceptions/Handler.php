@@ -6,10 +6,11 @@ use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
-use App\Exceptions\InvalidRequestParameter; 
+use App\Exceptions\InvalidParameterException; 
 use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\JWTException;
+use App\Exceptions\ModelNotFoundException;
 
 
 class Handler extends ExceptionHandler
@@ -71,9 +72,15 @@ class Handler extends ExceptionHandler
            if ($exception->getMessage() === 'Token not provided') {
                return response()->json(['error' => true, 'message' => ["token"=>'Token not provided']]);
            }
+           elseif ($exception->getMessage() === 'User not found'){
+                return response()->json(['error' => true, 'message' => ["user"=>'User not found']]);
+           }
         }
-        elseif($exception instanceof InvalidRequestParameter){
-            return InvalidRequestParameter::render($exception->getMessage());
+        elseif($exception instanceof InvalidParameterException){
+            return InvalidParameterException::render($exception->getMessage());
+        }
+        elseif($exception instanceof ModelNotFoundException){
+            return ModelNotFoundException::render($exception->getMessage());
         }
         return parent::render($request, $exception);
     }
