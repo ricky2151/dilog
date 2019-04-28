@@ -47,6 +47,12 @@ class User extends Authenticatable implements JWTSubject
     //     'email_verified_at' => 'datetime',
     // ];
 
+
+    public static function findEmail($email){
+        $user = User::where("email",$email)->first();
+        return ($user != null ? $user : false);
+    }
+
     public function getJWTIdentifier() {
 
         return $this->getKey();

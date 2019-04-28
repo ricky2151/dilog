@@ -3,10 +3,11 @@
 namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
-use App\Exceptions\InvalidParameterException;
+use App\Exceptions\InvalidParameterException; 
 use Illuminate\Foundation\Http\FormRequest;
 
-class LoginUser extends FormRequest
+
+class UpdateUser extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,8 +27,11 @@ class LoginUser extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email',
-            'password' => 'required',
+            'name' => "string",
+            'email' => 'email|string|unique:users,email',
+            'role_id' => 'integer|min:1|exists:roles,id',
+            'warehouse_id' => "integer|min:1",
+            'job_title' => "string"
         ];
     }
 

@@ -8,7 +8,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\LoginUser;
-use App\Http\Requests\RegisterUser;
+use App\Http\Requests\StoreUser;
 use App\Http\Controllers\Controller;
 
 class AuthController extends Controller
@@ -32,7 +32,7 @@ class AuthController extends Controller
     {
         $credentials = $request->validated();
         if (! $token = auth('api')->attempt($credentials)) {
-            return response()->json(['authenticate' => false, 'message' => ["authentication" => 'Invalid Email/Password']], 401);
+            return response()->json(['authenticate' => false, 'message' => ["authentication" => ['Invalid Email/Password']]], 401);
         }
         return $this->respondWithToken($token);
     }
@@ -43,7 +43,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register(RegisterUser $request){
+    public function register(StoreUser $request){
         
         $data = $request->validated();
         $data["password"] = bcrypt($data["password"]);
