@@ -23,6 +23,11 @@ Route::group([
     Route::patch('/users/password/{email}','UserController@resetPassword');
     Route::delete('/users/{id}','UserController@destroy');
 
-    //Route Rule
+    //Route Category
+    Route::get('/categories','CategoryController@index');
+    Route::post('/categories','CategoryController@store');
+    Route::get('/categories/{id}','CategoryController@show');
+    Route::patch('/categories/{id}','CategoryController@update');
+    Route::delete('/categories/{id}','CategoryController@destroy');
 });
 
