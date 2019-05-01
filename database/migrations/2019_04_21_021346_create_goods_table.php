@@ -31,6 +31,7 @@ class CreateGoodsTable extends Migration
             $table->integer('unit_id')->unsigned();
             $table->integer('cogs_id')->unsigned();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

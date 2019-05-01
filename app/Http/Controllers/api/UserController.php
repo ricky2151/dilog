@@ -53,7 +53,7 @@ class UserController extends Controller
     /**
      * Display the specified user.
      *
-     * @param  \App\Models\User  $user
+     * @param  int $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
@@ -85,7 +85,7 @@ class UserController extends Controller
     /**
      * Soft delete the specified user from database.
      *
-     * @param  \App\Models\User  $user
+     * @param  int $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function destroy($id)
@@ -101,7 +101,7 @@ class UserController extends Controller
      * Update the specified user password in database.
      *
      * @param  \Illuminate\Http\Request\ResetUserPassword  $request
-     * @param  int $id
+     * @param  $email
      * @return \Illuminate\Http\JsonResponse
      */
     public function resetPassword(ResetUserPassword $request,$email){
@@ -112,5 +112,18 @@ class UserController extends Controller
         $request["password"] = bcrypt($request["password"]);
         $this->user->findEmail($email)->update($request);
         return formatResponse(false,(["user"=>["User password successfully reset"]]));
+    }
+
+    /**
+     * Cek email available in user
+     *
+     * @param  int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function isEmailAvailable($email){
+        $this->userService->handleInvalidParameter($email,2);
+
+        $available = $this->user->isEmailUserAvailable($email);
+        return formatResponse(false,(["email"=>[$available == true ? "Email is available" : "Email is not available"]]));
     }
 }

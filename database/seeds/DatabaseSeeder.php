@@ -20,7 +20,8 @@ class DatabaseSeeder extends Seeder
             WarehousesTableSeeder::class,
             RacksTableSeeder::class,
             CategoryTableSeeder::class,
-            UnitTableSeeder::class
+            UnitTableSeeder::class,
+            GoodsTableSeeder::class
         ]);
     }
 }
