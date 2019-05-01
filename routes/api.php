@@ -18,6 +18,7 @@ Route::group([
     //Route User
     Route::resource('users', 'UserController');
     Route::patch('/users/password/{email}','UserController@resetPassword');
+    Route::get('/users/email/available/{email}','UserController@isEmailAvailable');
 
     //Route Category
     Route::resource('categories', 'CategoryController');
