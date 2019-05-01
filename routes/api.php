@@ -24,4 +24,7 @@ Route::group([
 
     //Route Unit
     Route::resource('units', 'UnitController');
+
+    //Warehouse
+    Route::resource('warehouses', 'WarehouseController');
 });

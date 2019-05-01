@@ -20,27 +20,27 @@ class WarehousesTableSeeder extends Seeder
             'address' => $faker->address,
             'lat' => $faker->text(20),
             'lng' => $faker->text(20),
-            'telp' => $faker->numerify('+62 ### #### ####'),
+            'telp' => $faker->numerify('+62###########'),
             'email' => $faker->email,
-            'pic' => $faker->text(20)
+            'pic' => "warehouse/1.jpg"
         ]);
         Warehouse::create([
             'name' => "Bakpia Tugu",
             'address' => $faker->address,
             'lat' => $faker->text(20),
             'lng' => $faker->text(20),
-            'telp' => $faker->numerify('+62 ### #### ####'),
+            'telp' => $faker->numerify('+62###########'),
             'email' => $faker->email,
-            'pic' => $faker->text(20)
+            'pic' => "warehouse/2.jpg"
         ]);
         Warehouse::create([
             'name' => "Bakpia Kukus",
             'address' => $faker->address,
             'lat' => $faker->text(20),
             'lng' => $faker->text(20),
-            'telp' => $faker->numerify('+62 ### #### ####'),
+            'telp' => $faker->numerify('+62###########'),
             'email' => $faker->email,
-            'pic' => $faker->text(20)
+            'pic' => "warehouse/3.jpg"
         ]);
         Warehouse::create([
             'name' => "Bakpia Pathok",
@@ -49,7 +49,7 @@ class WarehousesTableSeeder extends Seeder
             'lng' => $faker->text(20),
             'telp' => $faker->numerify('+62 ### #### ####'),
             'email' => $faker->email,
-            'pic' => $faker->text(20)
+            'pic' => "warehouse/4.jpg"
         ]);
     }
 }
