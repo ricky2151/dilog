@@ -13,22 +13,75 @@ class GoodsTableSeeder extends Seeder
     public function run()
     {
         Goods::create([
-            'uuid' => "Rack Buku",
-            'name' => "Rack Buku",
-            'code' => "Rack Buku",
-            'desc' => "Rack Buku",
-            'margin' => "Rack Buku",
-            'value' => "Rack Buku",
-            'status' => "Rack Buku",
-            'last_buy_pricelist' => "Rack Buku",
-            'barcode_master' => "Rack Buku",
-            'thumbnail' => "Rack Buku",
-            'avgprice_status' => "Rack Buku",
-            'user_id' => "Rack Buku",
-            'tax' => "Rack Buku",
-            'unit_id' => "Rack Buku",
-            'cogs_id' => "Rack Buku",
-            'warehouse_id' => rand(1,4)
+            'uuid' => uniqid(),
+            'name' => "Buku avenger:end game",
+            'code' => "11011",
+            'desc' => "Buku special edition",
+            'margin' => 1,
+            'value' => 1,
+            'status' => 1,
+            'last_buy_pricelist' => 1,
+            'barcode_master' => "XXID190",
+            'thumbnail' => "thumbnail/image.jpg",
+            'avgprice_status' => true,
+            'user_id' => 1,
+            'tax' => 5,
+            'unit_id' => 1,
+            'cogs_id' => 1
+        ]);
+
+        Goods::create([
+            'uuid' => uniqid(),
+            'name' => "Buku avenger:age of ultron",
+            'code' => "11011",
+            'desc' => "Buku special edition",
+            'margin' => 1,
+            'value' => 1,
+            'status' => 1,
+            'last_buy_pricelist' => 1,
+            'barcode_master' => "XXID190",
+            'thumbnail' => "thumbnail/image.jpg",
+            'avgprice_status' => true,
+            'user_id' => 1,
+            'tax' => 5,
+            'unit_id' => 1,
+            'cogs_id' => 1
+        ]);
+
+        Goods::create([
+            'uuid' => uniqid(),
+            'name' => "Buku avenger",
+            'code' => "11011",
+            'desc' => "Buku special edition",
+            'margin' => 1,
+            'value' => 1,
+            'status' => 1,
+            'last_buy_pricelist' => 1,
+            'barcode_master' => "XXID190",
+            'thumbnail' => "thumbnail/image.jpg",
+            'avgprice_status' => true,
+            'user_id' => 1,
+            'tax' => 5,
+            'unit_id' => 1,
+            'cogs_id' => 1
+        ]);
+
+        Goods::create([
+            'uuid' => uniqid(),
+            'name' => "Buku avenger:infinity war",
+            'code' => "11011",
+            'desc' => "Buku special edition",
+            'margin' => 1,
+            'value' => 1,
+            'status' => 1,
+            'last_buy_pricelist' => 1,
+            'barcode_master' => "XXID190",
+            'thumbnail' => "thumbnail/image.jpg",
+            'avgprice_status' => true,
+            'user_id' => 1,
+            'tax' => 5,
+            'unit_id' => 1,
+            'cogs_id' => 1
         ]);
     }
 }

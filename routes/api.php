@@ -28,4 +28,7 @@ Route::group([
 
     //Warehouse
     Route::resource('warehouses', 'WarehouseController');
+
+    //Goods
+    Route::get('goods','GoodsController@index');
 });
