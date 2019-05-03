@@ -96,7 +96,7 @@ export default {
                 { text: 'No.',value: 'no'},
                 { text: 'Name',value: 'name'},
                 
-                { text: 'Action', align:'left',width:'15%' },
+                { text: 'Action', align:'left',width:'15%',sortable:false},
             ],
             units: [
             {
