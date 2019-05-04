@@ -34,4 +34,7 @@ Route::group([
 
     //Attributes
     Route::resource('attributes', 'AttributeController');
+
+    //Types
+    Route::resource('types', 'TypeController');
 });

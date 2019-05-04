@@ -23,7 +23,10 @@ class DatabaseSeeder extends Seeder
             UnitTableSeeder::class,
             GoodsTableSeeder::class,
             AttributeGoodsTableSeeder::class,
-            AttributesTableSeeder::class
+            AttributesTableSeeder::class,
+            TypesTableSeeder::class,
+            CogsTableSeeder::class,
+            CogsComponentsTableSeeder::class
         ]);
     }
 }
