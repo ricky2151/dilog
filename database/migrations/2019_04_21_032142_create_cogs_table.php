@@ -19,6 +19,7 @@ class CreateCogsTable extends Migration
             $table->string('name');
             $table->integer('type_id')->unsigned();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

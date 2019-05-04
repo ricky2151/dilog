@@ -20,6 +20,7 @@ class CreateCogsComponentsTable extends Migration
             $table->string('info');
             $table->integer('cogs_id')->unsigned();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

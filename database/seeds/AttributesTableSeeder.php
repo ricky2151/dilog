@@ -3,7 +3,7 @@
 use App\Models\Attribute;
 use Illuminate\Database\Seeder;
 
-class AttributeTableSeeder extends Seeder
+class AttributesTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
