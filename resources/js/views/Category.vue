@@ -1,85 +1,55 @@
 <div>
-  
     <v-container fluid>
-        <h3>Categories</h3>
+        <h3>categories</h3>
     </v-container>
-  
 </div>
 
-
-      
 <template>
-
-    
-
-
-
     <div>
         <v-dialog v-model="dialog_createedit" width=750>
             <v-card>
                 <v-toolbar dark color="red">
-                    <v-btn icon dark @click="closedialog_createedit()">
+                    <v-btn icon dark v-on:click="closedialog_createedit()">
                         <v-icon>close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Add Category</v-toolbar-title>
-                    
+                    <v-toolbar-title>Add categories</v-toolbar-title>
+
                 </v-toolbar>
                 <form style='padding:30px'>
-                    <v-text-field v-model="in_name" label="Name" required></v-text-field>
-                    <v-btn v-on:click='post_category()'>submit</v-btn>
-                    
+                    <v-text-field v-model='input.name' label="Name" required></v-text-field>
+                    <v-btn v-on:click='save_category()' >submit</v-btn>
                 </form>
             </v-card>
         </v-dialog>
 
-
         <v-toolbar flat color="white">
-            <v-toolbar-title>Categories Data</v-toolbar-title>
+            <v-toolbar-title>categories Data</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn @click='opendialog_createedit()' color="primary" dark>
+            <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark>
                 Add Data
             </v-btn>
         </v-toolbar>
         <v-data-table
-            id='table-categories'
+            disable-initial-sort
             :headers="headers"
             :items="categories"
             class=""
         >
-            <template slot="headerCell" slot-scope="props">
-                <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                        <span v-on="on">
-                            {{ props.header.text }}
-                        </span>
-                    </template>
-                    <span>
-                        {{ props.header.text }}
-                    </span>
-                </v-tooltip>
-            </template>
         <template v-slot:items="props">
-            <td>{{ props.item.no }}</td>
             <td>{{ props.item.name }}</td>
-            
-            
             <td>
-                <v-btn class='button-action' v-on:click='opendialog_createedit()' color="primary" fab depressed small dark v-on="on">
+                <v-btn class='button-action' v-on:click='opendialog_createedit(props.index)' color="primary" fab depressed small dark v-on="on">
                     <v-icon small>edit</v-icon>
                 </v-btn>
-                <v-btn class='button-action' color="red" fab small dark depressed>
+                <v-btn class='button-action' v-on:click='delete_category(props.index)' color="red" fab small dark depressed>
                     <v-icon small>delete</v-icon>
                 </v-btn>
 
             </td>
-           
         </template>
         </v-data-table>
     </div>
 </template>
-      
-
-
 
 <script>
 import axios from 'axios'
@@ -87,55 +57,109 @@ export default {
     data () {
         return {
             on:false,
+
             dialog_createedit:false,
             dialog_stock:false,
+
+            idx_data_edit:-1,
+
+            input:{
+                name:'',    
+            },
+            
+
             headers: [
-                { text: 'No.',value: 'no'},
-                { text: 'Name',value: 'name'},
+                { text: 'Name', value: 'name'},
                 { text: 'Action', align:'left',width:'15%',sortable:false},
             ],
-            categories: [
-            {
-                no : 1,
-                name: 'Kayu',
-            },
-            {
-                no : 2,
-                name: 'Besi', 
-            },
-            ],
-            in_name:'',
+
+
+            categories: []
         }
     },
     methods: {
-
         closedialog_createedit(){
             this.dialog_createedit = false;
         },
-        opendialog_createedit(){
+        opendialog_createedit(idx_data_edit){
+            if(idx_data_edit != -1)
+            {
+                this.idx_data_edit = idx_data_edit;
+
+                
+                this.input.name = this.categories[this.idx_data_edit].name;
+            }
+
             this.dialog_createedit = true;
         },
+        
         showTable(r)
         {
-            //console.log(r)
-            //this.categories = r.data.categories
+            
+            this.categories = r.data.items.categories;
         },
         get_category() {
-            axios.get('api/categories?token' + localStorage.getItem('token')).then(r => showTable(r));
-            
-        },
-        post_category(){
-            axios.post('api/categories',{
-                name: this.in_name,
-                token: localStorage.getItem('token'),
-            })
-        }
 
-        
+            axios.get('/api/categories', {
+                params:{
+                    token: localStorage.getItem('token')
+                }
+            },{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            }).then(r => this.showTable(r))
+        },
+        save_category()
+        {
+            if(this.idx_data_edit != -1) //jika sedang diedit
+            {
+                axios.patch('api/categories/' + this.categories[this.idx_data_edit].id,{
+                    name: this.input.name,
+                    token: localStorage.getItem('token')
+                }).then((r) => {
+                    this.get_category();
+                    this.closedialog_createedit();
+                    swal("Good job!", "Data saved !", "success");
+                    this.idx_data_edit = -1;
+                    this.input.name = '';
+                });
+                
+                
+                
+
+                
+            }
+            else //jika sedang tambah data
+            {
+                axios.post('api/categories',{
+                    name: this.input.name,
+                    token: localStorage.getItem('token')
+                }).then((r)=> {
+                    this.get_category();
+                    this.closedialog_createedit();
+                    swal("Good job!", "Data saved !", "success");
+                });
+            }
+        },
+        delete_category(idx_data_delete){
+            
+            axios.delete('api/categories/' + this.categories[idx_data_delete].id,{
+                data:{
+                    token: localStorage.getItem('token')    
+                }
+                
+            }).then((r)=>{
+                this.get_category();
+                swal("Good job!", "Data Deleted !", "success");
+                
+            });
+        }
 
 
     },
-    beforeMount(){
+    mounted(){
         this.get_category();
     },
 }
@@ -145,7 +169,7 @@ export default {
 
 .text-link{
     color:blue;
-    text-decoration: underline; 
+    text-decoration: underline;
     cursor:pointer;
 }
 .button-action{
