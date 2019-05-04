@@ -12,7 +12,7 @@ if (!function_exists('formatResponse'))
     function formatResponse(bool $error, array $array){
         return response()->json([
             "error" => $error,
-            ($error == false ? "data" : "message") => $array
+            ($error == false ? "items" : "message") => $array
         ]);
     }
 

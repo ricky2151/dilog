@@ -60,21 +60,21 @@ class Handler extends ExceptionHandler
             $preException = $exception->getPrevious();
         
             if ($preException instanceof TokenInvalidException) {
-                return response()->json(['error' => true,'message' => ["token"=>"Invalid Token"]],400);
+                return response()->json(['error' => true,'message' => ["token"=>["Invalid Token"]]],400);
             }
             elseif ($preException instanceof TokenExpiredException) {
-                return response()->json(['error' => true, 'message' => ["token"=>"Token is Expired"]],400);
+                return response()->json(['error' => true, 'message' => ["token"=>["Token is Expired"]]],400);
             }
             elseif ($preException instanceof TokenBlacklistedException) {
-                return response()->json(['error' => true, 'message' => ["token"=>'Token is Blacklist']],400);
+                return response()->json(['error' => true, 'message' => ["token"=>['Token is Blacklist']]],400);
             }
             
         
            if ($exception->getMessage() === 'Token not provided') {
-               return response()->json(['error' => true, 'message' => ["token"=>'Token not provided']]);
+               return response()->json(['error' => true, 'message' => ["token"=>['Token not provided']]]);
            }
            elseif ($exception->getMessage() === 'User not found'){
-                return response()->json(['error' => true, 'message' => ["user"=>'User not found']]);
+                return response()->json(['error' => true, 'message' => ["user"=>['User not found']]]);
            }
         }
         elseif($exception instanceof InvalidParameterException){

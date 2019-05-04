@@ -28,7 +28,7 @@ class UnitController extends Controller
     {
         $this->unitService->handleEmptyModel();
 
-        $units = $this->unit->all();
+        $units = $this->unit->latest()->get();
         return formatResponse(false,(["units"=>$units]));
     }
 

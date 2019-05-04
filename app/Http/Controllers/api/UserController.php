@@ -30,7 +30,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = $this->user->all();
+        $user = $this->user->latest()->get();
         return formatResponse(false,(["users"=>$user]));
     }
 

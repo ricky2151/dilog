@@ -24,7 +24,7 @@ class GoodsController extends Controller
     public function index()
     {
         $this->goodsService->handleEmptyModel();
-        $CollectionGoods = $this->goods->all();
+        $CollectionGoods = $this->goods->latest()->get();
 
         return formatResponse(false,(["goods"=>$CollectionGoods]));
     }

@@ -30,7 +30,7 @@ class WarehouseController extends Controller
     public function index()
     {
         $this->warehouseService->handleEmptyModel();
-        $warehouses = $this->warehouse->all();
+        $warehouses = $this->warehouse->latest()->get();
         return formatResponse(false,(["warehouse"=>$warehouses]));
     }
 

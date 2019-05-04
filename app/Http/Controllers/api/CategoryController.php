@@ -26,7 +26,7 @@ class CategoryController extends Controller
     public function index()
     {
         $this->categoryService->handleEmptyModel();
-        $categories = $this->category->all();
+        $categories = $this->category->latest()->get();
         return formatResponse(false,(["categories"=>$categories]));
     }
 
