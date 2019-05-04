@@ -35,7 +35,7 @@
                         <v-list-tile
                             v-for="(item, index) in toolbarMenu"
                             :key="index"
-                            :to="item.route"
+                            :to="item.action"
                             >
                             <v-list-tile-action>
                                 <v-icon>{{ item.icon }}</v-icon>
@@ -56,7 +56,7 @@
                     <v-img src="/assets/images/logo.png" contain class="my-5">
                     </v-img>
                 </v-container>
-                <v-list>
+                <!-- <v-list>
                     <v-list-tile
                         v-for="(item, index) in routes"
                         router
@@ -71,6 +71,69 @@
                             <v-list-tile-title>{{ item.title }}</v-list-tile-title>
                         </v-list-tile-content>
                     </v-list-tile>
+                </v-list> -->
+
+                <v-list>
+                    <!--  -->
+                    <div v-for="(item,index) in routes">
+
+
+                        <v-list-group
+                            
+                            v-if="item.subroutes"
+                            router
+                            :key="'menu'+index"
+                            v-model="item.active"
+                            
+                            no-action
+                            >
+                            <template v-slot:activator>
+                                <v-list-tile>
+                                    <v-list-tile-action>
+                                        <v-icon>{{ item.icon }}</v-icon>
+                                    </v-list-tile-action>
+                                    <v-list-tile-content>
+                                        <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                                    </v-list-tile-content>
+                                </v-list-tile>
+                            </template>
+
+                            <v-list-tile
+
+                                v-for="subItem in item.subroutes"
+                                :key="subItem.subtitle"
+                                :to="subItem.subaction"
+
+                                @click=""
+                            >
+                                <v-list-tile-action>
+                                    <v-icon>{{ subItem.subicon }}</v-icon>
+                                </v-list-tile-action>
+                                <v-list-tile-content>
+                                    <v-list-tile-title>{{ subItem.subtitle }}</v-list-tile-title>
+                                </v-list-tile-content>
+
+                                  
+                            </v-list-tile>
+                        </v-list-group>
+
+
+                        <v-list-tile
+                            v-else
+                            router
+                            :to="item.action"
+                            :key="'menu'+index"
+                            >
+                            <v-list-tile-action>
+                                <v-icon>{{ item.icon }}</v-icon>
+                            </v-list-tile-action>
+
+                            <v-list-tile-content>
+                                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+
+                    </div>
                 </v-list>
             </v-navigation-drawer>
 
@@ -93,34 +156,84 @@ export default {
                 {
                     icon: "dashboard",
                     title: "Dashboard",
-                    route: "/",
+                    
+                },
+                {
+                    icon: "store",
+                    title: "Master Data",
+                    subroutes:[
+                    {
+                        subicon:"category",
+                        subtitle:"Goods Category",
+                        subaction: "/category"
+                    },
+                    {
+                        subicon:"dns",
+                        subtitle:"Goods Unit",
+                        subaction: "/unit"
+                    },
+                    {
+                        subicon:"build",
+                        subtitle:"Goods Attribute",
+                        subaction: "/attribute"
+                    },
+
+                    {
+                        subicon:"bookmarks",
+                        subtitle:"COGS Type",
+                        subaction: "/type"
+                    },
+                    {
+                        subicon:"compare_arrows",
+                        subtitle:"Price Category",
+                        subaction: "/categorypriceselling"
+                    },
+
+                    {
+                        subicon:"description",
+                        subtitle:"Batch Source",
+                        subaction: "/source"
+                    },
+                    
+                    ]
+                },
+                {
+                    icon: "widgets",
+                    title : "Goods",
+                    action : "/goods",
                 },
                 {
                     icon: "store",
                     title: "Warehouse",
-                    route: "/warehouse",
+                    action: "/warehouse",
                 },
+                {
+                    icon: "store",
+                    title : "Goods",
+                    route : "/goods",
+                }
+               
             ],
             toolbarMenu: [
                 {
                     icon: "account_circle",
                     title: "Account",
-                    route: "/account"
+                    action: "/account"
                 },
                 {
                     icon: "contact_support",
                     title: "Support",
-                    route: "/support"
+                    action: "/support"
                 },
                 {
                     icon: "feedback",
                     title: "Feedback",
-                    route: "/feedback"
+                    action: "/feedback"
                 },
                 {
                     icon: "exit_to_app",
                     title: "Logout",
-                    route: "/logout"
+                    action: "/logout"
                 }
             ]
         }
