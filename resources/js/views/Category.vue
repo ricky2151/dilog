@@ -145,15 +145,26 @@ export default {
         },
         delete_category(idx_data_delete){
             
-            axios.delete('api/categories/' + this.categories[idx_data_delete].id,{
-                data:{
-                    token: localStorage.getItem('token')    
-                }
-                
-            }).then((r)=>{
-                this.get_category();
-                swal("Good job!", "Data Deleted !", "success");
-                
+            swal({
+                    title: "Are you sure want to delete this item?",
+                    text: "Once deleted, it can't be undone",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        axios.delete('api/categories/' + this.categories[idx_data_delete].id,{
+                            data:{
+                                token: localStorage.getItem('token')    
+                            }
+                            
+                        }).then((r)=>{
+                            this.get_category();
+                            swal("Good job!", "Data Deleted !", "success");
+                            
+                        });
+                    }
             });
         }
 
