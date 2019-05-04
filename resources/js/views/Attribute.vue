@@ -85,7 +85,7 @@
 
 
 <script>
-
+import axios from 'axios'
 export default {
     data () {
         return {
@@ -121,7 +121,7 @@ export default {
         opendialog_createedit(){
             this.dialog_createedit = true;
         },
-        fetchAttributes() {
+        req_attribute() {
             //axios
             return "";
         },

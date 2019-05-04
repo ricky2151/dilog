@@ -25,11 +25,8 @@
                     
                 </v-toolbar>
                 <form style='padding:30px'>
-                    <v-text-field label="Name" required></v-text-field>
-
-                     
-
-                    <v-btn >submit</v-btn>
+                    <v-text-field v-model="in_name" label="Name" required></v-text-field>
+                    <v-btn v-on:click='post_category()'>submit</v-btn>
                     
                 </form>
             </v-card>
@@ -85,7 +82,7 @@
 
 
 <script>
-
+import axios from 'axios'
 export default {
     data () {
         return {
@@ -101,34 +98,46 @@ export default {
             {
                 no : 1,
                 name: 'Kayu',
-                
             },
             {
                 no : 2,
-                name: 'Besi',
-                
+                name: 'Besi', 
             },
-            
-
-            ]
+            ],
+            in_name:'',
         }
     },
     methods: {
+
         closedialog_createedit(){
             this.dialog_createedit = false;
         },
         opendialog_createedit(){
             this.dialog_createedit = true;
         },
-        fetchCategories() {
-            //axios
-            return "";
+        showTable(r)
+        {
+            //console.log(r)
+            //this.categories = r.data.categories
         },
+        get_category() {
+            axios.get('api/categories?token' + localStorage.getItem('token')).then(r => showTable(r));
+            
+        },
+        post_category(){
+            axios.post('api/categories',{
+                name: this.in_name,
+                token: localStorage.getItem('token'),
+            })
+        }
 
         
 
 
-    }
+    },
+    beforeMount(){
+        this.get_category();
+    },
 }
 </script>
 

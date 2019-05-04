@@ -1,111 +1,61 @@
 <template>
-    <v-app id="login" class="red">
+    <div>
         <v-content>
             <v-container fluid fill-height>
                 <v-layout align-center justify-center>
-                    <v-flex xs12 sm8 md4 lg4>
-                        <v-card class="elevation-1 pa-3">
+                    <v-flex xs12 sm8 md4>
+                        <v-card class="elevation-12">
+                            <v-toolbar dark color="primary">
+                                <v-toolbar-title>Login form</v-toolbar-title>
+                                
+                            </v-toolbar>
                             <v-card-text>
-                                <div class="layout column align-center pb-4">
-                                    <img src="/assets/images/logo.png" alt="Dilog" width="200">
-                                </div>
                                 <v-form>
-                                    <v-text-field
-                                        append-icon="person"
-                                        name="login"
-                                        label="Login"
-                                        type="text"
-                                        v-model="form.email.value"
-                                        :error="error"
-                                        :rules="form.email.rules"/>
-                                    <v-text-field
-                                        :type="form.password.hide ? 'password' : 'text'"
-                                        :append-icon="form.password.hide ? 'visibility_off' : 'visibility'"
-                                        name="password"
-                                        label="Password"
-                                        id="password"
-                                        :rules="form.password.rules"
-                                        v-model="form.password.value"
-                                        :error="error"
-                                        @click:append="form.password.hide = !form.password.hide"/>
+                                	<input type="hidden" name="_token" :value="csrf">
+                                    <v-text-field v-model="in_username" prepend-icon="person" name="login" label="Username" type="text"></v-text-field>
+                                    <v-text-field v-model="in_password" prepend-icon="lock" name="password" label="Password" id="password" type="password"></v-text-field>
+                                    <label>{{token}}</label>
+
                                 </v-form>
                             </v-card-text>
                             <v-card-actions>
-                                <v-btn block large color="primary" @click="login" :loading="loading">Login</v-btn>
+                                <v-spacer></v-spacer>
+                                <v-btn color="primary" v-on:click='req_login()' >Login</v-btn>
                             </v-card-actions>
                         </v-card>
                     </v-flex>
                 </v-layout>
             </v-container>
-            <v-snackbar
-                v-model="showResult"
-                :timeout="2000"
-                top>
-                {{ result }}
-            </v-snackbar>
         </v-content>
-    </v-app>
+    </div>
 </template>
 
 <script>
-export default {
-    data() {
-        return {
-            loading: false,
-            error: false,
-            showResult: false,
-            result: '',
-            form: {
-                email: {
-                    value: '',
-                    rules: [
-                        v => !!v || 'Email is required!',
-                    ]
-                },
-                password: {
-                    value: '',
-                    rules: [
-                        v => !!v || 'Password is required!',
-                    ],
-                    hide: true,
-                }
-            }
-        }
-    },
+	import axios from 'axios'
+    export default {
+    	data()
+    	{
+    		return {
+    			csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+	            in_password:'',
+	            in_username:'',
+	            token:'',
+        	}
+    	},
+    	methods:
+    	{
+    		req_login(){
 
-    methods: {
-        login() {
-            const vm = this;
+    			axios.post('/api/auth/login',{
+    				username:this.in_username,
+    				password:this.in_password
+    			}).then(r => saveToken(r));
+    		},
 
-            if (!vm.form.email.value || !vm.form.password.value) {
-
-                vm.result = "Email and Password can't be null.";
-                vm.showResult = true;
-
-                return;
-            }
-
-            if (true) {
-                router.push('/')
-            }
-            else {
-                vm.error = true;
-                vm.result = "Email or Password is incorrect.";
-                vm.showResult = true;
-            }
-        }
+    		saveToken(r){
+    			localStorage.setItem('token',r.access_token)
+    		}
+    	}
     }
 }
 </script>
-
-<style scoped>
-#login {
-    height: 50%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    content: "";
-    z-index: 0;
-}
-</style>

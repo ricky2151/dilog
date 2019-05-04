@@ -25,11 +25,11 @@
                     
                 </v-toolbar>
                 <form style='padding:30px'>
-                    <v-text-field label="Name" required></v-text-field>
+                    <v-text-field v-model='in_name' label="Name" required></v-text-field>
 
                      
 
-                    <v-btn >submit</v-btn>
+                    <v-btn v-on:click='post_unit()' >submit</v-btn>
                     
                 </form>
             </v-card>
@@ -85,13 +85,14 @@
 
 
 <script>
-
+import axios from 'axios'
 export default {
     data () {
         return {
             on:false,
             dialog_createedit:false,
             dialog_stock:false,
+            in_name:'',
             headers: [
                 { text: 'No.',value: 'no'},
                 { text: 'Name',value: 'name'},
@@ -121,15 +122,30 @@ export default {
         opendialog_createedit(){
             this.dialog_createedit = true;
         },
-        fetchUnits() {
-            //axios
-            return "";
+
+        showTable(r)
+        {
+            //console.log(r)
+            //this.units = r.data.units
         },
+        get_unit() {
+            axios.get('api/unit?token' + localStorage.getItem('token')).then(r => showTable(r));
+            
+        },
+        post_unit(){
+            axios.post('api/units',{
+                name: this.in_name,
+                token: localStorage.getItem('token'),
+            })
+        }
 
         
 
 
-    }
+    },
+    beforeMount(){
+        this.get_category();
+    },
 }
 </script>
 
