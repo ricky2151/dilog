@@ -6,6 +6,8 @@ import Authenticated from './views/Authenticated'
 
 import Home from './views/Home'
 import Warehouse from './views/Warehouse'
+import Goods from './views/Goods'
+import Goodscreate from './views/Goodscreate'
 
 import Login from './views/Login'
 
@@ -25,8 +27,12 @@ const routes = [
         children: [
             { path: '/', component: Home },
             { path: '/warehouse', component: Warehouse },
+            { path: '/goods', component: Goods },
+            { path: '/goodscreate', component: Goodscreate}
         ],
     },
+
+
 ]
 
 const router = new VueRouter({

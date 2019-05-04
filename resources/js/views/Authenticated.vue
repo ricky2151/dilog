@@ -100,6 +100,12 @@ export default {
                     title: "Warehouse",
                     route: "/warehouse",
                 },
+                {
+                    icon: "store",
+                    title : "Goods",
+                    route : "/goods",
+                }
+               
             ],
             toolbarMenu: [
                 {
