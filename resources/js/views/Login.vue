@@ -7,14 +7,12 @@
                         <v-card class="elevation-12">
                             <v-toolbar dark color="primary">
                                 <v-toolbar-title>Login form</v-toolbar-title>
-                                
+
                             </v-toolbar>
                             <v-card-text>
                                 <v-form>
-                                	<input type="hidden" name="_token" :value="csrf">
-                                    <v-text-field v-model="in_username" prepend-icon="person" name="login" label="Username" type="text"></v-text-field>
+                                    <v-text-field v-model="in_email" prepend-icon="person" name="login" label="Email" type="text"></v-text-field>
                                     <v-text-field v-model="in_password" prepend-icon="lock" name="password" label="Password" id="password" type="password"></v-text-field>
-                                    <label>{{token}}</label>
 
                                 </v-form>
                             </v-card-text>
@@ -31,31 +29,28 @@
 </template>
 
 <script>
-	import axios from 'axios'
     export default {
     	data()
     	{
     		return {
-    			csrf: document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
 	            in_password:'',
-	            in_username:'',
-	            token:'',
+	            in_email:'',
         	}
     	},
     	methods:
     	{
     		req_login(){
-
     			axios.post('/api/auth/login',{
-    				username:this.in_username,
+    				email:this.in_email,
     				password:this.in_password
-    			}).then(r => saveToken(r));
+    			}).then(r => this.saveToken(r));
     		},
 
     		saveToken(r){
-    			localStorage.setItem('token',r.access_token)
+    			localStorage.setItem('token', r.data.access_token)
+                localStorage.setItem('user', r.data.user)
+                this.$router.replace('/');
     		}
     	}
     }
-}
 </script>
