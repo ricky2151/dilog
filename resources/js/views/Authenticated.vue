@@ -156,6 +156,7 @@ export default {
                 {
                     icon: "dashboard",
                     title: "Dashboard",
+                    action:"/",
                     
                 },
                 {

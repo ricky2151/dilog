@@ -9,7 +9,7 @@
         <v-dialog v-model="dialog_createedit" width=750>
             <v-card>
                 <v-toolbar dark color="red">
-                    <v-btn icon dark @click="closedialog_createedit()">
+                    <v-btn icon dark v-on:click="closedialog_createedit()">
                         <v-icon>close</v-icon>
                     </v-btn>
                     <v-toolbar-title>Add Units</v-toolbar-title>
@@ -17,7 +17,7 @@
                 </v-toolbar>
                 <form style='padding:30px'>
                     <v-text-field v-model='in_name' label="Name" required></v-text-field>
-                    <v-btn v-on:click='post_unit()' >submit</v-btn>
+                    <v-btn v-on:click='save_unit()' >submit</v-btn>
                 </form>
             </v-card>
         </v-dialog>
@@ -25,7 +25,7 @@
         <v-toolbar flat color="white">
             <v-toolbar-title>Units Data</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn @click='opendialog_createedit()' color="primary" dark>
+            <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark>
                 Add Data
             </v-btn>
         </v-toolbar>
@@ -38,10 +38,10 @@
         <template v-slot:items="props">
             <td>{{ props.item.name }}</td>
             <td>
-                <v-btn class='button-action' v-on:click='opendialog_createedit()' color="primary" fab depressed small dark v-on="on">
+                <v-btn class='button-action' v-on:click='opendialog_createedit(props.index)' color="primary" fab depressed small dark v-on="on">
                     <v-icon small>edit</v-icon>
                 </v-btn>
-                <v-btn class='button-action' color="red" fab small dark depressed>
+                <v-btn class='button-action' v-on:click='delete_unit(props.index)' color="red" fab small dark depressed>
                     <v-icon small>delete</v-icon>
                 </v-btn>
 
@@ -57,13 +57,20 @@ export default {
     data () {
         return {
             on:false,
+
             dialog_createedit:false,
             dialog_stock:false,
+
+            idx_data_edit:-1,
+
             in_name:'',
+
             headers: [
                 { text: 'Name', value: 'name'},
                 { text: 'Action', align:'left',width:'15%',sortable:false},
             ],
+
+
             units: []
         }
     },
@@ -71,14 +78,25 @@ export default {
         closedialog_createedit(){
             this.dialog_createedit = false;
         },
-        opendialog_createedit(){
+        opendialog_createedit(idx_data_edit){
+            if(idx_data_edit != -1)
+            {
+                this.idx_data_edit = idx_data_edit;
+
+                
+                this.in_name = this.units[this.idx_data_edit].name;
+            }
+
             this.dialog_createedit = true;
         },
+        
         showTable(r)
         {
-            this.units = r.data.data.units
+            
+            this.units = r.data.items.units;
         },
         get_unit() {
+
             axios.get('/api/units', {
                 params:{
                     token: localStorage.getItem('token')
@@ -90,16 +108,49 @@ export default {
                 }
             }).then(r => this.showTable(r))
         },
-        post_unit(){
-            axios.post('api/units',{
-                name: this.in_name,
-                token: localStorage.getItem('token')
-            })
+        save_unit()
+        {
+            if(this.idx_data_edit != -1) //jika sedang diedit
+            {
+                axios.patch('api/units/' + this.units[this.idx_data_edit].id,{
+                    name: this.in_name,
+                    token: localStorage.getItem('token')
+                });
+                this.get_unit();
+                this.closedialog_createedit();
+                swal("Good job!", "Data saved !", "success");
+                this.idx_data_edit = -1;
+                this.in_name = '';
+
+                
+            }
+            else //jika sedang tambah data
+            {
+                axios.post('api/units',{
+                    name: this.in_name,
+                    token: localStorage.getItem('token')
+                });
+                this.get_unit();
+                this.closedialog_createedit();
+                swal("Good job!", "Data saved !", "success");
+            }
+        },
+        delete_unit(idx_data_delete){
+            
+            axios.delete('api/units/' + this.units[idx_data_delete].id,{
+                data:{
+                    token: localStorage.getItem('token')    
+                }
+                
+            });
+            this.get_unit();
+            swal("Good job!", "Data Deleted !", "success");
         }
+
 
     },
     mounted(){
-        this.get_unit()
+        this.get_unit();
     },
 }
 </script>
