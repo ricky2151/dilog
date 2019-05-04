@@ -115,12 +115,16 @@ export default {
                 axios.patch('api/units/' + this.units[this.idx_data_edit].id,{
                     name: this.in_name,
                     token: localStorage.getItem('token')
+                }).then((r) => {
+                    let res2 = this.get_unit();
+                    this.closedialog_createedit();
+                    swal("Good job!", "Data saved !", "success");
+                    this.idx_data_edit = -1;
+                    this.in_name = '';
                 });
-                this.get_unit();
-                this.closedialog_createedit();
-                swal("Good job!", "Data saved !", "success");
-                this.idx_data_edit = -1;
-                this.in_name = '';
+                
+                
+                
 
                 
             }
@@ -129,10 +133,11 @@ export default {
                 axios.post('api/units',{
                     name: this.in_name,
                     token: localStorage.getItem('token')
+                }).then((r)=> {
+                    this.get_unit();
+                    this.closedialog_createedit();
+                    swal("Good job!", "Data saved !", "success");
                 });
-                this.get_unit();
-                this.closedialog_createedit();
-                swal("Good job!", "Data saved !", "success");
             }
         },
         delete_unit(idx_data_delete){
@@ -142,9 +147,11 @@ export default {
                     token: localStorage.getItem('token')    
                 }
                 
+            }).then((r)=>{
+                this.get_unit();
+                swal("Good job!", "Data Deleted !", "success");
+                
             });
-            this.get_unit();
-            swal("Good job!", "Data Deleted !", "success");
         }
 
 
