@@ -31,4 +31,7 @@ Route::group([
 
     //Goods
     Route::get('goods','GoodsController@index');
+
+    //Attributes
+    Route::resource('attributes', 'AttributeController');
 });

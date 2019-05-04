@@ -21,7 +21,9 @@ class DatabaseSeeder extends Seeder
             RacksTableSeeder::class,
             CategoryTableSeeder::class,
             UnitTableSeeder::class,
-            GoodsTableSeeder::class
+            GoodsTableSeeder::class,
+            AttributeGoodsTableSeeder::class,
+            AttributeTableSeeder::class
         ]);
     }
 }
