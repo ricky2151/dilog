@@ -16,7 +16,7 @@
 
                 </v-toolbar>
                 <form style='padding:30px'>
-                    <v-text-field v-model='in_name' label="Name" required></v-text-field>
+                    <v-text-field v-model='input.name' label="Name" required></v-text-field>
                     <v-btn v-on:click='save_unit()' >submit</v-btn>
                 </form>
             </v-card>
@@ -63,7 +63,10 @@ export default {
 
             idx_data_edit:-1,
 
-            in_name:'',
+            input:{
+                name:'',    
+            },
+            
 
             headers: [
                 { text: 'Name', value: 'name'},
@@ -84,7 +87,7 @@ export default {
                 this.idx_data_edit = idx_data_edit;
 
                 
-                this.in_name = this.units[this.idx_data_edit].name;
+                this.input.name = this.units[this.idx_data_edit].name;
             }
 
             this.dialog_createedit = true;
@@ -113,14 +116,14 @@ export default {
             if(this.idx_data_edit != -1) //jika sedang diedit
             {
                 axios.patch('api/units/' + this.units[this.idx_data_edit].id,{
-                    name: this.in_name,
+                    name: this.input.name,
                     token: localStorage.getItem('token')
                 }).then((r) => {
-                    let res2 = this.get_unit();
+                    this.get_unit();
                     this.closedialog_createedit();
                     swal("Good job!", "Data saved !", "success");
                     this.idx_data_edit = -1;
-                    this.in_name = '';
+                    this.input.name = '';
                 });
                 
                 
@@ -131,7 +134,7 @@ export default {
             else //jika sedang tambah data
             {
                 axios.post('api/units',{
-                    name: this.in_name,
+                    name: this.input.name,
                     token: localStorage.getItem('token')
                 }).then((r)=> {
                     this.get_unit();
