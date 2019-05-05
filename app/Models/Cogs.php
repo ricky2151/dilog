@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class Cogs extends Model
 {
-    //
+    use SoftDeletes;
+    
     protected $fillable = [
         'nominal','name','type_id'
     ];

@@ -31,4 +31,22 @@ Route::group([
 
     //Goods
     Route::get('goods','GoodsController@index');
+
+    //Attributes
+    Route::resource('attributes', 'AttributeController');
+
+    //Types
+    Route::resource('types', 'TypeController');
+
+    //Cogs
+    Route::resource('cogs', 'CogsController');
+
+    //CogsComponent
+    Route::resource('cogsComponent', 'CogsComponentController');
+    
+    //Source
+    Route::resource('sources', 'SourceController');
+
+    //CategoryPriceSelling
+    Route::resource('categoryPriceSellings', 'CategoryPriceSellingController');
 });
