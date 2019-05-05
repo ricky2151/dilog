@@ -59,7 +59,7 @@ class CogsController extends Controller
         $this->cogsService->handleModelNotFound($id);
 
         $cogs = $this->cogs->find($id);
-        return formatResponse(false,(["type"=>$cogs]));
+        return formatResponse(false,(["cogs"=>$cogs]));
     }
 
 

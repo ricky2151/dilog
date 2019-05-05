@@ -40,4 +40,8 @@ Route::group([
 
     //Cogs
     Route::resource('cogs', 'CogsController');
+
+    //CogsComponent
+    Route::resource('cogsComponent', 'CogsComponentController');
+    
 });
