@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
+use App\Exceptions\InvalidParameterException; 
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreCogs extends FormRequest
@@ -13,7 +15,7 @@ class StoreCogs extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +26,13 @@ class StoreCogs extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => "required|string",
+            'nominal' =>"required|integer",
+            'type_id' =>"required|integer|min:1|exists:types,id"
         ];
+    }
+
+    protected function failedValidation(Validator $validator) {
+        throw new InvalidParameterException($validator->errors()); 
     }
 }

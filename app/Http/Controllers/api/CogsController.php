@@ -2,85 +2,95 @@
 
 namespace App\Http\Controllers\api;
 
+use App\Services\CogsService;
+use App\Http\Requests\StoreCogs;
+use App\Http\Requests\UpdateCogs;
 use App\Models\Cogs;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class CogsController extends Controller
 {
+    private $cogsService,$cogs;
+
+    public function __construct(CogsService $cogsService, Cogs $cogs)
+    {
+        $this->cogsService = $cogsService;
+        $this->cogs = $cogs;
+    }
+
     /**
-     * Display a listing of the resource.
+     * Display a listing of the cogs.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        //
+        $this->cogsService->handleEmptyModel();
+
+        $CollectionCogs = $this->cogs->latest()->get();
+        return formatResponse(false,(["cogs"=>$CollectionCogs]));
+    }
+
+
+    /**
+     * Store a newly created cogs in storage.
+     *
+     * @param  \Illuminate\Http\StoreCogs  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(StoreCogs $request)
+    {
+        $data = $request->validated();
+
+        $this->cogs->create($data);
+        return formatResponse(false,(["cogs"=>["cogs successfully created"]]));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Display the specified cogs.
      *
-     * @return \Illuminate\Http\Response
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create()
+    public function show($id)
     {
-        //
+        $this->cogsService->handleInvalidParameter($id);
+        $this->cogsService->handleModelNotFound($id);
+
+        $cogs = $this->cogs->find($id);
+        return formatResponse(false,(["type"=>$cogs]));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Cogs  $cogs
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Cogs $cogs)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Cogs  $cogs
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Cogs $cogs)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Cogs  $cogs
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\UpdateCogs  $request
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, Cogs $cogs)
+    public function update(UpdateCogs $request, $id)
     {
-        //
+        $this->cogsService->handleInvalidParameter($id);
+        $this->cogsService->handleModelNotFound($id);
+
+        $this->cogs->find($id)->update($request->validated());
+        return formatResponse(false,(["cogs"=>["cogs was successfully updated"]]));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Cogs  $cogs
-     * @return \Illuminate\Http\Response
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Cogs $cogs)
+    public function destroy($id)
     {
-        //
+        $this->cogsService->handleInvalidParameter($id);
+        $this->cogsService->handleModelNotFound($id);
+
+        $this->cogs->find($id)->delete();
+        return formatResponse(false,(["cogs"=>["cogs deleted successfully"]]));
     }
 }

@@ -37,4 +37,7 @@ Route::group([
 
     //Types
     Route::resource('types', 'TypeController');
+
+    //Cogs
+    Route::resource('cogs', 'CogsController');
 });
