@@ -44,4 +44,6 @@ Route::group([
     //CogsComponent
     Route::resource('cogsComponent', 'CogsComponentController');
     
+    //Source
+    Route::resource('sources', 'SourceController');
 });

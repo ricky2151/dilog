@@ -26,7 +26,8 @@ class DatabaseSeeder extends Seeder
             AttributesTableSeeder::class,
             TypesTableSeeder::class,
             CogsTableSeeder::class,
-            CogsComponentsTableSeeder::class
+            CogsComponentsTableSeeder::class,
+            SourcesTableSeeder::class
         ]);
     }
 }
