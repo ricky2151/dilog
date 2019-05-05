@@ -46,4 +46,7 @@ Route::group([
     
     //Source
     Route::resource('sources', 'SourceController');
+
+    //CategoryPriceSelling
+    Route::resource('categoryPriceSellings', 'CategoryPriceSellingController');
 });

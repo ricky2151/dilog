@@ -27,7 +27,8 @@ class DatabaseSeeder extends Seeder
             TypesTableSeeder::class,
             CogsTableSeeder::class,
             CogsComponentsTableSeeder::class,
-            SourcesTableSeeder::class
+            SourcesTableSeeder::class,
+            CategoryPriceSellingsTableSeeder::class
         ]);
     }
 }
