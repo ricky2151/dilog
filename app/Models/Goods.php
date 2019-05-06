@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 
 class Goods extends Model
 {
@@ -12,6 +13,10 @@ class Goods extends Model
     protected $fillable = [
         'uuid', 'name','code','desc','margin','value','status','last_buy_pricelist','barcode_master','thumbnail','avgprice_status','user_id','tax','unit_id','cogs_id'
     ];
+
+    public static function allDataCreate(){
+        return ['materials' => Material::all(['id','name']),'categories' => Category::all(['id','name']),'attributes' => Attribute::all(['id','name'])];
+    }
 
     public function goodsRack(){
         return $this->hasMany('App\Models\GoodRack');
