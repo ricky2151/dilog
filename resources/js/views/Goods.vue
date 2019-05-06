@@ -363,7 +363,6 @@ export default {
                 { text: 'Value', value: 'value', align:'right' },
                 { text: 'Status', value: 'status', align:'right' },
                 { text: 'Last Buy Pricelist', value: 'last_buy_pricelist', align:'right' },
-                { text: 'Stock', value: 'stock', align:'right' },
                 { text: 'Action', align:'left',width:'15%',sortable:false},
             ],
 
@@ -529,8 +528,27 @@ export default {
         
         showTable(r)
         {
-            console.log(r.data.items.goods[0]);
+            //console.log(r.data.items.goods[0]);
             this.goods = r.data.items.goods;
+        },
+        fill_select_unit(r){
+            this.ref_input.unit = r.data.items.units;
+        },
+        fill_select_cogs(r)
+        {
+            this.ref_input.cogs = r.data.items.cogs;
+        },
+        fill_select_category(r)
+        {
+            this.ref_input.category = r.data.items.categories;
+        },
+        fill_select_attribute(r)
+        {
+            this.ref_input.attribute = r.data.items.attributes;
+        },
+        fill_select_material(r)
+        {
+            this.ref_input.material = r.data.items.materials;
         },
         get_goods() {
 
@@ -550,6 +568,10 @@ export default {
             if(this.idx_data_edit != -1) //jika sedang diedit
             {
                 axios.patch('api/goods/' + this.goods[this.idx_data_edit].id,{
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    },
                     name: this.input.name,
                     code: this.input.code,
                     value: this.input.value,
@@ -572,6 +594,10 @@ export default {
             {
                
                 axios.post('api/goods',{
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    },
                     name: this.input.name,
                     code: this.input.code,
                     value: this.input.value,
@@ -609,12 +635,82 @@ export default {
                         });
                     }
             });
-        }
+        },
+        get_master_unit()
+        {
+            axios.get('/api/units', {
+                params:{
+                    token: localStorage.getItem('token')
+                }
+            },{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            }).then(r => this.fill_select_unit(r))
+        },
+        get_master_cogs()
+        {
+            axios.get('/api/cogs', {
+                params:{
+                    token: localStorage.getItem('token')
+                }
+            },{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            }).then(r => this.fill_select_cogs(r))
+        },
+        get_master_category()
+        {
+            axios.get('/api/categories', {
+                params:{
+                    token: localStorage.getItem('token')
+                }
+            },{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            }).then(r => this.fill_select_category(r))
+        },
+        get_master_attribute()
+        {
+            axios.get('/api/attributes', {
+                params:{
+                    token: localStorage.getItem('token')
+                }
+            },{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            }).then(r => this.fill_select_attribute(r))
+        },
+        get_master_material()
+        {
+            axios.get('/api/materials', {
+                params:{
+                    token: localStorage.getItem('token')
+                }
+            },{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            }).then(r => this.fill_select_material(r))
+        },
 
 
     },
     mounted(){
         this.get_goods();
+        this.get_master_unit();
+        this.get_master_cogs();
+        this.get_master_category();
+        this.get_master_attribute();
+        this.get_master_material();
     },
 }
 </script>
