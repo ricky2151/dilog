@@ -8,6 +8,8 @@ use App\Models\Goods;
 use App\Models\Material;
 use App\Models\Category;
 use App\Models\Attribute;
+use App\Models\Unit;
+use App\Models\Cogs;
 
 class GoodsService
 {
@@ -22,11 +24,17 @@ class GoodsService
         if(Material::all()->count() === 0){
             throw new CustomModelNotFoundException("material"); 
         } 
-        if(Category::all()->count() === 0){
+        elseif(Category::all()->count() === 0){
             throw new CustomModelNotFoundException("category"); 
         } 
-        if(Attribute::all()->count() === 0){
+        elseif(Attribute::all()->count() === 0){
             throw new CustomModelNotFoundException("attribute"); 
+        } 
+        elseif(Unit::all()->count() === 0){
+            throw new CustomModelNotFoundException("unit"); 
+        } 
+        elseif(Cogs::all()->count() === 0){
+            throw new CustomModelNotFoundException("cogs"); 
         } 
     }
 
