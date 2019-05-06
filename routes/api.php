@@ -49,4 +49,7 @@ Route::group([
 
     //CategoryPriceSelling
     Route::resource('categoryPriceSellings', 'CategoryPriceSellingController');
+
+    //Material
+    Route::resource('materials', 'MaterialController');
 });
