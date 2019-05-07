@@ -4,14 +4,29 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use App\Http\Traits\Uuids;
 
 class Goods extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes,Uuids;
     //
     protected $fillable = [
-        'uuid', 'name','code','desc','margin','value','status','last_buy_pricelist','barcode_master','thumbnail','avgprice_status','user_id','tax','unit_id','cogs_id'
+        'name','code','desc','margin','value','status','last_buy_pricelist','barcode_master','thumbnail','avgprice_status','user_id','tax','unit_id','cogs_id'
     ];
+
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = [
+        'uuid'
+    ];
+
+    public static function allDataCreate(){
+        return ['materials' => Material::all(['id','name']),'categories' => Category::all(['id','name']),'attributes' => Attribute::all(['id','name']),'units'=>Unit::all(['id','name']),'cogs'=>Cogs::all(['id','name'])];
+    }
 
     public function goodsRack(){
         return $this->hasMany('App\Models\GoodRack');

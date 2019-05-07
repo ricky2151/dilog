@@ -30,7 +30,7 @@ Route::group([
     Route::resource('warehouses', 'WarehouseController');
 
     //Goods
-    Route::get('goods','GoodsController@index');
+    Route::resource('goods','GoodsController');
 
     //Attributes
     Route::resource('attributes', 'AttributeController');

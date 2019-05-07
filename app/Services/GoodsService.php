@@ -5,6 +5,11 @@ use App\Exceptions\InvalidParameterException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\ModelNotFoundException as CustomModelNotFoundException;
 use App\Models\Goods;
+use App\Models\Material;
+use App\Models\Category;
+use App\Models\Attribute;
+use App\Models\Unit;
+use App\Models\Cogs;
 
 class GoodsService
 {
@@ -13,6 +18,24 @@ class GoodsService
             throw new CustomModelNotFoundException("goods"); 
         } 
 
+    }
+
+    public function handleGetAllDataForGoodsCreation(){
+        if(Material::all()->count() === 0){
+            throw new CustomModelNotFoundException("material"); 
+        } 
+        elseif(Category::all()->count() === 0){
+            throw new CustomModelNotFoundException("category"); 
+        } 
+        elseif(Attribute::all()->count() === 0){
+            throw new CustomModelNotFoundException("attribute"); 
+        } 
+        elseif(Unit::all()->count() === 0){
+            throw new CustomModelNotFoundException("unit"); 
+        } 
+        elseif(Cogs::all()->count() === 0){
+            throw new CustomModelNotFoundException("cogs"); 
+        } 
     }
 
     public function handleInvalidParameter($id){

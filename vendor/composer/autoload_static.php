@@ -425,6 +425,13 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
     );
 
     public static $prefixesPsr0 = array (
+        'W' => 
+        array (
+            'Webpatser\\Uuid' => 
+            array (
+                0 => __DIR__ . '/..' . '/webpatser/laravel-uuid/src',
+            ),
+        ),
         'P' => 
         array (
             'Prophecy\\' => 
@@ -471,6 +478,7 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Http\\Controllers\\api\\CogsComponentController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/CogsComponentController.php',
         'App\\Http\\Controllers\\api\\CogsController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/CogsController.php',
         'App\\Http\\Controllers\\api\\GoodsController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/GoodsController.php',
+        'App\\Http\\Controllers\\api\\MaterialController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/MaterialController.php',
         'App\\Http\\Controllers\\api\\SourceController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/SourceController.php',
         'App\\Http\\Controllers\\api\\TypeController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/TypeController.php',
         'App\\Http\\Controllers\\api\\UnitController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/UnitController.php',
@@ -492,6 +500,8 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Http\\Requests\\StoreCategoryPriceSelling' => __DIR__ . '/../..' . '/app/Http/Requests/StoreCategoryPriceSelling.php',
         'App\\Http\\Requests\\StoreCogs' => __DIR__ . '/../..' . '/app/Http/Requests/StoreCogs.php',
         'App\\Http\\Requests\\StoreCogsComponent' => __DIR__ . '/../..' . '/app/Http/Requests/StoreCogsComponent.php',
+        'App\\Http\\Requests\\StoreGoods' => __DIR__ . '/../..' . '/app/Http/Requests/StoreGoods.php',
+        'App\\Http\\Requests\\StoreMaterial' => __DIR__ . '/../..' . '/app/Http/Requests/StoreMaterial.php',
         'App\\Http\\Requests\\StoreSource' => __DIR__ . '/../..' . '/app/Http/Requests/StoreSource.php',
         'App\\Http\\Requests\\StoreType' => __DIR__ . '/../..' . '/app/Http/Requests/StoreType.php',
         'App\\Http\\Requests\\StoreUnit' => __DIR__ . '/../..' . '/app/Http/Requests/StoreUnit.php',
@@ -502,6 +512,7 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Http\\Requests\\UpdateCategoryPriceSelling' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateCategoryPriceSelling.php',
         'App\\Http\\Requests\\UpdateCogs' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateCogs.php',
         'App\\Http\\Requests\\UpdateCogsComponent' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateCogsComponent.php',
+        'App\\Http\\Requests\\UpdateMaterial' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateMaterial.php',
         'App\\Http\\Requests\\UpdateSource' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateSource.php',
         'App\\Http\\Requests\\UpdateType' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateType.php',
         'App\\Http\\Requests\\UpdateUnit' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateUnit.php',
@@ -534,6 +545,7 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Services\\CogsComponentService' => __DIR__ . '/../..' . '/app/Services/CogsComponentService.php',
         'App\\Services\\CogsService' => __DIR__ . '/../..' . '/app/Services/CogsService.php',
         'App\\Services\\GoodsService' => __DIR__ . '/../..' . '/app/Services/GoodsService.php',
+        'App\\Services\\MaterialService' => __DIR__ . '/../..' . '/app/Services/MaterialService.php',
         'App\\Services\\SourceService' => __DIR__ . '/../..' . '/app/Services/SourceService.php',
         'App\\Services\\TypeService' => __DIR__ . '/../..' . '/app/Services/TypeService.php',
         'App\\Services\\UnitService' => __DIR__ . '/../..' . '/app/Services/UnitService.php',
@@ -4270,6 +4282,8 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'UnitTableSeeder' => __DIR__ . '/../..' . '/database/seeds/UnitTableSeeder.php',
         'WarehousesTableSeeder' => __DIR__ . '/../..' . '/database/seeds/WarehousesTableSeeder.php',
         'Webmozart\\Assert\\Assert' => __DIR__ . '/..' . '/webmozart/assert/src/Assert.php',
+        'Webpatser\\Uuid\\Uuid' => __DIR__ . '/..' . '/webpatser/laravel-uuid/src/Webpatser/Uuid/Uuid.php',
+        'Webpatser\\Uuid\\UuidServiceProvider' => __DIR__ . '/..' . '/webpatser/laravel-uuid/src/Webpatser/Uuid/UuidServiceProvider.php',
         'Whoops\\Exception\\ErrorException' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Exception/ErrorException.php',
         'Whoops\\Exception\\Formatter' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Exception/Formatter.php',
         'Whoops\\Exception\\Frame' => __DIR__ . '/..' . '/filp/whoops/src/Whoops/Exception/Frame.php',

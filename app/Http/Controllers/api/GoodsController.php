@@ -30,20 +30,22 @@ class GoodsController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new goods.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function create()
     {
-        //
+        $this->goodsService->handleGetAllDataForGoodsCreation();
+        $data = $this->goods->allDataCreate();
+        return formatResponse(false,([$data]));
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(Request $request)
     {
