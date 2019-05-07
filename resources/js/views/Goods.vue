@@ -163,8 +163,10 @@
                     <v-stepper-step step="4" editable><h3>Goods Material</h3></v-stepper-step>
 
                     <v-stepper-content step="4">
-                        <v-select v-model='temp_input.material_goods.goods' :items="ref_input.goods" item-text='name' return-object label="Select Goods"></v-select>
+                        <!-- <v-select v-model='temp_input.material_goods.name' :items="ref_input.material" item-text='name' return-object label="Select Material"></v-select> -->
                         
+                        <v-text-field v-model="temp_input.material_goods.name" label="Name" required></v-text-field>
+
                         <v-text-field v-model="temp_input.material_goods.total" label="Total" required></v-text-field>
 
                         <v-text-field v-model="temp_input.material_goods.adjust" label="Adjust" required></v-text-field>
@@ -191,7 +193,7 @@
                         <v-data-table
                             disable-initial-sort
                             :headers="[
-                            {text:'Goods', value:'goods'},
+                            {text:'Material', value:'name'},
                             {text:'Total',value:'total',align:'right'},
                             {text:'Adjust',value:'adjust',align:'right'},
                             {text:'Action',align:'left',width:'15%',sortable:false}
@@ -201,7 +203,7 @@
                         >
 
                             <template v-slot:items="props">
-                                <td>{{ props.item.goods.name }}</td>
+                                <td>{{ props.item.name }}</td>
                                 <td class="text-xs-right">{{ props.item.total }}</td>
                                 <td class="text-xs-right">{{ props.item.adjust }}</td>
                                 <td>
@@ -347,7 +349,7 @@ export default {
                     {id:4,name:'Ukuran'},
                     {id:3,name:'Diameter'},
                 ],
-                goods:[
+                material:[
                     {id:5,name:'piring cantik'},
                     {id:4,name:'payung cantik'},
                     {id:3,name:'gelas cantik'},
@@ -432,7 +434,7 @@ export default {
                 },
                 clearTempInput(){
 
-                    self.temp_input.material_goods.goods = null;
+                    self.temp_input.material_goods.name = null;
                     self.temp_input.material_goods.total = 0;
                     self.temp_input.material_goods.adjust = 0;
                 },
@@ -441,14 +443,16 @@ export default {
                     if(id_edit == -1)
                     {
                         var temp = JSON.parse(JSON.stringify(self.temp_input.material_goods));
-                    
+                        console.log(temp);
                         self.input.material_goods.push(temp);
                         
                     }
                     else
                     {
+                        
                         self.input.material_goods[id_edit] = JSON.parse(JSON.stringify(self.temp_input.material_goods));
                         self.temp_input.id_edit_material_goods = -1;
+
 
                     }
                     this.clearTempInput();
@@ -531,24 +535,15 @@ export default {
             //console.log(r.data.items.goods[0]);
             this.goods = r.data.items.goods;
         },
-        fill_select_unit(r){
-            this.ref_input.unit = r.data.items.units;
-        },
-        fill_select_cogs(r)
+        
+        fill_select_master_data(r)
         {
-            this.ref_input.cogs = r.data.items.cogs;
-        },
-        fill_select_category(r)
-        {
-            this.ref_input.category = r.data.items.categories;
-        },
-        fill_select_attribute(r)
-        {
-            this.ref_input.attribute = r.data.items.attributes;
-        },
-        fill_select_material(r)
-        {
-            this.ref_input.material = r.data.items.materials;
+            //console.log(r.data.items[0].units);
+            this.ref_input.unit = r.data.items[0].units;
+            this.ref_input.cogs = r.data.items[0].cogs;
+            this.ref_input.category = r.data.items[0].categories;
+            this.ref_input.attribute = r.data.items[0].attributes;
+            this.ref_input.material = r.data.items[0].materials;
         },
         get_goods() {
 
@@ -636,9 +631,9 @@ export default {
                     }
             });
         },
-        get_master_unit()
+        get_master_data()
         {
-            axios.get('/api/units', {
+            axios.get('/api/goods/create', {
                 params:{
                     token: localStorage.getItem('token')
                 }
@@ -647,70 +642,15 @@ export default {
                     'Accept': 'application/json',
                     'Content-type': 'application/json'
                 }
-            }).then(r => this.fill_select_unit(r))
-        },
-        get_master_cogs()
-        {
-            axios.get('/api/cogs', {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r => this.fill_select_cogs(r))
-        },
-        get_master_category()
-        {
-            axios.get('/api/categories', {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r => this.fill_select_category(r))
-        },
-        get_master_attribute()
-        {
-            axios.get('/api/attributes', {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r => this.fill_select_attribute(r))
-        },
-        get_master_material()
-        {
-            axios.get('/api/materials', {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r => this.fill_select_material(r))
+            }).then(r => this.fill_select_master_data(r))
         },
 
 
     },
     mounted(){
         this.get_goods();
-        this.get_master_unit();
-        this.get_master_cogs();
-        this.get_master_category();
-        this.get_master_attribute();
-        this.get_master_material();
+        this.get_master_data();
+        
     },
 }
 </script>
