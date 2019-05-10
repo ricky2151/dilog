@@ -487,20 +487,29 @@ export default {
             const files = e.target.files;
 
             if(files[0] !== undefined) {
-                this.input.thumbnail_filename = files[0].name;
-                if(this.input.thumbnail_filename.lastIndexOf('.') <= 0) { //jika bukan file 
-                    return
+                console.log(files[0].size);
+                if(((files[0].size / 1024) / 1024) < 2)
+                {
+                    
+                    
+                    
+                    this.input.thumbnail_filename = files[0].name;
+
+                    const fr = new FileReader ()
+                    fr.readAsDataURL(files[0])
+                    fr.addEventListener('load', () => {
+                        this.preview.thumbnail = fr.result; //jadi preview
+                        this.input.thumbnail_file = files[0]; //yang dikirim ke server
+                    })
+                    
                 }
-                const fr = new FileReader ()
-                fr.readAsDataURL(files[0])
-                fr.addEventListener('load', () => {
-                    this.preview.thumbnail = fr.result; //jadi preview
-                    this.input.thumbnail_file = files[0]; //yang dikirim ke server
-                })
+                else
+                {
+                    
+                    swal("File is to Big", "Pleas uload file with size < 2 MB !", "error");
+                }
             } else {
-                this.input.thumbnail_filename = ''
-                this.input.thumbnail_file = ''
-                this.input.thumbnail_filesend = ''
+                swal("Your file is empty !", "Please Upload Your File !", "error");
                 
             }
         },
