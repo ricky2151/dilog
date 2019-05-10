@@ -53,7 +53,7 @@
 
                             <v-text-field v-model='input.avgprice' label="Average price" required></v-text-field>
 
-                            <v-select v-model='input.user_id' :items="ref_input.user" item-text='name' item-value='id' label="Select User"></v-select>
+                            
 
                             <v-text-field v-model='input.tax' label="Tax" required></v-text-field>
 
@@ -289,7 +289,6 @@ export default {
                 thumbnail_filename:'', //tidak ikut dikirim ke server (cuman muncul di form)
                 thumbnail_file:'', //ini akan dikirim ke server
                 avgprice:'',
-                user_id:'',
                 tax:'',
                 unit_id:'', //seola
                 cogs_id:'',
@@ -488,20 +487,29 @@ export default {
             const files = e.target.files;
 
             if(files[0] !== undefined) {
-                this.input.thumbnail_filename = files[0].name;
-                if(this.input.thumbnail_filename.lastIndexOf('.') <= 0) { //jika bukan file 
-                    return
+                console.log(files[0].size);
+                if(((files[0].size / 1024) / 1024) < 2)
+                {
+                    
+                    
+                    
+                    this.input.thumbnail_filename = files[0].name;
+
+                    const fr = new FileReader ()
+                    fr.readAsDataURL(files[0])
+                    fr.addEventListener('load', () => {
+                        this.preview.thumbnail = fr.result; //jadi preview
+                        this.input.thumbnail_file = files[0]; //yang dikirim ke server
+                    })
+                    
                 }
-                const fr = new FileReader ()
-                fr.readAsDataURL(files[0])
-                fr.addEventListener('load', () => {
-                    this.preview.thumbnail = fr.result; //jadi preview
-                    this.input.thumbnail_file = files[0]; //yang dikirim ke server
-                })
+                else
+                {
+                    
+                    swal("File is to Big", "Pleas uload file with size < 2 MB !", "error");
+                }
             } else {
-                this.input.thumbnail_filename = ''
-                this.input.thumbnail_file = ''
-                this.input.thumbnail_filesend = ''
+                swal("Your file is empty !", "Please Upload Your File !", "error");
                 
             }
         },
