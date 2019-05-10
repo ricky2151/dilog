@@ -13,6 +13,21 @@ use App\Models\Cogs;
 
 class GoodsService
 {
+    public function handleUploadImage($image, string $path, string $name){
+        if(!is_null($image)){
+            $name = strtolower(preg_replace('/[^a-zA-Z0-9-_\.]/','',$name));
+            return storeImage($image,$path,(uniqid().$name.".".$image->getClientOriginalExtension()));
+        }
+    }
+
+    public function handleUpdateImage($image, string $path, string $name, string $oldPic, $newName){
+        if(!is_null($image)){
+            deleteImage($oldPic);
+            $name = strtolower(preg_replace('/[^a-zA-Z0-9-_\.]/','',is_null($newName) == true ? $name : $newName));
+            return storeImage($image,$path,(uniqid().$name.".".$image->getClientOriginalExtension()));
+        }
+    }
+    
     public function handleEmptyModel(){
         if(Goods::all()->count() === 0){
             throw new CustomModelNotFoundException("goods"); 

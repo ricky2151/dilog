@@ -3,18 +3,25 @@
 namespace App\Http\Controllers\api;
 
 use App\Services\GoodsService;
+use App\Http\Requests\StoreGoods;
+use App\Http\Requests\UpdateGoods;
 use App\Models\Goods;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
 
 class GoodsController extends Controller
 {
-    private $goodsService,$goods;
+    private $goodsService,$goods,$path,$user;
 
     public function __construct(GoodsService $goodsService, Goods $goods)
     {
         $this->goodsService = $goodsService;
         $this->goods = $goods;
+        $this->path = 'goods';
+        $this->user = auth('api')->user();
     }
     /**
      * Display a listing of the goods.
@@ -42,14 +49,39 @@ class GoodsController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created goods in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \Illuminate\Http\StoreGoods  $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreGoods $request)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $data = $request->validated();
+            $name =  $data["name"].Str::random(10);
+            $path = $this->goodsService->handleUploadImage($request->file("thumbnail"),$this->path,$name);
+            $data["thumbnail"] = $path;
+
+
+            $attribute_goods = Arr::pull($data,'attribute_goods');
+            $category_goods = Arr::pull($data,'category_goods');
+            $material_goods = Arr::pull($data,'material_goods');
+
+            $goods = $this->user->goods()->create($data);
+            $goods->attributes()->sync($attribute_goods);
+            $goods->categories()->attach($category_goods);
+            $goods->materials()->createMany($material_goods);
+
+
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollback();
+            deleteImage($data["thumbnail"]);
+        }
+        return formatResponse(false,(["goods"=>["goods successfully created"]]));
     }
 
     /**
