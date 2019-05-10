@@ -49,7 +49,7 @@
                                 accept="image/*"
                                 v-on:change='changeImage'
                             >
-                            <img :src="input.thumbnail_file" height="150" v-if="input.thumbnail_filename"/>
+                            <img :src="preview.thumbnail" height="150" v-if="preview.thumbnail"/>
 
                             <v-text-field v-model='input.avgprice' label="Average price" required></v-text-field>
 
@@ -220,7 +220,8 @@
                         <v-btn color='primary' v-on:click='e6=4'>Continue</v-btn>
                     </v-stepper-content>
 
-                    <v-btn v-on:click='save_unit()' >submit</v-btn>
+                    <v-btn v-on:click='save_goods()' >submit</v-btn>
+                    {{input}}
 
                 </v-stepper>
             </v-card>
@@ -272,6 +273,10 @@ export default {
 
             idx_data_edit:-1,
 
+            preview:{
+                thumbnail:'',
+            },
+
             input:{
                 name:'',
                 code:'',
@@ -282,8 +287,7 @@ export default {
                 last_buy_pricelist:'',
                 barcode:'',
                 thumbnail_filename:'', //tidak ikut dikirim ke server (cuman muncul di form)
-                thumbnail_file:'', //tidak ikut dikirim ke server (cuman muncul di preview di form)
-                thumbnail_filesend:'', //ini akan dikirim ke server
+                thumbnail_file:'', //ini akan dikirim ke server
                 avgprice:'',
                 user_id:'',
                 tax:'',
@@ -304,15 +308,11 @@ export default {
                         id:null,
                         name:null,
                     },
-                    tax:null,
+                    value:null,
                 },
                 material_goods:
                 {
-                    goods:
-                    {
-                        id:null,
-                        name:null,
-                    },
+                   
                     total:null,
                     adjust:null,
                 }
@@ -485,7 +485,8 @@ export default {
 
 
         changeImage(e){
-            const files = e.target.files
+            const files = e.target.files;
+
             if(files[0] !== undefined) {
                 this.input.thumbnail_filename = files[0].name;
                 if(this.input.thumbnail_filename.lastIndexOf('.') <= 0) { //jika bukan file 
@@ -494,8 +495,8 @@ export default {
                 const fr = new FileReader ()
                 fr.readAsDataURL(files[0])
                 fr.addEventListener('load', () => {
-                    this.input.thumbnail_file = fr.result //jadi preview
-                    this.input.thumbnail_filesend = files[0] //yang dikirim ke server
+                    this.preview.thumbnail = fr.result; //jadi preview
+                    this.input.thumbnail_file = files[0]; //yang dikirim ke server
                 })
             } else {
                 this.input.thumbnail_filename = ''
@@ -565,7 +566,8 @@ export default {
                 axios.patch('api/goods/' + this.goods[this.idx_data_edit].id,{
                     headers: {
                         'Accept': 'application/json',
-                        'Content-type': 'application/json'
+                        'Content-type': 'multipart/form-data'
+
                     },
                     name: this.input.name,
                     code: this.input.code,
@@ -587,20 +589,30 @@ export default {
             }
             else //jika sedang tambah data
             {
+
                
-                axios.post('api/goods',{
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-type': 'application/json'
-                    },
-                    name: this.input.name,
-                    code: this.input.code,
-                    value: this.input.value,
-                    status: this.input.status,
-                    last_buy_pricelist: this.input.last_buy_pricelist,
-                    stock: this.input.stock,
-                    token: localStorage.getItem('token')
-                }).then((r)=> {
+               
+               //prepare file data on this.input :
+               //1. buat FormData
+               const formData = new FormData();
+
+               //2. pisahkan data dengan file
+               //2.a. masukan file ke formData
+               formData.append('fileData[]', this.input.thumbnail_file);
+               //2.b. hilangkan file pada object input
+               delete this.input.thumbnail_file;
+               //2.c. masukan input ke formData
+               formData.append('input', JSON.stringify(this.input));
+               //2.d. masukan token ke formData
+               formData.append('token', localStorage.getItem('token'));
+               
+               
+                axios.post('api/goods',formData,
+                {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+              }).then((r)=> {
                     this.get_goods();
                     this.closedialog_createedit();
                     swal("Good job!", "Data saved !", "success");
