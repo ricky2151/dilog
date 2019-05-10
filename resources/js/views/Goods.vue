@@ -53,7 +53,7 @@
 
                             <v-text-field v-model='input.avgprice' label="Average price" required></v-text-field>
 
-                            <v-select v-model='input.user_id' :items="ref_input.user" item-text='name' item-value='id' label="Select User"></v-select>
+                            
 
                             <v-text-field v-model='input.tax' label="Tax" required></v-text-field>
 
@@ -289,7 +289,6 @@ export default {
                 thumbnail_filename:'', //tidak ikut dikirim ke server (cuman muncul di form)
                 thumbnail_file:'', //ini akan dikirim ke server
                 avgprice:'',
-                user_id:'',
                 tax:'',
                 unit_id:'', //seola
                 cogs_id:'',
