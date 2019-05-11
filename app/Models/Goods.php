@@ -24,8 +24,18 @@ class Goods extends Model
         'uuid'
     ];
 
+
     public static function allDataCreate(){
-        return ['materials' => Material::all(['id','name']),'categories' => Category::all(['id','name']),'attributes' => Attribute::all(['id','name']),'units'=>Unit::all(['id','name']),'cogs'=>Cogs::all(['id','name'])];
+        return ['categories' => Category::all(['id','name']),'attributes' => Attribute::all(['id','name']),'units'=>Unit::all(['id','name']),'cogs'=>Cogs::all(['id','name'])];
+    }
+
+    public function asu(){
+        return 
+        [
+            'category_goods' => $this->categories,
+            'attribute_goods' => $this->attributes,
+            // 'material_goods'=> $this->materials
+        ];
     }
 
     public function goodsRack(){
@@ -45,14 +55,14 @@ class Goods extends Model
     }
 
     public function categories(){
-        return $this->belongsToMany('App\Models\Category','category_goods','goods_id','category_id')->withTimestamps();
+        return $this->belongsToMany('App\Models\Category','category_goods','goods_id','category_id')->withTimestamps()->orderBy('pivot_updated_at', 'desc');
     }
 
     public function attributes(){
-        return $this->belongsToMany('App\Models\Attribute','attribute_goods','goods_id','attribute_id')->withPivot('value')->withTimestamps();
+        return $this->belongsToMany('App\Models\Attribute','attribute_goods','goods_id','attribute_id')->withPivot('value')->withTimestamps()->orderBy('pivot_updated_at', 'desc');
     }
 
     public function materials(){
-        return $this->hasMany('App\Models\Material');
+        return $this->hasMany('App\Models\Material')->orderBy('updated_at', 'desc');
     }
 }

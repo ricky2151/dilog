@@ -36,10 +36,7 @@ class GoodsService
     }
 
     public function handleGetAllDataForGoodsCreation(){
-        if(Material::all()->count() === 0){
-            throw new CustomModelNotFoundException("material"); 
-        } 
-        elseif(Category::all()->count() === 0){
+        if(Category::all()->count() === 0){
             throw new CustomModelNotFoundException("category"); 
         } 
         elseif(Attribute::all()->count() === 0){

@@ -10,7 +10,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use App\Http\Controllers\Controller;
+use Storage;
 
 class GoodsController extends Controller
 {
@@ -57,13 +59,11 @@ class GoodsController extends Controller
     public function store(StoreGoods $request)
     {
         DB::beginTransaction();
-
         try {
             $data = $request->validated();
             $name =  $data["name"].Str::random(10);
             $path = $this->goodsService->handleUploadImage($request->file("thumbnail"),$this->path,$name);
             $data["thumbnail"] = $path;
-
 
             $attribute_goods = Arr::pull($data,'attribute_goods');
             $category_goods = Arr::pull($data,'category_goods');
@@ -73,8 +73,6 @@ class GoodsController extends Controller
             $goods->attributes()->sync($attribute_goods);
             $goods->categories()->attach($category_goods);
             $goods->materials()->createMany($material_goods);
-
-
 
             DB::commit();
         } catch (Exception $e) {
@@ -87,23 +85,24 @@ class GoodsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Goods  $goods
-     * @return \Illuminate\Http\Response
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(Goods $goods)
+    public function show($id)
     {
-        //
-    }
+        $this->goodsService->handleInvalidParameter($id);
+        $this->goodsService->handleModelNotFound($id);
+        $this->goodsService->handleGetAllDataForGoodsCreation();
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Goods  $goods
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Goods $goods)
-    {
-        //
+        $allMaterial = collect($this->goods->allDataCreate());
+
+        $goods = $this->goods->find($id);
+        $goods["thumbnail"] = Storage::url($goods["pic"]);
+        $goods = collect($goods);
+        
+        $concatenated = $goods->union($allMaterial)->union($this->showFormatData($id));
+
+        return formatResponse(false,(["goods"=>$concatenated]));
     }
 
     /**
@@ -127,5 +126,29 @@ class GoodsController extends Controller
     public function destroy(Goods $goods)
     {
         //
+    }
+
+    /**
+     * Format goods relation data in method show.
+     *
+     * @param  $id
+     * @return Illuminate\Support\Collection
+     */
+    public function showFormatData($id){
+        $goodsAttributes = $this->goods->find($id)->attributes;
+        $goodsCategories = $this->goods->find($id)->categories;
+        $goodsMaterials = $this->goods->find($id)->materials;
+
+        $goodsAttributes = $goodsAttributes->map(function ($item) {
+            return ['id' => $item['id'], 'name' => $item['name'],'value'=> $item['pivot']['value']];
+        });
+
+        $goodsCategories = $goodsCategories->map(function ($item) {
+            return ['id' => $item['id'], 'name' => $item['name']];
+        });
+
+        $data = collect(["attribute_goods" => $goodsAttributes, "category_goods"=>$goodsCategories , "material_goods" => $goodsMaterials]);
+
+        return $data;
     }
 }
