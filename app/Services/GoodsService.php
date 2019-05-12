@@ -7,6 +7,7 @@ use App\Exceptions\ModelNotFoundException as CustomModelNotFoundException;
 use App\Exceptions\ModelDontHaveRelation;
 use App\Models\Goods;
 use App\Models\Material;
+use Illuminate\Support\Str;
 use App\Models\Category;
 use App\Models\Attribute;
 use App\Models\Unit;
@@ -30,11 +31,17 @@ class GoodsService
         }
     }
 
-    public function handleUpdateImage($image, string $path, string $name, string $oldPic, $newName){
+    public function handleUpdateImageGetPath($image, string $name, $newName){
         if(!is_null($image)){
+            $name = strtolower(preg_replace('/[^a-zA-Z0-9-_\.]/','',is_null($newName) == true ? $name : ($newName.Str::random(10))));
+            return (uniqid().$name.".".$image->getClientOriginalExtension());
+        }
+    }
+
+    public function handleUpdateImage($image, string $oldPic, string $name, string $path){
+        if(!is_null($image) && !is_null($name)){
             deleteImage($oldPic);
-            $name = strtolower(preg_replace('/[^a-zA-Z0-9-_\.]/','',is_null($newName) == true ? $name : $newName));
-            return storeImage($image,$path,(uniqid().$name.".".$image->getClientOriginalExtension()));
+            storeImage($image,$path,($name));
         }
     }
     

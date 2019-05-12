@@ -13,6 +13,7 @@ use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Exceptions\ModelNotFoundException;
 use App\Exceptions\ModelDontHaveRelation;
+use App\Exceptions\DatabaseTransactionErrorException;
 
 class Handler extends ExceptionHandler
 {
@@ -79,6 +80,9 @@ class Handler extends ExceptionHandler
         }
         elseif($exception instanceof ModelDontHaveRelation){
             return ModelDontHaveRelation::render($exception->getMessage());
+        }
+        elseif($exception instanceof DatabaseTransactionErrorException){
+            return DatabaseTransactionErrorException::render($exception->getMessage());
         }
         elseif($exception instanceof InvalidParameterException){
             return InvalidParameterException::render($exception->getMessage());

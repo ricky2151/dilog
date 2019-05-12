@@ -7,13 +7,13 @@ use App\Http\Requests\StoreGoods;
 use App\Http\Requests\UpdateGoods;
 use Illuminate\Database\QueryException;
 use App\Models\Goods;
+use App\Exceptions\DatabaseTransactionErrorException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use App\Http\Controllers\Controller;
-use App\Exceptions\ModelNotFoundException as CustomModelNotFoundException;
 use Storage;
 
 class GoodsController extends Controller
@@ -77,9 +77,10 @@ class GoodsController extends Controller
             $goods->materials()->createMany($material_goods);
 
             DB::commit();
-        } catch (Exception $e) {
-            DB::rollback();
+        } catch (\Throwable $e) {
             deleteImage($data["thumbnail"]);
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("Goods");
         }
         return formatResponse(false,(["goods"=>["goods successfully created"]]));
     }
@@ -130,12 +131,11 @@ class GoodsController extends Controller
 
         DB::beginTransaction();
         try {
-            $name =  $data["name"].Str::random(10);
-            $path = $this->goodsService->handleUpdateImage($request->file("thumbnail"),$this->path,$goods->find($id)->name.Str::random(10),$goods->find($id)->thumbnail,$request["name"]);
-            is_null($path) ? "" : $data["thumbnail"]=$path;
+            $oldThumnail = $goods->find($id)->thumbnail;
+            $path = $this->goodsService->handleUpdateImageGetPath($request->file("thumbnail"),($goods->find($id)->name.Str::random(10)),$request["name"]);
+            is_null($path) ? "" : $data["thumbnail"]=$this->path."/".$path;
             $data["user_id"] = $this->user["id"];
             
-
             $attribute_goods = Arr::pull($data,'attribute_goods');
             $category_goods = Arr::pull($data,'category_goods');
             $material_goods_new = Arr::pull($data,'material_goods_new');
@@ -147,9 +147,12 @@ class GoodsController extends Controller
             $goods->updateManyAtribut($material_goods_update);
             $goods->deleteManyAtribut($material_goods_delete);
 
+            $this->goodsService->handleUpdateImage($request->file("thumbnail"),$oldThumnail, $path, $this->path);
+
             DB::commit();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollback();
+            throw new DatabaseTransactionErrorException("Goods");
         }
 
         return formatResponse(false,(["goods"=>["goods successfully updated"]]));
