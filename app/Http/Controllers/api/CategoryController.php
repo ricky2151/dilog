@@ -87,7 +87,9 @@ class CategoryController extends Controller
         $this->categoryService->handleInvalidParameter($id);
         $this->categoryService->handleModelNotFound($id);
 
+        $this->category->find($id)->goods()->sync([]);
         $this->category->find($id)->delete();
+        
         return formatResponse(false,(["category"=>["category deleted successfully"]]));
     }
 }

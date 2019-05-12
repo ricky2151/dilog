@@ -25,6 +25,6 @@ class Category extends Model
     protected $dates = ['deleted_at'];
 
     public function goods(){
-        return $this->belongsToMany('App\Models\Good','category_goods','category_id','goods_id')->withTimestamps();
+        return $this->belongsToMany('App\Models\Goods','category_goods','category_id','goods_id')->withTimestamps();
     }
 }

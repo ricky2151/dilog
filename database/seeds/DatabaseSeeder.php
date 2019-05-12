@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             WarehousesTableSeeder::class,
             RacksTableSeeder::class,
             CategoriesTableSeeder::class,
+            CategoryGoodsTableSeeder::class,
             UnitTableSeeder::class,
             GoodsTableSeeder::class,
             AttributeGoodsTableSeeder::class,
@@ -28,7 +29,8 @@ class DatabaseSeeder extends Seeder
             CogsTableSeeder::class,
             CogsComponentsTableSeeder::class,
             SourcesTableSeeder::class,
-            CategoryPriceSellingsTableSeeder::class
+            CategoryPriceSellingsTableSeeder::class,
+            MaterialsTableSeeder::class
         ]);
     }
 }

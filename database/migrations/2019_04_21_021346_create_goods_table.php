@@ -15,7 +15,7 @@ class CreateGoodsTable extends Migration
     {
         Schema::create('goods', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('uuid')->unique();
+            $table->uuid('uuid')->unique();
             $table->string('name');
             $table->string('code');
             $table->string('desc')->nullable();
