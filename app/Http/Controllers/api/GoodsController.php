@@ -36,6 +36,9 @@ class GoodsController extends Controller
     {
         $this->goodsService->handleEmptyModel();
         $CollectionGoods = $this->goods->latest()->get();
+        foreach($CollectionGoods as $goods){
+            Arr::set($goods, 'thumbnail', Storage::url($goods["thumbnail"]));
+        }
 
         return formatResponse(false,(["goods"=>$CollectionGoods]));
     }
@@ -100,7 +103,7 @@ class GoodsController extends Controller
         $allMaterial = collect($this->goods->allDataCreate());
 
         $goods = $this->goods->find($id);
-        $goods["thumbnail"] = Storage::url($goods["pic"]);
+        $goods["thumbnail"] = Storage::url($goods["thumbnail"]);
         $goods = collect($goods);
         
         $concatenated = $goods->union($allMaterial)->union($this->showFormatData($id));
