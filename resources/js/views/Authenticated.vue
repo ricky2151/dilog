@@ -1,11 +1,36 @@
 <template>
     <fullscreen ref="fullscreen" @change="fullscreenChange">
         <v-app>
-            <v-toolbar app dense fixed clipped-left color="red" dark>
+            <v-toolbar app dense fixed clipped-left color="menu" dark>
                 <v-toolbar-side-icon
                 @click.stop="drawer = !drawer"
                 ></v-toolbar-side-icon>
                 <v-spacer></v-spacer>
+
+                <!-- notification button -->
+                <v-menu open-on-click  offset-y offset-x>
+
+                        <v-icon class="text-none ma-0" slot="activator" depressed flat>notifications</v-icon>
+
+
+                    <v-list>
+                        <v-list-tile
+
+                            v-for="(item, index) in notifications"
+                            :key="index"
+                            :to="item.action"
+                            >
+                            <v-list-tile-action>
+                                <v-icon>{{ item.icon }}</v-icon>
+                            </v-list-tile-action>
+                            <v-list-tile-content>
+                                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                            </v-list-tile-content>
+                        </v-list-tile>
+                    </v-list>
+                </v-menu>
+
+                <!-- fullscreen button -->
                 <v-tooltip bottom>
                     <template slot="activator">
                         <v-btn icon @click="toggleFullscreen">
@@ -16,6 +41,8 @@
                     <span v-if="fullscreen == false">Enter Fullscreen Mode</span>
                     <span v-else>Exit Fullscreen Mode</span>
                 </v-tooltip>
+
+                 <!-- Profil button -->
                 <v-menu open-on-hover offset-y offset-x>
                     <v-btn
                         class="text-none ma-0"
@@ -90,10 +117,10 @@
                             <template v-slot:activator>
                                 <v-list-tile>
                                     <v-list-tile-action>
-                                        <v-icon>{{ item.icon }}</v-icon>
+                                        <v-icon class='color-text-sidebar'>{{ item.icon }}</v-icon>
                                     </v-list-tile-action>
                                     <v-list-tile-content>
-                                        <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                                        <v-list-tile-title class='color-text-sidebar ff-text-sidebar'>{{ item.title }}</v-list-tile-title>
                                     </v-list-tile-content>
                                 </v-list-tile>
                             </template>
@@ -107,10 +134,10 @@
                                 @click=""
                             >
                                 <v-list-tile-action>
-                                    <v-icon>{{ subItem.subicon }}</v-icon>
+                                    <v-icon class='color-text-sidebar'>{{ subItem.subicon }}</v-icon>
                                 </v-list-tile-action>
                                 <v-list-tile-content>
-                                    <v-list-tile-title>{{ subItem.subtitle }}</v-list-tile-title>
+                                    <v-list-tile-title class='color-text-sidebar ff-text-sidebar'>{{ subItem.subtitle }}</v-list-tile-title>
                                 </v-list-tile-content>
 
                                   
@@ -125,11 +152,11 @@
                             :key="'menu'+index"
                             >
                             <v-list-tile-action>
-                                <v-icon>{{ item.icon }}</v-icon>
+                                <v-icon class='color-text-sidebar'>{{ item.icon }}</v-icon>
                             </v-list-tile-action>
 
                             <v-list-tile-content>
-                                <v-list-tile-title>{{ item.title }}</v-list-tile-title>
+                                <v-list-tile-title class='color-text-sidebar ff-text-sidebar'>{{ item.title }}</v-list-tile-title>
                             </v-list-tile-content>
                         </v-list-tile>
 
@@ -143,7 +170,19 @@
         </v-app>
     </fullscreen>
 </template>
+<style>
+.color-text-sidebar
+{
+    color:#848484;
+    text-decoration: none;
+    font-size: 17px;
 
+}
+.ff-text-sidebar
+{
+    font-family: 'Open Sans',sans-serif;
+}
+</style>
 <script>
 
 export default {
@@ -235,6 +274,26 @@ export default {
                     icon: "exit_to_app",
                     title: "Logout",
                     action: "/logout"
+                }
+            ],
+            notifications: [
+                {
+                    icon: "feedback",
+                    title: "Barang sudah habis !",
+                    action: "/goods",
+                    bgcolor : "red",
+                },
+                {
+                    icon: "feedback",
+                    title: "Barang sudah habis !",
+                    action: "/goods",
+                    bgcolor : "red",
+                },
+                {
+                    icon: "feedback",
+                    title: "Barang sudah habis !",
+                    action: "/goods",
+                    bgcolor : "red",
                 }
             ]
         }
