@@ -70,8 +70,14 @@ class GoodsController extends Controller
             $path = $this->goodsService->handleUploadImage($request->file("thumbnail"),$this->path,$name);
             $data["thumbnail"] = $path;
 
-            $attribute_goods = Arr::pull($data,'attribute_goods');
-            $category_goods = Arr::pull($data,'category_goods');
+            $attribute_goods = collect(Arr::pull($data,'attribute_goods'))->unique(function ($item) {
+                return $item['attribute_id'].$item['value'];
+            });
+
+            $category_goods = collect(Arr::pull($data,'category_goods'))->unique(function ($item) {
+                return $item['category_id'];
+            });
+            
             $material_goods = Arr::pull($data,'material_goods');
 
             $goods = $this->user->goods()->create($data);
@@ -136,11 +142,17 @@ class GoodsController extends Controller
         try {
             $oldThumnail = $goods->find($id)->thumbnail;
             $path = $this->goodsService->handleUpdateImageGetPath($request->file("thumbnail"),($goods->find($id)->name.Str::random(10)),$request["name"]);
-            is_null($path) ? "" : $data["thumbnail"]=$this->path."/".$path;
+            is_null($path) ? $path = "" : $data["thumbnail"]=$this->path."/".$path;
             $data["user_id"] = $this->user["id"];
             
-            $attribute_goods = Arr::pull($data,'attribute_goods');
-            $category_goods = Arr::pull($data,'category_goods');
+            $attribute_goods = collect(Arr::pull($data,'attribute_goods'))->unique(function ($item) {
+                return $item['attribute_id'].$item['value'];
+            });
+
+            $category_goods = collect(Arr::pull($data,'category_goods'))->unique(function ($item) {
+                return $item['category_id'];
+            });
+
             $material_goods_new = Arr::pull($data,'material_goods_new');
             
             $goods->update($data);
@@ -155,6 +167,7 @@ class GoodsController extends Controller
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollback();
+            // return $e;
             throw new DatabaseTransactionErrorException("Goods");
         }
 
