@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Exceptions\InvalidParameterException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\ModelNotFoundException as CustomModelNotFoundException;
+use App\Exceptions\ModelDontHaveRelation;
 use App\Models\Goods;
 use App\Models\Material;
 use App\Models\Category;
@@ -13,6 +14,15 @@ use App\Models\Cogs;
 
 class GoodsService
 {
+    public function checkRelationship($goodsId,$data){
+        foreach($data as $id){
+            $material = Material::find($id);
+            if($material->goods_id != $goodsId){
+                throw new ModelDontHaveRelation(json_encode([0=>"Material",1=>"Goods"])); 
+            }
+        }
+    }
+
     public function handleUploadImage($image, string $path, string $name){
         if(!is_null($image)){
             $name = strtolower(preg_replace('/[^a-zA-Z0-9-_\.]/','',$name));
@@ -32,7 +42,6 @@ class GoodsService
         if(Goods::all()->count() === 0){
             throw new CustomModelNotFoundException("goods"); 
         } 
-
     }
 
     public function handleGetAllDataForGoodsCreation(){

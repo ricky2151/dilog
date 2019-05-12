@@ -24,18 +24,25 @@ class Goods extends Model
         'uuid'
     ];
 
+    public function updateManyAtribut($material_goods_update){
+        if(!is_null($material_goods_update)){
+            foreach ($material_goods_update as $update) {
+                $data = Arr::except($update, ['id']);
+                $this->materials()->find($update["id"])->update($data);
+            }
+        }
+    }
+
+    public function deleteManyAtribut($material_goods_delete){
+        if(!is_null($material_goods_delete)){
+            foreach ($material_goods_delete as $delete) {
+                $this->materials()->find($delete["id"])->delete();
+            }
+        }
+    }
 
     public static function allDataCreate(){
         return ['categories' => Category::all(['id','name']),'attributes' => Attribute::all(['id','name']),'units'=>Unit::all(['id','name']),'cogs'=>Cogs::all(['id','name'])];
-    }
-
-    public function asu(){
-        return 
-        [
-            'category_goods' => $this->categories,
-            'attribute_goods' => $this->attributes,
-            // 'material_goods'=> $this->materials
-        ];
     }
 
     public function goodsRack(){
