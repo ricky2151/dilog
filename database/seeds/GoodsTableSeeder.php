@@ -13,7 +13,6 @@ class GoodsTableSeeder extends Seeder
     public function run()
     {
         Goods::create([
-            'uuid' => uniqid(),
             'name' => "Buku avenger:end game",
             'code' => "11011",
             'desc' => "Buku special edition",
@@ -22,7 +21,7 @@ class GoodsTableSeeder extends Seeder
             'status' => 1,
             'last_buy_pricelist' => 1,
             'barcode_master' => "XXID190",
-            'thumbnail' => "thumbnail/image.jpg",
+            'thumbnail' => "goods/default.png",
             'avgprice_status' => true,
             'user_id' => 1,
             'tax' => 5,
@@ -31,7 +30,6 @@ class GoodsTableSeeder extends Seeder
         ]);
 
         Goods::create([
-            'uuid' => uniqid(),
             'name' => "Buku avenger:age of ultron",
             'code' => "11011",
             'desc' => "Buku special edition",
@@ -40,7 +38,7 @@ class GoodsTableSeeder extends Seeder
             'status' => 1,
             'last_buy_pricelist' => 1,
             'barcode_master' => "XXID190",
-            'thumbnail' => "thumbnail/image.jpg",
+            'thumbnail' => "goods/default.png",
             'avgprice_status' => true,
             'user_id' => 1,
             'tax' => 5,
@@ -49,7 +47,6 @@ class GoodsTableSeeder extends Seeder
         ]);
 
         Goods::create([
-            'uuid' => uniqid(),
             'name' => "Buku avenger",
             'code' => "11011",
             'desc' => "Buku special edition",
@@ -58,7 +55,7 @@ class GoodsTableSeeder extends Seeder
             'status' => 1,
             'last_buy_pricelist' => 1,
             'barcode_master' => "XXID190",
-            'thumbnail' => "thumbnail/image.jpg",
+            'thumbnail' => "goods/default.png",
             'avgprice_status' => true,
             'user_id' => 1,
             'tax' => 5,
@@ -67,7 +64,6 @@ class GoodsTableSeeder extends Seeder
         ]);
 
         Goods::create([
-            'uuid' => uniqid(),
             'name' => "Buku avenger:infinity war",
             'code' => "11011",
             'desc' => "Buku special edition",
@@ -76,7 +72,7 @@ class GoodsTableSeeder extends Seeder
             'status' => 1,
             'last_buy_pricelist' => 1,
             'barcode_master' => "XXID190",
-            'thumbnail' => "thumbnail/image.jpg",
+            'thumbnail' => "goods/default.png",
             'avgprice_status' => true,
             'user_id' => 1,
             'tax' => 5,

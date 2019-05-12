@@ -8,7 +8,7 @@ class Material extends Model
 {
     //
     protected $fillable = [
-        'goods_id', 'total','adjust'
+        'goods_id', 'total','adjust','name'
     ];
 
     public function goods(){

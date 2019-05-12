@@ -39,7 +39,7 @@
                             
                             <v-text-field v-model='input.last_buy_pricelist' label="Last Buy Price List" required></v-text-field>
                             
-                            <v-text-field v-model='input.barcode' label="Barcode" required></v-text-field>
+                            <v-text-field v-model='input.barcode_master' label="Barcode" required></v-text-field>
 
                             <v-text-field v-model='input.thumbnail_filename' label="Select Image" v-on:click='pickFile' prepend-icon='attach_file'></v-text-field>
                             <input
@@ -49,11 +49,13 @@
                                 accept="image/*"
                                 v-on:change='changeImage'
                             >
-                            <img :src="input.thumbnail_file" height="150" v-if="input.thumbnail_filename"/>
+                            <img :src="preview.thumbnail" height="150" v-if="preview.thumbnail"/>
 
-                            <v-text-field v-model='input.avgprice' label="Average price" required></v-text-field>
+                            <v-select v-model='input.avgprice_status' :items="ref_input.avgprice_status" item-text='name' item-value='value' label="Select Average Price Status"></v-select>
 
-                            <v-select v-model='input.user_id' :items="ref_input.user" item-text='name' item-value='id' label="Select User"></v-select>
+                            
+
+                            
 
                             <v-text-field v-model='input.tax' label="Tax" required></v-text-field>
 
@@ -163,8 +165,10 @@
                     <v-stepper-step step="4" editable><h3>Goods Material</h3></v-stepper-step>
 
                     <v-stepper-content step="4">
-                        <v-select v-model='temp_input.material_goods.goods' :items="ref_input.goods" item-text='name' return-object label="Select Goods"></v-select>
+                        <!-- <v-select v-model='temp_input.material_goods.name' :items="ref_input.material" item-text='name' return-object label="Select Material"></v-select> -->
                         
+                        <v-text-field v-model="temp_input.material_goods.name" label="Name" required></v-text-field>
+
                         <v-text-field v-model="temp_input.material_goods.total" label="Total" required></v-text-field>
 
                         <v-text-field v-model="temp_input.material_goods.adjust" label="Adjust" required></v-text-field>
@@ -191,7 +195,7 @@
                         <v-data-table
                             disable-initial-sort
                             :headers="[
-                            {text:'Goods', value:'goods'},
+                            {text:'Material', value:'name'},
                             {text:'Total',value:'total',align:'right'},
                             {text:'Adjust',value:'adjust',align:'right'},
                             {text:'Action',align:'left',width:'15%',sortable:false}
@@ -201,7 +205,7 @@
                         >
 
                             <template v-slot:items="props">
-                                <td>{{ props.item.goods.name }}</td>
+                                <td>{{ props.item.name }}</td>
                                 <td class="text-xs-right">{{ props.item.total }}</td>
                                 <td class="text-xs-right">{{ props.item.adjust }}</td>
                                 <td>
@@ -215,11 +219,13 @@
                                 </td>
                             </template>
                         </v-data-table>
-                        <v-btn color='primary' v-on:click='e6=4'>Continue</v-btn>
+                        
                     </v-stepper-content>
 
-                    <v-btn v-on:click='save_unit()' >submit</v-btn>
-
+                    <v-btn v-on:click='save_goods()' >submit</v-btn>
+                    {{input}}
+                    <v-btn v-on:click='save_goods()' >sementara aja</v-btn>
+                    {{input_before_edit}}
                 </v-stepper>
             </v-card>
         </v-dialog>
@@ -244,7 +250,7 @@
             <td class="text-xs-right">{{ props.item.status }}</td>
             <td class="text-xs-right">{{ props.item.last_buy_pricelist }}</td>
             <td>
-                <v-btn class='button-action' v-on:click='opendialog_createedit(props.index)' color="primary" fab depressed small dark v-on="on">
+                <v-btn class='button-action' v-on:click='get_data_before_edit(props.index)' color="primary" fab depressed small dark v-on="on">
                     <v-icon small>edit</v-icon>
                 </v-btn>
                 <v-btn class='button-action' v-on:click='delete_goods(props.index)' color="red" fab small dark depressed>
@@ -270,6 +276,12 @@ export default {
 
             idx_data_edit:-1,
 
+            preview:{
+                thumbnail:'',
+            },
+            input_before_edit:{ //variabel ini dipakai hanya untuk kasus2 tertentu seperti material_goods saat tambah data goods
+                material_goods:[],
+            },
             input:{
                 name:'',
                 code:'',
@@ -278,14 +290,12 @@ export default {
                 value:'',
                 status:'',
                 last_buy_pricelist:'',
-                barcode:'',
+                barcode_master:'',
                 thumbnail_filename:'', //tidak ikut dikirim ke server (cuman muncul di form)
-                thumbnail_file:'', //tidak ikut dikirim ke server (cuman muncul di preview di form)
-                thumbnail_filesend:'', //ini akan dikirim ke server
-                avgprice:'',
-                user_id:'',
+                thumbnail_file:'', //ini akan dikirim ke server
+                avgprice_status:'',
                 tax:'',
-                unit_id:'', //seola
+                unit_id:'', 
                 cogs_id:'',
                 category_goods:[],
                 attribute_goods:[],
@@ -302,15 +312,11 @@ export default {
                         id:null,
                         name:null,
                     },
-                    tax:null,
+                    value:null,
                 },
                 material_goods:
                 {
-                    goods:
-                    {
-                        id:null,
-                        name:null,
-                    },
+                   
                     total:null,
                     adjust:null,
                 }
@@ -347,11 +353,17 @@ export default {
                     {id:4,name:'Ukuran'},
                     {id:3,name:'Diameter'},
                 ],
-                goods:[
+                material:[
                     {id:5,name:'piring cantik'},
                     {id:4,name:'payung cantik'},
                     {id:3,name:'gelas cantik'},
                 ],
+
+                //statis
+                avgprice_status:[
+                    {value:1,name:'True'},
+                    {value:0,name:'False'},
+                ]
             },
             
 
@@ -363,7 +375,6 @@ export default {
                 { text: 'Value', value: 'value', align:'right' },
                 { text: 'Status', value: 'status', align:'right' },
                 { text: 'Last Buy Pricelist', value: 'last_buy_pricelist', align:'right' },
-                { text: 'Stock', value: 'stock', align:'right' },
                 { text: 'Action', align:'left',width:'15%',sortable:false},
             ],
 
@@ -385,9 +396,12 @@ export default {
                     self.temp_input.id_edit_attribute_goods = idx;
                 },
                 clearTempInput(){
-
-                    self.temp_input.attribute_goods.attribute = null;
-                    self.temp_input.attribute_goods.value = 0;
+                    for (var key in self.temp_input.attribute_goods)
+                    {
+                        if(self.temp_input.attribute_goods[key])
+                            self.temp_input.attribute_goods[key] = null;
+                    }
+                    
                 },
                 save(){ //bisa edit / add
                     var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_attribute_goods));
@@ -433,23 +447,30 @@ export default {
                 },
                 clearTempInput(){
 
-                    self.temp_input.material_goods.goods = null;
-                    self.temp_input.material_goods.total = 0;
-                    self.temp_input.material_goods.adjust = 0;
+                   
+                    for (var key in self.temp_input.material_goods)
+                    {
+                        if(self.temp_input.material_goods[key])
+                            self.temp_input.material_goods[key] = null;
+                    }
+                    
                 },
                 save(){ //bisa edit / add
                     var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_material_goods));
                     if(id_edit == -1)
                     {
                         var temp = JSON.parse(JSON.stringify(self.temp_input.material_goods));
-                    
+                        console.log(temp);
                         self.input.material_goods.push(temp);
                         
                     }
                     else
                     {
+                        
                         self.input.material_goods[id_edit] = JSON.parse(JSON.stringify(self.temp_input.material_goods));
+                        
                         self.temp_input.id_edit_material_goods = -1;
+
 
                     }
                     this.clearTempInput();
@@ -482,22 +503,32 @@ export default {
 
 
         changeImage(e){
-            const files = e.target.files
+            const files = e.target.files;
+
             if(files[0] !== undefined) {
-                this.input.thumbnail_filename = files[0].name;
-                if(this.input.thumbnail_filename.lastIndexOf('.') <= 0) { //jika bukan file 
-                    return
+                console.log(files[0].size);
+                if(((files[0].size / 1024) / 1024) < 2)
+                {
+                    
+                    
+                    
+                    this.input.thumbnail_filename = files[0].name;
+
+                    const fr = new FileReader ()
+                    fr.readAsDataURL(files[0])
+                    fr.addEventListener('load', () => {
+                        this.preview.thumbnail = fr.result; //jadi preview
+                        this.input.thumbnail_file = files[0]; //yang dikirim ke server
+                    })
+                    
                 }
-                const fr = new FileReader ()
-                fr.readAsDataURL(files[0])
-                fr.addEventListener('load', () => {
-                    this.input.thumbnail_file = fr.result //jadi preview
-                    this.input.thumbnail_filesend = files[0] //yang dikirim ke server
-                })
+                else
+                {
+                    
+                    swal("File is to Big", "Pleas uload file with size < 2 MB !", "error");
+                }
             } else {
-                this.input.thumbnail_filename = ''
-                this.input.thumbnail_file = ''
-                this.input.thumbnail_filesend = ''
+                swal("Your file is empty !", "Please Upload Your File !", "error");
                 
             }
         },
@@ -509,18 +540,11 @@ export default {
         closedialog_createedit(){
             this.dialog_createedit = false;
         },
-        opendialog_createedit(idx_data_edit){
+        opendialog_createedit(idx_data_edit,r){
             if(idx_data_edit != -1)
             {
                 this.idx_data_edit = idx_data_edit;
-
-                
-                this.input.name = this.goods[this.idx_data_edit].name;
-                this.input.code = this.goods[this.idx_data_edit].code;
-                this.input.value = this.goods[this.idx_data_edit].value;
-                this.input.status = this.goods[this.idx_data_edit].status;
-                this.input.last_buy_pricelist = this.goods[this.idx_data_edit].last_buy_pricelist;
-                this.input.stock = this.goods[this.idx_data_edit].stock;
+                this.convert_data_input_goods(r);
                 
             }
 
@@ -529,8 +553,111 @@ export default {
         
         showTable(r)
         {
-            console.log(r.data.items.goods[0]);
+            //console.log(r.data.items.goods[0]);
             this.goods = r.data.items.goods;
+        },
+        
+        fill_select_master_data(r)
+        {
+            //console.log(r.data.items[0].units);
+            this.ref_input.unit = r.data.items[0].units;
+            this.ref_input.cogs = r.data.items[0].cogs;
+            this.ref_input.category = r.data.items[0].categories;
+            this.ref_input.attribute = r.data.items[0].attributes;
+            this.ref_input.material = r.data.items[0].materials;
+        },
+        convert_data_input_goods(r)
+        {
+            var temp_r = r.data.items.goods;
+            this.input.name = temp_r.name;
+            this.input.code = temp_r.code;
+            this.input.desc = temp_r.desc;
+            this.input.margin = temp_r.margin;
+            this.input.value = temp_r.value;
+            this.input.status = temp_r.status;
+            this.input.last_buy_pricelist = temp_r.last_buy_pricelist;
+            this.input.barcode_master = temp_r.barcode_master;
+            this.input.avgprice_status = temp_r.avgprice_status;
+            this.input.tax = temp_r.tax;
+            this.input.unit_id = temp_r.unit_id;
+            this.input.cogs_id = temp_r.cogs_id;
+            this.preview.thumbnail = temp_r.thumbnail.substr(1);
+
+            console.log(temp_r.category_goods);
+            this.input.category_goods = temp_r.category_goods;
+
+            for(var i = 0;i<temp_r.attribute_goods.length;i++)
+            {  
+                this.input.attribute_goods.push({
+                    attribute:{
+                        id: temp_r.attribute_goods[i].id,
+                        name: temp_r.attribute_goods[i].name,
+                    },
+                    value:temp_r.attribute_goods[i].value,
+                })
+            }
+            this.input.material_goods = temp_r.material_goods;
+
+            //taruh this.input.material_goods ke this.input_before_edit.material_goods
+            this.input_before_edit.material_goods = JSON.parse(JSON.stringify(this.input.material_goods));
+        },
+        prepare_data_form_goods()
+        {
+            //prepare data selalu dari this.input
+            
+            //1. buat FormData
+            const formData = new FormData();
+
+            //2. isi formData dengan data dari this.input 
+            formData.append('name', this.input.name);
+            formData.append('code', this.input.code);
+            formData.append('desc', this.input.desc);
+            formData.append('margin', this.input.margin);
+            formData.append('value', this.input.value);
+            formData.append('status', this.input.status);
+            formData.append('last_buy_pricelist', this.input.last_buy_pricelist);
+            formData.append('barcode_master', this.input.barcode_master);
+            formData.append('thumbnail', this.input.thumbnail_file); 
+            formData.append('avgprice_status', this.input.avgprice_status);
+            formData.append('tax', this.input.tax);
+            formData.append('unit_id', this.input.unit_id);
+            formData.append('cogs_id', this.input.cogs_id);
+
+            for(var i = 0;i<this.input.category_goods.length;i++)
+            {
+                formData.append('category_goods[' + i + '][category_id]',this.input.category_goods[i].id);
+            }
+
+            for(var i = 0;i<this.input.attribute_goods.length;i++)
+            {
+                console.log(this.input.attribute_goods[i]);
+                formData.append('attribute_goods[' + i + '][attribute_id]',this.input.attribute_goods[i].attribute.id);
+                formData.append('attribute_goods[' + i + '][value]',this.input.attribute_goods[i].value);
+
+            }
+
+            if(this.idx_data_edit != -1) //jika sedang diedit
+            {
+
+            }
+            else //jika sedang add
+            {
+                for(var i = 0;i<this.input.material_goods.length;i++)
+                {
+                    formData.append('material_goods[' + i + '][adjust]',this.input.material_goods[i].adjust);
+                    formData.append('material_goods[' + i + '][total]',this.input.material_goods[i].total);
+                    formData.append('material_goods[' + i + '][name]',this.input.material_goods[i].name);
+
+                }
+
+            }
+
+            
+            
+
+            //4. masukan token
+            formData.append('token', localStorage.getItem('token'));
+            return formData;
         },
         get_goods() {
 
@@ -549,37 +676,28 @@ export default {
         {
             if(this.idx_data_edit != -1) //jika sedang diedit
             {
-                axios.patch('api/goods/' + this.goods[this.idx_data_edit].id,{
-                    name: this.input.name,
-                    code: this.input.code,
-                    value: this.input.value,
-                    status: this.input.status,
-                    token: localStorage.getItem('token')
-                }).then((r) => {
+                axios.post('api/goods/' + this.goods[this.idx_data_edit].id,this.prepare_data_form_goods(),
+                {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+              }).then((r)=> {
                     this.get_goods();
                     this.closedialog_createedit();
                     swal("Good job!", "Data saved !", "success");
-                    this.idx_data_edit = -1;
-                    this.input.name = '';
                 });
-                
-                
-                
 
                 
             }
             else //jika sedang tambah data
             {
-               
-                axios.post('api/goods',{
-                    name: this.input.name,
-                    code: this.input.code,
-                    value: this.input.value,
-                    status: this.input.status,
-                    last_buy_pricelist: this.input.last_buy_pricelist,
-                    stock: this.input.stock,
-                    token: localStorage.getItem('token')
-                }).then((r)=> {
+
+                axios.post('api/goods',this.prepare_data_form_goods(),
+                {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                }
+              }).then((r)=> {
                     this.get_goods();
                     this.closedialog_createedit();
                     swal("Good job!", "Data saved !", "success");
@@ -609,12 +727,73 @@ export default {
                         });
                     }
             });
+        },
+        get_master_data()
+        {
+            axios.get('/api/goods/create', {
+                params:{
+                    token: localStorage.getItem('token')
+                }
+            },{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            }).then(r => this.fill_select_master_data(r))
+        },
+        get_data_before_edit(idx_edit)
+        {
+            var id_edit = this.goods[idx_edit].id;
+            axios.get('/api/goods/' + id_edit, {
+                params:{
+                    token: localStorage.getItem('token')
+                }
+            },{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            }).then(r=> {
+
+                this.opendialog_createedit(id_edit,r);
+            })
+        },
+
+
+
+
+        //TESTING INPUT
+        testing_input(){
+            //manual :
+            //this.thumbnail_filename
+            //this.thumbnail_file
+            //this.category_goods
+            //this.attribute_goods
+            //this.material_goods
+
+            this.input.name = 'Meja Bundar';
+            this.input.code = 'MB01';
+            this.input.desc = 'Meja yang bentuknya bundar';
+            this.input.margin = '100';
+            this.input.value = '120';
+            this.input.status = '140';
+            this.input.last_buy_pricelist = '160';
+            this.input.barcode_master = 'X123';
+            this.input.avgprice_status = 1;
+            this.input.tax = '180';
+            this.input.unit_id = '1';
+            this.input.cogs_id = '2';
+
+
         }
 
 
     },
     mounted(){
         this.get_goods();
+        this.get_master_data();
+        this.testing_input();
+
     },
 }
 </script>

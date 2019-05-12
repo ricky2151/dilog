@@ -13,6 +13,6 @@ class Attribute extends Model
     ];
 
     public function goods(){
-        return $this->belongsToMany('App\Models\Good','attribute_goods','attribute_id','goods_id')->withPivot('value')->withTimestamps();
+        return $this->belongsToMany('App\Models\Goods','attribute_goods','attribute_id','goods_id')->withPivot('value')->withTimestamps();
     }
 }

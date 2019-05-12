@@ -89,6 +89,7 @@ class AttributeController extends Controller
         $this->attributeService->handleInvalidParameter($id);
         $this->attributeService->handleModelNotFound($id);
 
+        $this->attribute->find($id)->goods()->sync([]);
         $this->attribute->find($id)->delete();
         return formatResponse(false,(["attribute"=>["attribute deleted successfully"]]));
     }
