@@ -29,6 +29,9 @@ class GoodsService
             $name = strtolower(preg_replace('/[^a-zA-Z0-9-_\.]/','',$name));
             return storeImage($image,$path,(uniqid().$name.".".$image->getClientOriginalExtension()));
         }
+        else{
+            return $path."/default.png";
+        }
     }
 
     public function handleUpdateImageGetPath($image, string $name, $newName){
