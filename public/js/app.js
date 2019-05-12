@@ -2838,6 +2838,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -2847,6 +2850,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       e6: 1,
       dialog_stock: false,
       idx_data_edit: -1,
+      preview: {
+        thumbnail: ''
+      },
       input: {
         name: '',
         code: '',
@@ -2859,11 +2865,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         thumbnail_filename: '',
         //tidak ikut dikirim ke server (cuman muncul di form)
         thumbnail_file: '',
-        //tidak ikut dikirim ke server (cuman muncul di preview di form)
-        thumbnail_filesend: '',
         //ini akan dikirim ke server
         avgprice: '',
-        user_id: '',
         tax: '',
         unit_id: '',
         //seola
@@ -2882,13 +2885,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
             id: null,
             name: null
           },
-          tax: null
+          value: null
         },
         material_goods: {
-          goods: {
-            id: null,
-            name: null
-          },
           total: null,
           adjust: null
         }
@@ -2953,7 +2952,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           id: 3,
           name: 'Diameter'
         }],
-        goods: [{
+        material: [{
           id: 5,
           name: 'piring cantik'
         }, {
@@ -2982,10 +2981,6 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }, {
         text: 'Last Buy Pricelist',
         value: 'last_buy_pricelist',
-        align: 'right'
-      }, {
-        text: 'Stock',
-        value: 'stock',
         align: 'right'
       }, {
         text: 'Action',
@@ -3039,7 +3034,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           self.temp_input.id_edit_material_goods = idx;
         },
         clearTempInput: function clearTempInput() {
-          self.temp_input.material_goods.goods = null;
+          self.temp_input.material_goods.name = null;
           self.temp_input.material_goods.total = 0;
           self.temp_input.material_goods.adjust = 0;
         },
@@ -3049,6 +3044,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
           if (id_edit == -1) {
             var temp = JSON.parse(JSON.stringify(self.temp_input.material_goods));
+            console.log(temp);
             self.input.material_goods.push(temp);
           } else {
             self.input.material_goods[id_edit] = JSON.parse(JSON.stringify(self.temp_input.material_goods));
@@ -3084,24 +3080,22 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var files = e.target.files;
 
       if (files[0] !== undefined) {
-        this.input.thumbnail_filename = files[0].name;
+        console.log(files[0].size);
 
-        if (this.input.thumbnail_filename.lastIndexOf('.') <= 0) {
-          //jika bukan file 
-          return;
+        if (files[0].size / 1024 / 1024 < 2) {
+          this.input.thumbnail_filename = files[0].name;
+          var fr = new FileReader();
+          fr.readAsDataURL(files[0]);
+          fr.addEventListener('load', function () {
+            _this.preview.thumbnail = fr.result; //jadi preview
+
+            _this.input.thumbnail_file = files[0]; //yang dikirim ke server
+          });
+        } else {
+          swal("File is to Big", "Pleas uload file with size < 2 MB !", "error");
         }
-
-        var fr = new FileReader();
-        fr.readAsDataURL(files[0]);
-        fr.addEventListener('load', function () {
-          _this.input.thumbnail_file = fr.result; //jadi preview
-
-          _this.input.thumbnail_filesend = files[0]; //yang dikirim ke server
-        });
       } else {
-        this.input.thumbnail_filename = '';
-        this.input.thumbnail_file = '';
-        this.input.thumbnail_filesend = '';
+        swal("Your file is empty !", "Please Upload Your File !", "error");
       }
     },
     pickFile: function pickFile() {
@@ -3124,8 +3118,16 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       this.dialog_createedit = true;
     },
     showTable: function showTable(r) {
-      console.log(r.data.items.goods[0]);
+      //console.log(r.data.items.goods[0]);
       this.goods = r.data.items.goods;
+    },
+    fill_select_master_data: function fill_select_master_data(r) {
+      //console.log(r.data.items[0].units);
+      this.ref_input.unit = r.data.items[0].units;
+      this.ref_input.cogs = r.data.items[0].cogs;
+      this.ref_input.category = r.data.items[0].categories;
+      this.ref_input.attribute = r.data.items[0].attributes;
+      this.ref_input.material = r.data.items[0].materials;
     },
     get_goods: function get_goods() {
       var _this2 = this;
@@ -3149,6 +3151,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       if (this.idx_data_edit != -1) //jika sedang diedit
         {
           axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch('api/goods/' + this.goods[this.idx_data_edit].id, {
+            headers: {
+              'Accept': 'application/json',
+              'Content-type': 'multipart/form-data'
+            },
             name: this.input.name,
             code: this.input.code,
             value: this.input.value,
@@ -3165,14 +3171,22 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           });
         } else //jika sedang tambah data
         {
-          axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/goods', {
-            name: this.input.name,
-            code: this.input.code,
-            value: this.input.value,
-            status: this.input.status,
-            last_buy_pricelist: this.input.last_buy_pricelist,
-            stock: this.input.stock,
-            token: localStorage.getItem('token')
+          //prepare file data on this.input :
+          //1. buat FormData
+          var formData = new FormData(); //2. pisahkan data dengan file
+          //2.a. masukan file ke formData
+
+          formData.append('fileData[]', this.input.thumbnail_file); //2.b. hilangkan file pada object input
+
+          delete this.input.thumbnail_file; //2.c. masukan input ke formData
+
+          formData.append('input', JSON.stringify(this.input)); //2.d. masukan token ke formData
+
+          formData.append('token', localStorage.getItem('token'));
+          axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/goods', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
           }).then(function (r) {
             _this3.get_goods();
 
@@ -3204,10 +3218,27 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           });
         }
       });
+    },
+    get_master_data: function get_master_data() {
+      var _this5 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/goods/create', {
+        params: {
+          token: localStorage.getItem('token')
+        }
+      }, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-type': 'application/json'
+        }
+      }).then(function (r) {
+        return _this5.fill_select_master_data(r);
+      });
     }
   },
   mounted: function mounted() {
     this.get_goods();
+    this.get_master_data();
   }
 });
 
@@ -7434,12 +7465,9 @@ var render = function() {
                         on: { change: _vm.changeImage }
                       }),
                       _vm._v(" "),
-                      _vm.input.thumbnail_filename
+                      _vm.preview.thumbnail
                         ? _c("img", {
-                            attrs: {
-                              src: _vm.input.thumbnail_file,
-                              height: "150"
-                            }
+                            attrs: { src: _vm.preview.thumbnail, height: "150" }
                           })
                         : _vm._e(),
                       _vm._v(" "),
@@ -7451,22 +7479,6 @@ var render = function() {
                             _vm.$set(_vm.input, "avgprice", $$v)
                           },
                           expression: "input.avgprice"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-select", {
-                        attrs: {
-                          items: _vm.ref_input.user,
-                          "item-text": "name",
-                          "item-value": "id",
-                          label: "Select User"
-                        },
-                        model: {
-                          value: _vm.input.user_id,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "user_id", $$v)
-                          },
-                          expression: "input.user_id"
                         }
                       }),
                       _vm._v(" "),
@@ -7845,23 +7857,14 @@ var render = function() {
                     "v-stepper-content",
                     { attrs: { step: "4" } },
                     [
-                      _c("v-select", {
-                        attrs: {
-                          items: _vm.ref_input.goods,
-                          "item-text": "name",
-                          "return-object": "",
-                          label: "Select Goods"
-                        },
+                      _c("v-text-field", {
+                        attrs: { label: "Name", required: "" },
                         model: {
-                          value: _vm.temp_input.material_goods.goods,
+                          value: _vm.temp_input.material_goods.name,
                           callback: function($$v) {
-                            _vm.$set(
-                              _vm.temp_input.material_goods,
-                              "goods",
-                              $$v
-                            )
+                            _vm.$set(_vm.temp_input.material_goods, "name", $$v)
                           },
-                          expression: "temp_input.material_goods.goods"
+                          expression: "temp_input.material_goods.name"
                         }
                       }),
                       _vm._v(" "),
@@ -7952,7 +7955,7 @@ var render = function() {
                         attrs: {
                           "disable-initial-sort": "",
                           headers: [
-                            { text: "Goods", value: "goods" },
+                            { text: "Material", value: "name" },
                             { text: "Total", value: "total", align: "right" },
                             { text: "Adjust", value: "adjust", align: "right" },
                             {
@@ -7969,9 +7972,7 @@ var render = function() {
                             key: "items",
                             fn: function(props) {
                               return [
-                                _c("td", [
-                                  _vm._v(_vm._s(props.item.goods.name))
-                                ]),
+                                _c("td", [_vm._v(_vm._s(props.item.name))]),
                                 _vm._v(" "),
                                 _c("td", { staticClass: "text-xs-right" }, [
                                   _vm._v(_vm._s(props.item.total))
@@ -8070,11 +8071,16 @@ var render = function() {
                     {
                       on: {
                         click: function($event) {
-                          return _vm.save_unit()
+                          return _vm.save_goods()
                         }
                       }
                     },
                     [_vm._v("submit")]
+                  ),
+                  _vm._v(
+                    "\n                " +
+                      _vm._s(_vm.input) +
+                      "\n\n            "
                   )
                 ],
                 1
