@@ -226,6 +226,8 @@
                     {{input}}
                     <v-btn v-on:click='save_goods()' >sementara aja</v-btn>
                     {{input_before_edit}}
+                    <v-btn v-on:click='save_goods()' >sementara aja</v-btn>
+                    {{preview}}
                 </v-stepper>
             </v-card>
         </v-dialog>
@@ -279,8 +281,8 @@ export default {
             preview:{
                 thumbnail:'',
             },
-            input_before_edit:{ //variabel ini dipakai hanya untuk kasus2 tertentu seperti material_goods saat tambah data goods
-                material_goods:[],
+            input_before_edit:{ //variabel ini digunakan untuk menampung input sebelum di klik submit saat edit
+                
             },
             input:{
                 name:'',
@@ -581,7 +583,7 @@ export default {
             this.input.tax = temp_r.tax;
             this.input.unit_id = temp_r.unit_id;
             this.input.cogs_id = temp_r.cogs_id;
-            this.preview.thumbnail = temp_r.thumbnail.substr(1);
+            this.preview.thumbnail = temp_r.thumbnail;
 
             console.log(temp_r.category_goods);
             this.input.category_goods = temp_r.category_goods;
@@ -599,54 +601,169 @@ export default {
             this.input.material_goods = temp_r.material_goods;
 
             //taruh this.input.material_goods ke this.input_before_edit.material_goods
-            this.input_before_edit.material_goods = JSON.parse(JSON.stringify(this.input.material_goods));
+            this.input_before_edit = JSON.parse(JSON.stringify(this.input));
+            
         },
         prepare_data_form_goods()
         {
-            //prepare data selalu dari this.input
+            //prepare data selalu dari this.input, tapi bandingkan dulu dengan this.input_before_edit
             
-            //1. buat FormData
+            
             const formData = new FormData();
 
-            //2. isi formData dengan data dari this.input 
-            formData.append('name', this.input.name);
-            formData.append('code', this.input.code);
-            formData.append('desc', this.input.desc);
-            formData.append('margin', this.input.margin);
-            formData.append('value', this.input.value);
-            formData.append('status', this.input.status);
-            formData.append('last_buy_pricelist', this.input.last_buy_pricelist);
-            formData.append('barcode_master', this.input.barcode_master);
-            formData.append('thumbnail', this.input.thumbnail_file); 
-            formData.append('avgprice_status', this.input.avgprice_status);
-            formData.append('tax', this.input.tax);
-            formData.append('unit_id', this.input.unit_id);
-            formData.append('cogs_id', this.input.cogs_id);
 
-            for(var i = 0;i<this.input.category_goods.length;i++)
-            {
-                formData.append('category_goods[' + i + '][category_id]',this.input.category_goods[i].id);
-            }
-
-            for(var i = 0;i<this.input.attribute_goods.length;i++)
-            {
-                console.log(this.input.attribute_goods[i]);
-                formData.append('attribute_goods[' + i + '][attribute_id]',this.input.attribute_goods[i].attribute.id);
-                formData.append('attribute_goods[' + i + '][value]',this.input.attribute_goods[i].value);
-
-            }
 
             if(this.idx_data_edit != -1) //jika sedang diedit
             {
 
+                //data yang harus dikirim saat update :
+                //1. data goods yang BERUBAH SAJA
+                //2. data goods_attribute dan goods_category AKHIR 
+                //3. data material yang BERUBAH, DITAMBAH, & DIHAPUS
+
+                //step-step :
+                //1. kirim data goods yang berubah
+                if(this.input.name != this.input_before_edit.name) formData.append('name', this.input.name);
+                if(this.input.code != this.input_before_edit.code) formData.append('code', this.input.code);
+                if(this.input.desc != this.input_before_edit.desc) formData.append('desc', this.input.desc);
+                if(this.input.margin != this.input_before_edit.margin) formData.append('margin', this.input.margin);
+                if(this.input.value != this.input_before_edit.value) formData.append('value', this.input.value);
+                if(this.input.status != this.input_before_edit.status) formData.append('status', this.input.status);
+                if(this.input.last_buy_pricelist != this.input_before_edit.last_buy_pricelist) formData.append('last_buy_pricelist', this.input.last_buy_pricelist);
+                if(this.input.barcode_master != this.input_before_edit.barcode_master) formData.append('barcode_master', this.input.barcode_master);
+                if(this.input.thumbnail_file != this.input_before_edit.thumbnail_file) formData.append('thumbnail', this.input.thumbnail_file); 
+                if(this.input.avgprice_status != this.input_before_edit.avgprice_status) formData.append('avgprice_status', this.input.avgprice_status);
+                if(this.input.tax != this.input_before_edit.tax) formData.append('tax', this.input.tax);
+                if(this.input.unit_id != this.input_before_edit.unit_id) formData.append('unit_id', this.input.unit_id);
+                if(this.input.cogs_id != this.input_before_edit.cogs_id) formData.append('cogs_id', this.input.cogs_id);
+
+                //2. kirim data goods_attribute dan goods_category
+                for(var i = 0;i<this.input.category_goods.length;i++)
+                {
+                    formData.append('category_goods[' + i + '][category_id]',this.input.category_goods[i].id);
+                }
+
+                for(var i = 0;i<this.input.attribute_goods.length;i++)
+                {
+                    console.log(this.input.attribute_goods[i]);
+                    formData.append('attribute_goods[' + i + '][attribute_id]',this.input.attribute_goods[i].attribute.id);
+                    formData.append('attribute_goods[' + i + '][value]',this.input.attribute_goods[i].value);
+
+                }
+
+                //3. kirim data material yang berubah, ditambah, dan dihapus
+                
+                //cek di input cocokin dengan input_before_edit
+                //1. cek apakah ada id nya atau tidak, jika tidak memiliki id, pasti itu tambah baru
+                //2. jika punya id, cocokan dengan input_before_edit, jika sama berarti tidak diedit, jika beda berarti diedit
+
+                //temp adalah data dari input
+                //temp2 adalah data dari input_before_edit
+                var counteridx = 0;
+                for(var i = 0;i<this.input.material_goods.length;i++)
+                {
+                    var temp = this.input.material_goods[i];
+                    if(temp.id == null)
+                    {
+                        formData.append('material_goods_new[' + counteridx + '][name]', temp.name);
+                        formData.append('material_goods_new[' + counteridx + '][adjust]', temp.adjust);
+                        formData.append('material_goods_new[' + counteridx + '][total]', temp.total);
+                        counteridx++;
+                    }
+                    else
+                    {
+                        //cocokan dengan input_before_edit
+                        var edittrue = false;
+                        for(var j = 0;j<this.input_before_edit.material_goods.length;j++)
+                        {
+                            var temp2 = this.input_before_edit.material_goods[i];
+                            if(temp.id == temp2.id)
+                            {
+                                if(temp.name != temp2.name || temp.adjust != temp2.adjust || temp.total != temp2.total) //jika ada salah satu saja yang berbeda, maka ini pasti diedit
+                                {
+                                    edittrue = true;
+                                }
+                                break;
+                            }
+                        }
+
+                        if(edittrue)
+                        {
+                            formData.append('material_goods_update[' + counteridx + '][id]', temp.id);
+                            formData.append('material_goods_update[' + counteridx + '][name]', temp.name);
+                            formData.append('material_goods_update[' + counteridx + '][adjust]', temp.adjust);
+                            formData.append('material_goods_update[' + counteridx + '][total]', temp.total);
+                            counteridx++;
+                        }
+
+                    }
+                }
+
+                //cek di input_before_edit cocokin dengan input
+                //1. jika ada data dengan id yang tidak ada di data input, berarti data tersebut pasti dihapus
+                for(var i = 0;i<this.input_before_edit.material_goods.length;i++)
+                {
+                    var deletetrue = true;
+                    for(var j=0;j<this.input.material_goods.length;j++)
+                    {
+                        if(this.input.material_goods[j].id == this.input_before_edit.material_goods[i].id)
+                        {
+                            deletetrue = false;
+                            break;
+                        }
+                    }
+
+                    if(deletetrue)
+                    {
+                        formData.append('material_goods_delete[' + counteridx + '][id]', this.input_before_edit.material_goods[i].id);
+                        counteridx++;
+                    }
+                }
+                formData.append('_method', 'patch');
+
             }
             else //jika sedang add
             {
+
+                //data-data yang harus dikirim : 
+                //1. semua data goods
+                //2. semua data attribute,category, dan material
+
+                //step-step : 
+                //1. kirim data goods
+                formData.append('name', this.input.name);
+                formData.append('code', this.input.code);
+                formData.append('desc', this.input.desc);
+                formData.append('margin', this.input.margin);
+                formData.append('value', this.input.value);
+                formData.append('status', this.input.status);
+                formData.append('last_buy_pricelist', this.input.last_buy_pricelist);
+                formData.append('barcode_master', this.input.barcode_master);
+                formData.append('thumbnail', this.input.thumbnail_file); 
+                formData.append('avgprice_status', this.input.avgprice_status);
+                formData.append('tax', this.input.tax);
+                formData.append('unit_id', this.input.unit_id);
+                formData.append('cogs_id', this.input.cogs_id);
+
+                //2. kirim data attribute,category, dan material
+
                 for(var i = 0;i<this.input.material_goods.length;i++)
                 {
                     formData.append('material_goods[' + i + '][adjust]',this.input.material_goods[i].adjust);
                     formData.append('material_goods[' + i + '][total]',this.input.material_goods[i].total);
                     formData.append('material_goods[' + i + '][name]',this.input.material_goods[i].name);
+
+                }
+
+                for(var i = 0;i<this.input.category_goods.length;i++)
+                {
+                    formData.append('category_goods[' + i + '][category_id]',this.input.category_goods[i].id);
+                }
+
+                for(var i = 0;i<this.input.attribute_goods.length;i++)
+                {
+                    formData.append('attribute_goods[' + i + '][attribute_id]',this.input.attribute_goods[i].attribute.id);
+                    formData.append('attribute_goods[' + i + '][value]',this.input.attribute_goods[i].value);
 
                 }
 
@@ -674,6 +791,7 @@ export default {
         },
         save_goods()
         {
+
             if(this.idx_data_edit != -1) //jika sedang diedit
             {
                 axios.post('api/goods/' + this.goods[this.idx_data_edit].id,this.prepare_data_form_goods(),
@@ -755,7 +873,7 @@ export default {
                 }
             }).then(r=> {
 
-                this.opendialog_createedit(id_edit,r);
+                this.opendialog_createedit(idx_edit,r); //idx_edit bukan id_edit !
             })
         },
 
