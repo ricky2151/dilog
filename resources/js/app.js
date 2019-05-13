@@ -16,7 +16,7 @@ import colors from 'vuetify/es5/util/colors'
 //AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM => api key berbayar (buat test aja)
 Vue.use(VueGoogleMaps, {
   load: {
-    key: '',
+    key: 'AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM',
   },
 
 })
