@@ -8,7 +8,7 @@
     <div>
         <v-dialog v-model="dialog_createedit" width=750>
             <v-card>
-                <v-toolbar dark color="red">
+                <v-toolbar dark color="menu">
                     <v-btn icon dark v-on:click="closedialog_createedit()">
                         <v-icon>close</v-icon>
                     </v-btn>

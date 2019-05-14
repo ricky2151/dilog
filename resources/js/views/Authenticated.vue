@@ -80,7 +80,7 @@
                 app clipped fixed
             >
                 <v-container fluid>
-                    <v-img src="/assets/images/logo.png" contain class="my-5">
+                    <v-img src="/assets/images/logo.png" contain class="my-0">
                     </v-img>
                 </v-container>
                 <!-- <v-list>
