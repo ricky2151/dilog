@@ -167,7 +167,6 @@ class GoodsController extends Controller
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollback();
-            // return $e;
             throw new DatabaseTransactionErrorException("Goods");
         }
 
@@ -186,10 +185,18 @@ class GoodsController extends Controller
         $this->goodsService->handleModelNotFound($id);
         deleteImage($this->goods->find($id)->thumbnail);
 
-        $this->goods->find($id)->attributes()->sync([]);
-        $this->goods->find($id)->categories()->sync([]);
-        $this->goods->find($id)->materials()->delete();
-        $this->goods->find($id)->delete();
+        DB::beginTransaction();
+        try {
+            $this->goods->find($id)->attributes()->sync([]);
+            $this->goods->find($id)->categories()->sync([]);
+            $this->goods->find($id)->materials()->delete();
+            $this->goods->find($id)->delete();
+            DB::commit();
+        }catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("Goods");
+        }
+        
 
         return formatResponse(false,(["goods"=>["goods deleted successfully"]]));
     }

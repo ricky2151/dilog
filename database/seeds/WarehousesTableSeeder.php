@@ -22,7 +22,7 @@ class WarehousesTableSeeder extends Seeder
             'lng' => $faker->text(20),
             'telp' => $faker->numerify('+62###########'),
             'email' => $faker->email,
-            'pic' => "warehouse/1.jpg"
+            'pic' => $faker->name
         ]);
         Warehouse::create([
             'name' => "Bakpia Tugu",
@@ -31,7 +31,7 @@ class WarehousesTableSeeder extends Seeder
             'lng' => $faker->text(20),
             'telp' => $faker->numerify('+62###########'),
             'email' => $faker->email,
-            'pic' => "warehouse/2.jpg"
+            'pic' => $faker->name
         ]);
         Warehouse::create([
             'name' => "Bakpia Kukus",
@@ -40,7 +40,7 @@ class WarehousesTableSeeder extends Seeder
             'lng' => $faker->text(20),
             'telp' => $faker->numerify('+62###########'),
             'email' => $faker->email,
-            'pic' => "warehouse/3.jpg"
+            'pic' => $faker->name
         ]);
         Warehouse::create([
             'name' => "Bakpia Pathok",
@@ -49,7 +49,7 @@ class WarehousesTableSeeder extends Seeder
             'lng' => $faker->text(20),
             'telp' => $faker->numerify('+62 ### #### ####'),
             'email' => $faker->email,
-            'pic' => "warehouse/4.jpg"
+            'pic' => $faker->name
         ]);
     }
 }

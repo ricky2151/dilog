@@ -42,7 +42,7 @@ class GoodsService
     }
 
     public function handleUpdateImage($image, string $oldPic, string $name, string $path){
-        if(!is_null($image) && !is_null($name)){
+        if(!is_null($image)){
             deleteImage($oldPic);
             storeImage($image,$path,($name));
         }

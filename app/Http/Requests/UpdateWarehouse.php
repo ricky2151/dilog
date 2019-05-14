@@ -26,13 +26,17 @@ class UpdateWarehouse extends FormRequest
     public function rules()
     {
         return [
-            "name" => "string",
-            "address" => "string",
-            "lat" => "string",
-            "lng" => "string",
-            "telp" => "string",
+            "name" => "filled|string",
+            "address" => "filled|string",
+            "lat" => "filled|string",
+            "lng" => "filled|string",
+            "telp" => "filled|string",
             "email" => "string|email|unique:warehouses,email",
-            "pic" => "image|max:2048|mimes:jpeg,bmp,png,jpg" 
+            "pic" => "filled|string",
+            "racks_update.*.id" => "required_with:racks_update.*.name|filled|integer|exists:racks,id",
+            "racks_update.*.name" => "required_with:racks_update.*.id|filled|string",
+            "racks_delete.*.id" => "filled|integer|exists:racks,id",
+            "racks_new.*.name" => "filled|string"
         ];
     }
 

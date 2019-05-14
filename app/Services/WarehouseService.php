@@ -4,23 +4,23 @@ namespace App\Services;
 use App\Exceptions\InvalidParameterException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\ModelNotFoundException as CustomModelNotFoundException;
+use App\Exceptions\ModelDontHaveRelation;
 use App\Models\Warehouse;
+use App\Models\Rack;
 use Storage;
 
 class WarehouseService
 {
-    public function handleUploadImage($image, string $path, string $name){
-        if(!is_null($image)){
-            $name = strtolower(preg_replace('/[^a-zA-Z0-9-_\.]/','',$name));
-            return storeImage($image,$path,(uniqid().$name.".".$image->getClientOriginalExtension()));
-        }
-    }
-
-    public function handleUpdateImage($image, string $path, string $name, string $oldPic, $newName){
-        if(!is_null($image)){
-            deleteImage($oldPic);
-            $name = strtolower(preg_replace('/[^a-zA-Z0-9-_\.]/','',is_null($newName) == true ? $name : $newName));
-            return storeImage($image,$path,(uniqid().$name.".".$image->getClientOriginalExtension()));
+    public function checkRelationship($warehouseId,$data){
+        foreach($data as $id){
+            try{
+                $rack = Rack::findOrFail($id);
+            }catch(ModelNotFoundException $e){
+                throw new CustomModelNotFoundException("Rack"); 
+            }
+            if($rack->warehouse_id != $warehouseId){
+                throw new ModelDontHaveRelation(json_encode([0=>"Rack",1=>"Warehouse"])); 
+            }
         }
     }
 
