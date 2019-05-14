@@ -6,230 +6,233 @@
 
 <template>
     <div>
+        
         <v-dialog v-model="dialog_createedit" fullscreen>
-            <v-card>
-                <v-toolbar dark color="red">
-                    <v-btn icon dark v-on:click="closedialog_createedit()">
-                        <v-icon>close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title>Add goods</v-toolbar-title>
+            <v-form v-model="valid" ref='formCreateEdit'>
+                <v-card>
+                    <v-toolbar dark color="red">
+                        <v-btn icon dark v-on:click="closedialog_createedit()">
+                            <v-icon>close</v-icon>
+                        </v-btn>
+                        <v-toolbar-title>Add goods</v-toolbar-title>
 
-                </v-toolbar>
-                <v-stepper v-model="e6" vertical>
+                    </v-toolbar>
+                    <v-stepper v-model="e6" vertical>
 
-                    <!-- ==== STEPPER 1 ==== -->
+                        <!-- ==== STEPPER 1 ==== -->
 
-                    <v-stepper-step :complete="e6 > 1" step="1" editable>
-                        <h3>Goods Data</h3>
-                    </v-stepper-step>
+                        <v-stepper-step :complete="e6 > 1" step="1" editable>
+                            <h3>Goods Data</h3>
+                        </v-stepper-step>
 
-                    <v-stepper-content step="1">
-                        
-                            <v-text-field v-model='input.name' label="Name" required></v-text-field>
+                        <v-stepper-content step="1">
                             
-                            <v-text-field v-model='input.code' label="Code" required></v-text-field>
-                            
-                            <v-text-field v-model='input.desc' label="Description" required></v-text-field>
-                            
-                            <v-text-field v-model='input.margin' label="Margin" required></v-text-field>
-                            
-                            <v-text-field v-model='input.value' label="Value" required></v-text-field>
-                            
-                            <v-text-field v-model='input.status' label="Status" required></v-text-field>
-                            
-                            <v-text-field v-model='input.last_buy_pricelist' label="Last Buy Price List" required></v-text-field>
-                            
-                            <v-text-field v-model='input.barcode_master' label="Barcode" required></v-text-field>
+                                <v-text-field :rules="this.$list_validation.max_req" v-model='input.name'  label="Name"></v-text-field>
+                                
+                                <v-text-field :rules="this.$list_validation.max_req" v-model='input.code' label="Code" required></v-text-field>
+                                
+                                <v-text-field :rules="this.$list_validation.max" v-model='input.desc' label="Description" required></v-text-field>
+                                
+                                <v-text-field :rules="this.$list_validation.numeric_req" v-model='input.margin' label="Margin" required></v-text-field>
+                                
+                                <v-text-field :rules="this.$list_validation.numeric_req" v-model='input.value' label="Value" required></v-text-field>
+                                
+                                <v-text-field :rules="this.$list_validation.numeric_req" v-model='input.status' label="Status" required></v-text-field>
+                                
+                                <v-text-field :rules="this.$list_validation.numeric" v-model='input.last_buy_pricelist' label="Last Buy Price List" required></v-text-field>
+                                
+                                <v-text-field :rules="this.$list_validation.max" v-model='input.barcode_master' label="Barcode" required></v-text-field>
 
-                            <v-text-field v-model='input.thumbnail_filename' label="Select Image" v-on:click='pickFile' prepend-icon='attach_file'></v-text-field>
-                            <input
-                                id='btn_upload_thumbnail'
-                                type="file"
-                                style="display: none"
-                                accept="image/*"
-                                v-on:change='changeImage'
+                                <v-text-field v-model='input.thumbnail_filename' label="Select Image" v-on:click='pickFile' prepend-icon='attach_file'></v-text-field>
+                                <input
+                                    id='btn_upload_thumbnail'
+                                    type="file"
+                                    style="display: none"
+                                    accept="image/*"
+                                    v-on:change='changeImage'
+                                >
+                                <img :src="preview.thumbnail" height="150" v-if="preview.thumbnail"/>
+
+                                <v-select :rules="this.$list_validation.selecttf_req" v-model='input.avgprice_status' :items="ref_input.avgprice_status" item-text='name' item-value='value' label="Select Average Price Status"></v-select>
+
+                                
+
+                                
+
+                                <v-text-field :rules="this.$list_validation.numeric" v-model='input.tax' label="Tax" required></v-text-field>
+
+                                <v-select :rules="this.$list_validation.selectdata_req"  v-model='input.unit_id' :items="ref_input.unit" item-text='name' item-value='id' label="Select Unit"></v-select>
+
+                                <v-select :rules="this.$list_validation.selectdata_req" v-model='input.cogs_id' :items="ref_input.cogs" item-text='name' item-value='id' label="Select COGS"></v-select>
+                                
+                                <v-btn color='primary' v-on:click='e6=2'>Continue</v-btn>
+                                
+                            
+                        </v-stepper-content>
+
+                        <!-- ==== STEPPER 2 ==== -->
+
+                        <v-stepper-step :complete="e6 > 2" step="2" editable><h3>Goods Category</h3></v-stepper-step>
+
+                        <v-stepper-content step="2">
+                            <v-combobox
+                                v-model='input.category_goods'
+                                :items="ref_input.category"
+                                item-value="id"
+                                item-text="name"
+                                label="Type or select goods category"
+                                chips
+                                clearable
+                                prepend-icon="filter_list"
+                                solo
+                                multiple
+                                v-on:keyup.enter="checkItemInList()"
+                                >
+                                    <template v-slot:selection="data">
+                                        <v-chip
+                                          :selected="data.selected"
+                                          close
+                                          v-on:input="removeChip(data.item)"
+                                        >
+                                            <strong>{{ data.item.name }}</strong>
+                                        </v-chip>
+                                    </template>
+                            </v-combobox>
+                            <v-btn color='primary' v-on:click='e6=3'>Continue</v-btn>
+                        </v-stepper-content>
+
+                        <!-- ==== STEPPER 3 ==== -->
+
+                        <v-stepper-step :complete="e6 > 3" step="3" editable><h3>Goods Attribute</h3></v-stepper-step>
+
+                        <v-stepper-content step="3">
+
+
+                            <v-select v-model='temp_input.attribute_goods.attribute' :items="ref_input.attribute" item-text='name' return-object label="Select Attribute"></v-select>
+                            
+
+
+                            <v-text-field v-model="temp_input.attribute_goods.value" label="Value" required></v-text-field>
+                            
+                            <v-toolbar flat color="white" >
+                                
+                                <v-spacer></v-spacer>
+                                <v-btn v-if='temp_input.id_edit_attribute_goods != -1' color="red" dark v-on:click='table_attribute().canceledit()'>
+                                    Cancel
+                                </v-btn>
+                                
+                                <v-btn color="primary" dark v-on:click='table_attribute().save()' v-html='temp_input.id_edit_attribute_goods == -1?"Add to Table":"Save Changes"'>
+                                </v-btn>
+                            </v-toolbar>
+                            
+
+
+                            <v-toolbar flat color="white" >
+                                <v-toolbar-title>Goods Attribute Data</v-toolbar-title>
+                                
+                            </v-toolbar>
+                            
+
+                            <v-data-table
+                                disable-initial-sort
+                                :headers="[
+                                {text:'Attribute', value:'attribute'},
+                                {text:'Values',value:'value',align:'right'},
+                                {text:'Action',align:'left',width:'15%',sortable:false}
+                                ]"
+                                :items="input.attribute_goods"
+                                class=""
                             >
-                            <img :src="preview.thumbnail" height="150" v-if="preview.thumbnail"/>
 
-                            <v-select v-model='input.avgprice_status' :items="ref_input.avgprice_status" item-text='name' item-value='value' label="Select Average Price Status"></v-select>
+                                <template v-slot:items="props">
+                                    <td>{{ props.item.attribute.name }}</td>
+                                    <td class="text-xs-right">{{ props.item.value }}</td>
+                                    <td>
+                                        <v-btn class='button-action' v-on:click='table_attribute().showData(props.index)' color="primary" fab depressed small dark v-on="on">
+                                            <v-icon small>edit</v-icon>
+                                        </v-btn>
+                                        <v-btn class='button-action' v-on:click='table_attribute().delete(props.index)' color="red" fab small dark depressed>
+                                            <v-icon small>delete</v-icon>
+                                        </v-btn>
 
-                            
-
-                            
-
-                            <v-text-field v-model='input.tax' label="Tax" required></v-text-field>
-
-                            <v-select v-model='input.unit_id' :items="ref_input.unit" item-text='name' item-value='id' label="Select Unit"></v-select>
-
-                            <v-select v-model='input.cogs_id' :items="ref_input.cogs" item-text='name' item-value='id' label="Select COGS"></v-select>
-                            
-                            <v-btn color='primary' v-on:click='e6=2'>Continue</v-btn>
-                            
-                        
-                    </v-stepper-content>
-
-                    <!-- ==== STEPPER 2 ==== -->
-
-                    <v-stepper-step :complete="e6 > 2" step="2" editable><h3>Goods Category</h3></v-stepper-step>
-
-                    <v-stepper-content step="2">
-                        <v-combobox
-                            v-model='input.category_goods'
-                            :items="ref_input.category"
-                            item-value="id"
-                            item-text="name"
-                            label="Type or select goods category"
-                            chips
-                            clearable
-                            prepend-icon="filter_list"
-                            solo
-                            multiple
-                            v-on:keyup.enter="checkItemInList()"
-                            >
-                                <template v-slot:selection="data">
-                                    <v-chip
-                                      :selected="data.selected"
-                                      close
-                                      v-on:input="removeChip(data.item)"
-                                    >
-                                        <strong>{{ data.item.name }}</strong>
-                                    </v-chip>
+                                    </td>
                                 </template>
-                        </v-combobox>
-                        <v-btn color='primary' v-on:click='e6=3'>Continue</v-btn>
-                    </v-stepper-content>
+                            </v-data-table>
+                            <v-btn color='primary' v-on:click='e6=4'>Continue</v-btn>
 
-                    <!-- ==== STEPPER 3 ==== -->
+                        </v-stepper-content>
 
-                    <v-stepper-step :complete="e6 > 3" step="3" editable><h3>Goods Attribute</h3></v-stepper-step>
+                        <!-- ==== STEPPER 4 ==== -->
 
-                    <v-stepper-content step="3">
+                        <v-stepper-step step="4" editable><h3>Goods Material</h3></v-stepper-step>
 
-
-                        <v-select v-model='temp_input.attribute_goods.attribute' :items="ref_input.attribute" item-text='name' return-object label="Select Attribute"></v-select>
-                        
-
-
-                        <v-text-field v-model="temp_input.attribute_goods.value" label="Value" required></v-text-field>
-                        
-                        <v-toolbar flat color="white" >
+                        <v-stepper-content step="4">
+                            <!-- <v-select v-model='temp_input.material_goods.name' :items="ref_input.material" item-text='name' return-object label="Select Material"></v-select> -->
                             
-                            <v-spacer></v-spacer>
-                            <v-btn v-if='temp_input.id_edit_attribute_goods != -1' color="red" dark v-on:click='table_attribute().canceledit()'>
-                                Cancel
-                            </v-btn>
+                            <v-text-field v-model="temp_input.material_goods.name" label="Name" required></v-text-field>
+
+                            <v-text-field v-model="temp_input.material_goods.total" label="Total" required></v-text-field>
+
+                            <v-text-field v-model="temp_input.material_goods.adjust" label="Adjust" required></v-text-field>
                             
-                            <v-btn color="primary" dark v-on:click='table_attribute().save()' v-html='temp_input.id_edit_attribute_goods == -1?"Add to Table":"Save Changes"'>
-                            </v-btn>
-                        </v-toolbar>
-                        
-
-
-                        <v-toolbar flat color="white" >
-                            <v-toolbar-title>Goods Attribute Data</v-toolbar-title>
+                            <v-toolbar flat color="white" >
+                                
+                                <v-spacer></v-spacer>
+                                <v-btn v-if='temp_input.id_edit_material_goods != -1' color="red" dark v-on:click='table_material().canceledit()'>
+                                    Cancel
+                                </v-btn>
+                                
+                                <v-btn color="primary" dark v-on:click='table_material().save()' v-html='temp_input.id_edit_material_goods == -1?"Add to Table":"Save Changes"'>
+                                </v-btn>
+                            </v-toolbar>
                             
-                        </v-toolbar>
-                        
 
-                        <v-data-table
-                            disable-initial-sort
-                            :headers="[
-                            {text:'Attribute', value:'attribute'},
-                            {text:'Values',value:'value',align:'right'},
-                            {text:'Action',align:'left',width:'15%',sortable:false}
-                            ]"
-                            :items="input.attribute_goods"
-                            class=""
-                        >
 
-                            <template v-slot:items="props">
-                                <td>{{ props.item.attribute.name }}</td>
-                                <td class="text-xs-right">{{ props.item.value }}</td>
-                                <td>
-                                    <v-btn class='button-action' v-on:click='table_attribute().showData(props.index)' color="primary" fab depressed small dark v-on="on">
-                                        <v-icon small>edit</v-icon>
-                                    </v-btn>
-                                    <v-btn class='button-action' v-on:click='table_attribute().delete(props.index)' color="red" fab small dark depressed>
-                                        <v-icon small>delete</v-icon>
-                                    </v-btn>
-
-                                </td>
-                            </template>
-                        </v-data-table>
-                        <v-btn color='primary' v-on:click='e6=4'>Continue</v-btn>
-
-                    </v-stepper-content>
-
-                    <!-- ==== STEPPER 4 ==== -->
-
-                    <v-stepper-step step="4" editable><h3>Goods Material</h3></v-stepper-step>
-
-                    <v-stepper-content step="4">
-                        <!-- <v-select v-model='temp_input.material_goods.name' :items="ref_input.material" item-text='name' return-object label="Select Material"></v-select> -->
-                        
-                        <v-text-field v-model="temp_input.material_goods.name" label="Name" required></v-text-field>
-
-                        <v-text-field v-model="temp_input.material_goods.total" label="Total" required></v-text-field>
-
-                        <v-text-field v-model="temp_input.material_goods.adjust" label="Adjust" required></v-text-field>
-                        
-                        <v-toolbar flat color="white" >
+                            <v-toolbar flat color="white" >
+                                <v-toolbar-title>Goods Material Data</v-toolbar-title>
+                                
+                            </v-toolbar>
                             
-                            <v-spacer></v-spacer>
-                            <v-btn v-if='temp_input.id_edit_material_goods != -1' color="red" dark v-on:click='table_material().canceledit()'>
-                                Cancel
-                            </v-btn>
+
+                            <v-data-table
+                                disable-initial-sort
+                                :headers="[
+                                {text:'Material', value:'name'},
+                                {text:'Total',value:'total',align:'right'},
+                                {text:'Adjust',value:'adjust',align:'right'},
+                                {text:'Action',align:'left',width:'15%',sortable:false}
+                                ]"
+                                :items="input.material_goods"
+                                class=""
+                            >
+
+                                <template v-slot:items="props">
+                                    <td>{{ props.item.name }}</td>
+                                    <td class="text-xs-right">{{ props.item.total }}</td>
+                                    <td class="text-xs-right">{{ props.item.adjust }}</td>
+                                    <td>
+                                        <v-btn class='button-action' v-on:click='table_material().showData(props.index)' color="primary" fab depressed small dark v-on="on">
+                                            <v-icon small>edit</v-icon>
+                                        </v-btn>
+                                        <v-btn class='button-action' v-on:click='table_material().delete(props.index)' color="red" fab small dark depressed>
+                                            <v-icon small>delete</v-icon>
+                                        </v-btn>
+
+                                    </td>
+                                </template>
+                            </v-data-table>
                             
-                            <v-btn color="primary" dark v-on:click='table_material().save()' v-html='temp_input.id_edit_material_goods == -1?"Add to Table":"Save Changes"'>
-                            </v-btn>
-                        </v-toolbar>
+                        </v-stepper-content>
+                        {{valid}}
+                        <v-btn v-on:click='save_goods()' >submit</v-btn>
+                        {{input}}
+                        <v-btn v-on:click='save_goods()' >sementara aja</v-btn>
                         
-
-
-                        <v-toolbar flat color="white" >
-                            <v-toolbar-title>Goods Material Data</v-toolbar-title>
-                            
-                        </v-toolbar>
+                        <v-btn v-on:click='save_goods()' >sementara aja</v-btn>
                         
-
-                        <v-data-table
-                            disable-initial-sort
-                            :headers="[
-                            {text:'Material', value:'name'},
-                            {text:'Total',value:'total',align:'right'},
-                            {text:'Adjust',value:'adjust',align:'right'},
-                            {text:'Action',align:'left',width:'15%',sortable:false}
-                            ]"
-                            :items="input.material_goods"
-                            class=""
-                        >
-
-                            <template v-slot:items="props">
-                                <td>{{ props.item.name }}</td>
-                                <td class="text-xs-right">{{ props.item.total }}</td>
-                                <td class="text-xs-right">{{ props.item.adjust }}</td>
-                                <td>
-                                    <v-btn class='button-action' v-on:click='table_material().showData(props.index)' color="primary" fab depressed small dark v-on="on">
-                                        <v-icon small>edit</v-icon>
-                                    </v-btn>
-                                    <v-btn class='button-action' v-on:click='table_material().delete(props.index)' color="red" fab small dark depressed>
-                                        <v-icon small>delete</v-icon>
-                                    </v-btn>
-
-                                </td>
-                            </template>
-                        </v-data-table>
-                        
-                    </v-stepper-content>
-
-                    <v-btn v-on:click='save_goods()' >submit</v-btn>
-                    {{input}}
-                    <v-btn v-on:click='save_goods()' >sementara aja</v-btn>
-                    {{input_before_edit}}
-                    <v-btn v-on:click='save_goods()' >sementara aja</v-btn>
-                    {{preview}}
-                </v-stepper>
-            </v-card>
+                    </v-stepper>
+                </v-card>
+            </v-form>
         </v-dialog>
 
         <v-toolbar flat color="white">
@@ -270,8 +273,9 @@ import axios from 'axios'
 export default {
     data () {
         return {
+            
+            valid:false,
             on:false,
-
             dialog_createedit:false,
             e6:1,
             dialog_stock:false,
@@ -384,8 +388,23 @@ export default {
             goods: []
         }
     },
-    methods: {
+    computed: {
+      rules () {
+        const rules = []
 
+        if (this.input.name) {
+          const rule =
+            v => (v || '').length <= 10 || 'A maximum of 255 characters is allowed'
+
+          rules.push(rule)
+        }
+
+        
+
+        return rules
+      }
+    },
+    methods: {
         table_attribute()
         {
             var self = this;
@@ -551,6 +570,13 @@ export default {
             }
 
             this.dialog_createedit = true;
+        },
+        clear_input(){
+            for (var key in self.input)
+            {
+                if(self.input[key])
+                    self.input[key] = null;
+            }
         },
         
         showTable(r)
@@ -802,6 +828,7 @@ export default {
               }).then((r)=> {
                     this.get_goods();
                     this.closedialog_createedit();
+                    this.clear_input();
                     swal("Good job!", "Data saved !", "success");
                 });
 
@@ -818,6 +845,7 @@ export default {
               }).then((r)=> {
                     this.get_goods();
                     this.closedialog_createedit();
+                    this.clear_input();
                     swal("Good job!", "Data saved !", "success");
                 });
             }
@@ -910,7 +938,7 @@ export default {
     mounted(){
         this.get_goods();
         this.get_master_data();
-        this.testing_input();
+        //this.testing_input();
 
     },
 }
