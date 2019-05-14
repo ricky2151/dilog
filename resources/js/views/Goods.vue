@@ -265,12 +265,10 @@
                             </v-data-table>
                             
                         </v-stepper-content>
-                        {{valid}}
-                        <v-btn v-on:click='save_goods()' >submit</v-btn>
-                        {{input}}
-                        <v-btn v-on:click='save_goods()' >sementara aja</v-btn>
                         
-                        <v-btn v-on:click='save_goods()' >sementara aja</v-btn>
+                        <v-btn v-on:click='save_goods()' >submit</v-btn>
+                        
+                        
                         
                     </v-stepper>
                 </v-card>
