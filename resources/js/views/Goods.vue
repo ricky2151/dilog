@@ -10,7 +10,7 @@
         <v-dialog v-model="dialog_createedit" fullscreen>
             <v-form v-model="valid" ref='formCreateEdit'>
                 <v-card>
-                    <v-toolbar dark color="red">
+                    <v-toolbar dark color="menu">
                         <v-btn icon dark v-on:click="closedialog_createedit()">
                             <v-icon>close</v-icon>
                         </v-btn>
@@ -27,45 +27,87 @@
 
                         <v-stepper-content step="1">
                             
-                                <v-text-field :rules="this.$list_validation.max_req" v-model='input.name'  label="Name"></v-text-field>
-                                
-                                <v-text-field :rules="this.$list_validation.max_req" v-model='input.code' label="Code" required></v-text-field>
-                                
-                                <v-text-field :rules="this.$list_validation.max" v-model='input.desc' label="Description" required></v-text-field>
-                                
-                                <v-text-field :rules="this.$list_validation.numeric_req" v-model='input.margin' label="Margin" required></v-text-field>
-                                
-                                <v-text-field :rules="this.$list_validation.numeric_req" v-model='input.value' label="Value" required></v-text-field>
-                                
-                                <v-text-field :rules="this.$list_validation.numeric_req" v-model='input.status' label="Status" required></v-text-field>
-                                
-                                <v-text-field :rules="this.$list_validation.numeric" v-model='input.last_buy_pricelist' label="Last Buy Price List" required></v-text-field>
-                                
-                                <v-text-field :rules="this.$list_validation.max" v-model='input.barcode_master' label="Barcode" required></v-text-field>
+                            <v-layout row>
+                                <v-flex xs9>
+                                    <v-text-field class="pa-2" :rules="this.$list_validation.max_req" v-model='input.name'  label="Name" counter=191></v-text-field>
+                                </v-flex>
+                                <v-flex xs3>
+                                    <v-text-field class="pa-2" :rules="this.$list_validation.max_req" v-model='input.code' label="Code" counter=191 required></v-text-field>
+                                </v-flex>
+                            </v-layout>
+                            
+                            <v-layout row>
+                                <v-flex xs12>
+                                    <v-text-field class="pa-2" :rules="this.$list_validation.max" v-model='input.desc' label="Description" counter=191 required></v-text-field>
+                                </v-flex>
+                            </v-layout>
 
-                                <v-text-field v-model='input.thumbnail_filename' label="Select Image" v-on:click='pickFile' prepend-icon='attach_file'></v-text-field>
-                                <input
-                                    id='btn_upload_thumbnail'
-                                    type="file"
-                                    style="display: none"
-                                    accept="image/*"
-                                    v-on:change='changeImage'
-                                >
-                                <img :src="preview.thumbnail" height="150" v-if="preview.thumbnail"/>
+                            <v-layout row>
+                                <v-flex xs6>
+                                    <v-text-field class="pa-2" :rules="this.$list_validation.numeric_req" v-model='input.margin' label="Margin" required></v-text-field>
+                                </v-flex>
+                                
+                                <v-flex xs6>
+                                    <v-text-field class="pa-2" :rules="this.$list_validation.numeric_req" v-model='input.status' label="Status" required></v-text-field>
+                                </v-flex>
+                            </v-layout>
 
-                                <v-select :rules="this.$list_validation.selecttf_req" v-model='input.avgprice_status' :items="ref_input.avgprice_status" item-text='name' item-value='value' label="Select Average Price Status"></v-select>
+                            <v-layout row>
+                                <v-flex xs6>
+                                    <v-text-field class="pa-2" :rules="this.$list_validation.numeric_req" v-model='input.value' label="Value" required></v-text-field>
+                                </v-flex>
+                                <v-flex xs6>
+                                    <v-text-field class="pa-2" :rules="this.$list_validation.numeric" v-model='input.last_buy_pricelist' label="Last Buy Price List" required></v-text-field>
+                                </v-flex>
+                            </v-layout>    
+
+                            <v-layout row>
+                                <v-flex xs12>
+                                    <v-text-field class="pa-2" :rules="this.$list_validation.max" v-model='input.barcode_master' label="Barcode" required></v-text-field>
+                                </v-flex>
+                            </v-layout>
+                                
+                            <v-layout row>
+                                <v-flex xs12>
+                                    <v-text-field v-model='input.thumbnail_filename' label="Select Image" v-on:click='pickFile' prepend-icon='attach_file'></v-text-field>
+                                    <input
+                                        id='btn_upload_thumbnail'
+                                        type="file"
+                                        style="display: none"
+                                        accept="image/*"
+                                        v-on:change='changeImage'
+                                    >
+                                    <img :src="preview.thumbnail" height="150" v-if="preview.thumbnail"/>
+                                </v-flex>
+                            </v-layout>
+                                
+                                
+                            <v-layout row>
+                                <v-flex xs12>
+                                    <v-select class='pa-2' :rules="this.$list_validation.selecttf_req" v-model='input.avgprice_status' :items="ref_input.avgprice_status" item-text='name' item-value='value' label="Select Average Price Status"></v-select>
+                                </v-flex>
+                            </v-layout>
+
+                            <v-layout row>
+                                <v-flex xs12>
+                                    <v-text-field class='pa-2' :rules="this.$list_validation.numeric" v-model='input.tax' label="Tax" required></v-text-field>
+                                </v-flex>
+                            </v-layout>
+
+                            <v-layout row>
+                                <v-flex xs12>
+                                    <v-select class='pa-2' :rules="this.$list_validation.selectdata_req"  v-model='input.unit_id' :items="ref_input.unit" item-text='name' item-value='id' label="Select Unit"></v-select>
+                                </v-flex>
+                            </v-layout>
+
+                            <v-layout row>
+                                <v-flex xs12>
+                                    <v-select class='pa-2' :rules="this.$list_validation.selectdata_req" v-model='input.cogs_id' :items="ref_input.cogs" item-text='name' item-value='id' label="Select COGS"></v-select>
+                                </v-flex>
+                            </v-layout>
 
                                 
-
-                                
-
-                                <v-text-field :rules="this.$list_validation.numeric" v-model='input.tax' label="Tax" required></v-text-field>
-
-                                <v-select :rules="this.$list_validation.selectdata_req"  v-model='input.unit_id' :items="ref_input.unit" item-text='name' item-value='id' label="Select Unit"></v-select>
-
-                                <v-select :rules="this.$list_validation.selectdata_req" v-model='input.cogs_id' :items="ref_input.cogs" item-text='name' item-value='id' label="Select COGS"></v-select>
-                                
-                                <v-btn color='primary' v-on:click='e6=2'>Continue</v-btn>
+                            <v-btn color='primary' v-on:click='e6=2'>Continue</v-btn>
                                 
                             
                         </v-stepper-content>
