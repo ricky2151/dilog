@@ -7,12 +7,23 @@ export default {
 
   	
   	Vue.prototype.$list_validation = {
+  		email_req:[
+  			v => v.length > 0 || 'Please fill the blank !',
+  			v => v.includes('@') || 'Please fill with email !',
+  		],
+
+  		email:[
+  			v => v.includes('@') || 'Please fill with email !'
+  		],
+
   		combodata_req:[
   			v => v.length > 0 || 'Please fill the blank !',
   		],
+
   		selectdata_req : [
   			v => v > 0 || 'Please fill the blank !',
   		],
+
   		selecttf_req : [
   			v => (v == 1 || v == 0) || 'Please fill the blank !',	
   		],

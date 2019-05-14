@@ -428,22 +428,6 @@ export default {
             goods: []
         }
     },
-    computed: {
-      rules () {
-        const rules = []
-
-        if (this.input.name) {
-          const rule =
-            v => (v || '').length <= 10 || 'A maximum of 255 characters is allowed'
-
-          rules.push(rule)
-        }
-
-        
-
-        return rules
-      }
-    },
     methods: {
         table_attribute()
         {
@@ -666,7 +650,7 @@ export default {
             }
             this.input.material_goods = temp_r.material_goods;
 
-            //taruh this.input.material_goods ke this.input_before_edit.material_goods
+            
             this.input_before_edit = JSON.parse(JSON.stringify(this.input));
             
         },
@@ -879,59 +863,68 @@ export default {
         },
         save_goods()
         {
-
-            if(this.idx_data_edit != -1) //jika sedang diedit
+            if(this.valid)
             {
-                axios.post('api/goods/' + this.goods[this.idx_data_edit].id,this.prepare_data_form_goods(),
+                if(this.idx_data_edit != -1) //jika sedang diedit
                 {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                }
-              }).then((r)=> {
-                    this.get_goods();
-                    this.closedialog_createedit();
-                    this.clear_input();
-                    swal("Good job!", "Data saved !", "success");
-                })
-              .catch(function (error)
-            {
-                if(error.response.status == 422)
-                {
-                    swal('Request Failed', 'Check your internet connection !', 'error');
-                }
-                else
-                {
-                    swal('Unkown Error', error.response.data , 'error');
-                }
-            });
+                    axios.post('api/goods/' + this.goods[this.idx_data_edit].id,this.prepare_data_form_goods(),
+                    {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    }
+                    }).then((r)=> {
+                        this.get_goods();
+                        this.closedialog_createedit();
+                        this.clear_input();
+                        this.idx_data_edit = -1;
+                        swal("Good job!", "Data saved !", "success");
+                    })
+                    .catch(function (error)
+                    {
+                        if(error.response.status == 422)
+                        {
+                            swal('Request Failed', 'Check your internet connection !', 'error');
+                        }
+                        else
+                        {
+                            swal('Unkown Error', error.response.data , 'error');
+                        }
+                    });
 
+                    
+                }
+                else //jika sedang tambah data
+                {
+
+                    axios.post('api/goods',this.prepare_data_form_goods(),
+                    {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                        }
+                    }).then((r)=> {
+                        this.get_goods();
+                        this.closedialog_createedit();
+                        this.clear_input();
+                        this.idx_data_edit = -1;
+                        swal("Good job!", "Data saved !", "success");
+                    })
+                    .catch(function (error)
+                    {   
+                        if(error.response.status == 422)
+                        {
+                            swal('Request Failed', 'Check your internet connection !', 'error');
+                        }
+                        else
+                        {
+                            swal('Unkown Error', error.response.data , 'error');
+                        }
+                    });                         
+                }
                 
             }
-            else //jika sedang tambah data
+            else
             {
-
-                axios.post('api/goods',this.prepare_data_form_goods(),
-                {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                }
-              }).then((r)=> {
-                    this.get_goods();
-                    this.closedialog_createedit();
-                    this.clear_input();
-                    swal("Good job!", "Data saved !", "success");
-                })
-              .catch(function (error)
-            {
-                if(error.response.status == 422)
-                {
-                    swal('Request Failed', 'Check your internet connection !', 'error');
-                }
-                else
-                {
-                    swal('Unkown Error', error.response.data , 'error');
-                }
-            });
+                swal('Form Is not Valid', "Please check your input" , 'error');
             }
         },
         delete_goods(idx_data_delete){
