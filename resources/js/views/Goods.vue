@@ -606,6 +606,7 @@ export default {
         showTable(r)
         {
             //console.log(r.data.items.goods[0]);
+
             this.goods = r.data.items.goods;
         },
         
@@ -1046,6 +1047,7 @@ export default {
 
     },
     mounted(){
+        
         this.get_goods();
         this.get_master_data();
         //this.testing_input();

@@ -72,6 +72,12 @@
                             
                             <v-layout row>
                                 <v-flex xs12>
+                                    <v-text-field :rules='this.$list_validation.max_req' counter=191 v-model='input.address' label="Address"></v-text-field>
+                                </v-flex>
+                            </v-layout>
+
+                            <v-layout row>
+                                <v-flex xs12>
                                     <v-text-field :rules='this.$list_validation.email_req' counter=191 v-model='input.email' label="Email"></v-text-field>
                                 </v-flex>
                             </v-layout>
@@ -117,13 +123,13 @@
                                         </v-chip>
                                     </template>
                             </v-combobox>
-                            <v-btn color='primary' v-on:click='e6=3'>Continue</v-btn>
+                            
                         </v-stepper-content>
 
                         
 
-                        <v-btn v-on:click='save_unit()' >submit</v-btn>
-                        {{input}}
+                        <v-btn v-on:click='save_warehouse()' >submit</v-btn>
+                        
                     </v-stepper>
                 </v-card>
                 
@@ -149,10 +155,10 @@
             <td class="text-xs-right">{{ props.item.telp }}</td>
             <td class="text-xs-right">{{ props.item.pic }}</td>
             <td>
-                <v-btn class='button-action' v-on:click='opendialog_createedit(props.index)' color="primary" fab depressed small dark v-on="on">
+                <v-btn class='button-action' v-on:click='get_data_before_edit(props.index)' color="primary" fab depressed small dark v-on="on">
                     <v-icon small>edit</v-icon>
                 </v-btn>
-                <v-btn class='button-action' v-on:click='delete_warehouse(props.index)' color="red" fab small dark depressed>
+                <v-btn class='button-action' v-on:click='delete_warehouses(props.index)' color="red" fab small dark depressed>
                     <v-icon small>delete</v-icon>
                 </v-btn>
 
@@ -255,11 +261,13 @@ export default {
         closedialog_createedit(){
             this.dialog_createedit = false;
         },
-        opendialog_createedit(idx_data_edit){
+        opendialog_createedit(idx_data_edit,r){
+            console.log('masuk opendialog_createedit : ' + idx_data_edit);
             if(idx_data_edit != -1)
             {
+                console.log('masuk if ');
                 this.idx_data_edit = idx_data_edit;
-                this.convert_data_input_goods(r);
+                this.convert_data_input_warehouse(r);
                 
             }
 
@@ -275,10 +283,12 @@ export default {
         showTable(r)
         {
             
-            this.warehouses = r.data.items.warehouses;
+            this.warehouses = r.data.items.warehouse;
         },
         convert_data_input_warehouse(r)
         {
+            console.log('masuk convert data');
+            console.log(r);
             var temp_r = r.data.items.warehouse;
             this.input.name = temp_r.name;
             this.input.address = temp_r.address;
@@ -431,7 +441,7 @@ export default {
             return formData;
         },
         get_warehouse() {
-
+            console.log('halo');
             axios.get('/api/warehouses', {
                 params:{
                     token: localStorage.getItem('token')
@@ -523,14 +533,14 @@ export default {
                 })
                 .then((willDelete) => {
                     if (willDelete) {
-                        axios.delete('api/warehouses/' + this.goods[idx_data_delete].id,{
+                        axios.delete('api/warehouses/' + this.warehouses[idx_data_delete].id,{
                             data:{
                                 token: localStorage.getItem('token')    
                             }
                             
                         }).then((r)=>{
-                            this.get_goods();
-                            swal("Good job!", "Data Deleted !", "success");
+                            this.get_warehouse();
+                            swal("Good job!", "DaRta Deleted !", "success");
                             
                         })
                         .catch(function (error)
@@ -550,7 +560,7 @@ export default {
         get_data_before_edit(idx_edit)
         {
             var id_edit = this.warehouses[idx_edit].id;
-            axios.get('/api/warehouse/' + id_edit, {
+            axios.get('/api/warehouses/' + id_edit, {
                 params:{
                     token: localStorage.getItem('token')
                 }
@@ -565,6 +575,7 @@ export default {
             })
             .catch(function (error)
             {
+                
                 if(error.response.status == 422)
                 {
                     swal('Request Failed', 'Check your internet connection !', 'error');
@@ -579,8 +590,9 @@ export default {
 
     },
     mounted(){
-        
-        this.get_my_location();
+        //console.log('masuksini');
+         this.get_warehouse();
+         this.get_my_location();
     },
 }
 </script>
