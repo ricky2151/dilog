@@ -686,6 +686,7 @@ export default {
                 //1. data goods yang BERUBAH SAJA
                 //2. data goods_attribute dan goods_category AKHIR 
                 //3. data material yang BERUBAH, DITAMBAH, & DIHAPUS
+                //4. jika thumbnail awal ada, lalu thumbnail akhir kosong (user menghapus gambar thumbnail), maka tambahin data is_image_deleted = true, jika tidak is_image_deleted = false
 
                 //step-step :
                 //1. kirim data goods yang berubah
@@ -785,6 +786,16 @@ export default {
                         counteridx++;
                     }
                 }
+
+                //4. tambahin is_image_deleted
+                if(this.input.thumbnail_file.length > 0 && this.input_before_edit.thumbnail_file == null)
+                {
+                    formData.append('is_image_deleted', '1');
+                }
+                else
+                {
+                    formData.append('is_image_deleted', '0');   
+                }
                 formData.append('_method', 'patch');
 
             }
@@ -854,6 +865,17 @@ export default {
                     'Content-type': 'application/json'
                 }
             }).then(r => this.showTable(r))
+            .catch(function (error)
+            {
+                if(error.response.status == 422)
+                {
+                    swal('Request Failed', 'Check your internet connection !', 'error');
+                }
+                else
+                {
+                    swal('Unkown Error', error.response.data , 'error');
+                }
+            });
         },
         save_goods()
         {
@@ -870,7 +892,18 @@ export default {
                     this.closedialog_createedit();
                     this.clear_input();
                     swal("Good job!", "Data saved !", "success");
-                });
+                })
+              .catch(function (error)
+            {
+                if(error.response.status == 422)
+                {
+                    swal('Request Failed', 'Check your internet connection !', 'error');
+                }
+                else
+                {
+                    swal('Unkown Error', error.response.data , 'error');
+                }
+            });
 
                 
             }
@@ -887,7 +920,18 @@ export default {
                     this.closedialog_createedit();
                     this.clear_input();
                     swal("Good job!", "Data saved !", "success");
-                });
+                })
+              .catch(function (error)
+            {
+                if(error.response.status == 422)
+                {
+                    swal('Request Failed', 'Check your internet connection !', 'error');
+                }
+                else
+                {
+                    swal('Unkown Error', error.response.data , 'error');
+                }
+            });
             }
         },
         delete_goods(idx_data_delete){
@@ -910,6 +954,17 @@ export default {
                             this.get_goods();
                             swal("Good job!", "Data Deleted !", "success");
                             
+                        })
+                        .catch(function (error)
+                        {
+                            if(error.response.status == 422)
+                            {
+                                swal('Request Failed', 'Check your internet connection !', 'error');
+                            }
+                            else
+                            {
+                                swal('Unkown Error', error.response.data , 'error');
+                            }
                         });
                     }
             });
@@ -926,6 +981,17 @@ export default {
                     'Content-type': 'application/json'
                 }
             }).then(r => this.fill_select_master_data(r))
+            .catch(function (error)
+            {
+                if(error.response.status == 422)
+                {
+                    swal('Request Failed', 'Check your internet connection !', 'error');
+                }
+                else
+                {
+                    swal('Unkown Error', error.response.data , 'error');
+                }
+            });
         },
         get_data_before_edit(idx_edit)
         {
@@ -943,6 +1009,17 @@ export default {
 
                 this.opendialog_createedit(idx_edit,r); //idx_edit bukan id_edit !
             })
+            .catch(function (error)
+            {
+                if(error.response.status == 422)
+                {
+                    swal('Request Failed', 'Check your internet connection !', 'error');
+                }
+                else
+                {
+                    swal('Unkown Error', error.response.data , 'error');
+                }
+            });
         },
 
 
