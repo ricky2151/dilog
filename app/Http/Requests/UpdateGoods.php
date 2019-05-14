@@ -50,6 +50,7 @@ class UpdateGoods extends FormRequest
             'material_goods_new.*.adjust'=> "string|nullable",
             'material_goods_new.*.name'=> "filled|required_with:material_goods_new.*.total,material_goods_new.*.adjust|string",
             'material_goods_delete.*.id'=> "filled|integer|exists:materials,id",
+            'is_image_delete' => "required|boolean"
         ];
     }
 
