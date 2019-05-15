@@ -8,8 +8,8 @@
     <div>
         
         <v-dialog v-model="dialog_createedit" fullscreen>
-            <v-form v-model="valid" ref='formCreateEdit'>
-                <v-card>
+            <v-form v-model="valid" ref='formCreateEdit' class='fixfullscreen'>
+                <v-card class='fixfullscreen'>
                     <v-toolbar dark color="menu">
                         <v-btn icon dark v-on:click="closedialog_createedit()">
                             <v-icon>close</v-icon>
@@ -830,6 +830,9 @@ export default {
 }
 .button-action i{
     font-size: 14px !important;
+}
+.fixfullscreen{
+    height: 100%;
 }
 
 </style>

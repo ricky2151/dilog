@@ -250,7 +250,7 @@ export default {
                 {
                     icon: "store",
                     title : "Goods Rack",
-                    route : "/goodsrack",
+                    action : "/goodsrack",
                 }
                
             ],
