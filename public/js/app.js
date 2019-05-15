@@ -4653,7 +4653,11 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
+<<<<<<< HEAD
+exports.push([module.i, "\n.color-text-sidebar\n{\n    color:#848484;\n    text-decoration: none;\n    font-size: 17px;\n}\n.ff-text-sidebar\n{\n    font-family: 'Open Sans',sans-serif;\n}\n", ""]);
+=======
 exports.push([module.i, "\n.color-text-sidebar\r\n{\r\n    color:#848484;\r\n    text-decoration: none;\r\n    font-size: 17px;\n}\n.ff-text-sidebar\r\n{\r\n    font-family: 'Open Sans',sans-serif;\n}\r\n", ""]);
+>>>>>>> CRUD-warehouse-scenario
 
 // exports
 
@@ -4710,7 +4714,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.text-link{\r\n    color:blue;\r\n    text-decoration: underline;\r\n    cursor:pointer;\n}\n.button-action{\r\n    width: 30px;\r\n    height: 30px;\n}\n.button-action i{\r\n    font-size: 14px !important;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.text-link{\n    color:blue;\n    text-decoration: underline;\n    cursor:pointer;\n}\n.button-action{\n    width: 30px;\n    height: 30px;\n}\n.button-action i{\n    font-size: 14px !important;\n}\n\n", ""]);
 
 // exports
 
@@ -4786,7 +4790,11 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
+<<<<<<< HEAD
+exports.push([module.i, "\n.text-link{\n    color:blue;\n    text-decoration: underline;\n    cursor:pointer;\n}\n.button-action{\n    width: 30px;\n    height: 30px;\n}\n.button-action i{\n    font-size: 14px !important;\n}\n\n", ""]);
+=======
 exports.push([module.i, "\n.text-link{\r\n    color:blue;\r\n    text-decoration: underline;\r\n    cursor:pointer;\n}\n.button-action{\r\n    width: 30px;\r\n    height: 30px;\n}\n.button-action i{\r\n    font-size: 14px !important;\n}\r\n\r\n", ""]);
+>>>>>>> CRUD-warehouse-scenario
 
 // exports
 
@@ -54870,11 +54878,19 @@ window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js")
 
 
 
+<<<<<<< HEAD
+ //AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM => api key berbayar (buat test aja)
+
+Vue.use(vue2_google_maps__WEBPACK_IMPORTED_MODULE_5__, {
+  load: {
+    key: 'AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM'
+=======
  //AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM => api key berbayar (buat test aja) 
 
 Vue.use(vue2_google_maps__WEBPACK_IMPORTED_MODULE_5__, {
   load: {
     key: ''
+>>>>>>> CRUD-warehouse-scenario
   }
 });
 Vue.use(vue_fullscreen__WEBPACK_IMPORTED_MODULE_3___default.a);
@@ -56377,8 +56393,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! D:\Kerjaan\dilog\dilog\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! D:\Kerjaan\dilog\dilog\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! /Users/kevingiovanni/Documents/Work/Warehousing/dilogdev/resources/js/app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! /Users/kevingiovanni/Documents/Work/Warehousing/dilogdev/resources/sass/app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

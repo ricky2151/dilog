@@ -13,7 +13,7 @@ import PluginValidation from './plugin/PluginValidation'
 Vue.use(PluginValidation);
 
 
-//AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM => api key berbayar (buat test aja) 
+//AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM => api key berbayar (buat test aja)
 Vue.use(VueGoogleMaps, {
   load: {
     key: '',
