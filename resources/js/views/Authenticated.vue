@@ -249,8 +249,8 @@ export default {
                 },
                 {
                     icon: "store",
-                    title : "Goods",
-                    route : "/goods",
+                    title : "Goods Rack",
+                    route : "/goodsrack",
                 }
                
             ],
