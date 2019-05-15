@@ -141,7 +141,7 @@ class GoodsController extends Controller
         DB::beginTransaction();
         try {
             $oldThumnail = $goods->find($id)->thumbnail;
-            $path = $this->goodsService->handleUpdateImageGetPath($request->file("thumbnail"),($goods->find($id)->name.Str::random(10)),$request["name"]);
+            $path = $this->goodsService->handleUpdateImageGetPath($request->file("thumbnail"),($goods->find($id)->name.Str::random(10)),$request["name"],$data["is_image_delete"]);
             is_null($path) ? $path = "" : $data["thumbnail"]=$this->path."/".$path;
             $data["user_id"] = $this->user["id"];
             
@@ -162,12 +162,11 @@ class GoodsController extends Controller
             $goods->updateManyAtribut($material_goods_update);
             $goods->deleteManyAtribut($material_goods_delete);
 
-            $this->goodsService->handleUpdateImage($request->file("thumbnail"),$oldThumnail, $path, $this->path);
+            $this->goodsService->handleUpdateImage($request->file("thumbnail"),$oldThumnail, $path, $this->path,$data["is_image_delete"]);
 
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollback();
-            // return $e;
             throw new DatabaseTransactionErrorException("Goods");
         }
 
@@ -186,10 +185,18 @@ class GoodsController extends Controller
         $this->goodsService->handleModelNotFound($id);
         deleteImage($this->goods->find($id)->thumbnail);
 
-        $this->goods->find($id)->attributes()->sync([]);
-        $this->goods->find($id)->categories()->sync([]);
-        $this->goods->find($id)->materials()->delete();
-        $this->goods->find($id)->delete();
+        DB::beginTransaction();
+        try {
+            $this->goods->find($id)->attributes()->sync([]);
+            $this->goods->find($id)->categories()->sync([]);
+            $this->goods->find($id)->materials()->delete();
+            $this->goods->find($id)->delete();
+            DB::commit();
+        }catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("Goods");
+        }
+        
 
         return formatResponse(false,(["goods"=>["goods deleted successfully"]]));
     }

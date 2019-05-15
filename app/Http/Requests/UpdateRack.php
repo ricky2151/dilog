@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use App\Exceptions\InvalidParameterException;
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateWarehouse extends FormRequest
+class UpdateRack extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,17 +26,8 @@ class UpdateWarehouse extends FormRequest
     public function rules()
     {
         return [
-            "name" => "filled|string",
-            "address" => "filled|string",
-            "lat" => "filled|string",
-            "lng" => "filled|string",
-            "telp" => "filled|string",
-            "email" => "string|email|unique:warehouses,email",
-            "pic" => "filled|string",
-            "racks_update.*.id" => "required_with:racks_update.*.name|filled|integer|exists:racks,id",
-            "racks_update.*.name" => "required_with:racks_update.*.id|filled|string",
-            "racks_delete.*.id" => "filled|integer|exists:racks,id",
-            "racks_new.*.name" => "filled|string"
+            'name' => "string|filled",
+            'warehouse_id' => "filled|integer|min:1|exists:warehouses,id"
         ];
     }
 

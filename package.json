@@ -27,6 +27,7 @@
     },
     "dependencies": {
         "vue-fullscreen": "^2.1.5",
-        "vue-swal": "^1.0.0"
+        "vue-swal": "^1.0.0",
+        "vue2-google-maps": "^0.10.6"
     }
 }

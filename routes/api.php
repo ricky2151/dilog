@@ -52,4 +52,7 @@ Route::group([
 
     //Material
     Route::resource('materials', 'MaterialController');
+
+    //Rack
+    Route::resource('racks', 'RackController');
 });
