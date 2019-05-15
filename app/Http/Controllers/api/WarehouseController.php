@@ -5,8 +5,11 @@ namespace App\Http\Controllers\api;
 use App\Http\Requests\UpdateWarehouse;
 use App\Http\Requests\StoreWarehouse;
 use App\Services\WarehouseService;
+use App\Exceptions\DatabaseTransactionErrorException;
 use App\Models\Warehouse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Image;
 use Storage;
 use File;
@@ -43,11 +46,20 @@ class WarehouseController extends Controller
     public function store(StoreWarehouse $request)
     {
         $data = $request->validated();
+        DB::beginTransaction();
+        try {
+            $racks = Arr::pull($data,'racks');
 
-        $path = $this->warehouseService->handleUploadImage($request->file("pic"),$this->path,$request["name"]);
-        $data["pic"] = $path;
+            $warehouse = $this->warehouse->create($data);
+            $warehouse->racks()->createMany($racks);
 
-        $this->warehouse->create($data);
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("Warehouse");
+        }
+
+
         return formatResponse(false,(["warehouse"=>["Warehouse successfully created"]]));
     }
 
@@ -63,8 +75,11 @@ class WarehouseController extends Controller
         $this->warehouseService->handleModelNotFound($id);
 
         $warehouse = $this->warehouse->find($id);
-        $warehouse["pic"] = Storage::url($warehouse["pic"]);
-        return formatResponse(false,(["warehouse"=>$warehouse]));
+        $warehouse = collect($warehouse);
+        
+        $concatenated = $warehouse->union(["racks"=>$this->warehouse->find($id)->racks]);
+
+        return formatResponse(false,(["warehouse"=>$concatenated]));
     }
 
     /**
@@ -77,13 +92,36 @@ class WarehouseController extends Controller
     public function update(UpdateWarehouse $request, $id)
     {
         $data = $request->validated();
+
         $this->warehouseService->handleInvalidParameter($id);
         $this->warehouseService->handleModelNotFound($id);
-        
-        $path = $this->warehouseService->handleUpdateImage($request->file("pic"),$this->path,$this->warehouse->find($id)->name,$this->warehouse->find($id)->pic,$request["name"]);
-        is_null($path) ? "" : $data["pic"]=$path;
 
-        $warehouse = $this->warehouse->find($id)->update($data);
+        $racks_delete = Arr::pull($data,'racks_delete');
+        $racks_update = Arr::pull($data,'racks_update');
+        
+        $this->warehouseService->checkRelationship($id,collect($racks_delete)->pluck("id"));
+        $this->warehouseService->checkRelationship($id,collect($racks_update)->pluck("id"));
+
+        $warehouse = $this->warehouse->find($id);
+
+        DB::beginTransaction();
+        try {
+            $racks_new = Arr::pull($data,'racks_new');
+
+            $warehouse->update($data);
+            is_null($racks_new) ? "" : $warehouse->racks()->createMany($racks_new);
+            $warehouse->updateManyAtribut($racks_update);
+            $warehouse->deleteManyAtribut($racks_delete);
+
+            DB::commit();
+        }catch (\Throwable $e) {
+            DB::rollback();
+            return $e;
+            throw new DatabaseTransactionErrorException("Warehouse");
+        }
+
+        
+        
         return formatResponse(false,(["warehouse"=>["warehouse was successfully updated"]]));
     }
 
@@ -97,9 +135,16 @@ class WarehouseController extends Controller
     {
         $this->warehouseService->handleInvalidParameter($id);
         $this->warehouseService->handleModelNotFound($id);
-        deleteImage($this->warehouse->find($id)->pic);
+        DB::beginTransaction();
+        try {
+            $this->warehouse->find($id)->racks()->delete();
+            $this->warehouse->find($id)->delete();
 
-        $this->warehouse->find($id)->delete();
+            DB::commit();
+        }catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("Warehouse");
+        }
         return formatResponse(false,(["warehouse"=>["warehouse deleted successfully"]]));
     }
 }

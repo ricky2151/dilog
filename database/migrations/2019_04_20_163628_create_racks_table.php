@@ -18,6 +18,7 @@ class CreateRacksTable extends Migration
             $table->string('name');
             $table->integer('warehouse_id')->unsigned();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

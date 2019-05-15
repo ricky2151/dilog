@@ -32,7 +32,8 @@ class StoreWarehouse extends FormRequest
             "lng" => "required|string",
             "telp" => "required|string",
             "email" => "required|string|email|unique:warehouses,email",
-            "pic" => "required|image|max:2048|mimes:jpeg,bmp,png,jpg" 
+            "pic" => "required|string",
+            "racks.*.name" => "required|string"
         ];
     }
 
