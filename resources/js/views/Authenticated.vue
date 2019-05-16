@@ -251,6 +251,11 @@ export default {
                     icon: "store",
                     title : "Goods Rack",
                     action : "/goodsrack",
+                },
+                {
+                    icon: "monetization_on",
+                    title : "COGS",
+                    action : "/cogs",
                 }
                
             ],

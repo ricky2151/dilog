@@ -136,8 +136,8 @@
             class=""
         >
         <template v-slot:items="props">
-            <td>{{ props.item.nominal }}</td>
-            <td class="text-xs-right">{{ props.item.name }}</td>
+            <td>{{ props.item.name }}</td>
+            <td class="text-xs-right">{{ props.item.nominal }}</td>
             <td class="text-xs-right">{{ props.item.types.name }}</td>
             <td>
                 <v-btn class='button-action' v-on:click='get_data_before_edit(props.index)' color="primary" fab depressed small dark v-on="on">
@@ -191,45 +191,10 @@ export default {
 
             ref_input:
             {
-                user:[
-                    {id:6,name:'ricky'},
-                    {id:7,name:'roy'},
-                    {id:8,name:'kevin'},
-                    {id:9,name:'thomas'},
-                ],
-                unit:[
-                    {id:6,name:'kilogram'},
-                    {id:7,name:'ton'},
-                    {id:8,name:'pcs'},
-                    {id:9,name:'cm'},
-                ],
-                cogs:[
+                types:[
                     {id:6,name:'HPP Penjualan'},
                     {id:7,name:'HPP Pembelian'},
-                    {id:8,name:'HPP xxxx'},
-                    {id:9,name:'HPP yyyyy'},
                 ],
-                category:[
-                    {id:5,name:'kayu'},
-                    {id:4,name:'batang'},
-                    {id:3,name:'piring'},
-                ],
-                attribute:[
-                    {id:5,name:'Warna'},
-                    {id:4,name:'Ukuran'},
-                    {id:3,name:'Diameter'},
-                ],
-                material:[
-                    {id:5,name:'piring cantik'},
-                    {id:4,name:'payung cantik'},
-                    {id:3,name:'gelas cantik'},
-                ],
-
-                //statis
-                avgprice_status:[
-                    {value:1,name:'True'},
-                    {value:0,name:'False'},
-                ]
             },
             
 
@@ -237,19 +202,17 @@ export default {
 
             headers: [
                 { text: 'Name', value: 'name'},
-                { text: 'Code', value: 'code', align:'right' },
-                { text: 'Value', value: 'value', align:'right' },
-                { text: 'Status', value: 'status', align:'right' },
-                { text: 'Last Buy Pricelist', value: 'last_buy_pricelist', align:'right' },
+                { text: 'Nominal', value: 'nominal', align:'right' },
+                { text: 'Type', value: 'type', align:'right' },
                 { text: 'Action', align:'left',width:'15%',sortable:false},
             ],
 
 
-            goods: []
+            cogs: []
         }
     },
     methods: {
-        table_attribute()
+        table_cogs_component()
         {
             var self = this;
             return{
@@ -257,41 +220,41 @@ export default {
                 
                 showData(idx){
                     
-                    self.temp_input.attribute_goods = JSON.parse(JSON.stringify(self.input.attribute_goods[idx]));
-                    self.temp_input.id_edit_attribute_goods = idx;
+                    self.temp_input.cogs_components = JSON.parse(JSON.stringify(self.input.cogs_components[idx]));
+                    self.temp_input.id_edit_cogs_component = idx;
                 },
                 clearTempInput(){
-                    for (var key in self.temp_input.attribute_goods)
+                    for (var key in self.temp_input.cogs_components)
                     {
-                        if(self.temp_input.attribute_goods[key])
-                            self.temp_input.attribute_goods[key] = null;
+                        if(self.temp_input.cogs_components[key])
+                            self.temp_input.cogs_components[key] = null;
                     }
                     
                 },
                 save(){ //bisa edit / add
-                    var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_attribute_goods));
+                    var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_cogs_component));
                     if(id_edit == -1)
                     {
-                        var temp = JSON.parse(JSON.stringify(self.temp_input.attribute_goods));
+                        var temp = JSON.parse(JSON.stringify(self.temp_input.cogs_components));
                     
-                        self.input.attribute_goods.push(temp);
+                        self.input.cogs_components.push(temp);
                         
                     }
                     else
                     {
-                        self.input.attribute_goods[id_edit] = JSON.parse(JSON.stringify(self.temp_input.attribute_goods));
-                        self.temp_input.id_edit_attribute_goods = -1;
+                        self.input.cogs_components[id_edit] = JSON.parse(JSON.stringify(self.temp_input.cogs_components));
+                        self.temp_input.id_edit_cogs_component = -1;
 
                     }
                     this.clearTempInput();
                 },
                 canceledit(){
                     this.clearTempInput();
-                    self.temp_input.id_edit_attribute_goods = -1;
+                    self.temp_input.id_edit_cogs_component = -1;
                 },
                 delete(idx)
                 {
-                    self.input.attribute_goods.splice(idx,1);
+                    self.input.cogs_components.splice(idx,1);
                 }
 
 
@@ -299,107 +262,7 @@ export default {
             }
         },
 
-        table_material()
-        {
-            var self = this;
-            return{
-
-                
-                showData(idx){
-                    
-                    self.temp_input.material_goods = JSON.parse(JSON.stringify(self.input.material_goods[idx]));
-                    self.temp_input.id_edit_material_goods = idx;
-                },
-                clearTempInput(){
-
-                   
-                    for (var key in self.temp_input.material_goods)
-                    {
-                        if(self.temp_input.material_goods[key])
-                            self.temp_input.material_goods[key] = null;
-                    }
-                    
-                },
-                save(){ //bisa edit / add
-                    var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_material_goods));
-                    if(id_edit == -1)
-                    {
-                        var temp = JSON.parse(JSON.stringify(self.temp_input.material_goods));
-                        console.log(temp);
-                        self.input.material_goods.push(temp);
-                        
-                    }
-                    else
-                    {
-                        
-                        self.input.material_goods[id_edit] = JSON.parse(JSON.stringify(self.temp_input.material_goods));
-                        
-                        self.temp_input.id_edit_material_goods = -1;
-
-
-                    }
-                    this.clearTempInput();
-                },
-                canceledit(){
-                    this.clearTempInput();
-                    self.temp_input.id_edit_material_goods = -1;
-                },
-                delete(idx)
-                {
-                    self.input.material_goods.splice(idx,1);
-                }
-
-
-
-            }
-        },
-
-        removeChip(item){
-            this.input.category_goods.splice(this.input.category_goods.indexOf(item), 1);
-            this.input.category_goods = [...this.input.category_goods];
-        },
-        checkItemInList(){
-            var temp = this.input.category_goods;
-            if (!temp[temp.length - 1].hasOwnProperty('id')) //artinya cuman asal enter, tanpa ambil item dari ref_input
-            {
-                this.removeChip(temp[temp.length - 1]);
-            }
-        },
-
-
-        changeImage(e){
-            const files = e.target.files;
-
-            if(files[0] !== undefined) {
-                console.log(files[0].size);
-                if(((files[0].size / 1024) / 1024) < 2)
-                {
-                    
-                    
-                    
-                    this.input.thumbnail_filename = files[0].name;
-
-                    const fr = new FileReader ()
-                    fr.readAsDataURL(files[0])
-                    fr.addEventListener('load', () => {
-                        this.preview.thumbnail = fr.result; //jadi preview
-                        this.input.thumbnail_file = files[0]; //yang dikirim ke server
-                    })
-                    
-                }
-                else
-                {
-                    
-                    swal("File is to Big", "Pleas uload file with size < 2 MB !", "error");
-                }
-            } else {
-                swal("Your file is empty !", "Please Upload Your File !", "error");
-                
-            }
-        },
-        pickFile () {
-            var el = document.getElementById('btn_upload_thumbnail').click();
-        },
+        
         
 
         closedialog_createedit(){
@@ -409,7 +272,7 @@ export default {
             if(idx_data_edit != -1)
             {
                 this.idx_data_edit = idx_data_edit;
-                this.convert_data_input_goods(r);
+                this.convert_data_input_cogs(r);
                 
             }
 
@@ -427,55 +290,30 @@ export default {
         {
             //console.log(r.data.items.goods[0]);
 
-            this.goods = r.data.items.goods;
+            this.cogs = r.data.items.cogs;
         },
         
         fill_select_master_data(r)
         {
             //console.log(r.data.items[0].units);
-            this.ref_input.unit = r.data.items[0].units;
-            this.ref_input.cogs = r.data.items[0].cogs;
-            this.ref_input.category = r.data.items[0].categories;
-            this.ref_input.attribute = r.data.items[0].attributes;
-            this.ref_input.material = r.data.items[0].materials;
+            this.ref_input.types = r.data.items[0].types;
         },
-        convert_data_input_goods(r)
+        convert_data_input_cogs(r)
         {
-            var temp_r = r.data.items.goods;
+            var temp_r = r.data.items.cogs;
             this.input.name = temp_r.name;
-            this.input.code = temp_r.code;
-            this.input.desc = temp_r.desc;
-            this.input.margin = temp_r.margin;
-            this.input.value = temp_r.value;
-            this.input.status = temp_r.status;
-            this.input.last_buy_pricelist = temp_r.last_buy_pricelist;
-            this.input.barcode_master = temp_r.barcode_master;
-            this.input.avgprice_status = temp_r.avgprice_status;
-            this.input.tax = temp_r.tax;
-            this.input.unit_id = temp_r.unit_id;
-            this.input.cogs_id = temp_r.cogs_id;
-            this.preview.thumbnail = temp_r.thumbnail;
+            this.input.nominal = temp_r.nominal;
+            this.input.type_id = temp_r.type_id;
+            
+            this.input.cogs_components = temp_r.cogs_components;
 
-            console.log(temp_r.category_goods);
-            this.input.category_goods = temp_r.category_goods;
-
-            for(var i = 0;i<temp_r.attribute_goods.length;i++)
-            {  
-                this.input.attribute_goods.push({
-                    attribute:{
-                        id: temp_r.attribute_goods[i].id,
-                        name: temp_r.attribute_goods[i].name,
-                    },
-                    value:temp_r.attribute_goods[i].value,
-                })
-            }
-            this.input.material_goods = temp_r.material_goods;
+            
 
             
             this.input_before_edit = JSON.parse(JSON.stringify(this.input));
             
         },
-        prepare_data_form_goods()
+        prepare_data_form_cogs()
         {
             //prepare data selalu dari this.input, tapi bandingkan dulu dengan this.input_before_edit
             
@@ -488,42 +326,21 @@ export default {
             {
 
                 //data yang harus dikirim saat update :
-                //1. data goods yang BERUBAH SAJA
-                //2. data goods_attribute dan goods_category AKHIR 
-                //3. data material yang BERUBAH, DITAMBAH, & DIHAPUS
-                //4. jika thumbnail awal ada, lalu thumbnail akhir kosong (user menghapus gambar thumbnail), maka tambahin data is_image_deleted = true, jika tidak is_image_deleted = false
+                //1. data cogs yang BERUBAH SAJA
+                //2. data cogs_components yang BERUBAH, DITAMBAH, & DIHAPUS
 
                 //step-step :
-                //1. kirim data goods yang berubah
+                //1. kirim data cogs yang berubah
                 if(this.input.name != this.input_before_edit.name) formData.append('name', this.input.name);
-                if(this.input.code != this.input_before_edit.code) formData.append('code', this.input.code);
-                if(this.input.desc != this.input_before_edit.desc) formData.append('desc', this.input.desc);
-                if(this.input.margin != this.input_before_edit.margin) formData.append('margin', this.input.margin);
-                if(this.input.value != this.input_before_edit.value) formData.append('value', this.input.value);
-                if(this.input.status != this.input_before_edit.status) formData.append('status', this.input.status);
-                if(this.input.last_buy_pricelist != this.input_before_edit.last_buy_pricelist) formData.append('last_buy_pricelist', this.input.last_buy_pricelist);
-                if(this.input.barcode_master != this.input_before_edit.barcode_master) formData.append('barcode_master', this.input.barcode_master);
-                if(this.input.thumbnail_file != this.input_before_edit.thumbnail_file) formData.append('thumbnail', this.input.thumbnail_file); 
-                if(this.input.avgprice_status != this.input_before_edit.avgprice_status) formData.append('avgprice_status', this.input.avgprice_status);
-                if(this.input.tax != this.input_before_edit.tax) formData.append('tax', this.input.tax);
-                if(this.input.unit_id != this.input_before_edit.unit_id) formData.append('unit_id', this.input.unit_id);
-                if(this.input.cogs_id != this.input_before_edit.cogs_id) formData.append('cogs_id', this.input.cogs_id);
+                if(this.input.nominal != this.input_before_edit.nominal) formData.append('nominal', this.input.nominal);
+                if(this.input.type_id != this.input_before_edit.type_id) formData.append('type_id', this.input.type_id);
 
-                //2. kirim data goods_attribute dan goods_category
-                for(var i = 0;i<this.input.category_goods.length;i++)
-                {
-                    formData.append('category_goods[' + i + '][category_id]',this.input.category_goods[i].id);
-                }
 
-                for(var i = 0;i<this.input.attribute_goods.length;i++)
-                {
-                    console.log(this.input.attribute_goods[i]);
-                    formData.append('attribute_goods[' + i + '][attribute_id]',this.input.attribute_goods[i].attribute.id);
-                    formData.append('attribute_goods[' + i + '][value]',this.input.attribute_goods[i].value);
+                
 
-                }
+                
 
-                //3. kirim data material yang berubah, ditambah, dan dihapus
+                //2. kirim data cogs_component yang berubah, ditambah, dan dihapus
                 
                 //cek di input cocokin dengan input_before_edit
                 //1. cek apakah ada id nya atau tidak, jika tidak memiliki id, pasti itu tambah baru
@@ -532,23 +349,23 @@ export default {
                 //temp adalah data dari input
                 //temp2 adalah data dari input_before_edit
                 var counteridx = 0;
-                for(var i = 0;i<this.input.material_goods.length;i++)
+                for(var i = 0;i<this.input.cogs_components.length;i++)
                 {
-                    var temp = this.input.material_goods[i];
+                    var temp = this.input.cogs_components[i];
                     if(temp.id == null)
                     {
-                        formData.append('material_goods_new[' + counteridx + '][name]', temp.name);
-                        formData.append('material_goods_new[' + counteridx + '][adjust]', temp.adjust);
-                        formData.append('material_goods_new[' + counteridx + '][total]', temp.total);
+                        formData.append('cogs_components_new[' + counteridx + '][name]', temp.name);
+                        formData.append('cogs_components_new[' + counteridx + '][value]', temp.value);
+                        formData.append('cogs_components_new[' + counteridx + '][info]', temp.info);
                         counteridx++;
                     }
                     else
                     {
                         //cocokan dengan input_before_edit
                         var edittrue = false;
-                        for(var j = 0;j<this.input_before_edit.material_goods.length;j++)
+                        for(var j = 0;j<this.input_before_edit.cogs_components.length;j++)
                         {
-                            var temp2 = this.input_before_edit.material_goods[i];
+                            var temp2 = this.input_before_edit.cogs_components[i];
                             if(temp.id == temp2.id)
                             {
                                 if(temp.name != temp2.name || temp.adjust != temp2.adjust || temp.total != temp2.total) //jika ada salah satu saja yang berbeda, maka ini pasti diedit
@@ -561,10 +378,9 @@ export default {
 
                         if(edittrue)
                         {
-                            formData.append('material_goods_update[' + counteridx + '][id]', temp.id);
-                            formData.append('material_goods_update[' + counteridx + '][name]', temp.name);
-                            formData.append('material_goods_update[' + counteridx + '][adjust]', temp.adjust);
-                            formData.append('material_goods_update[' + counteridx + '][total]', temp.total);
+                            formData.append('cogs_components_new[' + counteridx + '][name]', temp.name);
+                            formData.append('cogs_components_new[' + counteridx + '][value]', temp.value);
+                            formData.append('cogs_components_new[' + counteridx + '][info]', temp.info);
                             counteridx++;
                         }
 
@@ -573,12 +389,12 @@ export default {
 
                 //cek di input_before_edit cocokin dengan input
                 //1. jika ada data dengan id yang tidak ada di data input, berarti data tersebut pasti dihapus
-                for(var i = 0;i<this.input_before_edit.material_goods.length;i++)
+                for(var i = 0;i<this.input_before_edit.cogs_components.length;i++)
                 {
                     var deletetrue = true;
-                    for(var j=0;j<this.input.material_goods.length;j++)
+                    for(var j=0;j<this.input.cogs_components.length;j++)
                     {
-                        if(this.input.material_goods[j].id == this.input_before_edit.material_goods[i].id)
+                        if(this.input.cogs_components[j].id == this.input_before_edit.cogs_components[i].id)
                         {
                             deletetrue = false;
                             break;
@@ -587,20 +403,12 @@ export default {
 
                     if(deletetrue)
                     {
-                        formData.append('material_goods_delete[' + counteridx + '][id]', this.input_before_edit.material_goods[i].id);
+                        formData.append('cogs_components_delete[' + counteridx + '][id]', this.input_before_edit.cogs_components[i].id);
                         counteridx++;
                     }
                 }
 
-                //4. tambahin is_image_deleted
-                if(this.input.thumbnail_file.length > 0 && this.input_before_edit.thumbnail_file == null)
-                {
-                    formData.append('is_image_deleted', '1');
-                }
-                else
-                {
-                    formData.append('is_image_deleted', '0');   
-                }
+                
                 formData.append('_method', 'patch');
 
             }
@@ -608,46 +416,26 @@ export default {
             {
 
                 //data-data yang harus dikirim : 
-                //1. semua data goods
-                //2. semua data attribute,category, dan material
+                //1. semua data cogs
+                //2. semua data cogs_component
 
                 //step-step : 
-                //1. kirim data goods
+                //1. kirim data cogs
                 formData.append('name', this.input.name);
-                formData.append('code', this.input.code);
-                formData.append('desc', this.input.desc);
-                formData.append('margin', this.input.margin);
-                formData.append('value', this.input.value);
-                formData.append('status', this.input.status);
-                formData.append('last_buy_pricelist', this.input.last_buy_pricelist);
-                formData.append('barcode_master', this.input.barcode_master);
-                formData.append('thumbnail', this.input.thumbnail_file); 
-                formData.append('avgprice_status', this.input.avgprice_status);
-                formData.append('tax', this.input.tax);
-                formData.append('unit_id', this.input.unit_id);
-                formData.append('cogs_id', this.input.cogs_id);
+                formData.append('nominal', this.input.nominal);
+                formData.append('type_id', this.input.type_id);
 
-                //2. kirim data attribute,category, dan material
+                //2. kirim data cogs_component
 
-                for(var i = 0;i<this.input.material_goods.length;i++)
+                for(var i = 0;i<this.input.cogs_components.length;i++)
                 {
-                    formData.append('material_goods[' + i + '][adjust]',this.input.material_goods[i].adjust);
-                    formData.append('material_goods[' + i + '][total]',this.input.material_goods[i].total);
-                    formData.append('material_goods[' + i + '][name]',this.input.material_goods[i].name);
+                    formData.append('cogs_components_new[' + i + '][name]', temp.name);
+                    formData.append('cogs_components_new[' + i + '][value]', temp.value);
+                    formData.append('cogs_components_new[' + i + '][info]', temp.info);
 
                 }
 
-                for(var i = 0;i<this.input.category_goods.length;i++)
-                {
-                    formData.append('category_goods[' + i + '][category_id]',this.input.category_goods[i].id);
-                }
-
-                for(var i = 0;i<this.input.attribute_goods.length;i++)
-                {
-                    formData.append('attribute_goods[' + i + '][attribute_id]',this.input.attribute_goods[i].attribute.id);
-                    formData.append('attribute_goods[' + i + '][value]',this.input.attribute_goods[i].value);
-
-                }
+                
 
             }
 
@@ -658,9 +446,9 @@ export default {
             formData.append('token', localStorage.getItem('token'));
             return formData;
         },
-        get_goods() {
+        get_cogs() {
 
-            axios.get('/api/goods', {
+            axios.get('/api/cogs', {
                 params:{
                     token: localStorage.getItem('token')
                 }
@@ -682,19 +470,19 @@ export default {
                 }
             });
         },
-        save_goods()
+        save_cogs()
         {
             if(this.valid)
             {
                 if(this.idx_data_edit != -1) //jika sedang diedit
                 {
-                    axios.post('api/goods/' + this.goods[this.idx_data_edit].id,this.prepare_data_form_goods(),
+                    axios.post('api/cogs/' + this.cogs[this.idx_data_edit].id,this.prepare_data_form_cogs(),
                     {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     }
                     }).then((r)=> {
-                        this.get_goods();
+                        this.get_cogs();
                         this.closedialog_createedit();
                         this.clear_input();
                         this.idx_data_edit = -1;
@@ -717,13 +505,13 @@ export default {
                 else //jika sedang tambah data
                 {
 
-                    axios.post('api/goods',this.prepare_data_form_goods(),
+                    axios.post('api/cogs',this.prepare_data_form_cogs(),
                     {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                         }
                     }).then((r)=> {
-                        this.get_goods();
+                        this.get_cogs();
                         this.closedialog_createedit();
                         this.clear_input();
                         this.idx_data_edit = -1;
@@ -748,7 +536,7 @@ export default {
                 swal('Form Is not Valid', "Please check your input" , 'error');
             }
         },
-        delete_goods(idx_data_delete){
+        delete_cogs(idx_data_delete){
             
             swal({
                     title: "Are you sure want to delete this item?",
@@ -759,13 +547,13 @@ export default {
                 })
                 .then((willDelete) => {
                     if (willDelete) {
-                        axios.delete('api/goods/' + this.goods[idx_data_delete].id,{
+                        axios.delete('api/cogs/' + this.cogs[idx_data_delete].id,{
                             data:{
                                 token: localStorage.getItem('token')    
                             }
                             
                         }).then((r)=>{
-                            this.get_goods();
+                            this.get_cogs();
                             swal("Good job!", "Data Deleted !", "success");
                             
                         })
@@ -785,7 +573,7 @@ export default {
         },
         get_master_data()
         {
-            axios.get('/api/goods/create', {
+            axios.get('/api/cogs/create', {
                 params:{
                     token: localStorage.getItem('token')
                 }
@@ -809,8 +597,8 @@ export default {
         },
         get_data_before_edit(idx_edit)
         {
-            var id_edit = this.goods[idx_edit].id;
-            axios.get('/api/goods/' + id_edit, {
+            var id_edit = this.cogs[idx_edit].id;
+            axios.get('/api/cogs/' + id_edit, {
                 params:{
                     token: localStorage.getItem('token')
                 }
@@ -868,7 +656,7 @@ export default {
     },
     mounted(){
         
-        this.get_goods();
+        this.get_cogs();
         this.get_master_data();
         //this.testing_input();
 

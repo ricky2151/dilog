@@ -91,11 +91,11 @@
                             <v-toolbar flat color="white" >
                                 
                                 <v-spacer></v-spacer>
-                                <v-btn v-if='temp_input.id_edit_price_sellings != -1' color="red" dark v-on:click='table_price_selling().canceledit()'>
+                                <v-btn v-if='temp_input.id_edit_price_selling != -1' color="red" dark v-on:click='table_price_selling().canceledit()'>
                                     Cancel
                                 </v-btn>
                                 
-                                <v-btn color="primary" dark v-on:click='table_price_selling().save()' v-html='temp_input.id_edit_price_sellings == -1?"Add to Table":"Save Changes"'>
+                                <v-btn color="primary" dark v-on:click='table_price_selling().save()' v-html='temp_input.id_edit_price_selling == -1?"Add to Table":"Save Changes"'>
                                 </v-btn>
                             </v-toolbar>
                             
@@ -292,7 +292,7 @@ export default {
             },
 
             temp_input:{
-                id_edit_price_sellings:-1, //artinya add data,
+                id_edit_price_selling:-1, //artinya add data,
                 id_edit_batch:-1, //artinya add data,
                 price_sellings:
                 {
@@ -371,7 +371,7 @@ export default {
                 showData(idx){
                     
                     self.temp_input.price_sellings = JSON.parse(JSON.stringify(self.input.price_sellings[idx]));
-                    self.temp_input.id_edit_price_sellings = idx;
+                    self.temp_input.id_edit_price_selling = idx;
                 },
                 clearTempInput(){
                     for (var key in self.temp_input.price_sellings)
@@ -382,7 +382,7 @@ export default {
                     
                 },
                 save(){ //bisa edit / add
-                    var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_price_sellings));
+                    var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_price_selling));
                     if(id_edit == -1)
                     {
                         var temp = JSON.parse(JSON.stringify(self.temp_input.price_sellings));
@@ -393,14 +393,14 @@ export default {
                     else
                     {
                         self.input.price_sellings[id_edit] = JSON.parse(JSON.stringify(self.temp_input.price_sellings));
-                        self.temp_input.id_edit_price_sellings = -1;
+                        self.temp_input.id_edit_price_selling = -1;
 
                     }
                     this.clearTempInput();
                 },
                 canceledit(){
                     this.clearTempInput();
-                    self.temp_input.id_edit_price_sellings = -1;
+                    self.temp_input.id_edit_price_selling = -1;
                 },
                 delete(idx)
                 {
