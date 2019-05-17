@@ -6,6 +6,8 @@ use App\Http\Requests\StoreRack;
 use App\Http\Requests\UpdateRack;
 use App\Services\RackService;
 use App\Models\Rack;
+use App\Exceptions\DatabaseTransactionErrorException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -86,8 +88,17 @@ class RackController extends Controller
     {
         $this->rackService->handleInvalidParameter($id);
         $this->rackService->handleModelNotFound($id);
+        DB::beginTransaction();
+        try {
+            $this->rack->find($id)->goodsRack()->delete();
+            $this->rack->find($id)->delete();
 
-        $this->rack->find($id)->delete();
+            DB::commit();
+        }catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("Rack");
+        }
+        
         return formatResponse(false,(["rack"=>["rack deleted successfully"]]));
     }
 }

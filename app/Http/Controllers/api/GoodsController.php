@@ -183,17 +183,21 @@ class GoodsController extends Controller
     {
         $this->goodsService->handleInvalidParameter($id);
         $this->goodsService->handleModelNotFound($id);
-        deleteImage($this->goods->find($id)->thumbnail);
-
+        $thumbnail = $this->goods->find($id)->thumbnail;
         DB::beginTransaction();
         try {
             $this->goods->find($id)->attributes()->sync([]);
             $this->goods->find($id)->categories()->sync([]);
             $this->goods->find($id)->materials()->delete();
+            $this->goods->find($id)->goodsRack()->delete();
+
             $this->goods->find($id)->delete();
+            deleteImage($thumbnail);
+
             DB::commit();
         }catch (\Throwable $e) {
             DB::rollback();
+            return $e;
             throw new DatabaseTransactionErrorException("Goods");
         }
         

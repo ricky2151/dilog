@@ -10,14 +10,14 @@ class CogsComponentService
 {
     public function handleEmptyModel(){
         if(CogsComponent::all()->count() === 0){
-            throw new CustomModelNotFoundException("cogsComponent"); 
+            throw new CustomModelNotFoundException("cogs_component"); 
         } 
 
     }
 
     public function handleInvalidParameter($id){
         if(!$this->isParameterValid($id)){
-            throw new InvalidParameterException(json_encode(["cogsComponent"=>["parameter invalid"]]));
+            throw new InvalidParameterException(json_encode(["cogs_component"=>["parameter invalid"]]));
         }
     }
 
@@ -27,7 +27,7 @@ class CogsComponentService
         }
         catch(ModelNotFoundException $e)
         {
-            throw new CustomModelNotFoundException("cogsComponent"); 
+            throw new CustomModelNotFoundException("cogs_component"); 
         }
     }
 

@@ -2205,8 +2205,8 @@ __webpack_require__.r(__webpack_exports__);
         action: "/warehouse"
       }, {
         icon: "store",
-        title: "Goods",
-        route: "/goods"
+        title: "Goods Rack",
+        route: "/goodsrack"
       }],
       toolbarMenu: [{
         icon: "account_circle",
@@ -2899,10 +2899,56 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      valid: false,
       on: false,
       dialog_createedit: false,
       e6: 1,
@@ -2911,9 +2957,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       preview: {
         thumbnail: ''
       },
-      input_before_edit: {
-        //variabel ini dipakai hanya untuk kasus2 tertentu seperti material_goods saat tambah data goods
-        material_goods: []
+      input_before_edit: {//variabel ini digunakan untuk menampung input sebelum di klik submit saat edit
       },
       input: {
         name: '',
@@ -3182,6 +3226,11 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
       this.dialog_createedit = true;
     },
+    clear_input: function clear_input() {
+      for (var key in self.input) {
+        if (self.input[key]) self.input[key] = null;
+      }
+    },
     showTable: function showTable(r) {
       //console.log(r.data.items.goods[0]);
       this.goods = r.data.items.goods;
@@ -3208,7 +3257,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       this.input.tax = temp_r.tax;
       this.input.unit_id = temp_r.unit_id;
       this.input.cogs_id = temp_r.cogs_id;
-      this.preview.thumbnail = temp_r.thumbnail.substr(1);
+      this.preview.thumbnail = temp_r.thumbnail;
       console.log(temp_r.category_goods);
       this.input.category_goods = temp_r.category_goods;
 
@@ -3222,46 +3271,149 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         });
       }
 
-      this.input.material_goods = temp_r.material_goods; //taruh this.input.material_goods ke this.input_before_edit.material_goods
-
-      this.input_before_edit.material_goods = JSON.parse(JSON.stringify(this.input.material_goods));
+      this.input.material_goods = temp_r.material_goods;
+      this.input_before_edit = JSON.parse(JSON.stringify(this.input));
     },
     prepare_data_form_goods: function prepare_data_form_goods() {
-      //prepare data selalu dari this.input
-      //1. buat FormData
-      var formData = new FormData(); //2. isi formData dengan data dari this.input 
-
-      formData.append('name', this.input.name);
-      formData.append('code', this.input.code);
-      formData.append('desc', this.input.desc);
-      formData.append('margin', this.input.margin);
-      formData.append('value', this.input.value);
-      formData.append('status', this.input.status);
-      formData.append('last_buy_pricelist', this.input.last_buy_pricelist);
-      formData.append('barcode_master', this.input.barcode_master);
-      formData.append('thumbnail', this.input.thumbnail_file);
-      formData.append('avgprice_status', this.input.avgprice_status);
-      formData.append('tax', this.input.tax);
-      formData.append('unit_id', this.input.unit_id);
-      formData.append('cogs_id', this.input.cogs_id);
-
-      for (var i = 0; i < this.input.category_goods.length; i++) {
-        formData.append('category_goods[' + i + '][category_id]', this.input.category_goods[i].id);
-      }
-
-      for (var i = 0; i < this.input.attribute_goods.length; i++) {
-        console.log(this.input.attribute_goods[i]);
-        formData.append('attribute_goods[' + i + '][attribute_id]', this.input.attribute_goods[i].attribute.id);
-        formData.append('attribute_goods[' + i + '][value]', this.input.attribute_goods[i].value);
-      }
+      //prepare data selalu dari this.input, tapi bandingkan dulu dengan this.input_before_edit
+      var formData = new FormData();
 
       if (this.idx_data_edit != -1) //jika sedang diedit
-        {} else //jika sedang add
         {
+          //data yang harus dikirim saat update :
+          //1. data goods yang BERUBAH SAJA
+          //2. data goods_attribute dan goods_category AKHIR 
+          //3. data material yang BERUBAH, DITAMBAH, & DIHAPUS
+          //4. jika thumbnail awal ada, lalu thumbnail akhir kosong (user menghapus gambar thumbnail), maka tambahin data is_image_deleted = true, jika tidak is_image_deleted = false
+          //step-step :
+          //1. kirim data goods yang berubah
+          if (this.input.name != this.input_before_edit.name) formData.append('name', this.input.name);
+          if (this.input.code != this.input_before_edit.code) formData.append('code', this.input.code);
+          if (this.input.desc != this.input_before_edit.desc) formData.append('desc', this.input.desc);
+          if (this.input.margin != this.input_before_edit.margin) formData.append('margin', this.input.margin);
+          if (this.input.value != this.input_before_edit.value) formData.append('value', this.input.value);
+          if (this.input.status != this.input_before_edit.status) formData.append('status', this.input.status);
+          if (this.input.last_buy_pricelist != this.input_before_edit.last_buy_pricelist) formData.append('last_buy_pricelist', this.input.last_buy_pricelist);
+          if (this.input.barcode_master != this.input_before_edit.barcode_master) formData.append('barcode_master', this.input.barcode_master);
+          if (this.input.thumbnail_file != this.input_before_edit.thumbnail_file) formData.append('thumbnail', this.input.thumbnail_file);
+          if (this.input.avgprice_status != this.input_before_edit.avgprice_status) formData.append('avgprice_status', this.input.avgprice_status);
+          if (this.input.tax != this.input_before_edit.tax) formData.append('tax', this.input.tax);
+          if (this.input.unit_id != this.input_before_edit.unit_id) formData.append('unit_id', this.input.unit_id);
+          if (this.input.cogs_id != this.input_before_edit.cogs_id) formData.append('cogs_id', this.input.cogs_id); //2. kirim data goods_attribute dan goods_category
+
+          for (var i = 0; i < this.input.category_goods.length; i++) {
+            formData.append('category_goods[' + i + '][category_id]', this.input.category_goods[i].id);
+          }
+
+          for (var i = 0; i < this.input.attribute_goods.length; i++) {
+            console.log(this.input.attribute_goods[i]);
+            formData.append('attribute_goods[' + i + '][attribute_id]', this.input.attribute_goods[i].attribute.id);
+            formData.append('attribute_goods[' + i + '][value]', this.input.attribute_goods[i].value);
+          } //3. kirim data material yang berubah, ditambah, dan dihapus
+          //cek di input cocokin dengan input_before_edit
+          //1. cek apakah ada id nya atau tidak, jika tidak memiliki id, pasti itu tambah baru
+          //2. jika punya id, cocokan dengan input_before_edit, jika sama berarti tidak diedit, jika beda berarti diedit
+          //temp adalah data dari input
+          //temp2 adalah data dari input_before_edit
+
+
+          var counteridx = 0;
+
+          for (var i = 0; i < this.input.material_goods.length; i++) {
+            var temp = this.input.material_goods[i];
+
+            if (temp.id == null) {
+              formData.append('material_goods_new[' + counteridx + '][name]', temp.name);
+              formData.append('material_goods_new[' + counteridx + '][adjust]', temp.adjust);
+              formData.append('material_goods_new[' + counteridx + '][total]', temp.total);
+              counteridx++;
+            } else {
+              //cocokan dengan input_before_edit
+              var edittrue = false;
+
+              for (var j = 0; j < this.input_before_edit.material_goods.length; j++) {
+                var temp2 = this.input_before_edit.material_goods[i];
+
+                if (temp.id == temp2.id) {
+                  if (temp.name != temp2.name || temp.adjust != temp2.adjust || temp.total != temp2.total) //jika ada salah satu saja yang berbeda, maka ini pasti diedit
+                    {
+                      edittrue = true;
+                    }
+
+                  break;
+                }
+              }
+
+              if (edittrue) {
+                formData.append('material_goods_update[' + counteridx + '][id]', temp.id);
+                formData.append('material_goods_update[' + counteridx + '][name]', temp.name);
+                formData.append('material_goods_update[' + counteridx + '][adjust]', temp.adjust);
+                formData.append('material_goods_update[' + counteridx + '][total]', temp.total);
+                counteridx++;
+              }
+            }
+          } //cek di input_before_edit cocokin dengan input
+          //1. jika ada data dengan id yang tidak ada di data input, berarti data tersebut pasti dihapus
+
+
+          for (var i = 0; i < this.input_before_edit.material_goods.length; i++) {
+            var deletetrue = true;
+
+            for (var j = 0; j < this.input.material_goods.length; j++) {
+              if (this.input.material_goods[j].id == this.input_before_edit.material_goods[i].id) {
+                deletetrue = false;
+                break;
+              }
+            }
+
+            if (deletetrue) {
+              formData.append('material_goods_delete[' + counteridx + '][id]', this.input_before_edit.material_goods[i].id);
+              counteridx++;
+            }
+          } //4. tambahin is_image_deleted
+
+
+          if (this.input.thumbnail_file.length > 0 && this.input_before_edit.thumbnail_file == null) {
+            formData.append('is_image_deleted', '1');
+          } else {
+            formData.append('is_image_deleted', '0');
+          }
+
+          formData.append('_method', 'patch');
+        } else //jika sedang add
+        {
+          //data-data yang harus dikirim : 
+          //1. semua data goods
+          //2. semua data attribute,category, dan material
+          //step-step : 
+          //1. kirim data goods
+          formData.append('name', this.input.name);
+          formData.append('code', this.input.code);
+          formData.append('desc', this.input.desc);
+          formData.append('margin', this.input.margin);
+          formData.append('value', this.input.value);
+          formData.append('status', this.input.status);
+          formData.append('last_buy_pricelist', this.input.last_buy_pricelist);
+          formData.append('barcode_master', this.input.barcode_master);
+          formData.append('thumbnail', this.input.thumbnail_file);
+          formData.append('avgprice_status', this.input.avgprice_status);
+          formData.append('tax', this.input.tax);
+          formData.append('unit_id', this.input.unit_id);
+          formData.append('cogs_id', this.input.cogs_id); //2. kirim data attribute,category, dan material
+
           for (var i = 0; i < this.input.material_goods.length; i++) {
             formData.append('material_goods[' + i + '][adjust]', this.input.material_goods[i].adjust);
             formData.append('material_goods[' + i + '][total]', this.input.material_goods[i].total);
             formData.append('material_goods[' + i + '][name]', this.input.material_goods[i].name);
+          }
+
+          for (var i = 0; i < this.input.category_goods.length; i++) {
+            formData.append('category_goods[' + i + '][category_id]', this.input.category_goods[i].id);
+          }
+
+          for (var i = 0; i < this.input.attribute_goods.length; i++) {
+            formData.append('attribute_goods[' + i + '][attribute_id]', this.input.attribute_goods[i].attribute.id);
+            formData.append('attribute_goods[' + i + '][value]', this.input.attribute_goods[i].value);
           }
         } //4. masukan token
 
@@ -3283,38 +3435,66 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
       }).then(function (r) {
         return _this2.showTable(r);
+      })["catch"](function (error) {
+        if (error.response.status == 422) {
+          swal('Request Failed', 'Check your internet connection !', 'error');
+        } else {
+          swal('Unkown Error', error.response.data, 'error');
+        }
       });
     },
     save_goods: function save_goods() {
       var _this3 = this;
 
-      if (this.idx_data_edit != -1) //jika sedang diedit
-        {
-          axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/goods/' + this.goods[this.idx_data_edit].id, this.prepare_data_form_goods(), {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          }).then(function (r) {
-            _this3.get_goods();
+      if (this.valid) {
+        if (this.idx_data_edit != -1) //jika sedang diedit
+          {
+            axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/goods/' + this.goods[this.idx_data_edit].id, this.prepare_data_form_goods(), {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }).then(function (r) {
+              _this3.get_goods();
 
-            _this3.closedialog_createedit();
+              _this3.closedialog_createedit();
 
-            swal("Good job!", "Data saved !", "success");
-          });
-        } else //jika sedang tambah data
-        {
-          axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/goods', this.prepare_data_form_goods(), {
-            headers: {
-              'Content-Type': 'multipart/form-data'
-            }
-          }).then(function (r) {
-            _this3.get_goods();
+              _this3.clear_input();
 
-            _this3.closedialog_createedit();
+              _this3.idx_data_edit = -1;
+              swal("Good job!", "Data saved !", "success");
+            })["catch"](function (error) {
+              if (error.response.status == 422) {
+                swal('Request Failed', 'Check your internet connection !', 'error');
+              } else {
+                swal('Unkown Error', error.response.data, 'error');
+              }
+            });
+          } else //jika sedang tambah data
+          {
+            axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/goods', this.prepare_data_form_goods(), {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }).then(function (r) {
+              _this3.get_goods();
 
-            swal("Good job!", "Data saved !", "success");
-          });
-        }
+              _this3.closedialog_createedit();
+
+              _this3.clear_input();
+
+              _this3.idx_data_edit = -1;
+              swal("Good job!", "Data saved !", "success");
+            })["catch"](function (error) {
+              if (error.response.status == 422) {
+                swal('Request Failed', 'Check your internet connection !', 'error');
+              } else {
+                swal('Unkown Error', error.response.data, 'error');
+              }
+            });
+          }
+      } else {
+        swal('Form Is not Valid', "Please check your input", 'error');
+      }
     },
     delete_goods: function delete_goods(idx_data_delete) {
       var _this4 = this;
@@ -3335,6 +3515,12 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
             _this4.get_goods();
 
             swal("Good job!", "Data Deleted !", "success");
+          })["catch"](function (error) {
+            if (error.response.status == 422) {
+              swal('Request Failed', 'Check your internet connection !', 'error');
+            } else {
+              swal('Unkown Error', error.response.data, 'error');
+            }
           });
         }
       });
@@ -3353,6 +3539,12 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
       }).then(function (r) {
         return _this5.fill_select_master_data(r);
+      })["catch"](function (error) {
+        if (error.response.status == 422) {
+          swal('Request Failed', 'Check your internet connection !', 'error');
+        } else {
+          swal('Unkown Error', error.response.data, 'error');
+        }
       });
     },
     get_data_before_edit: function get_data_before_edit(idx_edit) {
@@ -3369,7 +3561,14 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           'Content-type': 'application/json'
         }
       }).then(function (r) {
-        _this6.opendialog_createedit(id_edit, r);
+        _this6.opendialog_createedit(idx_edit, r); //idx_edit bukan id_edit !
+
+      })["catch"](function (error) {
+        if (error.response.status == 422) {
+          swal('Request Failed', 'Check your internet connection !', 'error');
+        } else {
+          swal('Unkown Error', error.response.data, 'error');
+        }
       });
     },
     //TESTING INPUT
@@ -3396,8 +3595,727 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
   },
   mounted: function mounted() {
     this.get_goods();
-    this.get_master_data();
-    this.testing_input();
+    this.get_master_data(); //this.testing_input();
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/GoodsRack.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/GoodsRack.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      valid: false,
+      on: false,
+      dialog_createedit: false,
+      e6: 1,
+      dialog_stock: false,
+      idx_data_edit: -1,
+      input_before_edit: {//variabel ini digunakan untuk menampung input sebelum di klik submit saat edit
+      },
+      input: {
+        goods_id: '',
+        rack_id: '',
+        stock: '',
+        price_sellings: [],
+        batch: []
+      },
+      temp_input: {
+        id_edit_price_sellings: -1,
+        //artinya add data,
+        id_edit_batch: -1,
+        //artinya add data,
+        price_sellings: {
+          category_price_sellings: {
+            id: null,
+            name: null
+          },
+          stock_cut_off: null,
+          price: null,
+          discount: null,
+          free: null
+        },
+        batch: {
+          stock: null,
+          batch_number: null,
+          sources: {
+            id: null,
+            name: null
+          }
+        }
+      },
+      ref_input: {
+        goods: [{
+          id: 6,
+          name: 'meja'
+        }, {
+          id: 7,
+          name: 'kursi'
+        }],
+        racks: [{
+          id: 6,
+          name: 'rack1'
+        }, {
+          id: 7,
+          name: 'rack2'
+        }],
+        category_price_sellings: [{
+          id: 6,
+          name: 'Harga Jual'
+        }, {
+          id: 7,
+          name: 'Harga Beli'
+        }],
+        sources: [{
+          id: 5,
+          name: 'Pembelian'
+        }, {
+          id: 4,
+          name: 'Diberi'
+        }, {
+          id: 3,
+          name: 'Nemu'
+        }],
+        //statis
+        free: [{
+          value: 1,
+          name: 'True'
+        }, {
+          value: 0,
+          name: 'False'
+        }]
+      },
+      headers: [{
+        text: 'Goods',
+        value: 'goods'
+      }, {
+        text: 'Racks',
+        value: 'racks',
+        align: 'right'
+      }, {
+        text: 'Stock',
+        value: 'stock',
+        align: 'right'
+      }, {
+        text: 'Action',
+        align: 'left',
+        width: '15%',
+        sortable: false
+      }],
+      goodsracks: []
+    };
+  },
+  methods: {
+    table_price_selling: function table_price_selling() {
+      var self = this;
+      return {
+        showData: function showData(idx) {
+          self.temp_input.price_sellings = JSON.parse(JSON.stringify(self.input.price_sellings[idx]));
+          self.temp_input.id_edit_price_sellings = idx;
+        },
+        clearTempInput: function clearTempInput() {
+          for (var key in self.temp_input.price_sellings) {
+            if (self.temp_input.price_sellings[key]) self.temp_input.price_sellings[key] = null;
+          }
+        },
+        save: function save() {
+          //bisa edit / add
+          var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_price_sellings));
+
+          if (id_edit == -1) {
+            var temp = JSON.parse(JSON.stringify(self.temp_input.price_sellings));
+            self.input.price_sellings.push(temp);
+          } else {
+            self.input.price_sellings[id_edit] = JSON.parse(JSON.stringify(self.temp_input.price_sellings));
+            self.temp_input.id_edit_price_sellings = -1;
+          }
+
+          this.clearTempInput();
+        },
+        canceledit: function canceledit() {
+          this.clearTempInput();
+          self.temp_input.id_edit_price_sellings = -1;
+        },
+        "delete": function _delete(idx) {
+          self.input.price_sellings.splice(idx, 1);
+        }
+      };
+    },
+    table_batch: function table_batch() {
+      var self = this;
+      return {
+        showData: function showData(idx) {
+          self.temp_input.batch = JSON.parse(JSON.stringify(self.input.batch[idx]));
+          self.temp_input.id_edit_batch = idx;
+        },
+        clearTempInput: function clearTempInput() {
+          for (var key in self.temp_input.batch) {
+            if (self.temp_input.batch[key]) self.temp_input.batch[key] = null;
+          }
+        },
+        save: function save() {
+          //bisa edit / add
+          var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_batch));
+
+          if (id_edit == -1) {
+            var temp = JSON.parse(JSON.stringify(self.temp_input.batch));
+            self.input.batch.push(temp);
+          } else {
+            self.input.batch[id_edit] = JSON.parse(JSON.stringify(self.temp_input.batch));
+            self.temp_input.id_edit_batch = -1;
+          }
+
+          this.clearTempInput();
+        },
+        canceledit: function canceledit() {
+          this.clearTempInput();
+          self.temp_input.id_edit_batch = -1;
+        },
+        "delete": function _delete(idx) {
+          self.input.batch.splice(idx, 1);
+        }
+      };
+    },
+    closedialog_createedit: function closedialog_createedit() {
+      this.dialog_createedit = false;
+    },
+    opendialog_createedit: function opendialog_createedit(idx_data_edit, r) {
+      if (idx_data_edit != -1) {
+        this.idx_data_edit = idx_data_edit;
+        this.convert_data_input_goodsrack(r);
+      }
+
+      this.dialog_createedit = true;
+    },
+    clear_input: function clear_input() {
+      for (var key in self.input) {
+        if (self.input[key]) self.input[key] = null;
+      }
+    },
+    showTable: function showTable(r) {
+      this.goodsracks = r.data.items.goods_rack;
+    },
+    fill_select_master_data: function fill_select_master_data(r) {
+      //console.log(r.data.items[0].units);
+      this.ref_input.goods = r.data.items[0].goods;
+      this.ref_input.racks = r.data.items[0].racks;
+      this.ref_input.category_price_sellings = r.data.items[0].category_price_sellings;
+      this.ref_input.sources = r.data.items[0].sources;
+    },
+    convert_data_input_goodsrack: function convert_data_input_goodsrack(r) {
+      var temp_r = r.data.items.goods_rack;
+      this.input.goods_id = temp_r.goods_id;
+      this.input.rack_id = temp_r.rack_id;
+      this.input.stock = temp_r.stock;
+      this.input.price_sellings = temp_r.price_sellings;
+      this.input.batch = temp_r.batch; // for(var i = 0;i<temp_r.attribute_goods.length;i++)
+      // {  
+      //     this.input.attribute_goods.push({
+      //         attribute:{
+      //             id: temp_r.attribute_goods[i].id,
+      //             name: temp_r.attribute_goods[i].name,
+      //         },
+      //         value:temp_r.attribute_goods[i].value,
+      //     })
+      // }
+
+      this.input_before_edit = JSON.parse(JSON.stringify(this.input));
+    },
+    prepare_data_form_goodsrack: function prepare_data_form_goodsrack() {
+      //prepare data selalu dari this.input, tapi bandingkan dulu dengan this.input_before_edit
+      var formData = new FormData();
+
+      if (this.idx_data_edit != -1) //jika sedang diedit
+        {
+          //data yang harus dikirim saat update :
+          //1. data goodsrack yang BERUBAH SAJA
+          //2. data price_sellings dan batch AKHIR 
+          //step-step :
+          //1. kirim data goodsrack yang berubah
+          if (this.input.goods_id != this.input_before_edit.goods_id) formData.append('goods_id', this.input.goods_id);
+          if (this.input.rack_id != this.input_before_edit.rack_id) formData.append('rack_id', this.input.rack_id);
+          if (this.input.stock != this.input_before_edit.stock) formData.append('stock', this.input.stock); //2. kirim data price_sellings dan batch akhir
+
+          for (var i = 0; i < this.input.price_sellings.length; i++) {
+            formData.append('price_sellings[' + i + '][category_price_selling_id]', this.input.price_sellings[i].category_price_sellings.id);
+            formData.append('price_sellings[' + i + '][stock_cut_off]', this.input.price_sellings[i].stock_cut_off);
+            formData.append('price_sellings[' + i + '][price]', this.input.price_sellings[i].price);
+            formData.append('price_sellings[' + i + '][discount]', this.input.price_sellings[i].discount);
+            formData.append('price_sellings[' + i + '][free]', this.input.price_sellings[i].free);
+          }
+
+          for (var i = 0; i < this.input.batch.length; i++) {
+            formData.append('batch[' + i + '][source_id]', this.input.batch[i].sources.id);
+            formData.append('batch[' + i + '][stock]', this.input.batch[i].stock);
+            formData.append('batch[' + i + '][batch_number]', this.input.batch[i].batch_number);
+          }
+
+          formData.append('_method', 'patch');
+        } else //jika sedang add
+        {
+          //data-data yang harus dikirim : 
+          //1. semua data goodsrack
+          //2. semua data price selling dan batch
+          //step-step : 
+          //1. kirim data goodsrack
+          formData.append('goods_id', this.input.goods_id);
+          formData.append('rack_id', this.input.rack_id);
+          formData.append('stock', this.input.stock); //2. kirim data price selling dan batch
+
+          for (var i = 0; i < this.input.price_sellings.length; i++) {
+            formData.append('price_sellings[' + i + '][category_price_selling_id]', this.input.price_sellings[i].category_price_sellings.id);
+            formData.append('price_sellings[' + i + '][stock_cut_off]', this.input.price_sellings[i].stock_cut_off);
+            formData.append('price_sellings[' + i + '][price]', this.input.price_sellings[i].price);
+            formData.append('price_sellings[' + i + '][discount]', this.input.price_sellings[i].discount);
+            formData.append('price_sellings[' + i + '][free]', this.input.price_sellings[i].free);
+          }
+
+          for (var i = 0; i < this.input.batch.length; i++) {
+            formData.append('batch[' + i + '][source_id]', this.input.batch[i].sources.id);
+            formData.append('batch[' + i + '][stock]', this.input.batch[i].stock);
+            formData.append('batch[' + i + '][batch_number]', this.input.batch[i].batch_number);
+          }
+        } //3. masukan token
+
+
+      formData.append('token', localStorage.getItem('token'));
+      return formData;
+    },
+    get_goodsrack: function get_goodsrack() {
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/goodsracks', {
+        params: {
+          token: localStorage.getItem('token')
+        }
+      }, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-type': 'application/json'
+        }
+      }).then(function (r) {
+        return _this.showTable(r);
+      })["catch"](function (error) {
+        if (error.response.status == 422) {
+          swal('Request Failed', 'Check your internet connection !', 'error');
+        } else {
+          swal('Unkown Error', error.response.data, 'error');
+        }
+      });
+    },
+    save_goodsrack: function save_goodsrack() {
+      var _this2 = this;
+
+      if (this.valid) {
+        if (this.idx_data_edit != -1) //jika sedang diedit
+          {
+            axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/goodsracks/' + this.goodsracks[this.idx_data_edit].id, this.prepare_data_form_goodsrack(), {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }).then(function (r) {
+              _this2.get_goodsrack();
+
+              _this2.closedialog_createedit();
+
+              _this2.clear_input();
+
+              _this2.idx_data_edit = -1;
+              swal("Good job!", "Data saved !", "success");
+            })["catch"](function (error) {
+              if (error.response.status == 422) {
+                swal('Request Failed', 'Check your internet connection !', 'error');
+              } else {
+                swal('Unkown Error', error.response.data, 'error');
+              }
+            });
+          } else //jika sedang tambah data
+          {
+            axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/goodsrack', this.prepare_data_form_goodsrack(), {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            }).then(function (r) {
+              _this2.get_goodsrack();
+
+              _this2.closedialog_createedit();
+
+              _this2.clear_input();
+
+              _this2.idx_data_edit = -1;
+              swal("Good job!", "Data saved !", "success");
+            })["catch"](function (error) {
+              if (error.response.status == 422) {
+                swal('Request Failed', 'Check your internet connection !', 'error');
+              } else {
+                swal('Unkown Error', error.response.data, 'error');
+              }
+            });
+          }
+      } else {
+        swal('Form Is not Valid', "Please check your input", 'error');
+      }
+    },
+    delete_goodsrack: function delete_goodsrack(idx_data_delete) {
+      var _this3 = this;
+
+      swal({
+        title: "Are you sure want to delete this item?",
+        text: "Once deleted, it can't be undone",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true
+      }).then(function (willDelete) {
+        if (willDelete) {
+          axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]('api/goodsracks/' + _this3.goodsracks[idx_data_delete].id, {
+            data: {
+              token: localStorage.getItem('token')
+            }
+          }).then(function (r) {
+            _this3.get_goodsrack();
+
+            swal("Good job!", "Data Deleted !", "success");
+          })["catch"](function (error) {
+            if (error.response.status == 422) {
+              swal('Request Failed', 'Check your internet connection !', 'error');
+            } else {
+              swal('Unkown Error', error.response.data, 'error');
+            }
+          });
+        }
+      });
+    },
+    get_master_data: function get_master_data() {
+      var _this4 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/goodsracks/create', {
+        params: {
+          token: localStorage.getItem('token')
+        }
+      }, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-type': 'application/json'
+        }
+      }).then(function (r) {
+        return _this4.fill_select_master_data(r);
+      })["catch"](function (error) {
+        if (error.response.status == 422) {
+          swal('Request Failed', 'Check your internet connection !', 'error');
+        } else {
+          swal('Unkown Error', error.response.data, 'error');
+        }
+      });
+    },
+    get_data_before_edit: function get_data_before_edit(idx_edit) {
+      var _this5 = this;
+
+      var id_edit = this.goodsracks[idx_edit].id;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/goodsracks/' + id_edit, {
+        params: {
+          token: localStorage.getItem('token')
+        }
+      }, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-type': 'application/json'
+        }
+      }).then(function (r) {
+        _this5.opendialog_createedit(idx_edit, r); //idx_edit bukan id_edit !
+
+      })["catch"](function (error) {
+        if (error.response.status == 422) {
+          swal('Request Failed', 'Check your internet connection !', 'error');
+        } else {
+          swal('Unkown Error', error.response.data, 'error');
+        }
+      });
+    },
+    //TESTING INPUT
+    testing_input: function testing_input() {//manual :
+    }
+  },
+  mounted: function mounted() {
+    this.get_goodsrack();
+    this.get_master_data(); //this.testing_input();
   }
 });
 
@@ -4359,11 +5277,50 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       on: false,
+      valid: false,
       my_location: {
         lat: 10,
         lng: 10
@@ -4378,11 +5335,14 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       e6: 1,
       dialog_stock: false,
       idx_data_edit: -1,
+      input_before_edit: {//variabel ini digunakan untuk menampung input sebelum di klik submit saat edit
+      },
       input: {
         name: '',
         address: '',
         telp: '',
         pic: '',
+        email: '',
         lat: null,
         lng: null,
         racks: []
@@ -4416,6 +5376,15 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       this.input.racks.splice(this.input.racks.indexOf(item), 1);
       this.input.racks = _toConsumableArray(this.input.racks);
     },
+    updateChip: function updateChip(item) {
+      //console.log(this.input.racks);
+      var temprack = this.input.racks;
+      var tempdata = temprack[temprack.length - 1];
+      this.removeChip(tempdata);
+      this.input.racks.push({
+        name: tempdata
+      });
+    },
     get_my_location: function get_my_location() {
       var _this = this;
 
@@ -4438,23 +5407,146 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     closedialog_createedit: function closedialog_createedit() {
       this.dialog_createedit = false;
     },
-    opendialog_createedit: function opendialog_createedit(idx_data_edit) {
+    opendialog_createedit: function opendialog_createedit(idx_data_edit, r) {
+      console.log('masuk opendialog_createedit : ' + idx_data_edit);
+
       if (idx_data_edit != -1) {
+        console.log('masuk if ');
         this.idx_data_edit = idx_data_edit;
-        this.input.name = this.warehouses[this.idx_data_edit].name;
-        this.input.address = this.warehouses[this.idx_data_edit].address;
-        this.input.telephone = this.warehouses[this.idx_data_edit].telephone;
-        this.input.pic = this.warehouses[this.idx_data_edit].pic;
+        this.convert_data_input_warehouse(r);
       }
 
       this.dialog_createedit = true;
     },
+    clear_input: function clear_input() {
+      for (var key in self.input) {
+        if (self.input[key]) self.input[key] = null;
+      }
+    },
     showTable: function showTable(r) {
-      this.warehouses = r.data.items.warehouses;
+      this.warehouses = r.data.items.warehouse;
+    },
+    convert_data_input_warehouse: function convert_data_input_warehouse(r) {
+      console.log('masuk convert data');
+      console.log(r);
+      var temp_r = r.data.items.warehouse;
+      this.input.name = temp_r.name;
+      this.input.address = temp_r.address;
+      this.input.telp = temp_r.telp;
+      this.input.pic = temp_r.pic;
+      this.input.email = temp_r.email;
+      this.input.lat = temp_r.lat;
+      this.input.lng = temp_r.lng;
+      this.input.racks = temp_r.racks; //ini bisa berubah
+
+      this.input_before_edit = JSON.parse(JSON.stringify(this.input));
+    },
+    prepare_data_form_warehouse: function prepare_data_form_warehouse() {
+      //prepare data selalu dari this.input, tapi bandingkan dulu dengan this.input_before_edit
+      var formData = new FormData();
+
+      if (this.idx_data_edit != -1) //jika sedang diedit
+        {
+          //data yang harus dikirim saat update :
+          //1. data warehouse yang BERUBAH SAJA
+          //2. data rack yang BERUBAH, DITAMBAH, & DIHAPUS
+          //step-step :
+          //1. kirim data warehouse yang berubah
+          if (this.input.name != this.input_before_edit.name) formData.append('name', this.input.name);
+          if (this.input.address != this.input_before_edit.address) formData.append('address', this.input.address);
+          if (this.input.telp != this.input_before_edit.telp) formData.append('telp', this.input.telp);
+          if (this.input.pic != this.input_before_edit.pic) formData.append('pic', this.input.pic);
+          if (this.input.email != this.input_before_edit.email) formData.append('email', this.input.email);
+          if (this.input.lat != this.input_before_edit.lat) formData.append('lat', this.input.lat);
+          if (this.input.lng != this.input_before_edit.lng) formData.append('lng', this.input.lng); //2. kirim data warehouse yang berubah, ditambah, dan dihapus
+          //cek di input cocokin dengan input_before_edit
+          //1. cek apakah ada id nya atau tidak, jika tidak memiliki id, pasti itu tambah baru
+          //2. jika punya id, cocokan dengan input_before_edit, jika attribute lainnya sama berarti tidak diedit, jika beda berarti diedit
+          //temp adalah data dari input
+          //temp2 adalah data dari input_before_edit
+
+          var counteridx = 0;
+
+          for (var i = 0; i < this.input.racks.length; i++) {
+            var temp = this.input.racks[i];
+
+            if (temp.id == null) {
+              formData.append('racks_new[' + counteridx + '][name]', temp.name);
+              counteridx++;
+            } else {
+              //cocokan dengan input_before_edit
+              var edittrue = false;
+
+              for (var j = 0; j < this.input_before_edit.racks.length; j++) {
+                var temp2 = this.input_before_edit.racks[i];
+
+                if (temp.id == temp2.id) {
+                  if (temp.name != temp2.name) //jika ada salah satu saja yang berbeda, maka ini pasti diedit
+                    {
+                      edittrue = true;
+                    }
+
+                  break;
+                }
+              }
+
+              if (edittrue) {
+                formData.append('racks_update[' + counteridx + '][id]', temp.id);
+                formData.append('racks_update[' + counteridx + '][name]', temp.name);
+                counteridx++;
+              }
+            }
+          } //cek di input_before_edit cocokin dengan input
+          //1. jika ada data dengan id yang tidak ada di data input, berarti data tersebut pasti dihapus
+
+
+          for (var i = 0; i < this.input_before_edit.racks.length; i++) {
+            var deletetrue = true;
+
+            for (var j = 0; j < this.input.racks.length; j++) {
+              if (this.input.racks[j].id == this.input_before_edit.racks[i].id) {
+                deletetrue = false;
+                break;
+              }
+            }
+
+            if (deletetrue) {
+              formData.append('racks_delete[' + counteridx + '][id]', this.input_before_edit.racks[i].id);
+              counteridx++;
+            }
+          }
+
+          formData.append('_method', 'patch');
+        } else //jika sedang add
+        {
+          //data-data yang harus dikirim : 
+          //1. semua data warehouse
+          //2. semua data racks
+          //step-step : 
+          //1. kirim data warehouse
+          formData.append('name', this.input.name);
+          formData.append('address', this.input.address);
+          formData.append('telp', this.input.telp);
+          formData.append('pic', this.input.pic);
+          formData.append('email', this.input.email);
+          formData.append('lat', this.input.lat);
+          formData.append('lng', this.input.lng); //2. kirim data racks
+
+          for (var i = 0; i < this.input.racks.length; i++) {
+            formData.append('racks[' + i + '][adjust]', this.input.racks[i].adjust);
+            formData.append('racks[' + i + '][total]', this.input.racks[i].total);
+            formData.append('racks[' + i + '][name]', this.input.racks[i].name);
+          }
+        } //4. masukan token
+
+
+      formData.append('token', localStorage.getItem('token'));
+      return formData;
     },
     get_warehouse: function get_warehouse() {
       var _this2 = this;
 
+      console.log('halo');
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/warehouses', {
         params: {
           token: localStorage.getItem('token')
@@ -4466,54 +5558,62 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         }
       }).then(function (r) {
         return _this2.showTable(r);
+      })["catch"](function (error) {
+        if (error.response.status == 422) {
+          swal('Request Failed', 'Check your internet connection !', 'error');
+        } else {
+          swal('Unkown Error', error.response.data, 'error');
+        }
       });
     },
-    save_warehouses: function save_warehouses() {
+    save_warehouse: function save_warehouse() {
       var _this3 = this;
 
-      if (this.idx_data_edit != -1) //jika sedang diedit
-        {
-          axios__WEBPACK_IMPORTED_MODULE_0___default.a.patch('api/warehouses/' + this.warehouses[this.idx_data_edit].id, {
-            headers: {
-              'Accept': 'application/json',
-              'Content-type': 'application/json'
-            },
-            name: this.input.name,
-            code: this.input.code,
-            value: this.input.value,
-            status: this.input.status,
-            token: localStorage.getItem('token')
-          }).then(function (r) {
-            _this3.get_goods();
+      if (this.valid) {
+        if (this.idx_data_edit != -1) //jika sedang diedit
+          {
+            axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/warehouses/' + this.warehouses[this.idx_data_edit].id, this.prepare_data_form_warehouse(), {
+              headers: {
+                'Accept': 'application/json',
+                'Content-type': 'application/json'
+              }
+            }).then(function (r) {
+              _this3.get_warehouse();
 
-            _this3.closedialog_createedit();
+              _this3.closedialog_createedit();
 
-            swal("Good job!", "Data saved !", "success");
-            _this3.idx_data_edit = -1;
-            _this3.input.name = '';
-          });
-        } else //jika sedang tambah data
-        {
-          axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/warehouses', {
-            headers: {
-              'Accept': 'application/json',
-              'Content-type': 'application/json'
-            },
-            name: this.input.name,
-            code: this.input.code,
-            value: this.input.value,
-            status: this.input.status,
-            last_buy_pricelist: this.input.last_buy_pricelist,
-            stock: this.input.stock,
-            token: localStorage.getItem('token')
-          }).then(function (r) {
-            _this3.get_goods();
+              _this3.clear_input();
 
-            _this3.closedialog_createedit();
+              _this3.idx_data_edit = -1;
+              swal("Good job!", "Data saved !", "success");
+            });
+          } else //jika sedang tambah data
+          {
+            axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('api/warehouses', this.prepare_data_form_warehouse(), {
+              headers: {
+                'Accept': 'application/json',
+                'Content-type': 'application/json'
+              }
+            }).then(function (r) {
+              _this3.get_warehouse();
 
-            swal("Good job!", "Data saved !", "success");
-          });
-        }
+              _this3.closedialog_createedit();
+
+              _this3.clear_input();
+
+              _this3.idx_data_edit = -1;
+              swal("Good job!", "Data saved !", "success");
+            })["catch"](function (error) {
+              if (error.response.status == 422) {
+                swal('Request Failed', 'Check your internet connection !', 'error');
+              } else {
+                swal('Unkown Error', error.response.data, 'error');
+              }
+            });
+          }
+      } else {
+        swal('Form Is not Valid', "Please check your input", 'error');
+      }
     },
     delete_warehouses: function delete_warehouses(idx_data_delete) {
       var _this4 = this;
@@ -4526,20 +5626,52 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         dangerMode: true
       }).then(function (willDelete) {
         if (willDelete) {
-          axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]('api/warehouses/' + _this4.goods[idx_data_delete].id, {
+          axios__WEBPACK_IMPORTED_MODULE_0___default.a["delete"]('api/warehouses/' + _this4.warehouses[idx_data_delete].id, {
             data: {
               token: localStorage.getItem('token')
             }
           }).then(function (r) {
-            _this4.get_goods();
+            _this4.get_warehouse();
 
-            swal("Good job!", "Data Deleted !", "success");
+            swal("Good job!", "DaRta Deleted !", "success");
+          })["catch"](function (error) {
+            if (error.response.status == 422) {
+              swal('Request Failed', 'Check your internet connection !', 'error');
+            } else {
+              swal('Unkown Error', error.response.data, 'error');
+            }
           });
+        }
+      });
+    },
+    get_data_before_edit: function get_data_before_edit(idx_edit) {
+      var _this5 = this;
+
+      var id_edit = this.warehouses[idx_edit].id;
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/warehouses/' + id_edit, {
+        params: {
+          token: localStorage.getItem('token')
+        }
+      }, {
+        headers: {
+          'Accept': 'application/json',
+          'Content-type': 'application/json'
+        }
+      }).then(function (r) {
+        _this5.opendialog_createedit(idx_edit, r); //idx_edit bukan id_edit !
+
+      })["catch"](function (error) {
+        if (error.response.status == 422) {
+          swal('Request Failed', 'Check your internet connection !', 'error');
+        } else {
+          swal('Unkown Error', error.response.data, 'error');
         }
       });
     }
   },
   mounted: function mounted() {
+    //console.log('masuksini');
+    this.get_warehouse();
     this.get_my_location();
   }
 });
@@ -4653,11 +5785,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-<<<<<<< HEAD
-exports.push([module.i, "\n.color-text-sidebar\n{\n    color:#848484;\n    text-decoration: none;\n    font-size: 17px;\n}\n.ff-text-sidebar\n{\n    font-family: 'Open Sans',sans-serif;\n}\n", ""]);
-=======
 exports.push([module.i, "\n.color-text-sidebar\r\n{\r\n    color:#848484;\r\n    text-decoration: none;\r\n    font-size: 17px;\n}\n.ff-text-sidebar\r\n{\r\n    font-family: 'Open Sans',sans-serif;\n}\r\n", ""]);
->>>>>>> CRUD-warehouse-scenario
 
 // exports
 
@@ -4714,7 +5842,26 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.text-link{\n    color:blue;\n    text-decoration: underline;\n    cursor:pointer;\n}\n.button-action{\n    width: 30px;\n    height: 30px;\n}\n.button-action i{\n    font-size: 14px !important;\n}\n\n", ""]);
+exports.push([module.i, "\n.text-link{\r\n    color:blue;\r\n    text-decoration: underline;\r\n    cursor:pointer;\n}\n.button-action{\r\n    width: 30px;\r\n    height: 30px;\n}\n.button-action i{\r\n    font-size: 14px !important;\n}\r\n\r\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/GoodsRack.vue?vue&type=style&index=0&lang=css&":
+/*!**********************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/GoodsRack.vue?vue&type=style&index=0&lang=css& ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.text-link{\r\n    color:blue;\r\n    text-decoration: underline;\r\n    cursor:pointer;\n}\n.button-action{\r\n    width: 30px;\r\n    height: 30px;\n}\n.button-action i{\r\n    font-size: 14px !important;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -4790,11 +5937,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-<<<<<<< HEAD
-exports.push([module.i, "\n.text-link{\n    color:blue;\n    text-decoration: underline;\n    cursor:pointer;\n}\n.button-action{\n    width: 30px;\n    height: 30px;\n}\n.button-action i{\n    font-size: 14px !important;\n}\n\n", ""]);
-=======
-exports.push([module.i, "\n.text-link{\r\n    color:blue;\r\n    text-decoration: underline;\r\n    cursor:pointer;\n}\n.button-action{\r\n    width: 30px;\r\n    height: 30px;\n}\n.button-action i{\r\n    font-size: 14px !important;\n}\r\n\r\n", ""]);
->>>>>>> CRUD-warehouse-scenario
+exports.push([module.i, "\n.text-link{\r\n    color:blue;\r\n    text-decoration: underline;\r\n    cursor:pointer;\n}\n.button-action{\r\n    width: 30px;\r\n    height: 30px;\n}\n.button-action i{\r\n    font-size: 14px !important;\n}\n.fixfullscreen{\r\n    height: 100%;\n}\r\n", ""]);
 
 // exports
 
@@ -6290,6 +7433,36 @@ if(false) {}
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/GoodsRack.vue?vue&type=style&index=0&lang=css&":
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/GoodsRack.vue?vue&type=style&index=0&lang=css& ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./GoodsRack.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/GoodsRack.vue?vue&type=style&index=0&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/Source.vue?vue&type=style&index=0&lang=css&":
 /*!***********************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--6-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/Source.vue?vue&type=style&index=0&lang=css& ***!
@@ -7315,7 +8488,7 @@ var render = function() {
             [
               _c(
                 "v-toolbar",
-                { attrs: { dark: "", color: "red" } },
+                { attrs: { dark: "", color: "menu" } },
                 [
                   _c(
                     "v-btn",
@@ -7693,7 +8866,7 @@ var render = function() {
                 { attrs: { fluid: "" } },
                 [
                   _c("v-img", {
-                    staticClass: "my-5",
+                    staticClass: "my-0",
                     attrs: { src: "/assets/images/logo.png", contain: "" }
                   })
                 ],
@@ -7910,7 +9083,7 @@ var render = function() {
             [
               _c(
                 "v-toolbar",
-                { attrs: { dark: "", color: "red" } },
+                { attrs: { dark: "", color: "menu" } },
                 [
                   _c(
                     "v-btn",
@@ -8112,7 +9285,7 @@ var render = function() {
             [
               _c(
                 "v-toolbar",
-                { attrs: { dark: "", color: "red" } },
+                { attrs: { dark: "", color: "menu" } },
                 [
                   _c(
                     "v-btn",
@@ -8310,793 +9483,1063 @@ var render = function() {
         },
         [
           _c(
-            "v-card",
+            "v-form",
+            {
+              ref: "formCreateEdit",
+              model: {
+                value: _vm.valid,
+                callback: function($$v) {
+                  _vm.valid = $$v
+                },
+                expression: "valid"
+              }
+            },
             [
               _c(
-                "v-toolbar",
-                { attrs: { dark: "", color: "red" } },
+                "v-card",
                 [
                   _c(
-                    "v-btn",
-                    {
-                      attrs: { icon: "", dark: "" },
-                      on: {
-                        click: function($event) {
-                          return _vm.closedialog_createedit()
-                        }
-                      }
-                    },
-                    [_c("v-icon", [_vm._v("close")])],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c("v-toolbar-title", [_vm._v("Add goods")])
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-stepper",
-                {
-                  attrs: { vertical: "" },
-                  model: {
-                    value: _vm.e6,
-                    callback: function($$v) {
-                      _vm.e6 = $$v
-                    },
-                    expression: "e6"
-                  }
-                },
-                [
-                  _c(
-                    "v-stepper-step",
-                    {
-                      attrs: { complete: _vm.e6 > 1, step: "1", editable: "" }
-                    },
-                    [_c("h3", [_vm._v("Goods Data")])]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-stepper-content",
-                    { attrs: { step: "1" } },
+                    "v-toolbar",
+                    { attrs: { dark: "", color: "menu" } },
                     [
-                      _c("v-text-field", {
-                        attrs: { label: "Name", required: "" },
-                        model: {
-                          value: _vm.input.name,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "name", $$v)
-                          },
-                          expression: "input.name"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "Code", required: "" },
-                        model: {
-                          value: _vm.input.code,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "code", $$v)
-                          },
-                          expression: "input.code"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "Description", required: "" },
-                        model: {
-                          value: _vm.input.desc,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "desc", $$v)
-                          },
-                          expression: "input.desc"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "Margin", required: "" },
-                        model: {
-                          value: _vm.input.margin,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "margin", $$v)
-                          },
-                          expression: "input.margin"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "Value", required: "" },
-                        model: {
-                          value: _vm.input.value,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "value", $$v)
-                          },
-                          expression: "input.value"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "Status", required: "" },
-                        model: {
-                          value: _vm.input.status,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "status", $$v)
-                          },
-                          expression: "input.status"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "Last Buy Price List", required: "" },
-                        model: {
-                          value: _vm.input.last_buy_pricelist,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "last_buy_pricelist", $$v)
-                          },
-                          expression: "input.last_buy_pricelist"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "Barcode", required: "" },
-                        model: {
-                          value: _vm.input.barcode_master,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "barcode_master", $$v)
-                          },
-                          expression: "input.barcode_master"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: {
-                          label: "Select Image",
-                          "prepend-icon": "attach_file"
-                        },
-                        on: { click: _vm.pickFile },
-                        model: {
-                          value: _vm.input.thumbnail_filename,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "thumbnail_filename", $$v)
-                          },
-                          expression: "input.thumbnail_filename"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("input", {
-                        staticStyle: { display: "none" },
-                        attrs: {
-                          id: "btn_upload_thumbnail",
-                          type: "file",
-                          accept: "image/*"
-                        },
-                        on: { change: _vm.changeImage }
-                      }),
-                      _vm._v(" "),
-                      _vm.preview.thumbnail
-                        ? _c("img", {
-                            attrs: { src: _vm.preview.thumbnail, height: "150" }
-                          })
-                        : _vm._e(),
-                      _vm._v(" "),
-                      _c("v-select", {
-                        attrs: {
-                          items: _vm.ref_input.avgprice_status,
-                          "item-text": "name",
-                          "item-value": "value",
-                          label: "Select Average Price Status"
-                        },
-                        model: {
-                          value: _vm.input.avgprice_status,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "avgprice_status", $$v)
-                          },
-                          expression: "input.avgprice_status"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "Tax", required: "" },
-                        model: {
-                          value: _vm.input.tax,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "tax", $$v)
-                          },
-                          expression: "input.tax"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-select", {
-                        attrs: {
-                          items: _vm.ref_input.unit,
-                          "item-text": "name",
-                          "item-value": "id",
-                          label: "Select Unit"
-                        },
-                        model: {
-                          value: _vm.input.unit_id,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "unit_id", $$v)
-                          },
-                          expression: "input.unit_id"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-select", {
-                        attrs: {
-                          items: _vm.ref_input.cogs,
-                          "item-text": "name",
-                          "item-value": "id",
-                          label: "Select COGS"
-                        },
-                        model: {
-                          value: _vm.input.cogs_id,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "cogs_id", $$v)
-                          },
-                          expression: "input.cogs_id"
-                        }
-                      }),
-                      _vm._v(" "),
                       _c(
                         "v-btn",
                         {
-                          attrs: { color: "primary" },
+                          attrs: { icon: "", dark: "" },
                           on: {
                             click: function($event) {
-                              _vm.e6 = 2
+                              return _vm.closedialog_createedit()
                             }
                           }
                         },
-                        [_vm._v("Continue")]
-                      )
+                        [_c("v-icon", [_vm._v("close")])],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("v-toolbar-title", [_vm._v("Add goods")])
                     ],
                     1
                   ),
                   _vm._v(" "),
                   _c(
-                    "v-stepper-step",
+                    "v-stepper",
                     {
-                      attrs: { complete: _vm.e6 > 2, step: "2", editable: "" }
-                    },
-                    [_c("h3", [_vm._v("Goods Category")])]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-stepper-content",
-                    { attrs: { step: "2" } },
-                    [
-                      _c("v-combobox", {
-                        attrs: {
-                          items: _vm.ref_input.category,
-                          "item-value": "id",
-                          "item-text": "name",
-                          label: "Type or select goods category",
-                          chips: "",
-                          clearable: "",
-                          "prepend-icon": "filter_list",
-                          solo: "",
-                          multiple: ""
+                      attrs: { vertical: "" },
+                      model: {
+                        value: _vm.e6,
+                        callback: function($$v) {
+                          _vm.e6 = $$v
                         },
-                        on: {
-                          keyup: function($event) {
-                            if (
-                              !$event.type.indexOf("key") &&
-                              _vm._k(
-                                $event.keyCode,
-                                "enter",
-                                13,
-                                $event.key,
-                                "Enter"
-                              )
-                            ) {
-                              return null
-                            }
-                            return _vm.checkItemInList()
+                        expression: "e6"
+                      }
+                    },
+                    [
+                      _c(
+                        "v-stepper-step",
+                        {
+                          attrs: {
+                            complete: _vm.e6 > 1,
+                            step: "1",
+                            editable: ""
                           }
                         },
-                        scopedSlots: _vm._u([
-                          {
-                            key: "selection",
-                            fn: function(data) {
-                              return [
-                                _c(
-                                  "v-chip",
-                                  {
+                        [_c("h3", [_vm._v("Goods Data")])]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "1" } },
+                        [
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs9: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
                                     attrs: {
-                                      selected: data.selected,
-                                      close: ""
+                                      rules: this.$list_validation.max_req,
+                                      label: "Name",
+                                      counter: "191"
                                     },
-                                    on: {
-                                      input: function($event) {
-                                        return _vm.removeChip(data.item)
-                                      }
+                                    model: {
+                                      value: _vm.input.name,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "name", $$v)
+                                      },
+                                      expression: "input.name"
                                     }
-                                  },
-                                  [
-                                    _c("strong", [
-                                      _vm._v(_vm._s(data.item.name))
-                                    ])
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-flex",
+                                { attrs: { xs3: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.max_req,
+                                      label: "Code",
+                                      counter: "191",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.input.code,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "code", $$v)
+                                      },
+                                      expression: "input.code"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.max,
+                                      label: "Description",
+                                      counter: "191",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.input.desc,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "desc", $$v)
+                                      },
+                                      expression: "input.desc"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs6: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.numeric_req,
+                                      label: "Margin",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.input.margin,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "margin", $$v)
+                                      },
+                                      expression: "input.margin"
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-flex",
+                                { attrs: { xs6: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.numeric_req,
+                                      label: "Status",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.input.status,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "status", $$v)
+                                      },
+                                      expression: "input.status"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs6: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.numeric_req,
+                                      label: "Value",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.input.value,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "value", $$v)
+                                      },
+                                      expression: "input.value"
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-flex",
+                                { attrs: { xs6: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.numeric,
+                                      label: "Last Buy Price List",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.input.last_buy_pricelist,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.input,
+                                          "last_buy_pricelist",
+                                          $$v
+                                        )
+                                      },
+                                      expression: "input.last_buy_pricelist"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.max,
+                                      label: "Barcode",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.input.barcode_master,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.input,
+                                          "barcode_master",
+                                          $$v
+                                        )
+                                      },
+                                      expression: "input.barcode_master"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    attrs: {
+                                      label: "Select Image",
+                                      "prepend-icon": "attach_file"
+                                    },
+                                    on: { click: _vm.pickFile },
+                                    model: {
+                                      value: _vm.input.thumbnail_filename,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.input,
+                                          "thumbnail_filename",
+                                          $$v
+                                        )
+                                      },
+                                      expression: "input.thumbnail_filename"
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("input", {
+                                    staticStyle: { display: "none" },
+                                    attrs: {
+                                      id: "btn_upload_thumbnail",
+                                      type: "file",
+                                      accept: "image/*"
+                                    },
+                                    on: { change: _vm.changeImage }
+                                  }),
+                                  _vm._v(" "),
+                                  _vm.preview.thumbnail
+                                    ? _c("img", {
+                                        attrs: {
+                                          src: _vm.preview.thumbnail,
+                                          height: "150"
+                                        }
+                                      })
+                                    : _vm._e()
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-select", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.selecttf_req,
+                                      items: _vm.ref_input.avgprice_status,
+                                      "item-text": "name",
+                                      "item-value": "value",
+                                      label: "Select Average Price Status"
+                                    },
+                                    model: {
+                                      value: _vm.input.avgprice_status,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.input,
+                                          "avgprice_status",
+                                          $$v
+                                        )
+                                      },
+                                      expression: "input.avgprice_status"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.numeric,
+                                      label: "Tax",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.input.tax,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "tax", $$v)
+                                      },
+                                      expression: "input.tax"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-select", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation
+                                        .selectdata_req,
+                                      items: _vm.ref_input.unit,
+                                      "item-text": "name",
+                                      "item-value": "id",
+                                      label: "Select Unit"
+                                    },
+                                    model: {
+                                      value: _vm.input.unit_id,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "unit_id", $$v)
+                                      },
+                                      expression: "input.unit_id"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-select", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation
+                                        .selectdata_req,
+                                      items: _vm.ref_input.cogs,
+                                      "item-text": "name",
+                                      "item-value": "id",
+                                      label: "Select COGS"
+                                    },
+                                    model: {
+                                      value: _vm.input.cogs_id,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "cogs_id", $$v)
+                                      },
+                                      expression: "input.cogs_id"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "primary" },
+                              on: {
+                                click: function($event) {
+                                  _vm.e6 = 2
+                                }
+                              }
+                            },
+                            [_vm._v("Continue")]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-step",
+                        {
+                          attrs: {
+                            complete: _vm.e6 > 2,
+                            step: "2",
+                            editable: ""
+                          }
+                        },
+                        [_c("h3", [_vm._v("Goods Category")])]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "2" } },
+                        [
+                          _c("v-combobox", {
+                            attrs: {
+                              items: _vm.ref_input.category,
+                              "item-value": "id",
+                              "item-text": "name",
+                              label: "Type or select goods category",
+                              chips: "",
+                              clearable: "",
+                              "prepend-icon": "filter_list",
+                              solo: "",
+                              multiple: ""
+                            },
+                            on: {
+                              keyup: function($event) {
+                                if (
+                                  !$event.type.indexOf("key") &&
+                                  _vm._k(
+                                    $event.keyCode,
+                                    "enter",
+                                    13,
+                                    $event.key,
+                                    "Enter"
+                                  )
+                                ) {
+                                  return null
+                                }
+                                return _vm.checkItemInList()
+                              }
+                            },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "selection",
+                                fn: function(data) {
+                                  return [
+                                    _c(
+                                      "v-chip",
+                                      {
+                                        attrs: {
+                                          selected: data.selected,
+                                          close: ""
+                                        },
+                                        on: {
+                                          input: function($event) {
+                                            return _vm.removeChip(data.item)
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("strong", [
+                                          _vm._v(_vm._s(data.item.name))
+                                        ])
+                                      ]
+                                    )
                                   ]
-                                )
-                              ]
-                            }
-                          }
-                        ]),
-                        model: {
-                          value: _vm.input.category_goods,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "category_goods", $$v)
-                          },
-                          expression: "input.category_goods"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: { color: "primary" },
-                          on: {
-                            click: function($event) {
-                              _vm.e6 = 3
-                            }
-                          }
-                        },
-                        [_vm._v("Continue")]
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-stepper-step",
-                    {
-                      attrs: { complete: _vm.e6 > 3, step: "3", editable: "" }
-                    },
-                    [_c("h3", [_vm._v("Goods Attribute")])]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-stepper-content",
-                    { attrs: { step: "3" } },
-                    [
-                      _c("v-select", {
-                        attrs: {
-                          items: _vm.ref_input.attribute,
-                          "item-text": "name",
-                          "return-object": "",
-                          label: "Select Attribute"
-                        },
-                        model: {
-                          value: _vm.temp_input.attribute_goods.attribute,
-                          callback: function($$v) {
-                            _vm.$set(
-                              _vm.temp_input.attribute_goods,
-                              "attribute",
-                              $$v
-                            )
-                          },
-                          expression: "temp_input.attribute_goods.attribute"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "Value", required: "" },
-                        model: {
-                          value: _vm.temp_input.attribute_goods.value,
-                          callback: function($$v) {
-                            _vm.$set(
-                              _vm.temp_input.attribute_goods,
-                              "value",
-                              $$v
-                            )
-                          },
-                          expression: "temp_input.attribute_goods.value"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "v-toolbar",
-                        { attrs: { flat: "", color: "white" } },
-                        [
-                          _c("v-spacer"),
-                          _vm._v(" "),
-                          _vm.temp_input.id_edit_attribute_goods != -1
-                            ? _c(
-                                "v-btn",
-                                {
-                                  attrs: { color: "red", dark: "" },
-                                  on: {
-                                    click: function($event) {
-                                      _vm.table_attribute().canceledit()
-                                    }
-                                  }
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                            Cancel\n                        "
-                                  )
-                                ]
-                              )
-                            : _vm._e(),
-                          _vm._v(" "),
-                          _c("v-btn", {
-                            attrs: { color: "primary", dark: "" },
-                            domProps: {
-                              innerHTML: _vm._s(
-                                _vm.temp_input.id_edit_attribute_goods == -1
-                                  ? "Add to Table"
-                                  : "Save Changes"
-                              )
-                            },
-                            on: {
-                              click: function($event) {
-                                _vm.table_attribute().save()
+                                }
                               }
+                            ]),
+                            model: {
+                              value: _vm.input.category_goods,
+                              callback: function($$v) {
+                                _vm.$set(_vm.input, "category_goods", $$v)
+                              },
+                              expression: "input.category_goods"
                             }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "primary" },
+                              on: {
+                                click: function($event) {
+                                  _vm.e6 = 3
+                                }
+                              }
+                            },
+                            [_vm._v("Continue")]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-step",
+                        {
+                          attrs: {
+                            complete: _vm.e6 > 3,
+                            step: "3",
+                            editable: ""
+                          }
+                        },
+                        [_c("h3", [_vm._v("Goods Attribute")])]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "3" } },
+                        [
+                          _c("v-select", {
+                            attrs: {
+                              items: _vm.ref_input.attribute,
+                              "item-text": "name",
+                              "return-object": "",
+                              label: "Select Attribute"
+                            },
+                            model: {
+                              value: _vm.temp_input.attribute_goods.attribute,
+                              callback: function($$v) {
+                                _vm.$set(
+                                  _vm.temp_input.attribute_goods,
+                                  "attribute",
+                                  $$v
+                                )
+                              },
+                              expression: "temp_input.attribute_goods.attribute"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-text-field", {
+                            attrs: { label: "Value", required: "" },
+                            model: {
+                              value: _vm.temp_input.attribute_goods.value,
+                              callback: function($$v) {
+                                _vm.$set(
+                                  _vm.temp_input.attribute_goods,
+                                  "value",
+                                  $$v
+                                )
+                              },
+                              expression: "temp_input.attribute_goods.value"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "v-toolbar",
+                            { attrs: { flat: "", color: "white" } },
+                            [
+                              _c("v-spacer"),
+                              _vm._v(" "),
+                              _vm.temp_input.id_edit_attribute_goods != -1
+                                ? _c(
+                                    "v-btn",
+                                    {
+                                      attrs: { color: "red", dark: "" },
+                                      on: {
+                                        click: function($event) {
+                                          _vm.table_attribute().canceledit()
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                Cancel\n                            "
+                                      )
+                                    ]
+                                  )
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _c("v-btn", {
+                                attrs: { color: "primary", dark: "" },
+                                domProps: {
+                                  innerHTML: _vm._s(
+                                    _vm.temp_input.id_edit_attribute_goods == -1
+                                      ? "Add to Table"
+                                      : "Save Changes"
+                                  )
+                                },
+                                on: {
+                                  click: function($event) {
+                                    _vm.table_attribute().save()
+                                  }
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-toolbar",
+                            { attrs: { flat: "", color: "white" } },
+                            [
+                              _c("v-toolbar-title", [
+                                _vm._v("Goods Attribute Data")
+                              ])
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("v-data-table", {
+                            attrs: {
+                              "disable-initial-sort": "",
+                              headers: [
+                                { text: "Attribute", value: "attribute" },
+                                {
+                                  text: "Values",
+                                  value: "value",
+                                  align: "right"
+                                },
+                                {
+                                  text: "Action",
+                                  align: "left",
+                                  width: "15%",
+                                  sortable: false
+                                }
+                              ],
+                              items: _vm.input.attribute_goods
+                            },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "items",
+                                fn: function(props) {
+                                  return [
+                                    _c("td", [
+                                      _vm._v(_vm._s(props.item.attribute.name))
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", { staticClass: "text-xs-right" }, [
+                                      _vm._v(_vm._s(props.item.value))
+                                    ]),
+                                    _vm._v(" "),
+                                    _c(
+                                      "td",
+                                      [
+                                        _c(
+                                          "v-btn",
+                                          _vm._g(
+                                            {
+                                              staticClass: "button-action",
+                                              attrs: {
+                                                color: "primary",
+                                                fab: "",
+                                                depressed: "",
+                                                small: "",
+                                                dark: ""
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  _vm
+                                                    .table_attribute()
+                                                    .showData(props.index)
+                                                }
+                                              }
+                                            },
+                                            _vm.on
+                                          ),
+                                          [
+                                            _c(
+                                              "v-icon",
+                                              { attrs: { small: "" } },
+                                              [_vm._v("edit")]
+                                            )
+                                          ],
+                                          1
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "v-btn",
+                                          {
+                                            staticClass: "button-action",
+                                            attrs: {
+                                              color: "red",
+                                              fab: "",
+                                              small: "",
+                                              dark: "",
+                                              depressed: ""
+                                            },
+                                            on: {
+                                              click: function($event) {
+                                                _vm
+                                                  .table_attribute()
+                                                  .delete(props.index)
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "v-icon",
+                                              { attrs: { small: "" } },
+                                              [_vm._v("delete")]
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  ]
+                                }
+                              }
+                            ])
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "primary" },
+                              on: {
+                                click: function($event) {
+                                  _vm.e6 = 4
+                                }
+                              }
+                            },
+                            [_vm._v("Continue")]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-step",
+                        { attrs: { step: "4", editable: "" } },
+                        [_c("h3", [_vm._v("Goods Material")])]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "4" } },
+                        [
+                          _c("v-text-field", {
+                            attrs: { label: "Name", required: "" },
+                            model: {
+                              value: _vm.temp_input.material_goods.name,
+                              callback: function($$v) {
+                                _vm.$set(
+                                  _vm.temp_input.material_goods,
+                                  "name",
+                                  $$v
+                                )
+                              },
+                              expression: "temp_input.material_goods.name"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-text-field", {
+                            attrs: { label: "Total", required: "" },
+                            model: {
+                              value: _vm.temp_input.material_goods.total,
+                              callback: function($$v) {
+                                _vm.$set(
+                                  _vm.temp_input.material_goods,
+                                  "total",
+                                  $$v
+                                )
+                              },
+                              expression: "temp_input.material_goods.total"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-text-field", {
+                            attrs: { label: "Adjust", required: "" },
+                            model: {
+                              value: _vm.temp_input.material_goods.adjust,
+                              callback: function($$v) {
+                                _vm.$set(
+                                  _vm.temp_input.material_goods,
+                                  "adjust",
+                                  $$v
+                                )
+                              },
+                              expression: "temp_input.material_goods.adjust"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "v-toolbar",
+                            { attrs: { flat: "", color: "white" } },
+                            [
+                              _c("v-spacer"),
+                              _vm._v(" "),
+                              _vm.temp_input.id_edit_material_goods != -1
+                                ? _c(
+                                    "v-btn",
+                                    {
+                                      attrs: { color: "red", dark: "" },
+                                      on: {
+                                        click: function($event) {
+                                          _vm.table_material().canceledit()
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                Cancel\n                            "
+                                      )
+                                    ]
+                                  )
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _c("v-btn", {
+                                attrs: { color: "primary", dark: "" },
+                                domProps: {
+                                  innerHTML: _vm._s(
+                                    _vm.temp_input.id_edit_material_goods == -1
+                                      ? "Add to Table"
+                                      : "Save Changes"
+                                  )
+                                },
+                                on: {
+                                  click: function($event) {
+                                    _vm.table_material().save()
+                                  }
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-toolbar",
+                            { attrs: { flat: "", color: "white" } },
+                            [
+                              _c("v-toolbar-title", [
+                                _vm._v("Goods Material Data")
+                              ])
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("v-data-table", {
+                            attrs: {
+                              "disable-initial-sort": "",
+                              headers: [
+                                { text: "Material", value: "name" },
+                                {
+                                  text: "Total",
+                                  value: "total",
+                                  align: "right"
+                                },
+                                {
+                                  text: "Adjust",
+                                  value: "adjust",
+                                  align: "right"
+                                },
+                                {
+                                  text: "Action",
+                                  align: "left",
+                                  width: "15%",
+                                  sortable: false
+                                }
+                              ],
+                              items: _vm.input.material_goods
+                            },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "items",
+                                fn: function(props) {
+                                  return [
+                                    _c("td", [_vm._v(_vm._s(props.item.name))]),
+                                    _vm._v(" "),
+                                    _c("td", { staticClass: "text-xs-right" }, [
+                                      _vm._v(_vm._s(props.item.total))
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", { staticClass: "text-xs-right" }, [
+                                      _vm._v(_vm._s(props.item.adjust))
+                                    ]),
+                                    _vm._v(" "),
+                                    _c(
+                                      "td",
+                                      [
+                                        _c(
+                                          "v-btn",
+                                          _vm._g(
+                                            {
+                                              staticClass: "button-action",
+                                              attrs: {
+                                                color: "primary",
+                                                fab: "",
+                                                depressed: "",
+                                                small: "",
+                                                dark: ""
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  _vm
+                                                    .table_material()
+                                                    .showData(props.index)
+                                                }
+                                              }
+                                            },
+                                            _vm.on
+                                          ),
+                                          [
+                                            _c(
+                                              "v-icon",
+                                              { attrs: { small: "" } },
+                                              [_vm._v("edit")]
+                                            )
+                                          ],
+                                          1
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "v-btn",
+                                          {
+                                            staticClass: "button-action",
+                                            attrs: {
+                                              color: "red",
+                                              fab: "",
+                                              small: "",
+                                              dark: "",
+                                              depressed: ""
+                                            },
+                                            on: {
+                                              click: function($event) {
+                                                _vm
+                                                  .table_material()
+                                                  .delete(props.index)
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "v-icon",
+                                              { attrs: { small: "" } },
+                                              [_vm._v("delete")]
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  ]
+                                }
+                              }
+                            ])
                           })
                         ],
                         1
                       ),
                       _vm._v(" "),
                       _c(
-                        "v-toolbar",
-                        { attrs: { flat: "", color: "white" } },
-                        [
-                          _c("v-toolbar-title", [
-                            _vm._v("Goods Attribute Data")
-                          ])
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c("v-data-table", {
-                        attrs: {
-                          "disable-initial-sort": "",
-                          headers: [
-                            { text: "Attribute", value: "attribute" },
-                            { text: "Values", value: "value", align: "right" },
-                            {
-                              text: "Action",
-                              align: "left",
-                              width: "15%",
-                              sortable: false
-                            }
-                          ],
-                          items: _vm.input.attribute_goods
-                        },
-                        scopedSlots: _vm._u([
-                          {
-                            key: "items",
-                            fn: function(props) {
-                              return [
-                                _c("td", [
-                                  _vm._v(_vm._s(props.item.attribute.name))
-                                ]),
-                                _vm._v(" "),
-                                _c("td", { staticClass: "text-xs-right" }, [
-                                  _vm._v(_vm._s(props.item.value))
-                                ]),
-                                _vm._v(" "),
-                                _c(
-                                  "td",
-                                  [
-                                    _c(
-                                      "v-btn",
-                                      _vm._g(
-                                        {
-                                          staticClass: "button-action",
-                                          attrs: {
-                                            color: "primary",
-                                            fab: "",
-                                            depressed: "",
-                                            small: "",
-                                            dark: ""
-                                          },
-                                          on: {
-                                            click: function($event) {
-                                              _vm
-                                                .table_attribute()
-                                                .showData(props.index)
-                                            }
-                                          }
-                                        },
-                                        _vm.on
-                                      ),
-                                      [
-                                        _c("v-icon", { attrs: { small: "" } }, [
-                                          _vm._v("edit")
-                                        ])
-                                      ],
-                                      1
-                                    ),
-                                    _vm._v(" "),
-                                    _c(
-                                      "v-btn",
-                                      {
-                                        staticClass: "button-action",
-                                        attrs: {
-                                          color: "red",
-                                          fab: "",
-                                          small: "",
-                                          dark: "",
-                                          depressed: ""
-                                        },
-                                        on: {
-                                          click: function($event) {
-                                            _vm
-                                              .table_attribute()
-                                              .delete(props.index)
-                                          }
-                                        }
-                                      },
-                                      [
-                                        _c("v-icon", { attrs: { small: "" } }, [
-                                          _vm._v("delete")
-                                        ])
-                                      ],
-                                      1
-                                    )
-                                  ],
-                                  1
-                                )
-                              ]
-                            }
-                          }
-                        ])
-                      }),
-                      _vm._v(" "),
-                      _c(
                         "v-btn",
                         {
-                          attrs: { color: "primary" },
                           on: {
                             click: function($event) {
-                              _vm.e6 = 4
+                              return _vm.save_goods()
                             }
                           }
                         },
-                        [_vm._v("Continue")]
+                        [_vm._v("submit")]
                       )
                     ],
                     1
-                  ),
-                  _vm._v(" "),
-                  _c("v-stepper-step", { attrs: { step: "4", editable: "" } }, [
-                    _c("h3", [_vm._v("Goods Material")])
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "v-stepper-content",
-                    { attrs: { step: "4" } },
-                    [
-                      _c("v-text-field", {
-                        attrs: { label: "Name", required: "" },
-                        model: {
-                          value: _vm.temp_input.material_goods.name,
-                          callback: function($$v) {
-                            _vm.$set(_vm.temp_input.material_goods, "name", $$v)
-                          },
-                          expression: "temp_input.material_goods.name"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "Total", required: "" },
-                        model: {
-                          value: _vm.temp_input.material_goods.total,
-                          callback: function($$v) {
-                            _vm.$set(
-                              _vm.temp_input.material_goods,
-                              "total",
-                              $$v
-                            )
-                          },
-                          expression: "temp_input.material_goods.total"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "Adjust", required: "" },
-                        model: {
-                          value: _vm.temp_input.material_goods.adjust,
-                          callback: function($$v) {
-                            _vm.$set(
-                              _vm.temp_input.material_goods,
-                              "adjust",
-                              $$v
-                            )
-                          },
-                          expression: "temp_input.material_goods.adjust"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "v-toolbar",
-                        { attrs: { flat: "", color: "white" } },
-                        [
-                          _c("v-spacer"),
-                          _vm._v(" "),
-                          _vm.temp_input.id_edit_material_goods != -1
-                            ? _c(
-                                "v-btn",
-                                {
-                                  attrs: { color: "red", dark: "" },
-                                  on: {
-                                    click: function($event) {
-                                      _vm.table_material().canceledit()
-                                    }
-                                  }
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                            Cancel\n                        "
-                                  )
-                                ]
-                              )
-                            : _vm._e(),
-                          _vm._v(" "),
-                          _c("v-btn", {
-                            attrs: { color: "primary", dark: "" },
-                            domProps: {
-                              innerHTML: _vm._s(
-                                _vm.temp_input.id_edit_material_goods == -1
-                                  ? "Add to Table"
-                                  : "Save Changes"
-                              )
-                            },
-                            on: {
-                              click: function($event) {
-                                _vm.table_material().save()
-                              }
-                            }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-toolbar",
-                        { attrs: { flat: "", color: "white" } },
-                        [
-                          _c("v-toolbar-title", [_vm._v("Goods Material Data")])
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c("v-data-table", {
-                        attrs: {
-                          "disable-initial-sort": "",
-                          headers: [
-                            { text: "Material", value: "name" },
-                            { text: "Total", value: "total", align: "right" },
-                            { text: "Adjust", value: "adjust", align: "right" },
-                            {
-                              text: "Action",
-                              align: "left",
-                              width: "15%",
-                              sortable: false
-                            }
-                          ],
-                          items: _vm.input.material_goods
-                        },
-                        scopedSlots: _vm._u([
-                          {
-                            key: "items",
-                            fn: function(props) {
-                              return [
-                                _c("td", [_vm._v(_vm._s(props.item.name))]),
-                                _vm._v(" "),
-                                _c("td", { staticClass: "text-xs-right" }, [
-                                  _vm._v(_vm._s(props.item.total))
-                                ]),
-                                _vm._v(" "),
-                                _c("td", { staticClass: "text-xs-right" }, [
-                                  _vm._v(_vm._s(props.item.adjust))
-                                ]),
-                                _vm._v(" "),
-                                _c(
-                                  "td",
-                                  [
-                                    _c(
-                                      "v-btn",
-                                      _vm._g(
-                                        {
-                                          staticClass: "button-action",
-                                          attrs: {
-                                            color: "primary",
-                                            fab: "",
-                                            depressed: "",
-                                            small: "",
-                                            dark: ""
-                                          },
-                                          on: {
-                                            click: function($event) {
-                                              _vm
-                                                .table_material()
-                                                .showData(props.index)
-                                            }
-                                          }
-                                        },
-                                        _vm.on
-                                      ),
-                                      [
-                                        _c("v-icon", { attrs: { small: "" } }, [
-                                          _vm._v("edit")
-                                        ])
-                                      ],
-                                      1
-                                    ),
-                                    _vm._v(" "),
-                                    _c(
-                                      "v-btn",
-                                      {
-                                        staticClass: "button-action",
-                                        attrs: {
-                                          color: "red",
-                                          fab: "",
-                                          small: "",
-                                          dark: "",
-                                          depressed: ""
-                                        },
-                                        on: {
-                                          click: function($event) {
-                                            _vm
-                                              .table_material()
-                                              .delete(props.index)
-                                          }
-                                        }
-                                      },
-                                      [
-                                        _c("v-icon", { attrs: { small: "" } }, [
-                                          _vm._v("delete")
-                                        ])
-                                      ],
-                                      1
-                                    )
-                                  ],
-                                  1
-                                )
-                              ]
-                            }
-                          }
-                        ])
-                      })
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    {
-                      on: {
-                        click: function($event) {
-                          return _vm.save_goods()
-                        }
-                      }
-                    },
-                    [_vm._v("submit")]
-                  ),
-                  _vm._v(
-                    "\n                " +
-                      _vm._s(_vm.input) +
-                      "\n                "
-                  ),
-                  _c(
-                    "v-btn",
-                    {
-                      on: {
-                        click: function($event) {
-                          return _vm.save_goods()
-                        }
-                      }
-                    },
-                    [_vm._v("sementara aja")]
-                  ),
-                  _vm._v(
-                    "\n                " +
-                      _vm._s(_vm.input_before_edit) +
-                      "\n            "
                   )
                 ],
                 1
@@ -9204,6 +10647,1049 @@ var render = function() {
                         on: {
                           click: function($event) {
                             return _vm.delete_goods(props.index)
+                          }
+                        }
+                      },
+                      [
+                        _c("v-icon", { attrs: { small: "" } }, [
+                          _vm._v("delete")
+                        ])
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              ]
+            }
+          }
+        ])
+      })
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/GoodsRack.vue?vue&type=template&id=04c44284&":
+/*!*******************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/GoodsRack.vue?vue&type=template&id=04c44284& ***!
+  \*******************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "v-dialog",
+        {
+          attrs: { fullscreen: "" },
+          model: {
+            value: _vm.dialog_createedit,
+            callback: function($$v) {
+              _vm.dialog_createedit = $$v
+            },
+            expression: "dialog_createedit"
+          }
+        },
+        [
+          _c(
+            "v-form",
+            {
+              ref: "formCreateEdit",
+              model: {
+                value: _vm.valid,
+                callback: function($$v) {
+                  _vm.valid = $$v
+                },
+                expression: "valid"
+              }
+            },
+            [
+              _c(
+                "v-card",
+                [
+                  _c(
+                    "v-toolbar",
+                    { attrs: { dark: "", color: "menu" } },
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { icon: "", dark: "" },
+                          on: {
+                            click: function($event) {
+                              return _vm.closedialog_createedit()
+                            }
+                          }
+                        },
+                        [_c("v-icon", [_vm._v("close")])],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("v-toolbar-title", [_vm._v("Add Goods Rack")])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-stepper",
+                    {
+                      attrs: { vertical: "" },
+                      model: {
+                        value: _vm.e6,
+                        callback: function($$v) {
+                          _vm.e6 = $$v
+                        },
+                        expression: "e6"
+                      }
+                    },
+                    [
+                      _c(
+                        "v-stepper-step",
+                        {
+                          attrs: {
+                            complete: _vm.e6 > 1,
+                            step: "1",
+                            editable: ""
+                          }
+                        },
+                        [_c("h3", [_vm._v("Goods Rack Data")])]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "1" } },
+                        [
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-select", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation
+                                        .selectdata_req,
+                                      items: _vm.ref_input.goods,
+                                      "item-text": "name",
+                                      "item-value": "id",
+                                      label: "Select Goods"
+                                    },
+                                    model: {
+                                      value: _vm.input.goods_id,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "goods_id", $$v)
+                                      },
+                                      expression: "input.goods_id"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-select", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation
+                                        .selectdata_req,
+                                      items: _vm.ref_input.racks,
+                                      "item-text": "name",
+                                      "item-value": "id",
+                                      label: "Select Rack"
+                                    },
+                                    model: {
+                                      value: _vm.input.rack_id,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "rack_id", $$v)
+                                      },
+                                      expression: "input.rack_id"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.numeric_req,
+                                      label: "Stock",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.input.stock,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "stock", $$v)
+                                      },
+                                      expression: "input.stock"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "primary" },
+                              on: {
+                                click: function($event) {
+                                  _vm.e6 = 2
+                                }
+                              }
+                            },
+                            [_vm._v("Continue")]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-step",
+                        {
+                          attrs: {
+                            complete: _vm.e6 > 2,
+                            step: "2",
+                            editable: ""
+                          }
+                        },
+                        [_c("h3", [_vm._v("Goods Price Selling")])]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "2" } },
+                        [
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.numeric_req,
+                                      label: "Stock Cut Off",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value:
+                                        _vm.temp_input.price_sellings
+                                          .stock_cut_off,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.temp_input.price_sellings,
+                                          "stock_cut_off",
+                                          $$v
+                                        )
+                                      },
+                                      expression:
+                                        "temp_input.price_sellings.stock_cut_off"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-select", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation
+                                        .selectdata_req,
+                                      items:
+                                        _vm.ref_input.category_price_sellings,
+                                      "item-text": "name",
+                                      "item-value": "id",
+                                      label: "Select Category Price Selling"
+                                    },
+                                    model: {
+                                      value:
+                                        _vm.temp_input.price_sellings
+                                          .category_price_sellings,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.temp_input.price_sellings,
+                                          "category_price_sellings",
+                                          $$v
+                                        )
+                                      },
+                                      expression:
+                                        "temp_input.price_sellings.category_price_sellings"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.numeric_req,
+                                      label: "Price",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value:
+                                        _vm.temp_input.price_sellings.price,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.temp_input.price_sellings,
+                                          "price",
+                                          $$v
+                                        )
+                                      },
+                                      expression:
+                                        "temp_input.price_sellings.price"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.numeric,
+                                      label: "Discount",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value:
+                                        _vm.temp_input.price_sellings.discount,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.temp_input.price_sellings,
+                                          "discount",
+                                          $$v
+                                        )
+                                      },
+                                      expression:
+                                        "temp_input.price_sellings.discount"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-select", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.selecttf_req,
+                                      items: _vm.ref_input.free,
+                                      "item-text": "name",
+                                      "item-value": "value",
+                                      label: "Free (True / False)"
+                                    },
+                                    model: {
+                                      value: _vm.temp_input.price_sellings.free,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.temp_input.price_sellings,
+                                          "free",
+                                          $$v
+                                        )
+                                      },
+                                      expression:
+                                        "temp_input.price_sellings.free"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-toolbar",
+                            { attrs: { flat: "", color: "white" } },
+                            [
+                              _c("v-spacer"),
+                              _vm._v(" "),
+                              _vm.temp_input.id_edit_price_sellings != -1
+                                ? _c(
+                                    "v-btn",
+                                    {
+                                      attrs: { color: "red", dark: "" },
+                                      on: {
+                                        click: function($event) {
+                                          _vm.table_price_selling().canceledit()
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                Cancel\n                            "
+                                      )
+                                    ]
+                                  )
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _c("v-btn", {
+                                attrs: { color: "primary", dark: "" },
+                                domProps: {
+                                  innerHTML: _vm._s(
+                                    _vm.temp_input.id_edit_price_sellings == -1
+                                      ? "Add to Table"
+                                      : "Save Changes"
+                                  )
+                                },
+                                on: {
+                                  click: function($event) {
+                                    _vm.table_price_selling().save()
+                                  }
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-toolbar",
+                            { attrs: { flat: "", color: "white" } },
+                            [
+                              _c("v-toolbar-title", [
+                                _vm._v("Price Selling Data")
+                              ])
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("v-data-table", {
+                            attrs: {
+                              "disable-initial-sort": "",
+                              headers: [
+                                {
+                                  text: "Stock Cut Off",
+                                  value: "stock_cut_off"
+                                },
+                                {
+                                  text: "Category Price Selling",
+                                  value: "category_price_sellings"
+                                },
+                                {
+                                  text: "Price",
+                                  value: "price",
+                                  align: "right"
+                                },
+                                {
+                                  text: "Discount",
+                                  value: "discount",
+                                  align: "right"
+                                },
+                                { text: "Free", value: "free", align: "right" },
+                                {
+                                  text: "Action",
+                                  align: "left",
+                                  width: "15%",
+                                  sortable: false
+                                }
+                              ],
+                              items: _vm.input.price_sellings
+                            },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "items",
+                                fn: function(props) {
+                                  return [
+                                    _c("td", [
+                                      _vm._v(_vm._s(props.item.stock_cut_off))
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", { staticClass: "text-xs-right" }, [
+                                      _vm._v(
+                                        _vm._s(
+                                          props.item.category_price_sellings
+                                            .name
+                                        )
+                                      )
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      _vm._v(_vm._s(props.item.price))
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      _vm._v(_vm._s(props.item.discount))
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [_vm._v(_vm._s(props.item.free))]),
+                                    _vm._v(" "),
+                                    _c(
+                                      "td",
+                                      [
+                                        _c(
+                                          "v-btn",
+                                          _vm._g(
+                                            {
+                                              staticClass: "button-action",
+                                              attrs: {
+                                                color: "primary",
+                                                fab: "",
+                                                depressed: "",
+                                                small: "",
+                                                dark: ""
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  _vm
+                                                    .table_price_selling()
+                                                    .showData(props.index)
+                                                }
+                                              }
+                                            },
+                                            _vm.on
+                                          ),
+                                          [
+                                            _c(
+                                              "v-icon",
+                                              { attrs: { small: "" } },
+                                              [_vm._v("edit")]
+                                            )
+                                          ],
+                                          1
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "v-btn",
+                                          {
+                                            staticClass: "button-action",
+                                            attrs: {
+                                              color: "red",
+                                              fab: "",
+                                              small: "",
+                                              dark: "",
+                                              depressed: ""
+                                            },
+                                            on: {
+                                              click: function($event) {
+                                                _vm
+                                                  .table_price_selling()
+                                                  .delete(props.index)
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "v-icon",
+                                              { attrs: { small: "" } },
+                                              [_vm._v("delete")]
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  ]
+                                }
+                              }
+                            ])
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "primary" },
+                              on: {
+                                click: function($event) {
+                                  _vm.e6 = 3
+                                }
+                              }
+                            },
+                            [_vm._v("Continue")]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-step",
+                        {
+                          attrs: {
+                            complete: _vm.e6 > 3,
+                            step: "3",
+                            editable: ""
+                          }
+                        },
+                        [_c("h3", [_vm._v("Goods Attribute")])]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "3" } },
+                        [
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.numeric_req,
+                                      label: "Stock Batch",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.temp_input.batch.stock,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.temp_input.batch,
+                                          "stock",
+                                          $$v
+                                        )
+                                      },
+                                      expression: "temp_input.batch.stock"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation.numeric_req,
+                                      label: "Batch Number",
+                                      required: ""
+                                    },
+                                    model: {
+                                      value: _vm.temp_input.batch.batch_number,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.temp_input.batch,
+                                          "batch_number",
+                                          $$v
+                                        )
+                                      },
+                                      expression:
+                                        "temp_input.batch.batch_number"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-select", {
+                                    staticClass: "pa-2",
+                                    attrs: {
+                                      rules: this.$list_validation
+                                        .selectdata_req,
+                                      items: _vm.ref_input.sources,
+                                      "item-text": "name",
+                                      "item-value": "id",
+                                      label: "Select Sources"
+                                    },
+                                    model: {
+                                      value: _vm.temp_input.batch.sources,
+                                      callback: function($$v) {
+                                        _vm.$set(
+                                          _vm.temp_input.batch,
+                                          "sources",
+                                          $$v
+                                        )
+                                      },
+                                      expression: "temp_input.batch.sources"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-toolbar",
+                            { attrs: { flat: "", color: "white" } },
+                            [
+                              _c("v-spacer"),
+                              _vm._v(" "),
+                              _vm.temp_input.id_edit_batch != -1
+                                ? _c(
+                                    "v-btn",
+                                    {
+                                      attrs: { color: "red", dark: "" },
+                                      on: {
+                                        click: function($event) {
+                                          _vm.table_batch().canceledit()
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                Cancel\n                            "
+                                      )
+                                    ]
+                                  )
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _c("v-btn", {
+                                attrs: { color: "primary", dark: "" },
+                                domProps: {
+                                  innerHTML: _vm._s(
+                                    _vm.temp_input.id_edit_batch == -1
+                                      ? "Add to Table"
+                                      : "Save Changes"
+                                  )
+                                },
+                                on: {
+                                  click: function($event) {
+                                    _vm.table_batch().save()
+                                  }
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-toolbar",
+                            { attrs: { flat: "", color: "white" } },
+                            [_c("v-toolbar-title", [_vm._v("Batch Data")])],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("v-data-table", {
+                            attrs: {
+                              "disable-initial-sort": "",
+                              headers: [
+                                { text: "Stock", value: "stock" },
+                                { text: "Batch Number", value: "batch_number" },
+                                {
+                                  text: "Source",
+                                  value: "sources",
+                                  align: "right"
+                                },
+                                {
+                                  text: "Action",
+                                  align: "left",
+                                  width: "15%",
+                                  sortable: false
+                                }
+                              ],
+                              items: _vm.input.batch
+                            },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "items",
+                                fn: function(props) {
+                                  return [
+                                    _c("td", [
+                                      _vm._v(_vm._s(props.item.stock))
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", [
+                                      _vm._v(_vm._s(props.item.batch_number))
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("td", { staticClass: "text-xs-right" }, [
+                                      _vm._v(_vm._s(props.item.sources.name))
+                                    ]),
+                                    _vm._v(" "),
+                                    _c(
+                                      "td",
+                                      [
+                                        _c(
+                                          "v-btn",
+                                          _vm._g(
+                                            {
+                                              staticClass: "button-action",
+                                              attrs: {
+                                                color: "primary",
+                                                fab: "",
+                                                depressed: "",
+                                                small: "",
+                                                dark: ""
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  _vm
+                                                    .table_batch()
+                                                    .showData(props.index)
+                                                }
+                                              }
+                                            },
+                                            _vm.on
+                                          ),
+                                          [
+                                            _c(
+                                              "v-icon",
+                                              { attrs: { small: "" } },
+                                              [_vm._v("edit")]
+                                            )
+                                          ],
+                                          1
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "v-btn",
+                                          {
+                                            staticClass: "button-action",
+                                            attrs: {
+                                              color: "red",
+                                              fab: "",
+                                              small: "",
+                                              dark: "",
+                                              depressed: ""
+                                            },
+                                            on: {
+                                              click: function($event) {
+                                                _vm
+                                                  .table_batch()
+                                                  .delete(props.index)
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c(
+                                              "v-icon",
+                                              { attrs: { small: "" } },
+                                              [_vm._v("delete")]
+                                            )
+                                          ],
+                                          1
+                                        )
+                                      ],
+                                      1
+                                    )
+                                  ]
+                                }
+                              }
+                            ])
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.save_goods()
+                            }
+                          }
+                        },
+                        [_vm._v("submit")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-toolbar",
+        { attrs: { flat: "", color: "white" } },
+        [
+          _c("v-toolbar-title", [_vm._v("Good Rack Data")]),
+          _vm._v(" "),
+          _c("v-spacer"),
+          _vm._v(" "),
+          _c(
+            "v-btn",
+            {
+              attrs: { color: "primary", dark: "" },
+              on: {
+                click: function($event) {
+                  return _vm.opendialog_createedit(-1)
+                }
+              }
+            },
+            [_vm._v("\n            Add Data\n        ")]
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c("v-data-table", {
+        attrs: {
+          "disable-initial-sort": "",
+          headers: _vm.headers,
+          items: _vm.goods_racks
+        },
+        scopedSlots: _vm._u([
+          {
+            key: "items",
+            fn: function(props) {
+              return [
+                _c("td", [_vm._v(_vm._s(props.item.goods))]),
+                _vm._v(" "),
+                _c("td", { staticClass: "text-xs-right" }, [
+                  _vm._v(_vm._s(props.item.rack))
+                ]),
+                _vm._v(" "),
+                _c("td", { staticClass: "text-xs-right" }, [
+                  _vm._v(_vm._s(props.item.stock))
+                ]),
+                _vm._v(" "),
+                _c(
+                  "td",
+                  [
+                    _c(
+                      "v-btn",
+                      _vm._g(
+                        {
+                          staticClass: "button-action",
+                          attrs: {
+                            color: "primary",
+                            fab: "",
+                            depressed: "",
+                            small: "",
+                            dark: ""
+                          },
+                          on: {
+                            click: function($event) {
+                              return _vm.get_data_before_edit(props.index)
+                            }
+                          }
+                        },
+                        _vm.on
+                      ),
+                      [
+                        _c("v-icon", { attrs: { small: "" } }, [_vm._v("edit")])
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-btn",
+                      {
+                        staticClass: "button-action",
+                        attrs: {
+                          color: "red",
+                          fab: "",
+                          small: "",
+                          dark: "",
+                          depressed: ""
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.delete_goods_rack(props.index)
                           }
                         }
                       },
@@ -9515,7 +12001,7 @@ var render = function() {
             [
               _c(
                 "v-toolbar",
-                { attrs: { dark: "", color: "red" } },
+                { attrs: { dark: "", color: "menu" } },
                 [
                   _c(
                     "v-btn",
@@ -9717,7 +12203,7 @@ var render = function() {
             [
               _c(
                 "v-toolbar",
-                { attrs: { dark: "", color: "red" } },
+                { attrs: { dark: "", color: "menu" } },
                 [
                   _c(
                     "v-btn",
@@ -9943,7 +12429,7 @@ var render = function() {
             [
               _c(
                 "v-toolbar",
-                { attrs: { dark: "", color: "red" } },
+                { attrs: { dark: "", color: "menu" } },
                 [
                   _c(
                     "v-btn",
@@ -10141,257 +12627,432 @@ var render = function() {
         },
         [
           _c(
-            "v-card",
+            "v-form",
+            {
+              ref: "formCreateEdit",
+              staticClass: "fixfullscreen",
+              model: {
+                value: _vm.valid,
+                callback: function($$v) {
+                  _vm.valid = $$v
+                },
+                expression: "valid"
+              }
+            },
             [
               _c(
-                "v-toolbar",
-                { attrs: { dark: "", color: "red" } },
+                "v-card",
+                { staticClass: "fixfullscreen" },
                 [
                   _c(
-                    "v-btn",
-                    {
-                      attrs: { icon: "", dark: "" },
-                      on: {
-                        click: function($event) {
-                          return _vm.closedialog_createedit()
-                        }
-                      }
-                    },
-                    [_c("v-icon", [_vm._v("close")])],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c("v-toolbar-title", [_vm._v("Add Warehouse")])
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-stepper",
-                {
-                  attrs: { vertical: "" },
-                  model: {
-                    value: _vm.e6,
-                    callback: function($$v) {
-                      _vm.e6 = $$v
-                    },
-                    expression: "e6"
-                  }
-                },
-                [
-                  _c(
-                    "v-stepper-step",
-                    {
-                      attrs: { complete: _vm.e6 > 1, step: "1", editable: "" }
-                    },
-                    [_c("h3", [_vm._v("Goods Data")])]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-stepper-content",
-                    { attrs: { step: "1" } },
+                    "v-toolbar",
+                    { attrs: { dark: "", color: "menu" } },
                     [
-                      _c("v-text-field", {
-                        attrs: { label: "Name", required: "" },
-                        model: {
-                          value: _vm.input.name,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "name", $$v)
-                          },
-                          expression: "input.name"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "Telp", required: "" },
-                        model: {
-                          value: _vm.input.telp,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "telp", $$v)
-                          },
-                          expression: "input.telp"
-                        }
-                      }),
-                      _vm._v(" "),
                       _c(
-                        "GmapMap",
+                        "v-btn",
                         {
-                          staticStyle: { width: "500px", height: "300px" },
-                          attrs: {
-                            center: _vm.my_location,
-                            zoom: 7,
-                            "map-type-id": "terrain"
+                          attrs: { icon: "", dark: "" },
+                          on: {
+                            click: function($event) {
+                              return _vm.closedialog_createedit()
+                            }
                           }
                         },
-                        _vm._l(_vm.markers, function(m, index) {
-                          return _c("GmapMarker", {
-                            key: index,
-                            attrs: {
-                              position: m.position,
-                              clickable: true,
-                              draggable: true,
-                              "v:on-click": "center=m.position"
-                            },
-                            on: { drag: _vm.updateMarkers }
-                          })
-                        }),
+                        [_c("v-icon", [_vm._v("close")])],
                         1
                       ),
                       _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: {
-                          label: "Latitude",
-                          disabled: "",
-                          required: ""
-                        },
-                        model: {
-                          value: _vm.input.lat,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "lat", $$v)
-                          },
-                          expression: "input.lat"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: {
-                          label: "Longitude",
-                          disabled: "",
-                          required: ""
-                        },
-                        model: {
-                          value: _vm.input.lng,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "lng", $$v)
-                          },
-                          expression: "input.lng"
-                        }
-                      }),
-                      _vm._v(
-                        "\n                            " +
-                          _vm._s(_vm.input.lat) +
-                          "\n                            " +
-                          _vm._s(_vm.markers[0].position) +
-                          "\n                            \n                            "
-                      ),
-                      _c("v-text-field", {
-                        attrs: { label: "Email", required: "" },
-                        model: {
-                          value: _vm.input.email,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "email", $$v)
-                          },
-                          expression: "input.email"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c("v-text-field", {
-                        attrs: { label: "PIC", required: "" },
-                        model: {
-                          value: _vm.input.pic,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "pic", $$v)
-                          },
-                          expression: "input.pic"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: { color: "primary" },
-                          on: {
-                            click: function($event) {
-                              _vm.e6 = 2
-                            }
-                          }
-                        },
-                        [_vm._v("Continue")]
-                      )
+                      _c("v-toolbar-title", [_vm._v("Add Warehouse")])
                     ],
                     1
                   ),
                   _vm._v(" "),
                   _c(
-                    "v-stepper-step",
+                    "v-stepper",
                     {
-                      attrs: { complete: _vm.e6 > 2, step: "2", editable: "" }
-                    },
-                    [_c("h3", [_vm._v("Create Rack")])]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-stepper-content",
-                    { attrs: { step: "2" } },
-                    [
-                      _c("v-combobox", {
-                        attrs: {
-                          label: "Type rack",
-                          chips: "",
-                          clearable: "",
-                          "prepend-icon": "filter_list",
-                          solo: "",
-                          multiple: ""
+                      attrs: { vertical: "" },
+                      model: {
+                        value: _vm.e6,
+                        callback: function($$v) {
+                          _vm.e6 = $$v
                         },
-                        scopedSlots: _vm._u([
-                          {
-                            key: "selection",
-                            fn: function(data) {
-                              return [
-                                _c(
-                                  "v-chip",
-                                  {
-                                    attrs: {
-                                      selected: data.selected,
-                                      close: ""
-                                    },
-                                    on: {
-                                      input: function($event) {
-                                        return _vm.removeChip(data.item)
-                                      }
-                                    }
-                                  },
-                                  [_c("strong", [_vm._v(_vm._s(data.item))])]
-                                )
-                              ]
-                            }
-                          }
-                        ]),
-                        model: {
-                          value: _vm.input.racks,
-                          callback: function($$v) {
-                            _vm.$set(_vm.input, "racks", $$v)
-                          },
-                          expression: "input.racks"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: { color: "primary" },
-                          on: {
-                            click: function($event) {
-                              _vm.e6 = 3
-                            }
-                          }
-                        },
-                        [_vm._v("Continue")]
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    {
-                      on: {
-                        click: function($event) {
-                          return _vm.save_unit()
-                        }
+                        expression: "e6"
                       }
                     },
-                    [_vm._v("submit")]
+                    [
+                      _c(
+                        "v-stepper-step",
+                        {
+                          attrs: {
+                            complete: _vm.e6 > 1,
+                            step: "1",
+                            editable: ""
+                          }
+                        },
+                        [_c("h3", [_vm._v("Warehouse Data")])]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "1" } },
+                        [
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    attrs: {
+                                      rules: this.$list_validation.max_req,
+                                      label: "Name",
+                                      counter: "191"
+                                    },
+                                    model: {
+                                      value: _vm.input.name,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "name", $$v)
+                                      },
+                                      expression: "input.name"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    attrs: {
+                                      rules: this.$list_validation.max_req,
+                                      counter: "20",
+                                      label: "Telp"
+                                    },
+                                    model: {
+                                      value: _vm.input.telp,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "telp", $$v)
+                                      },
+                                      expression: "input.telp"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c(
+                                    "GmapMap",
+                                    {
+                                      staticStyle: {
+                                        width: "500px",
+                                        height: "300px"
+                                      },
+                                      attrs: {
+                                        center: _vm.my_location,
+                                        zoom: 7,
+                                        "map-type-id": "terrain"
+                                      }
+                                    },
+                                    _vm._l(_vm.markers, function(m, index) {
+                                      return _c("GmapMarker", {
+                                        key: index,
+                                        attrs: {
+                                          position: m.position,
+                                          clickable: true,
+                                          draggable: true,
+                                          "v:on-click": "center=m.position"
+                                        },
+                                        on: { drag: _vm.updateMarkers }
+                                      })
+                                    }),
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs6: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: { label: "Latitude", disabled: "" },
+                                    model: {
+                                      value: _vm.input.lat,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "lat", $$v)
+                                      },
+                                      expression: "input.lat"
+                                    }
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-flex",
+                                { attrs: { xs6: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    staticClass: "pa-2",
+                                    attrs: { label: "Longitude", disabled: "" },
+                                    model: {
+                                      value: _vm.input.lng,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "lng", $$v)
+                                      },
+                                      expression: "input.lng"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    attrs: {
+                                      rules: this.$list_validation.max_req,
+                                      counter: "191",
+                                      label: "Address"
+                                    },
+                                    model: {
+                                      value: _vm.input.address,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "address", $$v)
+                                      },
+                                      expression: "input.address"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    attrs: {
+                                      rules: this.$list_validation.email_req,
+                                      counter: "191",
+                                      label: "Email"
+                                    },
+                                    model: {
+                                      value: _vm.input.email,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "email", $$v)
+                                      },
+                                      expression: "input.email"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c("v-text-field", {
+                                    attrs: {
+                                      rules: this.$list_validation.max_req,
+                                      counter: "191",
+                                      label: "PIC"
+                                    },
+                                    model: {
+                                      value: _vm.input.pic,
+                                      callback: function($$v) {
+                                        _vm.$set(_vm.input, "pic", $$v)
+                                      },
+                                      expression: "input.pic"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-layout",
+                            { attrs: { row: "" } },
+                            [
+                              _c(
+                                "v-flex",
+                                { attrs: { xs12: "" } },
+                                [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: { color: "primary" },
+                                      on: {
+                                        click: function($event) {
+                                          _vm.e6 = 2
+                                        }
+                                      }
+                                    },
+                                    [_vm._v("Continue")]
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-step",
+                        {
+                          attrs: {
+                            complete: _vm.e6 > 2,
+                            step: "2",
+                            editable: ""
+                          }
+                        },
+                        [_c("h3", [_vm._v("Create Rack")])]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "2" } },
+                        [
+                          _c("v-combobox", {
+                            attrs: {
+                              label: "Type rack",
+                              chips: "",
+                              clearable: "",
+                              "prepend-icon": "filter_list",
+                              solo: "",
+                              multiple: ""
+                            },
+                            on: {
+                              keyup: function($event) {
+                                if (
+                                  !$event.type.indexOf("key") &&
+                                  _vm._k(
+                                    $event.keyCode,
+                                    "enter",
+                                    13,
+                                    $event.key,
+                                    "Enter"
+                                  )
+                                ) {
+                                  return null
+                                }
+                                return _vm.updateChip()
+                              }
+                            },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "selection",
+                                fn: function(data) {
+                                  return [
+                                    _c(
+                                      "v-chip",
+                                      {
+                                        attrs: {
+                                          selected: data.selected,
+                                          close: ""
+                                        },
+                                        on: {
+                                          input: function($event) {
+                                            return _vm.removeChip(data.item)
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("strong", [
+                                          _vm._v(_vm._s(data.item.name))
+                                        ])
+                                      ]
+                                    )
+                                  ]
+                                }
+                              }
+                            ]),
+                            model: {
+                              value: _vm.input.racks,
+                              callback: function($$v) {
+                                _vm.$set(_vm.input, "racks", $$v)
+                              },
+                              expression: "input.racks"
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.save_warehouse()
+                            }
+                          }
+                        },
+                        [_vm._v("submit")]
+                      )
+                    ],
+                    1
                   )
                 ],
                 1
@@ -10421,7 +13082,7 @@ var render = function() {
                 }
               }
             },
-            [_vm._v("\n                Add Data\n            ")]
+            [_vm._v("\n            Add Data\n        ")]
           )
         ],
         1
@@ -10469,7 +13130,7 @@ var render = function() {
                           },
                           on: {
                             click: function($event) {
-                              return _vm.opendialog_createedit(props.index)
+                              return _vm.get_data_before_edit(props.index)
                             }
                           }
                         },
@@ -10494,7 +13155,7 @@ var render = function() {
                         },
                         on: {
                           click: function($event) {
-                            return _vm.delete_warehouse(props.index)
+                            return _vm.delete_warehouses(props.index)
                           }
                         }
                       },
@@ -54869,7 +57530,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue2_google_maps__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(vue2_google_maps__WEBPACK_IMPORTED_MODULE_5__);
 /* harmony import */ var vuetify_es5_util_colors__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vuetify/es5/util/colors */ "./node_modules/vuetify/es5/util/colors.js");
 /* harmony import */ var vuetify_es5_util_colors__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(vuetify_es5_util_colors__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var _DilogApp__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./DilogApp */ "./resources/js/DilogApp.vue");
+/* harmony import */ var _plugin_PluginValidation__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./plugin/PluginValidation */ "./resources/js/plugin/PluginValidation.js");
+/* harmony import */ var _DilogApp__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./DilogApp */ "./resources/js/DilogApp.vue");
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 
@@ -54878,19 +57540,13 @@ window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js")
 
 
 
-<<<<<<< HEAD
- //AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM => api key berbayar (buat test aja)
 
-Vue.use(vue2_google_maps__WEBPACK_IMPORTED_MODULE_5__, {
-  load: {
-    key: 'AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM'
-=======
- //AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM => api key berbayar (buat test aja) 
+
+Vue.use(_plugin_PluginValidation__WEBPACK_IMPORTED_MODULE_7__["default"]); //AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM => api key berbayar (buat test aja)
 
 Vue.use(vue2_google_maps__WEBPACK_IMPORTED_MODULE_5__, {
   load: {
     key: ''
->>>>>>> CRUD-warehouse-scenario
   }
 });
 Vue.use(vue_fullscreen__WEBPACK_IMPORTED_MODULE_3___default.a);
@@ -54907,7 +57563,61 @@ var app = new Vue({
   el: '#app',
   router: _router_js__WEBPACK_IMPORTED_MODULE_1__["default"],
   components: {
-    DilogApp: _DilogApp__WEBPACK_IMPORTED_MODULE_7__["default"]
+    DilogApp: _DilogApp__WEBPACK_IMPORTED_MODULE_8__["default"]
+  }
+});
+
+/***/ }),
+
+/***/ "./resources/js/plugin/PluginValidation.js":
+/*!*************************************************!*\
+  !*** ./resources/js/plugin/PluginValidation.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// This exports the plugin object.
+/* harmony default export */ __webpack_exports__["default"] = ({
+  // The install method will be called with the Vue constructor as
+  // the first argument, along with possible options
+  install: function install(Vue, options) {
+    Vue.prototype.$list_validation = {
+      email_req: [function (v) {
+        return v.length > 0 || 'Please fill the blank !';
+      }, function (v) {
+        return v.includes('@') || 'Please fill with email !';
+      }],
+      email: [function (v) {
+        return v.includes('@') || 'Please fill with email !';
+      }],
+      combodata_req: [function (v) {
+        return v.length > 0 || 'Please fill the blank !';
+      }],
+      selectdata_req: [function (v) {
+        return v > 0 || 'Please fill the blank !';
+      }],
+      selecttf_req: [function (v) {
+        return v == 1 || v == 0 || 'Please fill the blank !';
+      }],
+      max_req: [function (v) {
+        return !!v || 'Please fill the blank !';
+      }, function (v) {
+        return (v || '').length <= 191 || 'A maximum of 191 characters is allowed';
+      }],
+      max: [function (v) {
+        return (v || '').length <= 191 || 'A maximum of 191 characters is allowed';
+      }],
+      numeric_req: [function (v) {
+        return !!v || 'Please fill the blank !';
+      }, function (v) {
+        return !isNaN(v) || 'Input must number !';
+      }],
+      numeric: [function (v) {
+        return !isNaN(v) || 'Input must number !';
+      }]
+    };
   }
 });
 
@@ -54939,8 +57649,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _views_Source__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./views/Source */ "./resources/js/views/Source.vue");
 /* harmony import */ var _views_Goods__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./views/Goods */ "./resources/js/views/Goods.vue");
 /* harmony import */ var _views_Goodscreate__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./views/Goodscreate */ "./resources/js/views/Goodscreate.vue");
-/* harmony import */ var _views_Login__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./views/Login */ "./resources/js/views/Login.vue");
-/* harmony import */ var _views_Logout__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./views/Logout */ "./resources/js/views/Logout.vue");
+/* harmony import */ var _views_GoodsRack__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./views/GoodsRack */ "./resources/js/views/GoodsRack.vue");
+/* harmony import */ var _views_Login__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./views/Login */ "./resources/js/views/Login.vue");
+/* harmony import */ var _views_Logout__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./views/Logout */ "./resources/js/views/Logout.vue");
 
 
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
@@ -54964,13 +57675,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 
 
+
 vue__WEBPACK_IMPORTED_MODULE_1___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]);
 var routes = [{
   path: '/login',
   component: _views_Unauthenticated__WEBPACK_IMPORTED_MODULE_3__["default"],
   children: [{
     path: '/login',
-    component: _views_Login__WEBPACK_IMPORTED_MODULE_15__["default"]
+    component: _views_Login__WEBPACK_IMPORTED_MODULE_16__["default"]
   }]
 }, {
   path: '/',
@@ -55004,11 +57716,14 @@ var routes = [{
     path: '/goods',
     component: _views_Goods__WEBPACK_IMPORTED_MODULE_13__["default"]
   }, {
+    path: '/goodsrack',
+    component: _views_GoodsRack__WEBPACK_IMPORTED_MODULE_15__["default"]
+  }, {
     path: '/goodscreate',
     component: _views_Goodscreate__WEBPACK_IMPORTED_MODULE_14__["default"]
   }, {
     path: '/logout',
-    component: _views_Logout__WEBPACK_IMPORTED_MODULE_16__["default"]
+    component: _views_Logout__WEBPACK_IMPORTED_MODULE_17__["default"]
   }],
   meta: {
     requiresAuth: true
@@ -55592,6 +58307,110 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Goods_vue_vue_type_template_id_66e1ba72___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Goods_vue_vue_type_template_id_66e1ba72___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/views/GoodsRack.vue":
+/*!******************************************!*\
+  !*** ./resources/js/views/GoodsRack.vue ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _GoodsRack_vue_vue_type_template_id_04c44284___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./GoodsRack.vue?vue&type=template&id=04c44284& */ "./resources/js/views/GoodsRack.vue?vue&type=template&id=04c44284&");
+/* harmony import */ var _GoodsRack_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./GoodsRack.vue?vue&type=script&lang=js& */ "./resources/js/views/GoodsRack.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _GoodsRack_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./GoodsRack.vue?vue&type=style&index=0&lang=css& */ "./resources/js/views/GoodsRack.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* harmony import */ var _GoodsRack_vue_vue_type_custom_index_0_blockType_div__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./GoodsRack.vue?vue&type=custom&index=0&blockType=div */ "./resources/js/views/GoodsRack.vue?vue&type=custom&index=0&blockType=div");
+/* harmony import */ var _GoodsRack_vue_vue_type_custom_index_0_blockType_div__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_GoodsRack_vue_vue_type_custom_index_0_blockType_div__WEBPACK_IMPORTED_MODULE_4__);
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _GoodsRack_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _GoodsRack_vue_vue_type_template_id_04c44284___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _GoodsRack_vue_vue_type_template_id_04c44284___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* custom blocks */
+
+if (typeof _GoodsRack_vue_vue_type_custom_index_0_blockType_div__WEBPACK_IMPORTED_MODULE_4___default.a === 'function') _GoodsRack_vue_vue_type_custom_index_0_blockType_div__WEBPACK_IMPORTED_MODULE_4___default()(component)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/GoodsRack.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/views/GoodsRack.vue?vue&type=custom&index=0&blockType=div":
+/*!********************************************************************************!*\
+  !*** ./resources/js/views/GoodsRack.vue?vue&type=custom&index=0&blockType=div ***!
+  \********************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+
+
+/***/ }),
+
+/***/ "./resources/js/views/GoodsRack.vue?vue&type=script&lang=js&":
+/*!*******************************************************************!*\
+  !*** ./resources/js/views/GoodsRack.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_GoodsRack_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./GoodsRack.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/GoodsRack.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_GoodsRack_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/views/GoodsRack.vue?vue&type=style&index=0&lang=css&":
+/*!***************************************************************************!*\
+  !*** ./resources/js/views/GoodsRack.vue?vue&type=style&index=0&lang=css& ***!
+  \***************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_GoodsRack_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--6-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--6-2!../../../node_modules/vue-loader/lib??vue-loader-options!./GoodsRack.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/GoodsRack.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_GoodsRack_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_GoodsRack_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_GoodsRack_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(__WEBPACK_IMPORT_KEY__ !== 'default') (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_GoodsRack_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_6_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_6_2_node_modules_vue_loader_lib_index_js_vue_loader_options_GoodsRack_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/js/views/GoodsRack.vue?vue&type=template&id=04c44284&":
+/*!*************************************************************************!*\
+  !*** ./resources/js/views/GoodsRack.vue?vue&type=template&id=04c44284& ***!
+  \*************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_GoodsRack_vue_vue_type_template_id_04c44284___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./GoodsRack.vue?vue&type=template&id=04c44284& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/GoodsRack.vue?vue&type=template&id=04c44284&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_GoodsRack_vue_vue_type_template_id_04c44284___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_GoodsRack_vue_vue_type_template_id_04c44284___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -56393,8 +59212,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/kevingiovanni/Documents/Work/Warehousing/dilogdev/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Users/kevingiovanni/Documents/Work/Warehousing/dilogdev/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\Kerjaan\dilog\dilog\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\Kerjaan\dilog\dilog\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

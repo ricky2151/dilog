@@ -55,4 +55,7 @@ Route::group([
 
     //Rack
     Route::resource('racks', 'RackController');
+
+    //GoodsRack
+    Route::resource('goodsRacks', 'GoodsRackController');
 });

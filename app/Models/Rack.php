@@ -19,6 +19,6 @@ class Rack extends Model
     }
 
     public function goodsRack(){
-        return $this->hasMany('App\Models\GoodRack');
+        return $this->hasMany('App\Models\GoodsRack');
     }
 }

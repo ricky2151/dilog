@@ -10,7 +10,7 @@ use App\Http\Traits\Uuids;
 class Goods extends Model
 {
     use SoftDeletes,Uuids;
-    //
+    
     protected $fillable = [
         'name','code','desc','margin','value','status','last_buy_pricelist','barcode_master','thumbnail','avgprice_status','user_id','tax','unit_id','cogs_id'
     ];
@@ -46,7 +46,7 @@ class Goods extends Model
     }
 
     public function goodsRack(){
-        return $this->hasMany('App\Models\GoodRack');
+        return $this->hasMany('App\Models\GoodsRack');
     }
 
     public function user(){
