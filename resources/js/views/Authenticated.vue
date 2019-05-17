@@ -250,7 +250,12 @@ export default {
                 {
                     icon: "store",
                     title : "Goods Rack",
-                    route : "/goodsrack",
+                    action : "/goodsrack",
+                },
+                {
+                    icon: "monetization_on",
+                    title : "COGS",
+                    action : "/cogs",
                 }
                
             ],

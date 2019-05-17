@@ -16,6 +16,7 @@ import Source from './views/Source'
 import Goods from './views/Goods'
 import Goodscreate from './views/Goodscreate'
 import GoodsRack from './views/GoodsRack'
+import Cogs from './views/Cogs'
 
 import Login from './views/Login'
 import Logout from './views/Logout'
@@ -46,6 +47,7 @@ const routes = [
             { path: '/goods', component: Goods },
             { path: '/goodsrack', component: GoodsRack },
             { path: '/goodscreate', component: Goodscreate},
+            { path: '/cogs', component: Cogs},
             { path: '/logout', component: Logout, },
         ],
         meta: { requiresAuth: true }
