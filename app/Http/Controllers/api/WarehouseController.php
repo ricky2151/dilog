@@ -75,13 +75,28 @@ class WarehouseController extends Controller
         $this->warehouseService->handleModelNotFound($id);
 
         $warehouse = $this->warehouse->find($id);
+
+        return formatResponse(false,(["warehouse"=>$warehouse]));
+    }
+
+    /**
+     * Show the form for editing the specified Warehouse.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id)
+    {
+        $this->warehouseService->handleInvalidParameter($id);
+        $this->warehouseService->handleModelNotFound($id);
+
+        $warehouse = $this->warehouse->find($id);
         $warehouse = collect($warehouse);
         
         $concatenated = $warehouse->union(["racks"=>$this->warehouse->find($id)->racks]);
 
         return formatResponse(false,(["warehouse"=>$concatenated]));
     }
-
     /**
      * Update the specified Warehouse in storage.
      *

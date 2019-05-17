@@ -52,7 +52,7 @@ class GoodsController extends Controller
     {
         $this->goodsService->handleGetAllDataForGoodsCreation();
         $data = $this->goods->allDataCreate();
-        return formatResponse(false,([$data]));
+        return formatResponse(false,($data));
     }
 
     /**
@@ -95,12 +95,28 @@ class GoodsController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified goods.
      *
      * @param  $id
      * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
+    {
+        $this->goodsService->handleInvalidParameter($id);
+        $this->goodsService->handleModelNotFound($id);
+
+        $goods = $this->goods->find($id);
+
+        return formatResponse(false,(["goods"=>$goods]));
+    }
+
+    /**
+     * Show the form for editing the specified goods.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id)
     {
         $this->goodsService->handleInvalidParameter($id);
         $this->goodsService->handleModelNotFound($id);

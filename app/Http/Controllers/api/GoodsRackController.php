@@ -89,6 +89,20 @@ class GoodsRackController extends Controller
     {
         $this->goodsRackService->handleInvalidParameter($id);
         $this->goodsRackService->handleModelNotFound($id);
+
+        return formatResponse(false,(["goods_rack"=>$this->goodsRack->find($id)]));
+    }
+
+    /**
+     * Show the form for editing the specified Goods Rack.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id)
+    {
+        $this->goodsRackService->handleInvalidParameter($id);
+        $this->goodsRackService->handleModelNotFound($id);
         $this->goodsRackService->handleGetAllDataForGoodsCreation();
 
         $allMaterial = collect($this->goodsRack->allDataCreate());
