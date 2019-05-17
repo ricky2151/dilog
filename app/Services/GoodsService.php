@@ -17,7 +17,11 @@ class GoodsService
 {
     public function checkRelationship($goodsId,$data){
         foreach($data as $id){
-            $material = Material::find($id);
+            try{
+                $material = Material::findOrFail($id);
+            }catch(ModelNotFoundException $e){
+                throw new CustomModelNotFoundException("Material"); 
+            }
             if($material->goods_id != $goodsId){
                 throw new ModelDontHaveRelation(json_encode([0=>"Material",1=>"Goods"])); 
             }
@@ -34,17 +38,27 @@ class GoodsService
         }
     }
 
-    public function handleUpdateImageGetPath($image, string $name, $newName){
+    public function handleUpdateImageGetPath($image, string $name, $newName, bool $isDeleteImage){
         if(!is_null($image)){
             $name = strtolower(preg_replace('/[^a-zA-Z0-9-_\.]/','',is_null($newName) == true ? $name : ($newName.Str::random(10))));
             return (uniqid().$name.".".$image->getClientOriginalExtension());
         }
+        else{
+            if($isDeleteImage){
+                return "default.png";
+            }
+        }
     }
 
-    public function handleUpdateImage($image, string $oldPic, string $name, string $path){
-        if(!is_null($image) && !is_null($name)){
+    public function handleUpdateImage($image, string $oldPic, string $name, string $path,bool $isDeleteImage){
+        if(!is_null($image)){
             deleteImage($oldPic);
             storeImage($image,$path,($name));
+        }
+        else{
+            if($isDeleteImage){
+                deleteImage($oldPic);
+            }
         }
     }
     

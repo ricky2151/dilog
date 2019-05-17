@@ -8,9 +8,9 @@ import FullScreen from 'vue-fullscreen'
 import 'vuetify/dist/vuetify.min.css'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import colors from 'vuetify/es5/util/colors'
+import PluginValidation from './plugin/PluginValidation'
 
-
-
+Vue.use(PluginValidation);
 
 
 //AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM => api key berbayar (buat test aja)

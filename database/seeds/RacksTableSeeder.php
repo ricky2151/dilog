@@ -13,7 +13,6 @@ class RacksTableSeeder extends Seeder
      */
     public function run()
     {
-        //
         $faker = Faker::create();
         Rack::create([
             'name' => "Rack Buku",

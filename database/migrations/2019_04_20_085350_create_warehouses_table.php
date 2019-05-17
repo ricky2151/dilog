@@ -23,6 +23,7 @@ class CreateWarehousesTable extends Migration
             $table->string("email")->unique();
             $table->string("pic");
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
