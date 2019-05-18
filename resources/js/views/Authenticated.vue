@@ -53,7 +53,7 @@
                         <span class="subheading text-xs-center overflow-text">
                             Hello,
                             <span class="font-weight-medium">
-                                John Doe
+                                {{ user.name }}
                             </span>
                         </span>
                     </v-btn>
@@ -106,12 +106,12 @@
 
 
                         <v-list-group
-                            
+
                             v-if="item.subroutes"
                             router
                             :key="'menu'+index"
                             v-model="item.active"
-                            
+
                             no-action
                             >
                             <template v-slot:activator>
@@ -140,7 +140,7 @@
                                     <v-list-tile-title class='color-text-sidebar ff-text-sidebar'>{{ subItem.subtitle }}</v-list-tile-title>
                                 </v-list-tile-content>
 
-                                  
+
                             </v-list-tile>
                         </v-list-group>
 
@@ -189,14 +189,14 @@ export default {
     data() {
         return {
             fullscreen: false,
-            user: null,
+            user: {},
             drawer: true,
             routes: [
                 {
                     icon: "dashboard",
                     title: "Dashboard",
                     action:"/",
-                    
+
                 },
                 {
                     icon: "store",
@@ -234,7 +234,7 @@ export default {
                         subtitle:"Batch Source",
                         subaction: "/source"
                     },
-                    
+
                     ]
                 },
                 {
@@ -252,7 +252,7 @@ export default {
                     title : "Goods",
                     route : "/goods",
                 }
-               
+
             ],
             toolbarMenu: [
                 {
@@ -305,6 +305,9 @@ export default {
         fullscreenChange(fullscreen) {
             this.fullscreen = fullscreen
         },
+    },
+    mounted() {
+        this.user = JSON.parse(localStorage.getItem('user'))
     }
 }
 </script>
