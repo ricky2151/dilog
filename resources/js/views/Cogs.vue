@@ -8,8 +8,8 @@
     <div>
         
         <v-dialog v-model="dialog_createedit" fullscreen>
-            <v-form v-model="valid" ref='formCreateEdit'>
-                <v-card>
+            <v-form v-model="valid" ref='formCreateEdit'  class='fixfullscreen'>
+                <v-card class='fixfullscreen'>
                     <v-toolbar dark color="menu">
                         <v-btn icon dark v-on:click="closedialog_createedit()">
                             <v-icon>close</v-icon>
@@ -664,19 +664,3 @@ export default {
 }
 </script>
 
-<style>
-
-.text-link{
-    color:blue;
-    text-decoration: underline;
-    cursor:pointer;
-}
-.button-action{
-    width: 30px;
-    height: 30px;
-}
-.button-action i{
-    font-size: 14px !important;
-}
-
-</style>
