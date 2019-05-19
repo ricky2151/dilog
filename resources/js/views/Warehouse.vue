@@ -597,21 +597,3 @@ export default {
 }
 </script>
 
-<style>
-
-.text-link{
-    color:blue;
-    text-decoration: underline;
-    cursor:pointer;
-}
-.button-action{
-    width: 30px;
-    height: 30px;
-}
-.button-action i{
-    font-size: 14px !important;
-}
-.fixfullscreen{
-    height: 100%;
-}
-</style>

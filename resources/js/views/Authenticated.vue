@@ -78,27 +78,28 @@
             <v-navigation-drawer
                 v-model="drawer"
                 app clipped fixed
+                :width='270'
+                
             >
-                <v-container fluid>
-                    <v-img src="/assets/images/logo.png" contain class="my-0">
-                    </v-img>
-                </v-container>
-                <!-- <v-list>
-                    <v-list-tile
-                        v-for="(item, index) in routes"
-                        router
-                        :to="item.route"
-                        :key="'menu'+index"
-                        >
-                        <v-list-tile-action>
-                            <v-icon>{{ item.icon }}</v-icon>
-                        </v-list-tile-action>
 
-                        <v-list-tile-content>
-                            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-                        </v-list-tile-content>
-                    </v-list-tile>
-                </v-list> -->
+                <!-- PROFIL PERUSAHAAN -->
+
+                <v-container fluid>
+                    <v-layout row>
+                        <v-flex xs3>
+                            <v-avatar :tile="tile" :size="avatarSize" color="grey lighten-4">
+                                <img src="/assets/images/logo2.png"></img>
+                            </v-avatar>
+                        </v-flex>
+                        <v-flex xs9 class='ml15'>
+                            <div class='title black--text'>Indomaret</div>
+                            <div class='subheading black--text'>Sistem Inventori</div>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+
+                <v-divider class='white'></v-divider>
+                
 
                 <v-list>
                     <!--  -->
@@ -115,11 +116,11 @@
                             no-action
                             >
                             <template v-slot:activator>
-                                <v-list-tile>
-                                    <v-list-tile-action>
-                                        <v-icon class='color-text-sidebar'>{{ item.icon }}</v-icon>
+                                <v-list-tile :active-class='active-menu'>
+                                    <v-list-tile-action class='ltc-icon'>
+                                        <v-icon class='color-text-sidebar icon-sidebar'>{{ item.icon }}</v-icon>
                                     </v-list-tile-action>
-                                    <v-list-tile-content>
+                                    <v-list-tile-content >
                                         <v-list-tile-title class='color-text-sidebar ff-text-sidebar'>{{ item.title }}</v-list-tile-title>
                                     </v-list-tile-content>
                                 </v-list-tile>
@@ -130,11 +131,12 @@
                                 v-for="subItem in item.subroutes"
                                 :key="subItem.subtitle"
                                 :to="subItem.subaction"
+                                class='sub-menu'
 
                                 @click=""
                             >
-                                <v-list-tile-action>
-                                    <v-icon class='color-text-sidebar'>{{ subItem.subicon }}</v-icon>
+                                <v-list-tile-action class='ltc-icon'>
+                                    <v-icon class='color-text-sidebar icon-sidebar'>{{ subItem.subicon }}</v-icon>
                                 </v-list-tile-action>
                                 <v-list-tile-content>
                                     <v-list-tile-title class='color-text-sidebar ff-text-sidebar'>{{ subItem.subtitle }}</v-list-tile-title>
@@ -151,8 +153,8 @@
                             :to="item.action"
                             :key="'menu'+index"
                             >
-                            <v-list-tile-action>
-                                <v-icon class='color-text-sidebar'>{{ item.icon }}</v-icon>
+                            <v-list-tile-action class='ltc-icon'>
+                                <v-icon class='color-text-sidebar icon-sidebar'>{{ item.icon }}</v-icon>
                             </v-list-tile-action>
 
                             <v-list-tile-content>
@@ -171,12 +173,36 @@
     </fullscreen>
 </template>
 <style>
+
+.ml15
+{
+    margin-left: 15px !important;
+}
+.sub-menu a
+{
+    padding-left: 45px !important;
+}
+
+.ltc-icon
+{
+    min-width: 36px !important;
+    margin-left: 10px !important;
+}
 .color-text-sidebar
 {
-    color:#848484;
+    color:#474747;
     text-decoration: none;
-    font-size: 17px;
+    font-size: 14px;
 
+}
+.active-menu
+{
+    color:red !important;
+}
+.icon-sidebar
+{
+    font-size: 20px !important;
+    color:#474747 !important;
 }
 .ff-text-sidebar
 {

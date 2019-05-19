@@ -15,10 +15,10 @@
                     <v-toolbar-title>Add Units</v-toolbar-title>
 
                 </v-toolbar>
-                <form style='padding:30px'>
+                <div class='padding30'>
                     <v-text-field v-model='input.name' label="Name" required></v-text-field>
                     <v-btn v-on:click='save_unit()' >submit</v-btn>
-                </form>
+                </div>
             </v-card>
         </v-dialog>
 
@@ -176,19 +176,3 @@ export default {
 }
 </script>
 
-<style>
-
-.text-link{
-    color:blue;
-    text-decoration: underline;
-    cursor:pointer;
-}
-.button-action{
-    width: 30px;
-    height: 30px;
-}
-.button-action i{
-    font-size: 14px !important;
-}
-
-</style>

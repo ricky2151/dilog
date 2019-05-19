@@ -6,20 +6,22 @@
 
 <template>
     <div>
-        <v-dialog v-model="dialog_createedit" width=750>
-            <v-card>
-                <v-toolbar dark color="menu">
-                    <v-btn icon dark v-on:click="closedialog_createedit()">
-                        <v-icon>close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title>Add categories</v-toolbar-title>
+        <v-dialog v-model="dialog_createedit" width=750 >
+            <v-form v-model="valid" ref='formCreateEdit'>
+                <v-card>
+                    <v-toolbar dark color="menu">
+                        <v-btn icon dark v-on:click="closedialog_createedit()">
+                            <v-icon>close</v-icon>
+                        </v-btn>
+                        <v-toolbar-title>Add categories</v-toolbar-title>
 
-                </v-toolbar>
-                <form style='padding:30px'>
-                    <v-text-field v-model='input.name' label="Name" required></v-text-field>
-                    <v-btn v-on:click='save_category()' >submit</v-btn>
-                </form>
-            </v-card>
+                    </v-toolbar>
+                    <div class='padding30'>
+                        <v-text-field v-model='input.name' label="Name" required></v-text-field>
+                        <v-btn v-on:click='save_category()' >submit</v-btn>
+                    </div>
+                </v-card>
+            </v-form>
         </v-dialog>
 
         <v-toolbar flat color="white">
@@ -176,19 +178,4 @@ export default {
 }
 </script>
 
-<style>
 
-.text-link{
-    color:blue;
-    text-decoration: underline;
-    cursor:pointer;
-}
-.button-action{
-    width: 30px;
-    height: 30px;
-}
-.button-action i{
-    font-size: 14px !important;
-}
-
-</style>

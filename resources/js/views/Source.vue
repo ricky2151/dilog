@@ -1,6 +1,6 @@
 <div>
     <v-container fluid>
-        <h3>sources</h3>
+        <h3>Sources</h3>
     </v-container>
 </div>
 
@@ -15,15 +15,15 @@
                     <v-toolbar-title>Add sources</v-toolbar-title>
 
                 </v-toolbar>
-                <form style='padding:30px'>
+                <div class='padding30'>
                     <v-text-field v-model='input.name' label="Name" required></v-text-field>
                     <v-btn v-on:click='save_source()' >submit</v-btn>
-                </form>
+                </div>
             </v-card>
         </v-dialog>
 
         <v-toolbar flat color="white">
-            <v-toolbar-title>sources Data</v-toolbar-title>
+            <v-toolbar-title>Sources Data</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark>
                 Add Data
@@ -176,19 +176,3 @@ export default {
 }
 </script>
 
-<style>
-
-.text-link{
-    color:blue;
-    text-decoration: underline;
-    cursor:pointer;
-}
-.button-action{
-    width: 30px;
-    height: 30px;
-}
-.button-action i{
-    font-size: 14px !important;
-}
-
-</style>

@@ -9,9 +9,15 @@ import 'vuetify/dist/vuetify.min.css'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import colors from 'vuetify/es5/util/colors'
 import PluginValidation from './plugin/PluginValidation'
+import DilogApp from './DilogApp'
+
+
+require('./css/custom/basic.css');
+
 
 Vue.use(PluginValidation);
-
+Vue.use(FullScreen);
+Vue.use(VueSwal);
 
 //AIzaSyDhXPsyAaPIsqYdcbpWc-o45UXBJtbnlHM => api key berbayar (buat test aja)
 Vue.use(VueGoogleMaps, {
@@ -22,9 +28,6 @@ Vue.use(VueGoogleMaps, {
 })
 
 
-Vue.use(FullScreen);
-Vue.use(VueSwal);
-
 Vue.use(Vuetify, {
     iconfont: 'md',
     // override colors
@@ -33,7 +36,7 @@ Vue.use(Vuetify, {
     }
 });
 
-import DilogApp from './DilogApp'
+
 const app = new Vue({
     el: '#app',
     router,
