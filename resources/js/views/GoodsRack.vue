@@ -59,31 +59,31 @@
 
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-text-field class="pa-2" :rules="this.$list_validation.numeric_req" v-model='temp_input.price_sellings.stock_cut_off' label="Stock Cut Off" required></v-text-field>
+                                    <v-text-field class="pa-2" v-model='temp_input.price_sellings.stock_cut_off' label="Stock Cut Off" required></v-text-field>
                                 </v-flex>
                             </v-layout>
 
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-select class='pa-2' :rules="this.$list_validation.selectdata_req"  v-model='temp_input.price_sellings.category_price_sellings' :items="ref_input.category_price_sellings" item-text='name' item-value='id' label="Select Category Price Selling"></v-select>
+                                    <v-select class='pa-2' v-model='temp_input.price_sellings.category_price_sellings' :items="ref_input.category_price_sellings" item-text='name' return-object label="Select Category Price Selling"></v-select>
                                 </v-flex>
                             </v-layout>
 
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-text-field class="pa-2" :rules="this.$list_validation.numeric_req" v-model='temp_input.price_sellings.price' label="Price" required></v-text-field>
+                                    <v-text-field class="pa-2" v-model='temp_input.price_sellings.price' label="Price" required></v-text-field>
                                 </v-flex>
                             </v-layout>
 
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-text-field class="pa-2" :rules="this.$list_validation.numeric" v-model='temp_input.price_sellings.discount' label="Discount" required></v-text-field>
+                                    <v-text-field class="pa-2" v-model='temp_input.price_sellings.discount' label="Discount" required></v-text-field>
                                 </v-flex>
                             </v-layout>
 
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-select class='pa-2' :rules="this.$list_validation.selecttf_req" v-model='temp_input.price_sellings.free' :items="ref_input.free" item-text='name' item-value='value' label="Free (True / False)"></v-select>
+                                    <v-select class='pa-2' v-model='temp_input.price_sellings.free' :items="ref_input.free" item-text='name' item-value='value' label="Free (True / False)"></v-select>
                                 </v-flex>
                             </v-layout>
                            
@@ -112,9 +112,9 @@
                                 :headers="[
                                 {text:'Stock Cut Off', value:'stock_cut_off'},
                                 {text:'Category Price Selling', value:'category_price_sellings'},
-                                {text:'Price',value:'price',align:'right'},
-                                {text:'Discount',value:'discount',align:'right'},
-                                {text:'Free',value:'free',align:'right'},
+                                {text:'Price',value:'price'},
+                                {text:'Discount',value:'discount'},
+                                {text:'Free',value:'free'},
                                 {text:'Action',align:'left',width:'15%',sortable:false}
                                 ]"
                                 :items="input.price_sellings"
@@ -123,10 +123,10 @@
 
                                 <template v-slot:items="props">
                                     <td>{{ props.item.stock_cut_off }}</td>
-                                    <td class="text-xs-right">{{ props.item.category_price_sellings.name }}</td>
+                                    <td>{{ props.item.category_price_sellings.name }}</td>
                                     <td>{{ props.item.price }}</td>
                                     <td>{{ props.item.discount }}</td>
-                                    <td>{{ props.item.free }}</td>
+                                    <td>{{ props.item.free.name }}</td>
 
                                     <td>
                                         <v-btn class='button-action' v-on:click='table_price_selling().showData(props.index)' color="primary" fab depressed small dark v-on="on">
@@ -140,6 +140,7 @@
                                 </template>
                             </v-data-table>
                             <v-btn color='primary' v-on:click='e6=3'>Continue</v-btn>
+                            {{input}}
                         </v-stepper-content>
 
                         <!-- ==== STEPPER 3 ==== -->
@@ -151,20 +152,20 @@
 
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-text-field class="pa-2" :rules="this.$list_validation.numeric_req" v-model='temp_input.batch.stock' label="Stock Batch" required></v-text-field>
+                                    <v-text-field class="pa-2" v-model='temp_input.batch.stock' label="Stock Batch" required></v-text-field>
                                 </v-flex>
                             </v-layout>
 
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-text-field class="pa-2" :rules="this.$list_validation.numeric_req" v-model='temp_input.batch.batch_number' label="Batch Number" required></v-text-field>
+                                    <v-text-field class="pa-2" v-model='temp_input.batch.batch_number' label="Batch Number" required></v-text-field>
                                     
                                 </v-flex>
                             </v-layout>
 
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-select class='pa-2' :rules="this.$list_validation.selectdata_req"  v-model='temp_input.batch.sources' :items="ref_input.sources" item-text='name' item-value='id' label="Select Sources"></v-select>
+                                    <v-select class='pa-2'  v-model='temp_input.batch.sources' :items="ref_input.sources" item-text='name' return-object label="Select Sources"></v-select>
                                 </v-flex>
                             </v-layout>
 
@@ -195,7 +196,7 @@
                                 :headers="[
                                 {text:'Stock', value:'stock'},
                                 {text:'Batch Number', value:'batch_number'},
-                                {text:'Source',value:'sources',align:'right'},
+                                {text:'Source',value:'sources'},
                                 {text:'Action',align:'left',width:'15%',sortable:false}
                                 ]"
                                 :items="input.batch"
@@ -205,7 +206,7 @@
                                 <template v-slot:items="props">
                                     <td>{{ props.item.stock }}</td>
                                     <td>{{ props.item.batch_number }}</td>
-                                    <td class="text-xs-right">{{ props.item.sources.name }}</td>
+                                    <td >{{ props.item.sources.name }}</td>
 
                                     <td>
                                         <v-btn class='button-action' v-on:click='table_batch().showData(props.index)' color="primary" fab depressed small dark v-on="on">
@@ -225,7 +226,7 @@
 
                         
                         
-                        <v-btn v-on:click='save_goods()' >submit</v-btn>
+                        <v-btn v-on:click='save_goodsrack()' >submit</v-btn>
                         
                         
                         
@@ -244,12 +245,12 @@
         <v-data-table
             disable-initial-sort
             :headers="headers"
-            :items="goods_racks"
+            :items="goodsracks"
             class=""
         >
         <template v-slot:items="props">
-            <td >{{ props.item.goods }}</td>
-            <td class="text-xs-right">{{ props.item.rack }}</td>
+            <td >{{ props.item.goods_id }}</td>
+            <td class="text-xs-right">{{ props.item.rack_id }}</td>
             <td class="text-xs-right">{{ props.item.stock }}</td>
             <td>
                 <v-btn class='button-action' v-on:click='get_data_before_edit(props.index)' color="primary" fab depressed small dark v-on="on">
@@ -491,18 +492,19 @@ export default {
         
         showTable(r)
         {
-            
+            //process r agar dari id menjadi nama
 
             this.goodsracks = r.data.items.goods_rack;
+
         },
         
         fill_select_master_data(r)
         {
-            //console.log(r.data.items[0].units);
-            this.ref_input.goods = r.data.items[0].goods;
-            this.ref_input.racks = r.data.items[0].racks;
-            this.ref_input.category_price_sellings = r.data.items[0].category_price_sellings;
-            this.ref_input.sources = r.data.items[0].sources;
+            //console.log(r.data.items.goods);
+            this.ref_input.goods = r.data.items.goods;
+            this.ref_input.racks = r.data.items.racks;
+            this.ref_input.category_price_sellings = r.data.items.category_price_selling;
+            this.ref_input.sources = r.data.items.sources;
             
         },
         convert_data_input_goodsrack(r)
@@ -512,7 +514,7 @@ export default {
             this.input.rack_id = temp_r.rack_id;
             this.input.stock = temp_r.stock;
 
-            this.input.price_sellings = temp_r.price_sellings;
+            this.input.price_sellings = temp_r.price_selling;
             this.input.batch = temp_r.batch;
 
             // for(var i = 0;i<temp_r.attribute_goods.length;i++)
@@ -560,7 +562,7 @@ export default {
                     formData.append('price_sellings[' + i + '][stock_cut_off]',this.input.price_sellings[i].stock_cut_off);
                     formData.append('price_sellings[' + i + '][price]',this.input.price_sellings[i].price);
                     formData.append('price_sellings[' + i + '][discount]',this.input.price_sellings[i].discount);
-                    formData.append('price_sellings[' + i + '][free]',this.input.price_sellings[i].free);
+                    formData.append('price_sellings[' + i + '][free]',this.input.price_sellings[i].free.value);
                 }
 
                 for(var i = 0;i<this.input.batch.length;i++)
@@ -618,7 +620,7 @@ export default {
         },
         get_goodsrack() {
 
-            axios.get('/api/goodsracks', {
+            axios.get('/api/goodsRacks', {
                 params:{
                     token: localStorage.getItem('token')
                 }
@@ -646,10 +648,12 @@ export default {
             {
                 if(this.idx_data_edit != -1) //jika sedang diedit
                 {
-                    axios.post('api/goodsracks/' + this.goodsracks[this.idx_data_edit].id,this.prepare_data_form_goodsrack(),
+                    console.log(this.prepare_data_form_goodsrack());
+                    axios.post('api/goodsRacks/' + this.goodsracks[this.idx_data_edit].id,this.prepare_data_form_goodsrack(),
                     {
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept' : 'application/json'
                     }
                     }).then((r)=> {
                         this.get_goodsrack();
@@ -675,7 +679,7 @@ export default {
                 else //jika sedang tambah data
                 {
 
-                    axios.post('api/goodsrack',this.prepare_data_form_goodsrack(),
+                    axios.post('api/goodsRack',this.prepare_data_form_goodsrack(),
                     {
                     headers: {
                         'Content-Type': 'multipart/form-data',
@@ -717,7 +721,7 @@ export default {
                 })
                 .then((willDelete) => {
                     if (willDelete) {
-                        axios.delete('api/goodsracks/' + this.goodsracks[idx_data_delete].id,{
+                        axios.delete('api/goodsRacks/' + this.goodsracks[idx_data_delete].id,{
                             data:{
                                 token: localStorage.getItem('token')    
                             }
@@ -743,7 +747,7 @@ export default {
         },
         get_master_data()
         {
-            axios.get('/api/goodsracks/create', {
+            axios.get('/api/goodsRacks/create', {
                 params:{
                     token: localStorage.getItem('token')
                 }
@@ -755,6 +759,7 @@ export default {
             }).then(r => this.fill_select_master_data(r))
             .catch(function (error)
             {
+                console.log(error);
                 if(error.response.status == 422)
                 {
                     swal('Request Failed', 'Check your internet connection !', 'error');
@@ -768,7 +773,7 @@ export default {
         get_data_before_edit(idx_edit)
         {
             var id_edit = this.goodsracks[idx_edit].id;
-            axios.get('/api/goodsracks/' + id_edit, {
+            axios.get('/api/goodsRacks/' + id_edit, {
                 params:{
                     token: localStorage.getItem('token')
                 }
@@ -817,22 +822,4 @@ export default {
 }
 </script>
 
-<style>
 
-.text-link{
-    color:blue;
-    text-decoration: underline;
-    cursor:pointer;
-}
-.button-action{
-    width: 30px;
-    height: 30px;
-}
-.button-action i{
-    font-size: 14px !important;
-}
-.fixfullscreen{
-    height: 100%;
-}
-
-</style>
