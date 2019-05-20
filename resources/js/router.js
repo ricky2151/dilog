@@ -17,6 +17,7 @@ import Goods from './views/Goods'
 import Goodscreate from './views/Goodscreate'
 import GoodsRack from './views/GoodsRack'
 import Cogs from './views/Cogs'
+import Rack from './views/Rack'
 
 import Login from './views/Login'
 import Logout from './views/Logout'
@@ -48,6 +49,7 @@ const routes = [
             { path: '/goodsrack', component: GoodsRack },
             { path: '/goodscreate', component: Goodscreate},
             { path: '/cogs', component: Cogs},
+            { path: '/rack', component: Rack},
             { path: '/logout', component: Logout, },
         ],
         meta: { requiresAuth: true }

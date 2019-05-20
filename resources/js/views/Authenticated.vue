@@ -204,34 +204,34 @@ export default {
                     subroutes:[
                     {
                         subicon:"category",
-                        subtitle:"Goods Category",
+                        subtitle:"Goods Categories",
                         subaction: "/category"
                     },
                     {
                         subicon:"dns",
-                        subtitle:"Goods Unit",
+                        subtitle:"Goods Units",
                         subaction: "/unit"
                     },
                     {
                         subicon:"build",
-                        subtitle:"Goods Attribute",
+                        subtitle:"Goods Attributes",
                         subaction: "/attribute"
                     },
 
                     {
                         subicon:"bookmarks",
-                        subtitle:"COGS Type",
+                        subtitle:"COGS Types",
                         subaction: "/type"
                     },
                     {
                         subicon:"compare_arrows",
-                        subtitle:"Price Category",
+                        subtitle:"Price Categories",
                         subaction: "/categorypriceselling"
                     },
 
                     {
                         subicon:"description",
-                        subtitle:"Batch Source",
+                        subtitle:"Batch Sources",
                         subaction: "/source"
                     },
                     
@@ -244,18 +244,23 @@ export default {
                 },
                 {
                     icon: "store",
-                    title: "Warehouse",
+                    title: "Warehouses",
                     action: "/warehouse",
                 },
                 {
-                    icon: "store",
-                    title : "Goods Rack",
+                    icon: "assignment_returned",
+                    title : "Goods Racks",
                     action : "/goodsrack",
                 },
                 {
                     icon: "monetization_on",
                     title : "COGS",
                     action : "/cogs",
+                },
+                {
+                    icon: "dns",
+                    title : "Racks",
+                    action : "/rack",
                 }
                
             ],
