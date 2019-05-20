@@ -79,7 +79,7 @@
 
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-select class='pa-2' v-model='temp_input.price_sellings.free' :items="ref_input.free" item-text='name' item-value='value' label="Free (True / False)"></v-select>
+                                    <v-select class='pa-2' v-model='temp_input.price_sellings.free' :items="ref_input.free" item-text='name' return-object label="Free (True / False)"></v-select>
                                 </v-flex>
                             </v-layout>
                            
@@ -141,7 +141,7 @@
 
                         <!-- ==== STEPPER 3 ==== -->
 
-                        <v-stepper-step :complete="e6 > 3" step="3" editable><h3>Goods Attribute</h3></v-stepper-step>
+                        <v-stepper-step :complete="e6 > 3" step="3" editable><h3>Batch Data</h3></v-stepper-step>
 
                         <v-stepper-content step="3">
 
@@ -221,9 +221,9 @@
                         </v-stepper-content>
 
                         
-                        
+                        {{input}}
                         <v-btn v-on:click='save_goodsrack()' >submit</v-btn>
-                        
+                        {{temp_input}}
                         
                         
                     </v-stepper>
@@ -267,7 +267,7 @@
 import axios from 'axios'
 export default {
     name: 'cpGoodsRack',
-    props:['propgoodsracks'],
+    props:['prop_id_goods_for_table'],
     data () {
         return {
             
@@ -515,8 +515,8 @@ export default {
             this.input.rack_id = temp_r.rack_id;
             this.input.stock = temp_r.stock;
 
-            this.input.price_sellings = temp_r.price_selling;
-            this.input.batch = temp_r.batch;
+            if(temp_r.price_selling) this.input.price_sellings = temp_r.price_selling;
+            if(temp_r.batch) this.input.batch = temp_r.batch;
 
             // for(var i = 0;i<temp_r.attribute_goods.length;i++)
             // {  
@@ -837,7 +837,8 @@ export default {
 
     },
     mounted(){
-        console.log(this.prop_id_goods_for_table);
+
+        
         this.get_goodsrack(this.id_goods_for_table);
         this.get_master_data();
         //this.testing_input();

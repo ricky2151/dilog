@@ -114,45 +114,46 @@
 
 
         <!-- UNTUK COMPONENT GOODS_RACK -->
-        <v-dialog v-model="dialog_goodsracks" fullscreen>
-            <cp-goods-rack v-if="id_goods_for_table != 'all'" :prop_id_goods_for_table='id_goods_for_table'></cp-goods-rack>
-        </v-dialog>
+        
+        <cp-goods-rack v-if="id_goods_for_table != 'all' && component_goodsrack" :prop_id_goods_for_table='id_goods_for_table'></cp-goods-rack>
+        
 
 
-
-        <v-toolbar flat color="white">
-            <v-toolbar-title>Racks Data</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark>
-                Add Data
-            </v-btn>
-        </v-toolbar>
-        <v-data-table
-            disable-initial-sort
-            :headers="headers"
-            :items="racks"
-            class=""
-        >
-        <template v-slot:items="props">
-            <td>{{ props.item.name }}</td>
-            <td>{{ props.item.warehouse }}</td>
-            <td>
-                <v-btn class='button-action' v-on:click='opendialog_goodsrack(props.index)' color="primary" block dark v-on="on">
-                    Goods
+        <div v-if="!component_goodsrack">
+            <v-toolbar flat color="white">
+                <v-toolbar-title>Racks Data</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark>
+                    Add Data
                 </v-btn>
-            </td>
-            <td>
-                <v-btn class='button-action' v-on:click='get_data_before_edit(props.index)' color="primary" fab depressed small dark v-on="on">
-                    <v-icon small>edit</v-icon>
-                </v-btn>
-                <v-btn class='button-action' v-on:click='delete_racks(props.index)' color="red" fab small dark depressed>
-                    <v-icon small>delete</v-icon>
-                </v-btn>
+            </v-toolbar>
+            <v-data-table
+                disable-initial-sort
+                :headers="headers"
+                :items="racks"
+                class=""
+            >
+                <template v-slot:items="props">
+                    <td>{{ props.item.name }}</td>
+                    <td>{{ props.item.warehouse }}</td>
+                    <td>
+                        <v-btn class='button-action' v-on:click='opencomponent_goodsrack(props.index)' color="primary" block dark v-on="on">
+                            Goods
+                        </v-btn>
+                    </td>
+                    <td>
+                        <v-btn class='button-action' v-on:click='get_data_before_edit(props.index)' color="primary" fab depressed small dark v-on="on">
+                            <v-icon small>edit</v-icon>
+                        </v-btn>
+                        <v-btn class='button-action' v-on:click='delete_racks(props.index)' color="red" fab small dark depressed>
+                            <v-icon small>delete</v-icon>
+                        </v-btn>
 
-            </td>
+                    </td>
 
-        </template>
-        </v-data-table>
+                </template>
+            </v-data-table>
+        </div>
     </div>
 </template>
 
@@ -166,7 +167,7 @@ export default {
     data () {
         return {
             
-            dialog_goodsracks:false,
+            component_goodsrack:false,
             id_goods_for_table:'all',
 
             valid:false,
@@ -287,14 +288,15 @@ export default {
         },
 
         
-        opendialog_goodsrack(idx)
+        opencomponent_goodsrack(idx)
         {
-            console.log('heheadsf');
+            
             if(idx != -1)
             {
-
+                console.log('id_goods_for_table : ' + this.id_goods_for_table);
+                console.log('component_goodsracks : ' + this.component_goodsrack);
                 this.id_goods_for_table = this.racks[idx].id;
-                this.opendialog_goodsrack = true;
+                this.component_goodsrack = true;
             }
         },
 
