@@ -32,6 +32,15 @@ class GoodsRackController extends Controller
     {
         $this->goodsRackService->handleEmptyModel();
         $goodsRacks = $this->goodsRack->latest()->get();
+
+        $goodsRacks = $goodsRacks->map(function ($goodsRack) {
+            
+            $goodsRack = Arr::add($goodsRack, 'goods_name', $goodsRack['goods']['name']);
+            $goodsRack = Arr::add($goodsRack, 'rack_name', $goodsRack['rack']['name']);
+
+            return Arr::except($goodsRack, ['goods','rack']);
+        });
+
         return formatResponse(false,(["goods_rack"=>$goodsRacks]));
     }
 
@@ -90,7 +99,10 @@ class GoodsRackController extends Controller
         $this->goodsRackService->handleInvalidParameter($id);
         $this->goodsRackService->handleModelNotFound($id);
 
-        return formatResponse(false,(["goods_rack"=>$this->goodsRack->find($id)]));
+        $goodsRack = $this->goodsRack->find($id);
+        $goodsRack = collect($goodsRack)->put("rack_name",$goodsRack->rack->name)->put("goods_name",$goodsRack->goods->name);
+
+        return formatResponse(false,(["goods_rack"=>$goodsRack]));
     }
 
     /**
@@ -179,7 +191,13 @@ class GoodsRackController extends Controller
         }
         return formatResponse(false,(["goods_rack"=>["Goods Rack deleted successfully"]]));
     }
-
+    
+    /**
+     * Format goods relation data in method show.
+     *
+     * @param  $id
+     * @return Illuminate\Support\Collection
+     */
     public function showFormatData($id){
         $goodsRackPriceSellings = $this->goodsRack->find($id)->priceSellings;
         $goodsRackBatchs = $this->goodsRack->find($id)->sources;

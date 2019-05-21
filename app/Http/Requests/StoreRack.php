@@ -27,7 +27,9 @@ class StoreRack extends FormRequest
     {
         return [
             'name' => "string|required",
-            'warehouse_id' => "required|integer|min:1|exists:warehouses,id"
+            'warehouse_id' => "required|integer|min:1|exists:warehouses,id",
+            'goods_racks.*.goods_id' => "required|integer|min:1|exists:goods,id" ,
+            'goods_racks.*.stock' => "required|integer|min:1",
         ];
     }
 

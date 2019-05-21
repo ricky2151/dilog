@@ -27,7 +27,13 @@ class UpdateRack extends FormRequest
     {
         return [
             'name' => "string|filled",
-            'warehouse_id' => "filled|integer|min:1|exists:warehouses,id"
+            'warehouse_id' => "filled|integer|min:1|exists:warehouses,id",
+            'goods_racks_delete.*.id' => "required|integer|min:1|exists:goods_rack,id",
+            'goods_racks_new.*.goods_id' => "required|integer|min:1|exists:goods,id" ,
+            'goods_racks_new.*.stock' => "required|integer|min:1",
+            'goods_racks_update.*.id' => "required|integer|min:1|exists:goods_rack,id" ,
+            'goods_racks_update.*.goods_id' => "required|integer|min:1|exists:goods,id" ,
+            'goods_racks_update.*.stock' => "required|integer|min:1",
         ];
     }
 
