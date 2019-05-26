@@ -275,14 +275,31 @@ export default {
                 this.convert_data_input_cogs(r);
                 
             }
+            else
+            {
+                this.clear_input();
+            }
 
             this.dialog_createedit = true;
         },
         clear_input(){
-            for (var key in self.input)
+            this.$refs.formCreateEdit.resetValidation();
+            for (var key in this.input)
             {
-                if(self.input[key])
-                    self.input[key] = null;
+                if(this.input[key])
+                {
+                    if(Array.isArray(this.input[key]))
+                    {
+                        this.input[key] = [];     
+                    }
+                    else
+                    {
+                        this.input[key] = "";
+                    }
+                    
+                    
+                }
+                    
             }
         },
         
@@ -296,7 +313,7 @@ export default {
         fill_select_master_data(r)
         {
             //console.log(r.data.items[0].units);
-            this.ref_input.types = r.data.items[0].types;
+            this.ref_input.types = r.data.items.types;
         },
         convert_data_input_cogs(r)
         {
@@ -598,7 +615,7 @@ export default {
         get_data_before_edit(idx_edit)
         {
             var id_edit = this.cogs[idx_edit].id;
-            axios.get('/api/cogs/' + id_edit, {
+            axios.get('/api/cogs/' + id_edit + '/edit', {
                 params:{
                     token: localStorage.getItem('token')
                 }
