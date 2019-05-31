@@ -50,7 +50,7 @@ class GoodsController extends Controller
      */
     public function create()
     {
-        $this->goodsService->handleGetAllDataForGoodsCreation();
+        // $this->goodsService->handleGetAllDataForGoodsCreation();
         $data = $this->goods->allDataCreate();
         return formatResponse(false,($data));
     }
@@ -77,12 +77,17 @@ class GoodsController extends Controller
             $category_goods = collect(Arr::pull($data,'category_goods'))->unique(function ($item) {
                 return $item['category_id'];
             });
+
+            $pricelists = collect(Arr::pull($data,'pricelists'))->unique(function ($item) {
+                return $item['supplier_id'].$item['price'];
+            });
             
             $material_goods = Arr::pull($data,'material_goods');
 
             $goods = $this->user->goods()->create($data);
             $goods->attributes()->attach($attribute_goods);
             $goods->categories()->attach($category_goods);
+            $goods->suppliers()->attach($pricelists);
             $goods->materials()->createMany($material_goods);
 
             DB::commit();
@@ -120,7 +125,7 @@ class GoodsController extends Controller
     {
         $this->goodsService->handleInvalidParameter($id);
         $this->goodsService->handleModelNotFound($id);
-        $this->goodsService->handleGetAllDataForGoodsCreation();
+        // $this->goodsService->handleGetAllDataForGoodsCreation();
 
         $allMaterial = collect($this->goods->allDataCreate());
 
@@ -130,6 +135,7 @@ class GoodsController extends Controller
         
         $concatenated = $goods->union($allMaterial)->union($this->showFormatData($id));
 
+        // return  $this->goods->find($id)->suppliers;
         return formatResponse(false,(["goods"=>$concatenated]));
     }
 
@@ -163,18 +169,26 @@ class GoodsController extends Controller
                 return $item['category_id'];
             });
 
+            $pricelists = collect(Arr::pull($data,'pricelists'))->unique(function ($item) {
+                return $item['supplier_id'].$item['price'];
+            });
+
             $material_goods = Arr::pull($data,'material_goods');
+
+            // return $material_goods;
             
             $goods->update($data);
             $goods->attributes()->sync($attribute_goods);
             $goods->categories()->sync($category_goods);
-            $goods->updateGoods($material_goods);
+            $goods->suppliers()->sync($pricelists);
+            is_null($material_goods) ? "" : $goods->updateGoods($material_goods);
 
             $this->goodsService->handleUpdateImage($request->file("thumbnail"),$oldThumnail, $path, $this->path,$data["is_image_delete"]);
 
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollback();
+            return $e;
             throw new DatabaseTransactionErrorException("Goods");
         }
 
@@ -196,6 +210,7 @@ class GoodsController extends Controller
         try {
             $this->goods->find($id)->attributes()->sync([]);
             $this->goods->find($id)->categories()->sync([]);
+            $this->goods->find($id)->suppliers()->sync([]);
             $this->goods->find($id)->materials()->delete();
             $this->goods->find($id)->goodsRack()->delete();
 
@@ -223,6 +238,9 @@ class GoodsController extends Controller
         $goodsAttributes = $this->goods->find($id)->attributes;
         $goodsCategories = $this->goods->find($id)->categories;
         $goodsMaterials = $this->goods->find($id)->materials;
+        $pricelists = $this->goods->find($id)->suppliers;
+
+        // return $pricelists;
 
         $goodsAttributes = $goodsAttributes->map(function ($item) {
             return ['id' => $item['id'], 'name' => $item['name'],'value'=> $item['pivot']['value']];
@@ -232,7 +250,13 @@ class GoodsController extends Controller
             return ['id' => $item['id'], 'name' => $item['name']];
         });
 
-        $data = collect(["attribute_goods" => $goodsAttributes, "category_goods"=>$goodsCategories , "material_goods" => $goodsMaterials]);
+        $pricelists = $pricelists->map(function ($item) {
+            $item = Arr::add($item, 'price', $item['pivot']['price']);
+            return Arr::except($item, ['pivot']);
+        });
+
+
+        $data = collect(["pricelists" => $pricelists,"attribute_goods" => $goodsAttributes, "category_goods"=>$goodsCategories , "material_goods" => $goodsMaterials]);
 
         return $data;
     }
