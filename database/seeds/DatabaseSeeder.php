@@ -33,7 +33,10 @@ class DatabaseSeeder extends Seeder
             MaterialsTableSeeder::class,
             PriceSellingsTableSeeder::class,
             GoodsRacksTableSeeder::class,
-            BatchsTableSeeder::class
+            BatchsTableSeeder::class,
+            SuppliersTableSeeder::class,
+            PricelistsTableSeeder::class,
+            DivisionsTableSeeder::class
         ]);
     }
 }

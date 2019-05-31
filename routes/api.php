@@ -58,4 +58,10 @@ Route::group([
 
     //GoodsRack
     Route::resource('goodsRacks', 'GoodsRackController');
+
+    //Supplier
+    Route::resource('suppliers', 'SupplierController');
+
+    //Division
+    Route::resource('divisions', 'DivisionController');
 });

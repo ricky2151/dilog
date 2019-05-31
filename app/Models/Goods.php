@@ -10,7 +10,7 @@ use App\Http\Traits\Uuids;
 class Goods extends Model
 {
     use SoftDeletes,Uuids;
-    
+
     protected $fillable = [
         'name','code','desc','margin','value','status','last_buy_pricelist','barcode_master','thumbnail','avgprice_status','user_id','tax','unit_id','cogs_id'
     ];
@@ -24,19 +24,15 @@ class Goods extends Model
         'uuid'
     ];
 
-    public function updateManyAtribut($material_goods_update){
-        if(!is_null($material_goods_update)){
-            foreach ($material_goods_update as $update) {
-                $data = Arr::except($update, ['id']);
-                $this->materials()->find($update["id"])->update($data);
+    public function updateGoods($materials){
+        foreach($materials as $material){
+            if($material->type == 1) {
+                $this->create($material);
             }
-        }
-    }
-
-    public function deleteManyAtribut($material_goods_delete){
-        if(!is_null($material_goods_delete)){
-            foreach ($material_goods_delete as $delete) {
-                $this->materials()->find($delete["id"])->delete();
+            else if($material->type == 0) {
+                $this->find($material->id)->update($material);
+            } else {
+                $this->find($material->id)->delete();
             }
         }
     }
@@ -47,6 +43,10 @@ class Goods extends Model
 
     public function goodsRack(){
         return $this->hasMany('App\Models\GoodsRack');
+    }
+
+    public function suppliers(){
+        return $this->belongsToMany('App\Models\Supplier','pricelists','goods_id','supplier_id')->withPivot('price')->withTimestamps()->orderBy('pivot_updated_at', 'desc');
     }
 
     public function user(){

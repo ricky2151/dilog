@@ -39,17 +39,18 @@ class UpdateGoods extends FormRequest
             'tax' => "filled|integer",
             'unit_id' => "filled|integer|exists:units,id",
             'cogs_id' => "filled|integer|exists:cogs,id",
+            
             'attribute_goods.*.value'=> "required|integer|min:1",
             'attribute_goods.*.attribute_id'=> "required|integer|exists:attributes,id",
+            
             'category_goods.*.category_id'=> "required|integer|exists:categories,id",
-            'material_goods_update.*.id'=> "filled|required_with:material_goods_update.*.total, material_goods_update.*.adjust,material_goods_update.*.name|integer|exists:materials,id",
-            'material_goods_update.*.total'=> "filled|required_with:material_goods_update.*.id, material_goods_update.*.adjust,material_goods_update.*.name|integer|min:1",
-            'material_goods_update.*.adjust'=> "nullable",
-            'material_goods_update.*.name'=> "filled|required_with:material_goods_update.*.id, material_goods_update.*.total, material_goods_update.*.adjust|string",
-            'material_goods_new.*.total'=> "filled|required_with:material_goods_new.*.name,material_goods_new.*.adjust|integer|min:1",
-            'material_goods_new.*.adjust'=> "string|nullable",
-            'material_goods_new.*.name'=> "filled|required_with:material_goods_new.*.total,material_goods_new.*.adjust|string",
-            'material_goods_delete.*.id'=> "filled|integer|exists:materials,id",
+            
+            'material_goods.*.id' => "filled|integer|exists:materials,id",
+            'material_goods.*.total'=> "required|integer|min:1",
+            'material_goods.*.adjust'=> "string|nullable",
+            'material_goods.*.name'=> "required|string",
+            'material_goods.*.type'=> "required|enum:1,0,-1",
+            
             'is_image_delete' => "required|boolean"
         ];
     }

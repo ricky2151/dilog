@@ -146,12 +146,6 @@ class GoodsController extends Controller
         $this->goodsService->handleInvalidParameter($id);
         $this->goodsService->handleModelNotFound($id);
 
-        $material_goods_delete = Arr::pull($data,'material_goods_delete');
-        $material_goods_update = Arr::pull($data,'material_goods_update');
-
-        $this->goodsService->checkRelationship($id,collect($material_goods_delete)->pluck("id"));
-        $this->goodsService->checkRelationship($id,collect($material_goods_update)->pluck("id"));
-
         $goods = $this->goods->find($id);
 
         DB::beginTransaction();
@@ -169,14 +163,12 @@ class GoodsController extends Controller
                 return $item['category_id'];
             });
 
-            $material_goods_new = Arr::pull($data,'material_goods_new');
+            $material_goods = Arr::pull($data,'material_goods');
             
             $goods->update($data);
             $goods->attributes()->sync($attribute_goods);
             $goods->categories()->sync($category_goods);
-            is_null($material_goods_new) ? "" : $goods->materials()->createMany($material_goods_new);
-            $goods->updateManyAtribut($material_goods_update);
-            $goods->deleteManyAtribut($material_goods_delete);
+            $goods->updateGoods($material_goods);
 
             $this->goodsService->handleUpdateImage($request->file("thumbnail"),$oldThumnail, $path, $this->path,$data["is_image_delete"]);
 

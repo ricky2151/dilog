@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
-use App\Exceptions\InvalidParameterException; 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use App\Exceptions\InvalidParameterException;
 
-class StoreUser extends FormRequest
+class UpdateDivision extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,16 +26,12 @@ class StoreUser extends FormRequest
     public function rules()
     {
         return [
-            'name' => "required|string",
-            'email' => 'required|email|string|unique:users,email',
-            'password' => 'required|min:8|string',
-            'role_id' => 'required|integer|min:1|exists:roles,id',
-            'warehouse_id' => "required|integer|min:1",
-            'job_title' => "required|string",
-            'division_id' => 'filled|exists:divisions,id'
+            "name" => "filled|string",
+            "status" => "filled|boolean",
+            "pic_user_id" => "filled|integer|exists:users,id"
         ];
     }
-    
+
     protected function failedValidation(Validator $validator) {
         throw new InvalidParameterException($validator->errors()); 
     }

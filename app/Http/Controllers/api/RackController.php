@@ -142,7 +142,7 @@ class RackController extends Controller
         DB::beginTransaction();
         try {
             $goods_racks_new = Arr::pull($data,'goods_racks_new');
-
+            
             $rack->update($data);
             is_null($goods_racks_new) ? "" : $rack->goodsRack()->createMany($goods_racks_new);
             $rack->updateManyAtribut($goods_racks_update);
