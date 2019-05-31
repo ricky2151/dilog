@@ -12,21 +12,7 @@
     <meta name="description" content="Warehousing App">
     <meta name="author" content="Dilog">
     <link rel="stylesheet" href="{{ asset(mix('/css/app.css'), true) }}">
-    <link rel="manifest" href="{{ asset('manifest.json', true) }}">
-    <script type="text/javascript">
-        // Initialize the service worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('serviceworker.js', {
-                scope: '.'
-            }).then(function (registration) {
-                // Registration was successful
-                console.log('Laravel PWA: ServiceWorker registration successful with scope: ', registration.scope);
-            }, function (err) {
-                // registration failed :(
-                console.log('Laravel PWA: ServiceWorker registration failed: ', err);
-            });
-        }
-    </script>
+    @laravelPWA
 </head>
 <body>
     <div id="app">
