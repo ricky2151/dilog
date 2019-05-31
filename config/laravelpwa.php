@@ -5,7 +5,7 @@ return [
     'manifest' => [
         'name' => 'Dilog App',
         'short_name' => 'Dilog App',
-        'start_url' => '/',
+        'start_url' => env('APP_URL'),
         'background_color' => '#F5BF0E',
         'theme_color' => '#F5BF0E',
         'display' => 'standalone',
