@@ -15,7 +15,7 @@
     <script type="text/javascript">
         // Initialize the service worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register(window.location.host + '/serviceworker.js', {
+            navigator.serviceWorker.register('serviceworker.js', {
                 scope: '.'
             }).then(function (registration) {
                 // Registration was successful
@@ -26,7 +26,6 @@
             });
         }
     </script>
-    @laravelPWA
 </head>
 <body>
     <div id="app">
