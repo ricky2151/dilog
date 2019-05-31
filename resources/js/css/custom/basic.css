@@ -1,0 +1,18 @@
+.padding30{
+	padding:30px;
+}
+.fixfullscreen{
+    height: 100%;
+}
+.text-link{
+    color:blue;
+    text-decoration: underline;
+    cursor:pointer;
+}
+.button-action{
+    width: 30px;
+    height: 30px;
+}
+.button-action i{
+    font-size: 14px !important;
+}

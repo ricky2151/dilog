@@ -7,8 +7,11 @@
     <title>Dilog</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" href="{{ asset('favicon.png', true) }}">
-    <meta name="theme-color" content="#F44336">
+    <meta name="theme-color" content="#F5BF0E">
+    <meta name="description" content="Warehousing app">
+    <meta name="author" content="Dilog">
     <link rel="stylesheet" href="{{ asset(mix('/css/app.css'), true) }}">
+    @laravelPWA
 </head>
 <body>
     <div id="app">
