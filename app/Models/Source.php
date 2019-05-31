@@ -13,7 +13,7 @@ class Source extends Model
         'name'
     ];
 
-    public function goodsRacks(){
-        return $this->belongsToMany('App\Models\GoodsRack','batchs','source_id','goods_rack_id')->withPivot('stock', 'batch_number')->withTimestamps();
-    }
+    // public function goodsRacks(){
+    //     return $this->belongsToMany('App\Models\GoodsRack','batchs','source_id','goods_rack_id')->withPivot('stock', 'batch_number')->withTimestamps();
+    // }
 }

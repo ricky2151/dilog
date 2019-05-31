@@ -13,16 +13,20 @@ class CategoryPriceSellingsTableSeeder extends Seeder
     public function run()
     {
         CategoryPriceSelling::create([
-            'name' => "Category Price Selling 1"
+            'name' => "Category Price Selling 1",
+            'diskon' => "10"
         ]);
         CategoryPriceSelling::create([
-            'name' => "Category Price Selling 2"
+            'name' => "Category Price Selling 2",
+            'diskon' => "20"
         ]);
         CategoryPriceSelling::create([
-            'name' => "Category Price Selling 3"
+            'name' => "Category Price Selling 3",
+            'diskon' => "30"
         ]);
         CategoryPriceSelling::create([
-            'name' => "Category Price Selling 4"
+            'name' => "Category Price Selling 4",
+            'diskon' => "40"
         ]);
     }
 }

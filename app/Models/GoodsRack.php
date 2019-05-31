@@ -12,24 +12,7 @@ class GoodsRack extends Model
     ];
 
     public static function allDataCreate(){
-        return ['goods' => Goods::all(['id','name']),'racks' => Rack::all(['id','name']),'category_price_selling'=>CategoryPriceSelling::all(['id','name']),'sources'=>Source::all(['id','name'])];
-    }
-
-    public function updateManyAtribut($price_sellings_update){
-        if(!is_null($price_sellings_update)){
-            foreach ($price_sellings_update as $update) {
-                $data = Arr::except($update, ['id']);
-                $this->priceSellings()->find($update["id"])->update($data);
-            }
-        }
-    }
-
-    public function deleteManyAtribut($price_sellings_delete){
-        if(!is_null($price_sellings_delete)){
-            foreach ($price_sellings_delete as $delete) {
-                $this->priceSellings()->find($delete["id"])->delete();
-            }
-        }
+        return ['goods' => Goods::all(['id','name']),'racks' => Rack::all(['id','name'])];
     }
     
     protected $table = 'goods_rack';
@@ -42,11 +25,7 @@ class GoodsRack extends Model
         return $this->belongsTo('App\Models\Goods');
     }
 
-    public function priceSellings(){
-        return $this->hasMany('App\Models\PriceSelling');
-    }
-
-    public function sources(){
-        return $this->belongsToMany('App\Models\Source','batchs','goods_rack_id','source_id')->withPivot('stock', 'batch_number')->withTimestamps();
-    }
+    // public function sources(){
+    //     return $this->belongsToMany('App\Models\Source','batchs','goods_rack_id','source_id')->withPivot('stock', 'batch_number')->withTimestamps();
+    // }
 }

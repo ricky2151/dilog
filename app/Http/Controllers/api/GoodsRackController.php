@@ -51,7 +51,7 @@ class GoodsRackController extends Controller
      */
     public function create()
     {
-        $this->goodsRackService->handleGetAllDataForGoodsCreation();
+        // $this->goodsRackService->handleGetAllDataForGoodsCreation();
         return formatResponse(false,($this->goodsRack->allDataCreate()));
     }
 
@@ -67,17 +67,7 @@ class GoodsRackController extends Controller
         DB::beginTransaction();
         try {
 
-            $priceSellings = collect(Arr::pull($data,'price_selling'))->unique(function ($item) {
-                return $item['stock_cut_off'].$item['category_price_selling_id'].$item['price'].$item['discount'].$item['free'];
-            })->toArray();
-
-            $batchs = collect(Arr::pull($data,'batch'))->unique(function ($item) {
-                return $item['batch_number'];
-            });
-
             $goodsRack = $this->goodsRack->create($data);
-            $goodsRack->priceSellings()->createMany($priceSellings);
-            $goodsRack->sources()->attach($batchs);
 
             DB::commit();
         } catch (\Throwable $e) {
@@ -115,12 +105,13 @@ class GoodsRackController extends Controller
     {
         $this->goodsRackService->handleInvalidParameter($id);
         $this->goodsRackService->handleModelNotFound($id);
-        $this->goodsRackService->handleGetAllDataForGoodsCreation();
+        // $this->goodsRackService->handleGetAllDataForGoodsCreation();
 
         $allMaterial = collect($this->goodsRack->allDataCreate());
         $goodsRack = collect($this->goodsRack->find($id));
 
-        $concatenated = $goodsRack->union($allMaterial)->union($this->showFormatData($id));
+        // $concatenated = $goodsRack->union($allMaterial)->union($this->showFormatData($id));
+        $concatenated = $goodsRack->union($allMaterial);
 
         return formatResponse(false,(["goods_rack"=>$concatenated]));
     }
@@ -138,26 +129,16 @@ class GoodsRackController extends Controller
         $this->goodsRackService->handleInvalidParameter($id);
         $this->goodsRackService->handleModelNotFound($id);
 
-        $price_sellings_delete = Arr::pull($data,'price_sellings_delete');
-        $price_sellings_update = Arr::pull($data,'price_sellings_update');
-
-        $this->goodsRackService->checkRelationship($id,collect($price_sellings_delete)->pluck("id"));
-        $this->goodsRackService->checkRelationship($id,collect($price_sellings_update)->pluck("id"));
-
         $goodsRack = $this->goodsRack->find($id);
 
         DB::beginTransaction();
         try {
-            $batchs = collect(Arr::pull($data,'batch'))->unique(function ($item) {
-                return $item['batch_number'];
-            });
-            $price_sellings_new = Arr::pull($data,'price_sellings_new');
+            // $batchs = collect(Arr::pull($data,'batch'))->unique(function ($item) {
+            //     return $item['batch_number'];
+            // });
 
             $goodsRack->update($data);
-            $goodsRack->sources()->sync($batchs);
-            is_null($price_sellings_new) ? "" : $goodsRack->priceSellings()->createMany($price_sellings_new);
-            $goodsRack->updateManyAtribut($price_sellings_update);
-            $goodsRack->deleteManyAtribut($price_sellings_delete);
+            // $goodsRack->sources()->sync($batchs);
 
             DB::commit();
         } catch (\Throwable $e) {
@@ -180,8 +161,7 @@ class GoodsRackController extends Controller
 
         DB::beginTransaction();
         try {
-            $this->goodsRack->find($id)->sources()->sync([]);
-            $this->goodsRack->find($id)->priceSellings()->delete();
+            // $this->goodsRack->find($id)->sources()->sync([]);
             $this->goodsRack->find($id)->delete();
 
             DB::commit();
@@ -199,18 +179,13 @@ class GoodsRackController extends Controller
      * @return Illuminate\Support\Collection
      */
     public function showFormatData($id){
-        $goodsRackPriceSellings = $this->goodsRack->find($id)->priceSellings;
         $goodsRackBatchs = $this->goodsRack->find($id)->sources;
-
-        $goodsRackPriceSellings = $goodsRackPriceSellings->map(function ($item) {
-            return ['id' => $item['id'], 'stock_cut_off' => $item['stock_cut_off'],'category_price_selling_id'=> $item['category_price_selling_id'],'price'=> $item['price'],'discount'=> $item['discount'],'free'=> $item['free']];
-        });
 
         $goodsRackBatchs = $goodsRackBatchs->map(function ($item) {
             return ['goods_rack_id' => $item['pivot']['goods_rack_id'], 'source_id' => $item['pivot']['source_id'],'stock' => $item['pivot']['stock'], 'batch_number' => $item['pivot']['batch_number']];
         });
 
-        $data = collect(["goods_rack_price_sellings" => $goodsRackPriceSellings, "goods_rack_batchs"=>$goodsRackBatchs]);
+        $data = collect(["goods_rack_batchs"=>$goodsRackBatchs]);
 
         return $data;
     }

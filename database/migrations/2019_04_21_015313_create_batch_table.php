@@ -15,11 +15,11 @@ class CreateBatchTable extends Migration
     {
         Schema::create('batchs', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('goods_rack_id')->unsigned();
-            $table->integer('source_id')->unsigned();
-            $table->integer('stock')->unsigned();
-            $table->string('batch_number'); 
-            $table->timestamps();
+            // $table->integer('goods_rack_id')->unsigned();
+            // $table->integer('source_id')->unsigned();
+            // $table->integer('stock')->unsigned();
+            // $table->string('batch_number'); 
+            // $table->timestamps();
         });
     }
 

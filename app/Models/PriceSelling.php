@@ -10,7 +10,7 @@ class PriceSelling extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'goods_rack_id', 'stock_cut_off','category_price_selling_id','price','discount','free'
+        'goods_id', 'warehouse_id', 'stock_cut_off','category_price_selling_id','price','free'
     ];
 
     public function goodRack(){

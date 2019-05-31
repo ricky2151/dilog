@@ -10,7 +10,7 @@ class CategoryPriceSelling extends Model
     use SoftDeletes;
     
     protected $fillable = [
-        'name'
+        'name','diskon'
     ];
 
     public function priceSellings(){

@@ -29,14 +29,10 @@ class StoreGoodsRack extends FormRequest
             'goods_id' => 'required|integer|exists:goods,id',
             'rack_id' => 'required|integer|exists:racks,id',
             'stock' => 'required|integer|min:0',
-            'price_selling.*.stock_cut_off' => 'required|integer',
-            'price_selling.*.category_price_selling_id' => 'required|integer|exists:category_price_sellings,id',
-            'price_selling.*.price' => 'required|integer|min:0',
-            'price_selling.*.discount' => 'nullable|integer',
-            'price_selling.*.free' => 'required|boolean',
-            'batch.*.stock' => 'required|integer|min:0',
-            'batch.*.batch_number' => 'required|string',
-            'batch.*.source_id' => 'required|integer|exists:sources,id'
+            
+            // 'batch.*.stock' => 'required|integer|min:0',
+            // 'batch.*.batch_number' => 'required|string',
+            // 'batch.*.source_id' => 'required|integer|exists:sources,id'
         ];
     }
 
