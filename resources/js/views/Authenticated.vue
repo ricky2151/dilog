@@ -79,7 +79,7 @@
                 v-model="drawer"
                 app clipped fixed
                 :width='270'
-                
+
             >
 
                 <!-- PROFIL PERUSAHAAN -->
@@ -88,7 +88,7 @@
                     <v-layout row>
                         <v-flex xs3>
                             <v-avatar :tile="tile" :size="avatarSize" color="grey lighten-4">
-                                <img src="/assets/images/logo2.png"></img>
+                                <img src="/assets/images/logo.png"></img>
                             </v-avatar>
                         </v-flex>
                         <v-flex xs9 class='ml15'>
@@ -99,7 +99,7 @@
                 </v-container>
 
                 <v-divider class='white'></v-divider>
-                
+
 
                 <v-list>
                     <!--  -->

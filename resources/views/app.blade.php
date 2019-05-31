@@ -8,12 +8,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" href="{{ asset('favicon.png') }}">
     <meta name="theme-color" content="#F5BF0E">
-    <link rel="stylesheet" href="{{ asset('/css/app.css') }}">
+    <meta name="description" content="Warehousing app">
+    <meta name="author" content="Dilog">
+    <link rel="stylesheet" href="{{ asset(mix('/css/app.css')) }}">
+    @laravelPWA
 </head>
 <body>
     <div id="app">
         <dilog-app></dilog-app>
     </div>
-  <script src="{{ asset('/js/app.js') }}"></script>
+  <script src="{{ asset(mix('/js/app.js')) }}"></script>
 </body>
 </html>
