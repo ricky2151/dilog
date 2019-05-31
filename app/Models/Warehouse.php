@@ -39,4 +39,8 @@ class Warehouse extends Model
     public function racks(){
         return $this->hasMany('App\Models\Rack');
     }
+
+    public function priceSelling(){
+        return $this->hasMany('App\Models\PriceSelling')->orderBy('updated_at', 'desc');
+    }
 }

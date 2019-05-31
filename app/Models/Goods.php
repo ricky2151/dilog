@@ -72,4 +72,9 @@ class Goods extends Model
     public function materials(){
         return $this->hasMany('App\Models\Material')->orderBy('updated_at', 'desc');
     }
+    
+    public function priceSelling(){
+        return $this->hasMany('App\Models\PriceSelling')->orderBy('updated_at', 'desc');
+    }
+
 }
