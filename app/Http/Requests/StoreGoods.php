@@ -44,7 +44,9 @@ class StoreGoods extends FormRequest
             'category_goods.*.category_id'=> "required|integer|exists:categories,id",
             'material_goods.*.total'=> "required|integer|min:1",
             'material_goods.*.adjust'=> "string|nullable",
-            'material_goods.*.name'=> "required|string"
+            'material_goods.*.name'=> "required|string",
+            'pricelists.*.supplier_id' => "required|integer|exists:suppliers,id",
+            'pricelists.*.price' => "required|integer"
         ];
     }
 

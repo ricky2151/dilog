@@ -46,10 +46,13 @@ class UpdateGoods extends FormRequest
             'category_goods.*.category_id'=> "required|integer|exists:categories,id",
             
             'material_goods.*.id' => "filled|integer|exists:materials,id",
-            'material_goods.*.total'=> "required|integer|min:1",
+            'material_goods.*.total'=> "filled|integer|min:1",
             'material_goods.*.adjust'=> "string|nullable",
-            'material_goods.*.name'=> "required|string",
-            'material_goods.*.type'=> "required|enum:1,0,-1",
+            'material_goods.*.name'=> "filled|string",
+            'material_goods.*.type'=> "filled|in:1,0,-1",//1 : update, 0 : update, -1 : delete
+
+            'pricelists.*.supplier_id' => "required|integer|exists:suppliers,id",
+            'pricelists.*.price' => "required|integer",
             
             'is_image_delete' => "required|boolean"
         ];
