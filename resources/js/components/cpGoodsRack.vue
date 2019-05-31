@@ -245,8 +245,8 @@
             class=""
         >
         <template v-slot:items="props">
-            <td >{{ props.item.goods_id }}</td>
-            <td class="text-xs-right">{{ props.item.rack_id }}</td>
+            <td >{{ props.item.rack_name }}</td>
+            <td>{{ props.item.goods_name }}</td>
             <td class="text-xs-right">{{ props.item.stock }}</td>
             <td>
                 <v-btn class='button-action' v-on:click='get_data_before_edit(props.index)' color="primary" fab depressed small dark v-on="on">
@@ -351,8 +351,8 @@ export default {
             
 
             headers: [
+                { text: 'Racks', value: 'racks'},
                 { text: 'Goods', value: 'goods'},
-                { text: 'Racks', value: 'racks', align:'right' },
                 { text: 'Stock', value: 'stock', align:'right' },
                 { text: 'Action', align:'left',width:'15%',sortable:false},
             ],
@@ -486,14 +486,31 @@ export default {
                 this.convert_data_input_goodsrack(r);
                 
             }
+            else
+            {
+                this.clear_input();
+            }
 
             this.dialog_createedit = true;
         },
         clear_input(){
-            for (var key in self.input)
+            this.$refs.formCreateEdit.resetValidation();
+            for (var key in this.input)
             {
-                if(self.input[key])
-                    self.input[key] = null;
+                if(this.input[key])
+                {
+                    if(Array.isArray(this.input[key]))
+                    {
+                        this.input[key] = [];     
+                    }
+                    else
+                    {
+                        this.input[key] = "";
+                    }
+                    
+                    
+                }
+                    
             }
         },
         
@@ -797,7 +814,7 @@ export default {
         get_data_before_edit(idx_edit)
         {
             var id_edit = this.goodsracks[idx_edit].id;
-            axios.get('/api/goodsRacks/' + id_edit, {
+            axios.get('/api/goodsRacks/' + id_edit + '/edit', {
                 params:{
                     token: localStorage.getItem('token')
                 }

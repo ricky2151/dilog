@@ -310,14 +310,31 @@ export default {
                 this.convert_data_input_rack(r);
                 
             }
+            else
+            {
+                this.clear_input();
+            }
 
             this.dialog_createedit = true;
         },
         clear_input(){
-            for (var key in self.input)
+            this.$refs.formCreateEdit.resetValidation();
+            for (var key in this.input)
             {
-                if(self.input[key])
-                    self.input[key] = null;
+                if(this.input[key])
+                {
+                    if(Array.isArray(this.input[key]))
+                    {
+                        this.input[key] = [];     
+                    }
+                    else
+                    {
+                        this.input[key] = "";
+                    }
+                    
+                    
+                }
+                    
             }
         },
         
@@ -331,8 +348,8 @@ export default {
         fill_select_master_data(r)
         {
             //console.log(r.data.items[0].units);
-            this.ref_input.warehouses = r.data.items[0].warehouses;
-            this.ref_input.goods = r.data.items[0].goods;
+            this.ref_input.warehouses = r.data.items.warehouses;
+            this.ref_input.goods = r.data.items.goods;
 
         },
         convert_data_input_rack(r)
@@ -567,7 +584,7 @@ export default {
         get_data_before_edit(idx_edit)
         {
             var id_edit = this.racks[idx_edit].id;
-            axios.get('/api/racks/' + id_edit, {
+            axios.get('/api/racks/' + id_edit + '/edit', {
                 params:{
                     token: localStorage.getItem('token')
                 }
