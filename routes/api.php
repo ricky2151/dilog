@@ -64,4 +64,7 @@ Route::group([
 
     //Division
     Route::resource('divisions', 'DivisionController');
+
+    //Periode
+    Route::resource('periodes', 'PeriodeController');
 });
