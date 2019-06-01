@@ -19,9 +19,9 @@ class PeriodeController extends Controller
         $this->periode = $periode;
     }
     /**
-     * Display a listing of the resource.
+     * Display a listing of the periode.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -32,10 +32,10 @@ class PeriodeController extends Controller
     
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created periode in storage.
      *
      * @param  \Illuminate\Http\StorePeriode  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function store(StorePeriode $request)
     {
@@ -46,10 +46,10 @@ class PeriodeController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified periode.
      *
      * @param  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function show($id)
     {
@@ -62,11 +62,11 @@ class PeriodeController extends Controller
 
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified periode in storage.
      *
      * @param  \Illuminate\Http\UpdatePeriode  $request
      * @param  $id
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function update(UpdatePeriode $request, $id)
     {
@@ -78,13 +78,18 @@ class PeriodeController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * non-activate the specified periode from storage.
      *
-     * @param  \App\Models\Periode  $periode
-     * @return \Illuminate\Http\Response
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(Periode $periode)
+    public function destroy($id)
     {
-        //
+        $this->periodeService->handleInvalidParameter($id);
+        $this->periodeService->handleModelNotFound($id);
+
+        $periode = $this->periode->find($id)->nonActive();
+        return formatResponse(false,(["periode"=>["periode was nonactivated"]]));
+
     }
 }

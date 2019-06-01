@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use App\Exceptions\InvalidParameterException;
 
-class StorePeriode extends FormRequest
+class StoreMaterialRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,10 +26,13 @@ class StorePeriode extends FormRequest
     public function rules()
     {
         return [
-            'name' => "required|string",
-            'from' => "required|date|before:to",
-            'to' => "required|date|after:from",
-            // 'status' => "required|boolean"
+            "code" => "required|string",
+            "division_id" => "required|integer|exists:divisions,id",
+            "request_by_user_id" => "required|integer|exists:users,id",
+            "periode_id" => "required|integer|exists:periodes,id",
+            "material_request_details.*.goods_id" => "required|integer|exists:divisions,id",
+            "material_request_details.*.qty" => "required|integer|min:1",
+            "material_request_details.*.notes" => "required|string",
         ];
     }
 

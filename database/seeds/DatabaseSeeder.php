@@ -37,7 +37,9 @@ class DatabaseSeeder extends Seeder
             SuppliersTableSeeder::class,
             PricelistsTableSeeder::class,
             DivisionsTableSeeder::class,
-            PeriodeTableSeeder::class
+            PeriodeTableSeeder::class,
+            MaterialRequestsTableSeeder::class,
+            MaterialRequestDetailsTableSeeder::class
         ]);
     }
 }

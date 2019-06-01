@@ -89,4 +89,10 @@ class User extends Authenticatable implements JWTSubject
     public function goods(){
         return $this->hasMany('App\Models\Goods');
     }
+
+    public function materialRequests()
+    {
+        return $this->hasMany('App\Models\MaterialRequest','request_by_user_id');
+    }
+
 }
