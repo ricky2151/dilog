@@ -46,7 +46,7 @@ Route::group([
     Route::resource('cogsComponent', 'CogsComponentController');
     
     //Source
-    Route::resource('sources', 'SourceController');
+    // Route::resource('sources', 'SourceController');
 
     //CategoryPriceSelling
     Route::resource('categoryPriceSellings', 'CategoryPriceSellingController');
