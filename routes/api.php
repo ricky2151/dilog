@@ -22,6 +22,7 @@ Route::group([
 
     //Route Category
     Route::resource('categories', 'CategoryController');
+    Route::get('/categories/{id}/goods','CategoryController@goodsCategory');
 
     //Route Unit
     Route::resource('units', 'UnitController');

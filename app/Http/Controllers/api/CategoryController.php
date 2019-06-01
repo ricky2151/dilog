@@ -18,6 +18,7 @@ class CategoryController extends Controller
         $this->categoryService = $categoryService;
         $this->category = $category;
     }
+
     /**
      * Display a listing of the category.
      *
@@ -30,6 +31,24 @@ class CategoryController extends Controller
         return formatResponse(false,(["categories"=>$categories]));
     }
 
+    /**
+     * Display a listing of the goods with stock in this category.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function goodsCategory($id)
+    {
+        $this->categoryService->handleEmptyModel();
+        $goods = $this->category->find($id)->goodsStock();
+
+        // $goods = $goods->map(function ($item) {
+        //     $stock = collect($item->goodsRack)->sum('stock');
+        //     return ['id' => $item['id'], 'name' => $item['name'],'stock'=>$stock];
+        // });
+
+
+        return formatResponse(false,(["categories"=>$goods]));
+    }
 
     /**
      * Store a newly created category in storage.

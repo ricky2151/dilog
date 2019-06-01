@@ -27,4 +27,15 @@ class Category extends Model
     public function goods(){
         return $this->belongsToMany('App\Models\Goods','category_goods','category_id','goods_id')->withTimestamps();
     }
+
+    public function goodsStock(){
+        $goods = $this->goods;
+
+        $goods = $goods->map(function ($item) {
+            $stock = collect($item->goodsRack)->sum('stock');
+            return ['id' => $item['id'], 'name' => $item['name'],'stock'=>$stock];
+        });
+
+        return $goods;
+    }
 }
