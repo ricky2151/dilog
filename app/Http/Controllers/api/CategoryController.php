@@ -41,12 +41,6 @@ class CategoryController extends Controller
         $this->categoryService->handleEmptyModel();
         $goods = $this->category->find($id)->goodsStock();
 
-        // $goods = $goods->map(function ($item) {
-        //     $stock = collect($item->goodsRack)->sum('stock');
-        //     return ['id' => $item['id'], 'name' => $item['name'],'stock'=>$stock];
-        // });
-
-
         return formatResponse(false,(["categories"=>$goods]));
     }
 
