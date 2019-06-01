@@ -16,7 +16,7 @@
 
                 </v-toolbar>
                 <div style='padding:30px'>
-                    
+
                     <v-text-field
                         v-model="popup_search_detailgoods"
                         append-icon="search"
@@ -119,7 +119,7 @@ export default {
 
             headers_popup_detailgoods : [
                 { text: 'No', value:'no'},
-                { text: 'Goods', value:'goods'},
+                { text: 'Goods', value:'name'},
                 { text: 'Stock', value:'stock'},
 
             ],
@@ -129,15 +129,15 @@ export default {
             popup_detailgoods :
             [
                 {
-                    goods:'meja',
+                    name:'meja',
                     stock:12,
                 },
                 {
-                    goods:'kursi',
+                    name:'kursi',
                     stock:13,
                 },
                 {
-                    goods:'indomie',
+                    name:'indomie',
                     stock:10,
                 },
             ],

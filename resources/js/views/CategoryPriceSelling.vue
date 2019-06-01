@@ -1,6 +1,6 @@
 <div>
     <v-container fluid>
-        <h3>Price Category</h3>
+        <h3>Selling Price Category</h3>
     </v-container>
 </div>
 
@@ -23,7 +23,7 @@
         </v-dialog>
 
         <v-toolbar flat color="white">
-            <v-toolbar-title>Price Category Data</v-toolbar-title>
+            <v-toolbar-title>Selling Price Category Data</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark>
                 Add Data

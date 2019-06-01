@@ -225,43 +225,62 @@ export default {
                     },
                     {
                         subicon:"compare_arrows",
-                        subtitle:"Price Categories",
+                        subtitle:"Selling Price Categories",
                         subaction: "/categorypriceselling"
                     },
 
                     {
-                        subicon:"description",
-                        subtitle:"Batch Sources",
-                        subaction: "/source"
+                        subicon:"widgets",
+                        subtitle:"Goods",
+                        subaction: "/goods"
+                    },
+
+                    {
+                        subicon:"monetization_on",
+                        subtitle:"COGS",
+                        subaction: "/cogs"
+                    },
+
+                    {
+                        subicon:"perm_contact_calendar",
+                        subtitle:"Suppliers",
+                        subaction: "/supplier"
+                    },
+
+                    {
+                        subicon:"person_pin",
+                        subtitle:"Customers",
+                        subaction: "/customer"
                     },
                     
                     ]
                 },
                 {
-                    icon: "widgets",
-                    title : "Goods",
-                    action : "/goods",
+                    icon: "local_convenience_store",
+                    title: "Stock",
+                    subroutes:[
+                    {
+                        subicon:"store",
+                        subtitle:"Warehouses",
+                        subaction: "/warehouse"
+                    },
+                    {
+                        subicon:"assignment_returned",
+                        subtitle:"Goods Racks",
+                        subaction: "/goodsrack"
+                    },
+                    {
+                        subicon:"dns",
+                        subtitle:"Racks",
+                        subaction: "/rack"
+                    },
+
+                   
+                    
+                    ]
                 },
-                {
-                    icon: "store",
-                    title: "Warehouses",
-                    action: "/warehouse",
-                },
-                {
-                    icon: "assignment_returned",
-                    title : "Goods Racks",
-                    action : "/goodsrack",
-                },
-                {
-                    icon: "monetization_on",
-                    title : "COGS",
-                    action : "/cogs",
-                },
-                {
-                    icon: "dns",
-                    title : "Racks",
-                    action : "/rack",
-                }
+
+                
                
             ],
             toolbarMenu: [
