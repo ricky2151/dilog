@@ -6,13 +6,49 @@
 
 <template>
     <div>
+        <v-dialog v-model="dialog_detailgoods" width=750>
+            <v-card>
+                <v-toolbar dark color="menu">
+                    <v-btn icon dark v-on:click="closedialog_detailgoods()">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Detail Goods</v-toolbar-title>
+
+                </v-toolbar>
+                <div style='padding:30px'>
+                    
+                    <v-text-field
+                        v-model="popup_search_detailgoods"
+                        append-icon="search"
+                        label="Search"
+                        single-line
+                        hide-details
+                      ></v-text-field>
+                    <v-data-table
+                    disable-initial-sort
+                    :headers="headers_popup_detailgoods"
+                    :items="popup_detailgoods"
+                    :search="popup_search_detailgoods"
+                    class=""
+                    >
+                    <template v-slot:items="props">
+                        <td>{{ props.index + 1 }}</td>
+                        <td>{{ props.item.name }}</td>
+                        <td>{{ props.item.stock }}</td>
+                    </template>
+                    </v-data-table>
+                </div>
+            </v-card>
+        </v-dialog>
+
+
         <v-dialog v-model="dialog_createedit" width=750>
             <v-card>
                 <v-toolbar dark color="menu">
                     <v-btn icon dark v-on:click="closedialog_createedit()">
                         <v-icon>close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Add categories</v-toolbar-title>
+                    <v-toolbar-title v-html='idx_data_edit == -1 ?"Add Categories":"Edit Categories"'></v-toolbar-title>
 
                 </v-toolbar>
                 <form style='padding:30px'>
@@ -38,6 +74,11 @@
         <template v-slot:items="props">
             <td>{{ props.item.name }}</td>
             <td>
+                <v-btn class='button-action' v-on:click='opendialog_detailgoods(props.index)' color="primary" block dark v-on="on">
+                    Goods
+                </v-btn>
+            </td>
+            <td>
                 <v-btn class='button-action' v-on:click='opendialog_createedit(props.index)' color="primary" fab depressed small dark v-on="on">
                     <v-icon small>edit</v-icon>
                 </v-btn>
@@ -59,6 +100,7 @@ export default {
             on:false,
 
             dialog_createedit:false,
+            dialog_detailgoods:false,
             dialog_stock:false,
 
             idx_data_edit:-1,
@@ -69,16 +111,52 @@ export default {
             
 
             headers: [
-                { text: 'Name', value: 'name'},
+                { text: 'Name', value: 'name',width:'70%'},
+                { text: 'Goods', align:'left',width:'15%',sortable:false},
                 { text: 'Action', align:'left',width:'15%',sortable:false},
+
             ],
 
+            headers_popup_detailgoods : [
+                { text: 'No', value:'no'},
+                { text: 'Goods', value:'goods'},
+                { text: 'Stock', value:'stock'},
 
-            categories: []
+            ],
+
+            categories: [],
+
+            popup_detailgoods :
+            [
+                {
+                    goods:'meja',
+                    stock:12,
+                },
+                {
+                    goods:'kursi',
+                    stock:13,
+                },
+                {
+                    goods:'indomie',
+                    stock:10,
+                },
+            ],
+            popup_search_detailgoods:null,
         }
     },
     methods: {
+        closedialog_detailgoods(){
+            this.dialog_detailgoods = false;
+        },
+        opendialog_detailgoods(idx_edit_popup_detailgoods)
+        {
+
+            this.dialog_detailgoods = true;
+            this.get_popup_detailgoods(idx_edit_popup_detailgoods);
+
+        },
         closedialog_createedit(){
+            this.idx_data_edit = -1;
             this.dialog_createedit = false;
         },
         opendialog_createedit(idx_data_edit){
@@ -166,6 +244,16 @@ export default {
                         });
                     }
             });
+        },
+        get_popup_detailgoods(idx_edit_popup_detailgoods){
+            axios.get('api/categories/' + this.categories[idx_edit_popup_detailgoods].id + '/goods',{
+                params : {
+                    token: localStorage.getItem('token')
+                }
+
+            }).then((r) => {
+                this.popup_detailgoods = r.data.items.categories;
+            })
         }
 
 
