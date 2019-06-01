@@ -52,7 +52,7 @@ class Goods extends Model
     }
 
     public static function allDataCreate(){
-        return ['categories' => Category::all(['id','name']),'attributes' => Attribute::all(['id','name']),'units'=>Unit::all(['id','name']),'cogs'=>Cogs::all(['id','name']),'suppliers'=>Supplier::all(['id','name_company','name_owner','name_pic','name_sales'])];
+        return ['categories' => Category::all(['id','name']), 'warehouses' => Warehouse::all(['id','name']), 'category_price_sellings' => CategoryPriceSelling::all(['id','name']),'attributes' => Attribute::all(['id','name']),'units'=>Unit::all(['id','name']),'cogs'=>Cogs::all(['id','name']),'suppliers'=>Supplier::all(['id','name_company','name_owner','name_pic','name_sales'])];
     }
 
     public function goodsRack(){

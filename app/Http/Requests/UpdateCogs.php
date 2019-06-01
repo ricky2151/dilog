@@ -29,11 +29,11 @@ class UpdateCogs extends FormRequest
             'name' => "string",
             'nominal' =>"integer",
             'type_id' =>"integer|min:1|exists:types,id",
-            'cogs_component.*.id' => "required|integer|exists:cogs_components,id",
-            'cogs_component.*.name' => "required|string",
-            'cogs_component.*.value' => "required|integer|min:0",
-            'cogs_component.*.info' => "required|string",
-            'cogs_component.*.type'=> "required|in:1,0,-1",//1 : update, 0 : update, -1 : delete
+            // 'cogs_component.*.id' => "filled|integer|exists:cogs_components,id",
+            // 'cogs_component.*.name' => "filled|string",
+            // 'cogs_component.*.value' => "filled|integer|min:0",
+            // 'cogs_component.*.info' => "filled|string",
+            // 'cogs_component.*.type'=> "required|in:1,0,-1",//1 : update, 0 : update, -1 : delete
         ];
     }
 

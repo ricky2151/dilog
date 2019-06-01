@@ -34,7 +34,7 @@ Route::group([
     Route::resource('goods','GoodsController');
     Route::get('/goods/{id}/racks','GoodsController@racks');
     Route::get('/goods/{id}/sellingPrices','GoodsController@sellingPrices');
-    Route::get('/goods/{id}/pricelists','GoodsController@pricelists');
+    Route::get('/goods/{id}/pricelists','GoodsController@   ');
 
     //Attributes
     Route::resource('attributes', 'AttributeController');

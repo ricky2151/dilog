@@ -32,7 +32,8 @@ class CogsController extends Controller
     {
         $this->cogsService->handleEmptyModel();
 
-        $CollectionCogs = $this->cogs->latest()->get();
+        $CollectionCogs = $this->cogs->index();
+        
         return formatResponse(false,(["cogs"=>$CollectionCogs]));
     }
 
@@ -56,10 +57,10 @@ class CogsController extends Controller
 
         DB::beginTransaction();
         try {
-            $cogsComponent = collect(Arr::pull($data,'cogs_component'))->toArray();
+            // $cogsComponent = collect(Arr::pull($data,'cogs_component'))->toArray();
 
             $cogs = $this->cogs->create($data);
-            $cogs->cogsComponents()->createMany($cogsComponent);
+            // $cogs->cogsComponents()->createMany($cogsComponent);
 
             DB::commit();
         } catch (\Throwable $e) {
@@ -100,7 +101,8 @@ class CogsController extends Controller
         $data = collect($this->cogs->allDataCreate());
         $cogs = collect($this->cogs->find($id));
 
-        $concatenated = $cogs->union($data)->union($this->showFormatData($id));
+        // $concatenated = $cogs->union($data)->union($this->showFormatData($id));
+        $concatenated = $cogs->union($data);
 
         return formatResponse(false,(["cogs"=>$concatenated]));
 
@@ -121,23 +123,16 @@ class CogsController extends Controller
         $this->cogsService->handleInvalidParameter($id);
         $this->cogsService->handleModelNotFound($id);
 
-        $cogs_components_delete = Arr::pull($data,'cogs_components_delete');
-        $cogs_components_update = Arr::pull($data,'cogs_components_update');
-
-        $this->cogsService->checkRelationship($id,collect($cogs_components_delete)->pluck("id"));
-        $this->cogsService->checkRelationship($id,collect($cogs_components_update)->pluck("id"));
-
         $cogs = $this->cogs->find($id);
 
         DB::beginTransaction();
         try { 
 
-            $cogs_components_new = Arr::pull($data,'cogs_components_new');
+            // $cogsComponents = Arr::pull($data,'cogs_component');
 
             $cogs->update($data);
-            is_null($cogs_components_new) ? "" : $cogs->cogsComponents()->createMany($cogs_components_new);
-            $cogs->updateManyAtribut($cogs_components_update);
-            $cogs->deleteManyAtribut($cogs_components_delete);
+            // is_null($cogsComponents) ? "" : $cogs->updateCogsComponent($cogsComponents);
+
 
             DB::commit();
         } catch (\Throwable $e) {

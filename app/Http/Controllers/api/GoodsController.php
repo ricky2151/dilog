@@ -297,6 +297,7 @@ class GoodsController extends Controller
         $goodsCategories = $this->goods->find($id)->categories;
         $goodsMaterials = $this->goods->find($id)->materials;
         $pricelists = $this->goods->find($id)->suppliers;
+        $priceSellings = $this->goods->find($id)->getSellingPrices();
 
         // return $pricelists;
 
@@ -314,7 +315,7 @@ class GoodsController extends Controller
         });
 
 
-        $data = collect(["pricelists" => $pricelists,"attribute_goods" => $goodsAttributes, "category_goods"=>$goodsCategories , "material_goods" => $goodsMaterials]);
+        $data = collect(["price_sellings"=>$priceSellings,"pricelists" => $pricelists,"attribute_goods" => $goodsAttributes, "category_goods"=>$goodsCategories , "material_goods" => $goodsMaterials]);
 
         return $data;
     }

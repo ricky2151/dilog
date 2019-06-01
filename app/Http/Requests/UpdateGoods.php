@@ -63,8 +63,6 @@ class UpdateGoods extends FormRequest
             'price_sellings.*.free' => "required|boolean",
             'price_sellings.*.type'=> "required|in:1,0,-1",//1 : update, 0 : update, -1 : delete
 
-            
-            
             'is_image_delete' => "required|boolean"
         ];
     }

@@ -14,19 +14,26 @@ class Cogs extends Model
         'nominal','name','type_id'
     ];
 
-    public function updateManyAtribut($cogs_components_update){
-        if(!is_null($cogs_components_update)){
-            foreach ($cogs_components_update as $update) {
-                $data = Arr::except($update, ['id']);
-                $this->cogsComponents()->find($update["id"])->update($data);
-            }
-        }
+    public static function index(){
+        $collectionCogs = Cogs::latest()->get();
+
+        $collectionCogs = $collectionCogs->map(function ($item) {
+            $item = Arr::add($item, 'type_name', $item['type']['name']);
+            return Arr::except($item, ['type']);
+        });
+
+        return $collectionCogs;
     }
 
-    public function deleteManyAtribut($cogs_components_delete){
-        if(!is_null($cogs_components_delete)){
-            foreach ($cogs_components_delete as $delete) {
-                $this->cogsComponents()->find($delete["id"])->delete();
+    public function updateCogsComponent($cogsComponents){
+        foreach($cogsComponents as $cogsComponent){
+            if($cogsComponent['type'] == 1) {
+                $this->cogsComponents()->create($cogsComponent);
+            }
+            else if($cogsComponent['type'] == 0) {
+                $this->cogsComponents()->find($cogsComponent['id'])->update($cogsComponent);
+            } else {
+                $this->cogsComponents()->find($cogsComponent['id'])->delete();
             }
         }
     }

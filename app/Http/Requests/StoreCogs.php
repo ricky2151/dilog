@@ -29,9 +29,9 @@ class StoreCogs extends FormRequest
             'name' => "required|string",
             'nominal' =>"required|integer|min:0",
             'type_id' =>"required|integer|min:1|exists:types,id",
-            'cogs_component.*.name' => "required|string",
-            'cogs_component.*.value' => "required|integer|min:0",
-            'cogs_component.*.info' => "required|string"
+            // 'cogs_component.*.name' => "required|string",
+            // 'cogs_component.*.value' => "required|integer|min:0",
+            // 'cogs_component.*.info' => "required|string"
         ];
     }
 
