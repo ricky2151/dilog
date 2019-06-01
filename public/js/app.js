@@ -2146,12 +2146,11 @@ __webpack_require__.r(__webpack_exports__);
         }]
       },
       headers: [{
+        text: 'Racks',
+        value: 'racks'
+      }, {
         text: 'Goods',
         value: 'goods'
-      }, {
-        text: 'Racks',
-        value: 'racks',
-        align: 'right'
       }, {
         text: 'Stock',
         value: 'stock',
@@ -2243,19 +2242,30 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     closedialog_createedit: function closedialog_createedit() {
+      this.idx_data_edit = -1;
       this.dialog_createedit = false;
     },
     opendialog_createedit: function opendialog_createedit(idx_data_edit, r) {
       if (idx_data_edit != -1) {
         this.idx_data_edit = idx_data_edit;
         this.convert_data_input_goodsrack(r);
+      } else {
+        this.clear_input();
       }
 
       this.dialog_createedit = true;
     },
     clear_input: function clear_input() {
-      for (var key in self.input) {
-        if (self.input[key]) self.input[key] = null;
+      this.$refs.formCreateEdit.resetValidation();
+
+      for (var key in this.input) {
+        if (this.input[key]) {
+          if (Array.isArray(this.input[key])) {
+            this.input[key] = [];
+          } else {
+            this.input[key] = "";
+          }
+        }
       }
     },
     fill_select_master_data: function fill_select_master_data(r) {
@@ -2489,7 +2499,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this5 = this;
 
       var id_edit = this.goodsracks[idx_edit].id;
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/goodsRacks/' + id_edit, {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/goodsRacks/' + id_edit + '/edit', {
         params: {
           token: localStorage.getItem('token')
         }
@@ -2610,6 +2620,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     closedialog_createedit: function closedialog_createedit() {
+      this.idx_data_edit = -1;
       this.dialog_createedit = false;
     },
     opendialog_createedit: function opendialog_createedit(idx_data_edit) {
@@ -3065,12 +3076,54 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       on: false,
       dialog_createedit: false,
+      dialog_detailgoods: false,
       dialog_stock: false,
       idx_data_edit: -1,
       input: {
@@ -3078,18 +3131,53 @@ __webpack_require__.r(__webpack_exports__);
       },
       headers: [{
         text: 'Name',
-        value: 'name'
+        value: 'name',
+        width: '70%'
+      }, {
+        text: 'Goods',
+        align: 'left',
+        width: '15%',
+        sortable: false
       }, {
         text: 'Action',
         align: 'left',
         width: '15%',
         sortable: false
       }],
-      categories: []
+      headers_popup_detailgoods: [{
+        text: 'No',
+        value: 'no'
+      }, {
+        text: 'Goods',
+        value: 'goods'
+      }, {
+        text: 'Stock',
+        value: 'stock'
+      }],
+      categories: [],
+      popup_detailgoods: [{
+        goods: 'meja',
+        stock: 12
+      }, {
+        goods: 'kursi',
+        stock: 13
+      }, {
+        goods: 'indomie',
+        stock: 10
+      }],
+      popup_search_detailgoods: null
     };
   },
   methods: {
+    closedialog_detailgoods: function closedialog_detailgoods() {
+      this.dialog_detailgoods = false;
+    },
+    opendialog_detailgoods: function opendialog_detailgoods(idx_edit_popup_detailgoods) {
+      this.dialog_detailgoods = true;
+      this.get_popup_detailgoods(idx_edit_popup_detailgoods);
+    },
     closedialog_createedit: function closedialog_createedit() {
+      this.idx_data_edit = -1;
       this.dialog_createedit = false;
     },
     opendialog_createedit: function opendialog_createedit(idx_data_edit) {
@@ -3171,6 +3259,17 @@ __webpack_require__.r(__webpack_exports__);
             swal("Good job!", "Data Deleted !", "success");
           });
         }
+      });
+    },
+    get_popup_detailgoods: function get_popup_detailgoods(idx_edit_popup_detailgoods) {
+      var _this4 = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('api/categories/' + this.categories[idx_edit_popup_detailgoods].id + '/goods', {
+        params: {
+          token: localStorage.getItem('token')
+        }
+      }).then(function (r) {
+        _this4.popup_detailgoods = r.data.items.categories;
       });
     }
   },
@@ -3270,6 +3369,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     closedialog_createedit: function closedialog_createedit() {
+      this.idx_data_edit = -1;
       this.dialog_createedit = false;
     },
     opendialog_createedit: function opendialog_createedit(idx_data_edit) {
@@ -3620,19 +3720,30 @@ __webpack_require__.r(__webpack_exports__);
       };
     },
     closedialog_createedit: function closedialog_createedit() {
+      this.idx_data_edit = -1;
       this.dialog_createedit = false;
     },
     opendialog_createedit: function opendialog_createedit(idx_data_edit, r) {
       if (idx_data_edit != -1) {
         this.idx_data_edit = idx_data_edit;
         this.convert_data_input_cogs(r);
+      } else {
+        this.clear_input();
       }
 
       this.dialog_createedit = true;
     },
     clear_input: function clear_input() {
-      for (var key in self.input) {
-        if (self.input[key]) self.input[key] = null;
+      this.$refs.formCreateEdit.resetValidation();
+
+      for (var key in this.input) {
+        if (this.input[key]) {
+          if (Array.isArray(this.input[key])) {
+            this.input[key] = [];
+          } else {
+            this.input[key] = "";
+          }
+        }
       }
     },
     showTable: function showTable(r) {
@@ -3641,7 +3752,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     fill_select_master_data: function fill_select_master_data(r) {
       //console.log(r.data.items[0].units);
-      this.ref_input.types = r.data.items[0].types;
+      this.ref_input.types = r.data.items.types;
     },
     convert_data_input_cogs: function convert_data_input_cogs(r) {
       var temp_r = r.data.items.cogs;
@@ -3878,7 +3989,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this5 = this;
 
       var id_edit = this.cogs[idx_edit].id;
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/cogs/' + id_edit, {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/cogs/' + id_edit + '/edit', {
         params: {
           token: localStorage.getItem('token')
         }
@@ -4259,6 +4370,10 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
+  errorCaptured: function errorCaptured(err, vm, info) {
+    this.error = "".concat(err.stack, "\n\nfound in ").concat(info, " of component");
+    return false;
+  },
   data: function data() {
     return {
       valid: false,
@@ -4530,19 +4645,32 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     },
     closedialog_createedit: function closedialog_createedit() {
       this.dialog_createedit = false;
+      this.idx_data_edit = -1;
     },
     opendialog_createedit: function opendialog_createedit(idx_data_edit, r) {
       if (idx_data_edit != -1) {
         this.idx_data_edit = idx_data_edit;
         this.convert_data_input_goods(r);
+      } else {
+        this.clear_input();
       }
 
       this.dialog_createedit = true;
     },
     clear_input: function clear_input() {
-      for (var key in self.input) {
-        if (self.input[key]) self.input[key] = null;
-      }
+      this.$refs.formCreateEdit.resetValidation();
+      this.preview.thumbnail = '';
+
+      for (var key in this.input) {
+        if (this.input[key]) {
+          if (Array.isArray(this.input[key])) {
+            this.input[key] = [];
+          } else {
+            this.input[key] = "";
+          }
+        }
+      } //this.$refs.formCreateEdit.reset();
+
     },
     showTable: function showTable(r) {
       //console.log(r.data.items.goods[0]);
@@ -4550,11 +4678,11 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     },
     fill_select_master_data: function fill_select_master_data(r) {
       //console.log(r.data.items[0].units);
-      this.ref_input.unit = r.data.items[0].units;
-      this.ref_input.cogs = r.data.items[0].cogs;
-      this.ref_input.category = r.data.items[0].categories;
-      this.ref_input.attribute = r.data.items[0].attributes;
-      this.ref_input.material = r.data.items[0].materials;
+      console.log(r.data.items.units);
+      this.ref_input.unit = r.data.items.units;
+      this.ref_input.cogs = r.data.items.cogs;
+      this.ref_input.category = r.data.items.categories;
+      this.ref_input.attribute = r.data.items.attributes; //this.ref_input.material = r.data.items[0].materials;
     },
     convert_data_input_goods: function convert_data_input_goods(r) {
       var temp_r = r.data.items.goods;
@@ -4571,7 +4699,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       this.input.unit_id = temp_r.unit_id;
       this.input.cogs_id = temp_r.cogs_id;
       this.preview.thumbnail = temp_r.thumbnail;
-      console.log(temp_r.category_goods);
+      console.log('testing convert_data_input_goods');
+      console.log(r.data.items);
       this.input.category_goods = temp_r.category_goods;
 
       for (var i = 0; i < temp_r.attribute_goods.length; i++) {
@@ -4687,9 +4816,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 
           if (this.input.thumbnail_file.length > 0 && this.input_before_edit.thumbnail_file == null) {
-            formData.append('is_image_deleted', '1');
+            formData.append('is_image_delete', '1');
           } else {
-            formData.append('is_image_deleted', '0');
+            formData.append('is_image_delete', '0');
           }
 
           formData.append('_method', 'patch');
@@ -4749,6 +4878,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }).then(function (r) {
         return _this2.showTable(r);
       })["catch"](function (error) {
+        console.log("error : ");
+        console.log(error);
+
         if (error.response.status == 422) {
           swal('Request Failed', 'Check your internet connection !', 'error');
         } else {
@@ -4776,6 +4908,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
               _this3.idx_data_edit = -1;
               swal("Good job!", "Data saved !", "success");
             })["catch"](function (error) {
+              console.log("error : ");
+              console.log(error);
+
               if (error.response.status == 422) {
                 swal('Request Failed', 'Check your internet connection !', 'error');
               } else {
@@ -4798,6 +4933,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
               _this3.idx_data_edit = -1;
               swal("Good job!", "Data saved !", "success");
             })["catch"](function (error) {
+              console.log("error : ");
+              console.log(error);
+
               if (error.response.status == 422) {
                 swal('Request Failed', 'Check your internet connection !', 'error');
               } else {
@@ -4829,6 +4967,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
             swal("Good job!", "Data Deleted !", "success");
           })["catch"](function (error) {
+            console.log("error : ");
+            console.log(error);
+
             if (error.response.status == 422) {
               swal('Request Failed', 'Check your internet connection !', 'error');
             } else {
@@ -4853,6 +4994,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }).then(function (r) {
         return _this5.fill_select_master_data(r);
       })["catch"](function (error) {
+        console.log("error : ");
+        console.log(error);
+
         if (error.response.status == 422) {
           swal('Request Failed', 'Check your internet connection !', 'error');
         } else {
@@ -4864,7 +5008,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var _this6 = this;
 
       var id_edit = this.goods[idx_edit].id;
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/goods/' + id_edit, {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/goods/' + id_edit + '/edit', {
         params: {
           token: localStorage.getItem('token')
         }
@@ -4877,6 +5021,9 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         _this6.opendialog_createedit(idx_edit, r); //idx_edit bukan id_edit !
 
       })["catch"](function (error) {
+        console.log("error : ");
+        console.log(error);
+
         if (error.response.status == 422) {
           swal('Request Failed', 'Check your internet connection !', 'error');
         } else {
@@ -5499,19 +5646,30 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     closedialog_createedit: function closedialog_createedit() {
+      this.idx_data_edit = -1;
       this.dialog_createedit = false;
     },
     opendialog_createedit: function opendialog_createedit(idx_data_edit, r) {
       if (idx_data_edit != -1) {
         this.idx_data_edit = idx_data_edit;
         this.convert_data_input_rack(r);
+      } else {
+        this.clear_input();
       }
 
       this.dialog_createedit = true;
     },
     clear_input: function clear_input() {
-      for (var key in self.input) {
-        if (self.input[key]) self.input[key] = null;
+      this.$refs.formCreateEdit.resetValidation();
+
+      for (var key in this.input) {
+        if (this.input[key]) {
+          if (Array.isArray(this.input[key])) {
+            this.input[key] = [];
+          } else {
+            this.input[key] = "";
+          }
+        }
       }
     },
     showTable: function showTable(r) {
@@ -5520,14 +5678,26 @@ __webpack_require__.r(__webpack_exports__);
     },
     fill_select_master_data: function fill_select_master_data(r) {
       //console.log(r.data.items[0].units);
-      this.ref_input.warehouses = r.data.items[0].warehouses;
-      this.ref_input.goods = r.data.items[0].goods;
+      this.ref_input.warehouses = r.data.items.warehouses; //kasus khusus
+
+      this.ref_input.goods = r.data.items.goods;
     },
     convert_data_input_rack: function convert_data_input_rack(r) {
-      var temp_r = r.data.items.racks;
+      var temp_r = r.data.items.rack;
       this.input.name = temp_r.name;
       this.input.warehouse_id = temp_r.warehouse_id;
-      this.input.goods_rack = temp_r.goods_rack;
+
+      for (var i = 0; i < temp_r.goods_racks.length; i++) {
+        this.input.goods_rack.push({
+          goods: {
+            id: temp_r.goods_racks[i].goods_id,
+            name: temp_r.goods_racks[i].goods_name
+          },
+          stock: temp_r.goods_racks[i].stock
+        });
+      } //this.input.goods_rack = temp_r.goods_racks;
+
+
       this.input_before_edit = JSON.parse(JSON.stringify(this.input));
     },
     prepare_data_form_rack: function prepare_data_form_rack() {
@@ -5700,7 +5870,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this5 = this;
 
       var id_edit = this.racks[idx_edit].id;
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/racks/' + id_edit, {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/racks/' + id_edit + '/edit', {
         params: {
           token: localStorage.getItem('token')
         }
@@ -5713,6 +5883,8 @@ __webpack_require__.r(__webpack_exports__);
         _this5.opendialog_createedit(idx_edit, r); //idx_edit bukan id_edit !
 
       })["catch"](function (error) {
+        console.log(error);
+
         if (error.response.status == 422) {
           swal('Request Failed', 'Check your internet connection !', 'error');
         } else {
@@ -5839,6 +6011,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     closedialog_createedit: function closedialog_createedit() {
+      this.idx_data_edit = -1;
       this.dialog_createedit = false;
     },
     opendialog_createedit: function opendialog_createedit(idx_data_edit) {
@@ -6019,6 +6192,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     closedialog_createedit: function closedialog_createedit() {
+      this.idx_data_edit = -1;
       this.dialog_createedit = false;
     },
     opendialog_createedit: function opendialog_createedit(idx_data_edit) {
@@ -6217,6 +6391,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     closedialog_createedit: function closedialog_createedit() {
+      this.idx_data_edit = -1;
       this.dialog_createedit = false;
     },
     opendialog_createedit: function opendialog_createedit(idx_data_edit) {
@@ -6587,6 +6762,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       this.input.lng = this.markers[0].position.lng;
     },
     closedialog_createedit: function closedialog_createedit() {
+      this.idx_data_edit = -1;
       this.dialog_createedit = false;
     },
     opendialog_createedit: function opendialog_createedit(idx_data_edit, r) {
@@ -6596,13 +6772,23 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         console.log('masuk if ');
         this.idx_data_edit = idx_data_edit;
         this.convert_data_input_warehouse(r);
+      } else {
+        this.clear_input();
       }
 
       this.dialog_createedit = true;
     },
     clear_input: function clear_input() {
-      for (var key in self.input) {
-        if (self.input[key]) self.input[key] = null;
+      this.$refs.formCreateEdit.resetValidation();
+
+      for (var key in this.input) {
+        if (this.input[key]) {
+          if (Array.isArray(this.input[key])) {
+            this.input[key] = [];
+          } else {
+            this.input[key] = "";
+          }
+        }
       }
     },
     showTable: function showTable(r) {
@@ -6830,7 +7016,7 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       var _this5 = this;
 
       var id_edit = this.warehouses[idx_edit].id;
-      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/warehouses/' + id_edit, {
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/warehouses/' + id_edit + '/edit', {
         params: {
           token: localStorage.getItem('token')
         }
@@ -9652,7 +9838,15 @@ var render = function() {
                         1
                       ),
                       _vm._v(" "),
-                      _c("v-toolbar-title", [_vm._v("Add Goods Rack")])
+                      _c("v-toolbar-title", {
+                        domProps: {
+                          innerHTML: _vm._s(
+                            _vm.idx_data_edit == -1
+                              ? "Add Goods Rack"
+                              : "Edit Goods Rack"
+                          )
+                        }
+                      })
                     ],
                     1
                   ),
@@ -10536,11 +10730,9 @@ var render = function() {
             key: "items",
             fn: function(props) {
               return [
-                _c("td", [_vm._v(_vm._s(props.item.goods_id))]),
+                _c("td", [_vm._v(_vm._s(props.item.rack_name))]),
                 _vm._v(" "),
-                _c("td", { staticClass: "text-xs-right" }, [
-                  _vm._v(_vm._s(props.item.rack_id))
-                ]),
+                _c("td", [_vm._v(_vm._s(props.item.goods_name))]),
                 _vm._v(" "),
                 _c("td", { staticClass: "text-xs-right" }, [
                   _vm._v(_vm._s(props.item.stock))
@@ -10670,7 +10862,15 @@ var render = function() {
                     1
                   ),
                   _vm._v(" "),
-                  _c("v-toolbar-title", [_vm._v("Add attributes")])
+                  _c("v-toolbar-title", {
+                    domProps: {
+                      innerHTML: _vm._s(
+                        _vm.idx_data_edit == -1
+                          ? "Add Attributes"
+                          : "Edit Attributes"
+                      )
+                    }
+                  })
                 ],
                 1
               ),
@@ -11236,6 +11436,97 @@ var render = function() {
         {
           attrs: { width: "750" },
           model: {
+            value: _vm.dialog_detailgoods,
+            callback: function($$v) {
+              _vm.dialog_detailgoods = $$v
+            },
+            expression: "dialog_detailgoods"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c(
+                "v-toolbar",
+                { attrs: { dark: "", color: "menu" } },
+                [
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { icon: "", dark: "" },
+                      on: {
+                        click: function($event) {
+                          return _vm.closedialog_detailgoods()
+                        }
+                      }
+                    },
+                    [_c("v-icon", [_vm._v("close")])],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c("v-toolbar-title", [_vm._v("Detail Goods")])
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticStyle: { padding: "30px" } },
+                [
+                  _c("v-text-field", {
+                    attrs: {
+                      "append-icon": "search",
+                      label: "Search",
+                      "single-line": "",
+                      "hide-details": ""
+                    },
+                    model: {
+                      value: _vm.popup_search_detailgoods,
+                      callback: function($$v) {
+                        _vm.popup_search_detailgoods = $$v
+                      },
+                      expression: "popup_search_detailgoods"
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("v-data-table", {
+                    attrs: {
+                      "disable-initial-sort": "",
+                      headers: _vm.headers_popup_detailgoods,
+                      items: _vm.popup_detailgoods,
+                      search: _vm.popup_search_detailgoods
+                    },
+                    scopedSlots: _vm._u([
+                      {
+                        key: "items",
+                        fn: function(props) {
+                          return [
+                            _c("td", [_vm._v(_vm._s(props.index + 1))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(props.item.name))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(props.item.stock))])
+                          ]
+                        }
+                      }
+                    ])
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { width: "750" },
+          model: {
             value: _vm.dialog_createedit,
             callback: function($$v) {
               _vm.dialog_createedit = $$v
@@ -11265,7 +11556,15 @@ var render = function() {
                     1
                   ),
                   _vm._v(" "),
-                  _c("v-toolbar-title", [_vm._v("Add categories")])
+                  _c("v-toolbar-title", {
+                    domProps: {
+                      innerHTML: _vm._s(
+                        _vm.idx_data_edit == -1
+                          ? "Add Categories"
+                          : "Edit Categories"
+                      )
+                    }
+                  })
                 ],
                 1
               ),
@@ -11342,6 +11641,29 @@ var render = function() {
             fn: function(props) {
               return [
                 _c("td", [_vm._v(_vm._s(props.item.name))]),
+                _vm._v(" "),
+                _c(
+                  "td",
+                  [
+                    _c(
+                      "v-btn",
+                      _vm._g(
+                        {
+                          staticClass: "button-action",
+                          attrs: { color: "primary", block: "", dark: "" },
+                          on: {
+                            click: function($event) {
+                              return _vm.opendialog_detailgoods(props.index)
+                            }
+                          }
+                        },
+                        _vm.on
+                      ),
+                      [_vm._v("\n                Goods\n            ")]
+                    )
+                  ],
+                  1
+                ),
                 _vm._v(" "),
                 _c(
                   "td",
@@ -11467,7 +11789,15 @@ var render = function() {
                     1
                   ),
                   _vm._v(" "),
-                  _c("v-toolbar-title", [_vm._v("Add Price Category")])
+                  _c("v-toolbar-title", {
+                    domProps: {
+                      innerHTML: _vm._s(
+                        _vm.idx_data_edit == -1
+                          ? "Add Price Category"
+                          : "Edit Price Category"
+                      )
+                    }
+                  })
                 ],
                 1
               ),
@@ -11684,7 +12014,13 @@ var render = function() {
                         1
                       ),
                       _vm._v(" "),
-                      _c("v-toolbar-title", [_vm._v("Add COGS")])
+                      _c("v-toolbar-title", {
+                        domProps: {
+                          innerHTML: _vm._s(
+                            _vm.idx_data_edit == -1 ? "Add COGS" : "Edit COGS"
+                          )
+                        }
+                      })
                     ],
                     1
                   ),
@@ -12260,7 +12596,13 @@ var render = function() {
                         1
                       ),
                       _vm._v(" "),
-                      _c("v-toolbar-title", [_vm._v("Add goods")])
+                      _c("v-toolbar-title", {
+                        domProps: {
+                          innerHTML: _vm._s(
+                            _vm.idx_data_edit == -1 ? "Add Goods" : "Edit Goods"
+                          )
+                        }
+                      })
                     ],
                     1
                   ),
@@ -13281,6 +13623,11 @@ var render = function() {
                           }
                         },
                         [_vm._v("submit")]
+                      ),
+                      _vm._v(
+                        "\n                    " +
+                          _vm._s(_vm.input) +
+                          "\n                    \n                    \n                "
                       )
                     ],
                     1
@@ -13556,6 +13903,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
+    { staticClass: "bg-login" },
     [
       _c(
         "v-content",
@@ -13765,7 +14113,13 @@ var render = function() {
                         1
                       ),
                       _vm._v(" "),
-                      _c("v-toolbar-title", [_vm._v("Add Racks")])
+                      _c("v-toolbar-title", {
+                        domProps: {
+                          innerHTML: _vm._s(
+                            _vm.idx_data_edit == -1 ? "Add Rack" : "Edit Rack"
+                          )
+                        }
+                      })
                     ],
                     1
                   ),
@@ -14090,7 +14444,7 @@ var render = function() {
                       ),
                       _vm._v(
                         "\n\n                    \n                    " +
-                          _vm._s(_vm.input) +
+                          _vm._s(_vm.ref_input) +
                           "\n                    "
                       ),
                       _c(
@@ -14165,7 +14519,7 @@ var render = function() {
                         return [
                           _c("td", [_vm._v(_vm._s(props.item.name))]),
                           _vm._v(" "),
-                          _c("td", [_vm._v(_vm._s(props.item.warehouse))]),
+                          _c("td", [_vm._v(_vm._s(props.item.warehouse_name))]),
                           _vm._v(" "),
                           _c(
                             "td",
@@ -14266,7 +14620,7 @@ var render = function() {
                   ],
                   null,
                   false,
-                  1107134792
+                  3319357904
                 )
               })
             ],
@@ -14336,7 +14690,13 @@ var render = function() {
                     1
                   ),
                   _vm._v(" "),
-                  _c("v-toolbar-title", [_vm._v("Add sources")])
+                  _c("v-toolbar-title", {
+                    domProps: {
+                      innerHTML: _vm._s(
+                        _vm.idx_data_edit == -1 ? "Add Sources" : "Edit Sources"
+                      )
+                    }
+                  })
                 ],
                 1
               ),
@@ -14538,7 +14898,13 @@ var render = function() {
                     1
                   ),
                   _vm._v(" "),
-                  _c("v-toolbar-title", [_vm._v("Add types")])
+                  _c("v-toolbar-title", {
+                    domProps: {
+                      innerHTML: _vm._s(
+                        _vm.idx_data_edit == -1 ? "Add Types" : "Edit Types"
+                      )
+                    }
+                  })
                 ],
                 1
               ),
@@ -14764,7 +15130,13 @@ var render = function() {
                     1
                   ),
                   _vm._v(" "),
-                  _c("v-toolbar-title", [_vm._v("Add Units")])
+                  _c("v-toolbar-title", {
+                    domProps: {
+                      innerHTML: _vm._s(
+                        _vm.idx_data_edit == -1 ? "Add Units" : "Edit Units"
+                      )
+                    }
+                  })
                 ],
                 1
               ),
@@ -14981,7 +15353,15 @@ var render = function() {
                         1
                       ),
                       _vm._v(" "),
-                      _c("v-toolbar-title", [_vm._v("Add Warehouse")])
+                      _c("v-toolbar-title", {
+                        domProps: {
+                          innerHTML: _vm._s(
+                            _vm.idx_data_edit == -1
+                              ? "Add Warehouse"
+                              : "Edit Warehouse"
+                          )
+                        }
+                      })
                     ],
                     1
                   ),
