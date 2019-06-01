@@ -32,8 +32,7 @@ class Category extends Model
         $goods = $this->goods;
 
         $goods = $goods->map(function ($item) {
-            $stock = collect($item->goodsRack)->sum('stock');
-            return ['id' => $item['id'], 'name' => $item['name'],'stock'=>$stock];
+            return ['id' => $item['id'], 'name' => $item['name'],'stock'=>$item->stock()];
         });
 
         return $goods;

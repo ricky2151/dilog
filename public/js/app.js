@@ -2937,33 +2937,41 @@ __webpack_require__.r(__webpack_exports__);
           subaction: "/type"
         }, {
           subicon: "compare_arrows",
-          subtitle: "Price Categories",
+          subtitle: "Selling Price Categories",
           subaction: "/categorypriceselling"
         }, {
-          subicon: "description",
-          subtitle: "Batch Sources",
-          subaction: "/source"
+          subicon: "widgets",
+          subtitle: "Goods",
+          subaction: "/goods"
+        }, {
+          subicon: "monetization_on",
+          subtitle: "COGS",
+          subaction: "/cogs"
+        }, {
+          subicon: "perm_contact_calendar",
+          subtitle: "Suppliers",
+          subaction: "/supplier"
+        }, {
+          subicon: "person_pin",
+          subtitle: "Customers",
+          subaction: "/customer"
         }]
       }, {
-        icon: "widgets",
-        title: "Goods",
-        action: "/goods"
-      }, {
-        icon: "store",
-        title: "Warehouses",
-        action: "/warehouse"
-      }, {
-        icon: "assignment_returned",
-        title: "Goods Racks",
-        action: "/goodsrack"
-      }, {
-        icon: "monetization_on",
-        title: "COGS",
-        action: "/cogs"
-      }, {
-        icon: "dns",
-        title: "Racks",
-        action: "/rack"
+        icon: "local_convenience_store",
+        title: "Stock",
+        subroutes: [{
+          subicon: "store",
+          subtitle: "Warehouses",
+          subaction: "/warehouse"
+        }, {
+          subicon: "assignment_returned",
+          subtitle: "Goods Racks",
+          subaction: "/goodsrack"
+        }, {
+          subicon: "dns",
+          subtitle: "Racks",
+          subaction: "/rack"
+        }]
       }],
       toolbarMenu: [{
         icon: "account_circle",
@@ -3149,20 +3157,20 @@ __webpack_require__.r(__webpack_exports__);
         value: 'no'
       }, {
         text: 'Goods',
-        value: 'goods'
+        value: 'name'
       }, {
         text: 'Stock',
         value: 'stock'
       }],
       categories: [],
       popup_detailgoods: [{
-        goods: 'meja',
+        name: 'meja',
         stock: 12
       }, {
-        goods: 'kursi',
+        name: 'kursi',
         stock: 13
       }, {
-        goods: 'indomie',
+        name: 'indomie',
         stock: 10
       }],
       popup_search_detailgoods: null
@@ -11842,7 +11850,7 @@ var render = function() {
         "v-toolbar",
         { attrs: { flat: "", color: "white" } },
         [
-          _c("v-toolbar-title", [_vm._v("Price Category Data")]),
+          _c("v-toolbar-title", [_vm._v("Selling Price Category Data")]),
           _vm._v(" "),
           _c("v-spacer"),
           _vm._v(" "),

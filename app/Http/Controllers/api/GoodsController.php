@@ -27,6 +27,7 @@ class GoodsController extends Controller
         $this->path = 'goods';
         $this->user = auth('api')->user();
     }
+
     /**
      * Display a listing of the goods.
      *
@@ -35,10 +36,52 @@ class GoodsController extends Controller
     public function index()
     {
         $this->goodsService->handleEmptyModel();
-        $CollectionGoods = $this->goods->latest()->get();
-        foreach($CollectionGoods as $goods){
-            Arr::set($goods, 'thumbnail', Storage::url($goods["thumbnail"]));
-        }
+        $CollectionGoods = $this->goods->index();
+
+        return formatResponse(false,(["goods"=>$CollectionGoods]));
+    }
+
+    /**
+     * Display a listing of the rack in specific goods.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function racks($id)
+    {
+        $this->goodsService->handleInvalidParameter($id);
+        $this->goodsService->handleModelNotFound($id);
+
+        $CollectionGoods = $this->goods->find($id)->getRack();
+
+        return formatResponse(false,(["goods"=>$CollectionGoods]));
+    }
+
+    /**
+     * Display a listing of the selling price in specific goods.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sellingPrices($id)
+    {
+        $this->goodsService->handleInvalidParameter($id);
+        $this->goodsService->handleModelNotFound($id);
+
+        $CollectionGoods = $this->goods->find($id)->getSellingPrices();
+
+        return formatResponse(false,(["goods"=>$CollectionGoods]));
+    }
+
+    /**
+     * Display a listing of the pricelist in specific goods.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function pricelists($id)
+    {
+        $this->goodsService->handleInvalidParameter($id);
+        $this->goodsService->handleModelNotFound($id);
+
+        $CollectionGoods = $this->goods->find($id)->getPricelist();
 
         return formatResponse(false,(["goods"=>$CollectionGoods]));
     }
@@ -81,19 +124,27 @@ class GoodsController extends Controller
             $pricelists = collect(Arr::pull($data,'pricelists'))->unique(function ($item) {
                 return $item['supplier_id'].$item['price'];
             });
+
+            $priceSellings = collect(Arr::pull($data,'price_sellings'))->unique(function ($item) {
+                return $item['warehouse_id'];
+            })->toArray();
             
-            $material_goods = Arr::pull($data,'material_goods');
+            $material_goods = collect(Arr::pull($data,'material_goods'))->unique(function ($item) {
+                return $item['name'];
+            })->toArray();
 
             $goods = $this->user->goods()->create($data);
             $goods->attributes()->attach($attribute_goods);
             $goods->categories()->attach($category_goods);
             $goods->suppliers()->attach($pricelists);
             $goods->materials()->createMany($material_goods);
+            $goods->priceSelling()->createMany($priceSellings);
 
             DB::commit();
         } catch (\Throwable $e) {
             deleteImage($data["thumbnail"]);
             DB::rollback();
+            return $e;
             throw new DatabaseTransactionErrorException("Goods");
         }
         return formatResponse(false,(["goods"=>["goods successfully created"]]));
@@ -173,7 +224,13 @@ class GoodsController extends Controller
                 return $item['supplier_id'].$item['price'];
             });
 
-            $material_goods = Arr::pull($data,'material_goods');
+            $priceSellings = collect(Arr::pull($data,'price_sellings'))->unique(function ($item) {
+                return $item['warehouse_id'];
+            })->toArray();
+            
+            $material_goods = collect(Arr::pull($data,'material_goods'))->unique(function ($item) {
+                return $item['name'];
+            })->toArray();
 
             // return $material_goods;
             
@@ -181,7 +238,8 @@ class GoodsController extends Controller
             $goods->attributes()->sync($attribute_goods);
             $goods->categories()->sync($category_goods);
             $goods->suppliers()->sync($pricelists);
-            is_null($material_goods) ? "" : $goods->updateGoods($material_goods);
+            is_null($priceSellings) ? "" : $goods->updatePriceSellings($priceSellings);
+            is_null($material_goods) ? "" : $goods->updateMaterials($material_goods);
 
             $this->goodsService->handleUpdateImage($request->file("thumbnail"),$oldThumnail, $path, $this->path,$data["is_image_delete"]);
 
