@@ -144,7 +144,6 @@ class GoodsController extends Controller
         } catch (\Throwable $e) {
             deleteImage($data["thumbnail"]);
             DB::rollback();
-            return $e;
             throw new DatabaseTransactionErrorException("Goods");
         }
         return formatResponse(false,(["goods"=>["goods successfully created"]]));
@@ -246,7 +245,6 @@ class GoodsController extends Controller
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollback();
-            return $e;
             throw new DatabaseTransactionErrorException("Goods");
         }
 
@@ -278,7 +276,6 @@ class GoodsController extends Controller
             DB::commit();
         }catch (\Throwable $e) {
             DB::rollback();
-            return $e;
             throw new DatabaseTransactionErrorException("Goods");
         }
         

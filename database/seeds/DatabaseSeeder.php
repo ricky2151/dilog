@@ -36,7 +36,8 @@ class DatabaseSeeder extends Seeder
             BatchsTableSeeder::class,
             SuppliersTableSeeder::class,
             PricelistsTableSeeder::class,
-            DivisionsTableSeeder::class
+            DivisionsTableSeeder::class,
+            CustomersTableSeeder::class
         ]);
     }
 }

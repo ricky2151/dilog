@@ -68,4 +68,7 @@ Route::group([
 
     //Division
     Route::resource('divisions', 'DivisionController');
+
+    //Customer
+    Route::resource('customers', 'CustomerController');
 });
