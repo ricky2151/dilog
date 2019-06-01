@@ -29,12 +29,15 @@ Route::group([
 
     //Warehouse
     Route::resource('warehouses', 'WarehouseController');
+    Route::get('/warehouses/{id}/racks','WarehouseController@racks');
+    Route::get('/warehouses/{id}/goodsRacks','WarehouseController@goodsRacks');
+
 
     //Goods
     Route::resource('goods','GoodsController');
     Route::get('/goods/{id}/racks','GoodsController@racks');
     Route::get('/goods/{id}/sellingPrices','GoodsController@sellingPrices');
-    Route::get('/goods/{id}/pricelists','GoodsController@   ');
+    Route::get('/goods/{id}/pricelists','GoodsController@pricelists');
 
     //Attributes
     Route::resource('attributes', 'AttributeController');
