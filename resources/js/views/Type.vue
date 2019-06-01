@@ -12,7 +12,7 @@
                     <v-btn icon dark v-on:click="closedialog_createedit()">
                         <v-icon>close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Add types</v-toolbar-title>
+                    <v-toolbar-title v-html='idx_data_edit == -1 ?"Add Types":"Edit Types"'></v-toolbar-title>
 
                 </v-toolbar>
                 <form style='padding:30px'>
@@ -79,6 +79,7 @@ export default {
     },
     methods: {
         closedialog_createedit(){
+            this.idx_data_edit = -1;
             this.dialog_createedit = false;
         },
         opendialog_createedit(idx_data_edit){
