@@ -10,7 +10,7 @@
                         <v-btn icon dark v-on:click="closedialog_createedit()">
                             <v-icon>close</v-icon>
                         </v-btn>
-                        <v-toolbar-title>Add Goods Rack</v-toolbar-title>
+                        <v-toolbar-title v-html='idx_data_edit == -1 ?"Add Goods Rack":"Edit Goods Rack"'></v-toolbar-title>
 
                     </v-toolbar>
                     <v-stepper v-model="e6" vertical>
@@ -477,6 +477,7 @@ export default {
 
 
         closedialog_createedit(){
+            this.idx_data_edit = -1;
             this.dialog_createedit = false;
         },
         opendialog_createedit(idx_data_edit,r){
