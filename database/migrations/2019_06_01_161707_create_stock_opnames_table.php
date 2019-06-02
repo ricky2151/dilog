@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateRacksTable extends Migration
+class CreateStockOpnamesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,14 @@ class CreateRacksTable extends Migration
      */
     public function up()
     {
-        Schema::create('racks', function (Blueprint $table) {
+        Schema::create('stock_opnames', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name');
-            $table->unique(['name','warehouse_id']);
-            $table->integer('warehouse_id')->unsigned();
+            $table->date('peiode');
+            $table->integer('user_id')->unsigned();
+            $table->boolean('approve')->default(0);
+            $table->integer('approve_id')->unsigned()->default(0);
+            $table->string('notes');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
@@ -30,6 +31,6 @@ class CreateRacksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('racks');
+        Schema::dropIfExists('stock_opnames');
     }
 }

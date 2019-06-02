@@ -38,6 +38,36 @@ class WarehouseController extends Controller
     }
 
     /**
+     * Display a listing of the rack in specific warehouse.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function racks($id)
+    {
+        $this->warehouseService->handleInvalidParameter($id);
+        $this->warehouseService->handleModelNotFound($id);
+
+        $racks = $this->warehouse->find($id)->getRackWithHaveGoods();
+
+        return formatResponse(false,(["warehouse"=>$racks]));
+    }
+
+    /**
+     * Display a listing of the goodsRack in specific warehouse.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function goodsRacks($id)
+    {
+        $this->warehouseService->handleInvalidParameter($id);
+        $this->warehouseService->handleModelNotFound($id);
+
+        $racks = $this->warehouse->find($id)->getGoodsRack();
+
+        return formatResponse(false,(["warehouse"=>$racks]));
+    }
+
+    /**
      * Store a newly created Warehouse in storage.
      *
      * @param  \Illuminate\Http\StoreWarehouse  $request
@@ -48,17 +78,14 @@ class WarehouseController extends Controller
         $data = $request->validated();
         DB::beginTransaction();
         try {
-            $racks = Arr::pull($data,'racks');
-
-            $warehouse = $this->warehouse->create($data);
-            $warehouse->racks()->createMany($racks);
+            $this->warehouseService->handleCreate($data);
 
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollback();
+            return $e;
             throw new DatabaseTransactionErrorException("Warehouse");
         }
-
 
         return formatResponse(false,(["warehouse"=>["Warehouse successfully created"]]));
     }
@@ -111,22 +138,16 @@ class WarehouseController extends Controller
         $this->warehouseService->handleInvalidParameter($id);
         $this->warehouseService->handleModelNotFound($id);
 
-        $racks_delete = Arr::pull($data,'racks_delete');
-        $racks_update = Arr::pull($data,'racks_update');
-        
-        $this->warehouseService->checkRelationship($id,collect($racks_delete)->pluck("id"));
-        $this->warehouseService->checkRelationship($id,collect($racks_update)->pluck("id"));
-
         $warehouse = $this->warehouse->find($id);
 
         DB::beginTransaction();
         try {
-            $racks_new = Arr::pull($data,'racks_new');
+            $racks = collect(Arr::pull($data,'racks'))->unique(function ($item) {
+                return $item['name'];
+            })->toArray();
 
             $warehouse->update($data);
-            is_null($racks_new) ? "" : $warehouse->racks()->createMany($racks_new);
-            $warehouse->updateManyAtribut($racks_update);
-            $warehouse->deleteManyAtribut($racks_delete);
+            is_null($racks) ? "" : $warehouse->updateRack($racks);
 
             DB::commit();
         }catch (\Throwable $e) {
