@@ -33,6 +33,7 @@ Route::group([
     Route::get('/warehouses/{id}/goodsRacks','WarehouseController@goodsRacks');
     Route::get('/warehouses/{id}/stockOpnames','WarehouseController@showStockOpnames');
     Route::post('/warehouses/{id}/stockOpnames','WarehouseController@storeStockOpnames');
+    Route::delete('/warehouses/stockOpnames/{stockOpnamesId}','WarehouseController@destroyStockOpnamesDetails');
     Route::post('/warehouses/stockOpnames/{stockOpnamesId}/stockOpnamesDetails','WarehouseController@storeStockOpnamesDetails');
     Route::patch('/warehouses/stockOpnames/{stockOpnamesId}/stockOpnamesDetails','WarehouseController@updateStockOpnamesDetails');
     Route::get('/warehouses/stockOpnames/{stockOpnamesId}/stockOpnamesDetails/edit','WarehouseController@editStockOpnamesDetails');

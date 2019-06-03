@@ -146,6 +146,32 @@ class WarehouseController extends Controller
 
         return formatResponse(false,(["warehouse"=>["details stock opname in specific warehouse successfully updated"]]));
     }
+
+    /**
+     * Remove the specified stockopname and that detail in warehouse from storage.
+     *
+     * @param  $stockOpnamesId
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function destroyStockOpnamesDetails($stockOpnamesId)
+    {
+        
+        $this->warehouseService->handleInvalidParameter($stockOpnamesId);
+        $this->warehouseService->handleModelStockOpnameNotFound($stockOpnamesId);
+
+        DB::beginTransaction();
+        try {
+            $this->stockOpname->find($stockOpnamesId)->stockOpnameDetails()->delete();
+            $this->stockOpname->find($stockOpnamesId)->delete();
+
+            DB::commit();
+        }catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("Warehouse");
+        }
+        return formatResponse(false,(["warehouse"=>["warehouse deleted successfully"]]));
+    }
+
     
 
     /**
@@ -299,12 +325,19 @@ class WarehouseController extends Controller
         $this->warehouseService->handleModelNotFound($id);
         DB::beginTransaction();
         try {
+
+            $this->warehouse->find($id)->stockOpnames->map(function($item){
+                $item->stockOpnameDetails()->delete();
+            });
+
+            $this->warehouse->find($id)->stockOpnames()->delete();
             $this->warehouse->find($id)->racks()->delete();
             $this->warehouse->find($id)->delete();
 
             DB::commit();
         }catch (\Throwable $e) {
             DB::rollback();
+            return $e;
             throw new DatabaseTransactionErrorException("Warehouse");
         }
         return formatResponse(false,(["warehouse"=>["warehouse deleted successfully"]]));
