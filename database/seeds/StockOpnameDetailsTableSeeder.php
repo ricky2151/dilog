@@ -12,32 +12,36 @@ class StockOpnameDetailsTableSeeder extends Seeder
      */
     public function run()
     {
-        StockOpname::create([
-            'stock_opname_id ' => 1,
-            'name' => "Susu",
+        StockOpnameDetail::create([
+            'stock_opname_id' => 1,
+            'goods_id' => 1,
             'new_stock' => 1,
-            'notes ' => "terindikasi kecurangan"
+            'current_stock' => 1,
+            'notes' => "terindikasi kecurangan"
         ]);
 
-        StockOpname::create([
-            'stock_opname_id ' => 2,
-            'name' => "Susu2",
+        StockOpnameDetail::create([
+            'stock_opname_id' => 2,
+            'goods_id' => 2,
             'new_stock' => 2,
-            'notes ' => "terindikasi kecurangan"
+            'current_stock' => 2,
+            'notes' => "terindikasi kecurangan"
         ]);
 
-        StockOpname::create([
-            'stock_opname_id ' => 3,
-            'name' => "Susu",
+        StockOpnameDetail::create([
+            'stock_opname_id' => 3,
+            'goods_id' => 3,
             'new_stock' => 3,
-            'notes ' => "terindikasi kecurangan"
+            'current_stock' => 3,
+            'notes' => "terindikasi kecurangan"
         ]);
 
-        StockOpname::create([
-            'stock_opname_id ' => 4,
-            'name' => "Susu",
+        StockOpnameDetail::create([
+            'stock_opname_id' => 4,
+            'goods_id' => 4,
             'new_stock' => 4,
-            'notes ' => "terindikasi kecurangan"
+            'current_stock' => 4,
+            'notes' => "terindikasi kecurangan"
         ]);
     }
 }

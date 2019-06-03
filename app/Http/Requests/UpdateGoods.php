@@ -50,7 +50,7 @@ class UpdateGoods extends FormRequest
             'material_goods.*.total'=> "filled|integer|min:1",
             'material_goods.*.adjust'=> "string|nullable",
             'material_goods.*.name'=> "filled|string",
-            'material_goods.*.type'=> "required|in:1,0,-1",//1 : update, 0 : update, -1 : delete
+            'material_goods.*.type'=> "required|in:1,0,-1",//1 : new, 0 : update, -1 : delete
 
             'pricelists.*.supplier_id' => "required|integer|exists:suppliers,id",
             'pricelists.*.price' => "required|integer",

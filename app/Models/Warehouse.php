@@ -44,6 +44,10 @@ class Warehouse extends Model
         return $this->hasMany('App\Models\PriceSelling')->orderBy('updated_at', 'desc');
     }
 
+    public function stockOpnames(){
+        return $this->hasMany("App\Models\stockOpname");
+    }
+
     public function updateRack($racks){
         foreach($racks as $rack){
             if($rack['type'] == 1) {
@@ -74,9 +78,19 @@ class Warehouse extends Model
                 return [$data['goods']];
             });
             return $goodsRack;
-        })->flatten(1);
+        })->flatten()->unique(function ($item) {
+            return $item['id'];
+        })->flatten();
 
         return $goods;
+    }
+
+    public function getGoodsWithStock(){
+        $goodsWithStock = $this->getGoods()->map(function($data){
+            return ['goods_id' => $data['id'], 'goods_name' => $data['name'], 'current_stock' => Goods::find($data['id'])->stock()];
+        });
+
+        return $goodsWithStock;
     }
 
     public function getGoodsRack(){

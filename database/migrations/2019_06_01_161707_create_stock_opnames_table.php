@@ -15,9 +15,10 @@ class CreateStockOpnamesTable extends Migration
     {
         Schema::create('stock_opnames', function (Blueprint $table) {
             $table->increments('id');
-            $table->date('peiode');
+            $table->date('periode');
+            $table->string('warehouse_id');
             $table->integer('user_id')->unsigned();
-            $table->boolean('approve')->default(0);
+            $table->enum('approve', ['0', '1', '2'])->default(0);// 0 : nothing, 1 : waiting, 2 : approve
             $table->integer('approve_id')->unsigned()->default(0);
             $table->string('notes');
             $table->timestamps();

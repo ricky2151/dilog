@@ -31,6 +31,13 @@ Route::group([
     Route::resource('warehouses', 'WarehouseController');
     Route::get('/warehouses/{id}/racks','WarehouseController@racks');
     Route::get('/warehouses/{id}/goodsRacks','WarehouseController@goodsRacks');
+    Route::get('/warehouses/{id}/stockOpnames','WarehouseController@showStockOpnames');
+    Route::post('/warehouses/{id}/stockOpnames','WarehouseController@storeStockOpnames');
+    Route::post('/warehouses/stockOpnames/{stockOpnamesId}/stockOpnamesDetails','WarehouseController@storeStockOpnamesDetails');
+    Route::patch('/warehouses/stockOpnames/{stockOpnamesId}/stockOpnamesDetails','WarehouseController@updateStockOpnamesDetails');
+    Route::get('/warehouses/stockOpnames/{stockOpnamesId}/stockOpnamesDetails/edit','WarehouseController@editStockOpnamesDetails');
+    Route::get('/warehouses/{warehouseId}/stockOpnames/stockOpnamesDetails/create','WarehouseController@createStockOpnamesDetails');
+    Route::post('/warehouses/stockOpnames/{stockOpnamesId}/setWaitings','WarehouseController@setWaitings');
 
 
     //Goods

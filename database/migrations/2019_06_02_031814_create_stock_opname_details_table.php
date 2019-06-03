@@ -16,7 +16,7 @@ class CreateStockOpnameDetailsTable extends Migration
         Schema::create('stock_opname_details', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('stock_opname_id')->unsigned();
-            $table->string('name');
+            $table->integer('goods_id')->unsigned();
             $table->integer('current_stock');
             $table->integer('new_stock');
             $table->string('notes');
