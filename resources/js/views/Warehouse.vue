@@ -15,7 +15,7 @@
                         <v-btn icon dark v-on:click="closedialog_createedit()">
                             <v-icon>close</v-icon>
                         </v-btn>
-                        <v-toolbar-title>Add Warehouse</v-toolbar-title>
+                        <v-toolbar-title v-html='idx_data_edit == -1 ?"Add Warehouse":"Edit Warehouse"'></v-toolbar-title>
 
                     </v-toolbar>
                     <v-stepper v-model="e6" vertical>
@@ -259,6 +259,7 @@ export default {
 		},
 
         closedialog_createedit(){
+            this.idx_data_edit = -1;
             this.dialog_createedit = false;
         },
         opendialog_createedit(idx_data_edit,r){
@@ -270,14 +271,31 @@ export default {
                 this.convert_data_input_warehouse(r);
                 
             }
+            else
+            {
+                this.clear_input();
+            }
 
             this.dialog_createedit = true;
         },
         clear_input(){
-            for (var key in self.input)
+            this.$refs.formCreateEdit.resetValidation();
+            for (var key in this.input)
             {
-                if(self.input[key])
-                    self.input[key] = null;
+                if(this.input[key])
+                {
+                    if(Array.isArray(this.input[key]))
+                    {
+                        this.input[key] = [];     
+                    }
+                    else
+                    {
+                        this.input[key] = "";
+                    }
+                    
+                    
+                }
+                    
             }
         },
         showTable(r)
@@ -560,7 +578,7 @@ export default {
         get_data_before_edit(idx_edit)
         {
             var id_edit = this.warehouses[idx_edit].id;
-            axios.get('/api/warehouses/' + id_edit, {
+            axios.get('/api/warehouses/' + id_edit + '/edit', {
                 params:{
                     token: localStorage.getItem('token')
                 }

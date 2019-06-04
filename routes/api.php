@@ -22,15 +22,30 @@ Route::group([
 
     //Route Category
     Route::resource('categories', 'CategoryController');
+    Route::get('/categories/{id}/goods','CategoryController@goodsCategory');
 
     //Route Unit
     Route::resource('units', 'UnitController');
 
     //Warehouse
     Route::resource('warehouses', 'WarehouseController');
+    Route::get('/warehouses/{id}/racks','WarehouseController@racks');
+    Route::get('/warehouses/{id}/goodsRacks','WarehouseController@goodsRacks');
+    Route::get('/warehouses/{id}/stockOpnames','WarehouseController@showStockOpnames');
+    Route::post('/warehouses/{id}/stockOpnames','WarehouseController@storeStockOpnames');
+    Route::delete('/warehouses/stockOpnames/{stockOpnamesId}','WarehouseController@destroyStockOpnamesDetails');
+    Route::post('/warehouses/stockOpnames/{stockOpnamesId}/stockOpnamesDetails','WarehouseController@storeStockOpnamesDetails');
+    Route::patch('/warehouses/stockOpnames/{stockOpnamesId}/stockOpnamesDetails','WarehouseController@updateStockOpnamesDetails');
+    Route::get('/warehouses/stockOpnames/{stockOpnamesId}/stockOpnamesDetails/edit','WarehouseController@editStockOpnamesDetails');
+    Route::get('/warehouses/{warehouseId}/stockOpnames/stockOpnamesDetails/create','WarehouseController@createStockOpnamesDetails');
+    Route::post('/warehouses/stockOpnames/{stockOpnamesId}/setWaitings','WarehouseController@setWaitings');
+
 
     //Goods
     Route::resource('goods','GoodsController');
+    Route::get('/goods/{id}/racks','GoodsController@racks');
+    Route::get('/goods/{id}/sellingPrices','GoodsController@sellingPrices');
+    Route::get('/goods/{id}/pricelists','GoodsController@pricelists');
 
     //Attributes
     Route::resource('attributes', 'AttributeController');
@@ -45,7 +60,7 @@ Route::group([
     Route::resource('cogsComponent', 'CogsComponentController');
     
     //Source
-    Route::resource('sources', 'SourceController');
+    // Route::resource('sources', 'SourceController');
 
     //CategoryPriceSelling
     Route::resource('categoryPriceSellings', 'CategoryPriceSellingController');
@@ -70,4 +85,7 @@ Route::group([
 
     //MaterialRequest
     Route::resource('materialRequests', 'MaterialRequestController');
+
+    //Customer
+    Route::resource('customers', 'CustomerController');
 });

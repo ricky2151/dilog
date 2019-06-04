@@ -37,6 +37,9 @@ class DatabaseSeeder extends Seeder
             SuppliersTableSeeder::class,
             PricelistsTableSeeder::class,
             DivisionsTableSeeder::class,
+            CustomersTableSeeder::class,
+            StockOpnameDetailsTableSeeder::class,
+            StockOpnameTableSeeder::class,
             PeriodeTableSeeder::class,
             MaterialRequestsTableSeeder::class,
             MaterialRequestDetailsTableSeeder::class

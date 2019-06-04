@@ -14,7 +14,7 @@
                         <v-btn icon dark v-on:click="closedialog_createedit()">
                             <v-icon>close</v-icon>
                         </v-btn>
-                        <v-toolbar-title>Add Racks</v-toolbar-title>
+                        <v-toolbar-title v-html='idx_data_edit == -1 ?"Add Rack":"Edit Rack"'></v-toolbar-title>
 
                     </v-toolbar>
                     <v-stepper v-model="e6" vertical>
@@ -102,7 +102,7 @@
                         </v-stepper-content>
 
                         
-                        {{input}}
+                        {{ref_input}}
                         <v-btn v-on:click='save_rack()' >submit</v-btn>
                         
                         
@@ -135,7 +135,7 @@
             >
                 <template v-slot:items="props">
                     <td>{{ props.item.name }}</td>
-                    <td>{{ props.item.warehouse }}</td>
+                    <td>{{ props.item.warehouse_name }}</td>
                     <td>
                         <v-btn class='button-action' v-on:click='opencomponent_goodsrack(props.index)' color="primary" block dark v-on="on">
                             Goods
@@ -301,6 +301,7 @@ export default {
         },
 
         closedialog_createedit(){
+            this.idx_data_edit = -1;
             this.dialog_createedit = false;
         },
         opendialog_createedit(idx_data_edit,r){
@@ -349,16 +350,34 @@ export default {
         {
             //console.log(r.data.items[0].units);
             this.ref_input.warehouses = r.data.items.warehouses;
+            //kasus khusus
             this.ref_input.goods = r.data.items.goods;
+            
+            
 
         },
         convert_data_input_rack(r)
         {
-            var temp_r = r.data.items.racks;
+            var temp_r = r.data.items.rack;
+
             this.input.name = temp_r.name;
             this.input.warehouse_id = temp_r.warehouse_id;
 
-            this.input.goods_rack = temp_r.goods_rack;
+            for(var i = 0;i<temp_r.goods_racks.length;i++)
+            {
+                this.input.goods_rack.push(
+                {
+                    goods:{
+                        id:temp_r.goods_racks[i].goods_id, 
+                        name:temp_r.goods_racks[i].goods_name,
+                        
+                    },
+                    stock:temp_r.goods_racks[i].stock,
+                }
+                    
+                );
+            }
+            //this.input.goods_rack = temp_r.goods_racks;
 
             
 
@@ -599,6 +618,7 @@ export default {
             })
             .catch(function (error)
             {
+                console.log(error);
                 if(error.response.status == 422)
                 {
                     swal('Request Failed', 'Check your internet connection !', 'error');

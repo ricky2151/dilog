@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use App\Exceptions\InvalidParameterException;
-use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateRack extends FormRequest
+class UpdateStockOpnameDetail extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,13 +26,9 @@ class UpdateRack extends FormRequest
     public function rules()
     {
         return [
-            'name' => "string|filled",
-            'warehouse_id' => "filled|integer|min:1|exists:warehouses,id",
-            
-            'goods_racks.*.id' => "filled|integer|min:1|exists:goods_rack,id" ,
-            'goods_racks.*.goods_id' => "filled|integer|min:1|exists:goods,id" ,
-            'goods_racks.*.stock' => "filled|integer|min:1",
-            'goods_racks.*.type'=> "required|in:1,0,-1",//1 : update, 0 : update, -1 : delete
+            'detail_stock_opname.*.goods_id' => 'required|integer|exists:goods,id',
+            'detail_stock_opname.*.new_stock' => 'required|integer|min:0',
+            'detail_stock_opname.*.notes' => 'required|string'
         ];
     }
 

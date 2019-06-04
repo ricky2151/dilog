@@ -25,7 +25,8 @@ class CreateGoodsTable extends Migration
             $table->integer('last_buy_pricelist')->nullable();
             $table->string('barcode_master')->nullable();
             $table->string('thumbnail')->nullable();
-            $table->boolean('avgprice_status');
+            $table->boolean('avg_price_status');
+            $table->integer('avg_price')->unsigned();
             $table->integer('user_id')->unsigned();
             $table->integer('tax')->nullable();
             $table->integer('unit_id')->unsigned();

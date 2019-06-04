@@ -1,6 +1,6 @@
 <div>
     <v-container fluid>
-        <h3>Price Category</h3>
+        <h3>Selling Price Category</h3>
     </v-container>
 </div>
 
@@ -12,7 +12,7 @@
                     <v-btn icon dark v-on:click="closedialog_createedit()">
                         <v-icon>close</v-icon>
                     </v-btn>
-                    <v-toolbar-title >Add Price Category</v-toolbar-title>
+                    <v-toolbar-title v-html='idx_data_edit == -1 ?"Add Price Category":"Edit Price Category"'></v-toolbar-title>
 
                 </v-toolbar>
                 <form style='padding:30px'>
@@ -23,7 +23,7 @@
         </v-dialog>
 
         <v-toolbar flat color="white">
-            <v-toolbar-title>Price Category Data</v-toolbar-title>
+            <v-toolbar-title>Selling Price Category Data</v-toolbar-title>
             <v-spacer></v-spacer>
             <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark>
                 Add Data
@@ -79,6 +79,7 @@ export default {
     },
     methods: {
         closedialog_createedit(){
+            this.idx_data_edit = -1;
             this.dialog_createedit = false;
         },
         opendialog_createedit(idx_data_edit){

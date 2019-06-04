@@ -14,7 +14,7 @@
                         <v-btn icon dark v-on:click="closedialog_createedit()">
                             <v-icon>close</v-icon>
                         </v-btn>
-                        <v-toolbar-title>Add goods</v-toolbar-title>
+                        <v-toolbar-title v-html='idx_data_edit == -1 ?"Add Goods":"Edit Goods"'></v-toolbar-title>
 
                     </v-toolbar>
                     <v-stepper v-model="e6" vertical>
@@ -267,7 +267,7 @@
                         </v-stepper-content>
                         
                         <v-btn v-on:click='save_goods()' >submit</v-btn>
-                        
+                        {{input}}
                         
                         
                     </v-stepper>
@@ -311,6 +311,10 @@
 <script>
 import axios from 'axios'
 export default {
+    errorCaptured (err, vm, info) {
+    this.error = `${err.stack}\n\nfound in ${info} of component`
+    return false
+  },
     data () {
         return {
             
@@ -433,10 +437,7 @@ export default {
         {
             var self = this;
             return{
-
-                
-                showData(idx){
-                    
+                showData(idx){ 
                     self.temp_input.attribute_goods = JSON.parse(JSON.stringify(self.input.attribute_goods[idx]));
                     self.temp_input.id_edit_attribute_goods = idx;
                 },
@@ -446,7 +447,6 @@ export default {
                         if(self.temp_input.attribute_goods[key])
                             self.temp_input.attribute_goods[key] = null;
                     }
-                    
                 },
                 save(){ //bisa edit / add
                     var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_attribute_goods));
@@ -584,6 +584,7 @@ export default {
 
         closedialog_createedit(){
             this.dialog_createedit = false;
+            this.idx_data_edit = -1;
         },
         opendialog_createedit(idx_data_edit,r){
             if(idx_data_edit != -1)
@@ -592,15 +593,35 @@ export default {
                 this.convert_data_input_goods(r);
                 
             }
+            else
+            {
+                this.clear_input();
+            }
 
             this.dialog_createedit = true;
         },
         clear_input(){
-            for (var key in self.input)
+            this.$refs.formCreateEdit.resetValidation();
+            this.preview.thumbnail = '';
+            for (var key in this.input)
             {
-                if(self.input[key])
-                    self.input[key] = null;
+                if(this.input[key])
+                {
+                    if(Array.isArray(this.input[key]))
+                    {
+                        this.input[key] = [];     
+                    }
+                    else
+                    {
+                        this.input[key] = "";
+                    }
+                    
+                    
+                }
+                    
             }
+            //this.$refs.formCreateEdit.reset();
+
         },
         
         showTable(r)
@@ -613,11 +634,12 @@ export default {
         fill_select_master_data(r)
         {
             //console.log(r.data.items[0].units);
-            this.ref_input.unit = r.data.items[0].units;
-            this.ref_input.cogs = r.data.items[0].cogs;
-            this.ref_input.category = r.data.items[0].categories;
-            this.ref_input.attribute = r.data.items[0].attributes;
-            this.ref_input.material = r.data.items[0].materials;
+            console.log(r.data.items.units);
+            this.ref_input.unit = r.data.items.units;
+            this.ref_input.cogs = r.data.items.cogs;
+            this.ref_input.category = r.data.items.categories;
+            this.ref_input.attribute = r.data.items.attributes;
+            //this.ref_input.material = r.data.items[0].materials;
         },
         convert_data_input_goods(r)
         {
@@ -636,7 +658,8 @@ export default {
             this.input.cogs_id = temp_r.cogs_id;
             this.preview.thumbnail = temp_r.thumbnail;
 
-            console.log(temp_r.category_goods);
+            console.log('testing convert_data_input_goods');
+            console.log(r.data.items);
             this.input.category_goods = temp_r.category_goods;
 
             for(var i = 0;i<temp_r.attribute_goods.length;i++)
@@ -775,11 +798,11 @@ export default {
                 //4. tambahin is_image_deleted
                 if(this.input.thumbnail_file.length > 0 && this.input_before_edit.thumbnail_file == null)
                 {
-                    formData.append('is_image_deleted', '1');
+                    formData.append('is_image_delete', '1');
                 }
                 else
                 {
-                    formData.append('is_image_deleted', '0');   
+                    formData.append('is_image_delete', '0');   
                 }
                 formData.append('_method', 'patch');
 
@@ -852,6 +875,8 @@ export default {
             }).then(r => this.showTable(r))
             .catch(function (error)
             {
+                console.log("error : ")
+                console.log(error)
                 if(error.response.status == 422)
                 {
                     swal('Request Failed', 'Check your internet connection !', 'error');
@@ -882,6 +907,8 @@ export default {
                     })
                     .catch(function (error)
                     {
+                        console.log("error : ")
+                        console.log(error)
                         if(error.response.status == 422)
                         {
                             swal('Request Failed', 'Check your internet connection !', 'error');
@@ -911,6 +938,8 @@ export default {
                     })
                     .catch(function (error)
                     {   
+                        console.log("error : ")
+                        console.log(error)
                         if(error.response.status == 422)
                         {
                             swal('Request Failed', 'Check your internet connection !', 'error');
@@ -951,6 +980,9 @@ export default {
                         })
                         .catch(function (error)
                         {
+                            console.log("error : ")
+                            
+                            console.log(error)
                             if(error.response.status == 422)
                             {
                                 swal('Request Failed', 'Check your internet connection !', 'error');
@@ -977,6 +1009,8 @@ export default {
             }).then(r => this.fill_select_master_data(r))
             .catch(function (error)
             {
+                console.log("error : ")
+                console.log(error)
                 if(error.response.status == 422)
                 {
                     swal('Request Failed', 'Check your internet connection !', 'error');
@@ -990,7 +1024,7 @@ export default {
         get_data_before_edit(idx_edit)
         {
             var id_edit = this.goods[idx_edit].id;
-            axios.get('/api/goods/' + id_edit, {
+            axios.get('/api/goods/' + id_edit + '/edit', {
                 params:{
                     token: localStorage.getItem('token')
                 }
@@ -1005,6 +1039,8 @@ export default {
             })
             .catch(function (error)
             {
+                console.log("error : ")
+                console.log(error)
                 if(error.response.status == 422)
                 {
                     swal('Request Failed', 'Check your internet connection !', 'error');

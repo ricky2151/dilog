@@ -33,10 +33,9 @@ class UpdateWarehouse extends FormRequest
             "telp" => "filled|string",
             "email" => "string|email|unique:warehouses,email",
             "pic" => "filled|string",
-            "racks_update.*.id" => "required_with:racks_update.*.name|filled|integer|exists:racks,id",
-            "racks_update.*.name" => "required_with:racks_update.*.id|filled|string",
-            "racks_delete.*.id" => "filled|integer|exists:racks,id",
-            "racks_new.*.name" => "filled|string"
+            "racks.*.id" => "filled|integer|exists:racks,id",
+            "racks.*.name" => "filled|string",
+            "racks.*.type" => "required|in:1,0,-1",//1 : new, 0 : update, -1 : delete
         ];
     }
 

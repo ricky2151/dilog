@@ -7,6 +7,8 @@ use App\Http\Requests\UpdateAttribute;
 use App\Models\Attribute;
 use App\Models\Goods;
 use App\Services\AttributeService;
+use Illuminate\Support\Facades\DB;
+use App\Exceptions\DatabaseTransactionErrorException;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -88,9 +90,17 @@ class AttributeController extends Controller
     {
         $this->attributeService->handleInvalidParameter($id);
         $this->attributeService->handleModelNotFound($id);
-
-        $this->attribute->find($id)->goods()->sync([]);
-        $this->attribute->find($id)->delete();
+        
+        DB::beginTransaction();
+        try {
+            $this->attribute->find($id)->goods()->sync([]);
+            $this->attribute->find($id)->delete();
+            DB::commit();
+        }catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("Attribute");
+        }
+        
         return formatResponse(false,(["attribute"=>["attribute deleted successfully"]]));
     }
 }

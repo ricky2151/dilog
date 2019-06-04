@@ -14,22 +14,20 @@ class Rack extends Model
         'name', 'warehouse_id'
     ];
 
-    public function updateManyAtribut($goods_rack_update){
-        if(!is_null($goods_rack_update)){
-            foreach ($goods_rack_update as $update) {
-                $data = Arr::except($update, ['id']);
-                $this->goodsRack()->find($update["id"])->update($data);
+    public function updateGoodsRack($goodsRacks){
+        foreach($goodsRacks as $goodsRack){
+            if($goodsRack['type'] == 1) {
+                $this->goodsRack()->create($goodsRack);
+            }
+            else if($goodsRack['type'] == 0) {
+                $this->goodsRack()->find($goodsRack['id'])->update($goodsRack);
+            } else {
+                $this->goodsRack()->find($goodsRack['id'])->delete();
             }
         }
     }
 
-    public function deleteManyAtribut($goods_rack_delete){
-        if(!is_null($goods_rack_delete)){
-            foreach ($goods_rack_delete as $delete) {
-                $this->goodsRack()->find($delete["id"])->delete();
-            }
-        }
-    }
+
 
     public static function allDataCreate(){
         return ['warehouses' => Warehouse::all(['id','name']),'goods' => Goods::all(['id','name'])];

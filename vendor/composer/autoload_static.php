@@ -479,6 +479,10 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Http\\Controllers\\api\\CategoryPriceSellingController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/CategoryPriceSellingController.php',
         'App\\Http\\Controllers\\api\\CogsComponentController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/CogsComponentController.php',
         'App\\Http\\Controllers\\api\\CogsController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/CogsController.php',
+<<<<<<< HEAD
+=======
+        'App\\Http\\Controllers\\api\\CustomerController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/CustomerController.php',
+>>>>>>> CRUD-goodsrack-scenario
         'App\\Http\\Controllers\\api\\DivisionController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/DivisionController.php',
         'App\\Http\\Controllers\\api\\GoodsController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/GoodsController.php',
         'App\\Http\\Controllers\\api\\GoodsRackController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/GoodsRackController.php',
@@ -507,6 +511,10 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Http\\Requests\\StoreCategoryPriceSelling' => __DIR__ . '/../..' . '/app/Http/Requests/StoreCategoryPriceSelling.php',
         'App\\Http\\Requests\\StoreCogs' => __DIR__ . '/../..' . '/app/Http/Requests/StoreCogs.php',
         'App\\Http\\Requests\\StoreCogsComponent' => __DIR__ . '/../..' . '/app/Http/Requests/StoreCogsComponent.php',
+<<<<<<< HEAD
+=======
+        'App\\Http\\Requests\\StoreCustomer' => __DIR__ . '/../..' . '/app/Http/Requests/StoreCustomer.php',
+>>>>>>> CRUD-goodsrack-scenario
         'App\\Http\\Requests\\StoreDivision' => __DIR__ . '/../..' . '/app/Http/Requests/StoreDivision.php',
         'App\\Http\\Requests\\StoreGoods' => __DIR__ . '/../..' . '/app/Http/Requests/StoreGoods.php',
         'App\\Http\\Requests\\StoreGoodsRack' => __DIR__ . '/../..' . '/app/Http/Requests/StoreGoodsRack.php',
@@ -525,6 +533,10 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Http\\Requests\\UpdateCategoryPriceSelling' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateCategoryPriceSelling.php',
         'App\\Http\\Requests\\UpdateCogs' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateCogs.php',
         'App\\Http\\Requests\\UpdateCogsComponent' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateCogsComponent.php',
+<<<<<<< HEAD
+=======
+        'App\\Http\\Requests\\UpdateCustomer' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateCustomer.php',
+>>>>>>> CRUD-goodsrack-scenario
         'App\\Http\\Requests\\UpdateDivision' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateDivision.php',
         'App\\Http\\Requests\\UpdateGoods' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateGoods.php',
         'App\\Http\\Requests\\UpdateGoodsRack' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateGoodsRack.php',
@@ -544,6 +556,7 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Models\\CategoryPriceSelling' => __DIR__ . '/../..' . '/app/Models/CategoryPriceSelling.php',
         'App\\Models\\Cogs' => __DIR__ . '/../..' . '/app/Models/Cogs.php',
         'App\\Models\\CogsComponent' => __DIR__ . '/../..' . '/app/Models/CogsComponent.php',
+        'App\\Models\\Customer' => __DIR__ . '/../..' . '/app/Models/Customer.php',
         'App\\Models\\Division' => __DIR__ . '/../..' . '/app/Models/Division.php',
         'App\\Models\\Goods' => __DIR__ . '/../..' . '/app/Models/Goods.php',
         'App\\Models\\GoodsRack' => __DIR__ . '/../..' . '/app/Models/GoodsRack.php',
@@ -556,6 +569,8 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Models\\Rack' => __DIR__ . '/../..' . '/app/Models/Rack.php',
         'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',
         'App\\Models\\Source' => __DIR__ . '/../..' . '/app/Models/Source.php',
+        'App\\Models\\StockOpname' => __DIR__ . '/../..' . '/app/Models/StockOpname.php',
+        'App\\Models\\StockOpnameDetail' => __DIR__ . '/../..' . '/app/Models/StockOpnameDetail.php',
         'App\\Models\\Supplier' => __DIR__ . '/../..' . '/app/Models/Supplier.php',
         'App\\Models\\Type' => __DIR__ . '/../..' . '/app/Models/Type.php',
         'App\\Models\\Unit' => __DIR__ . '/../..' . '/app/Models/Unit.php',
@@ -571,6 +586,10 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Services\\CategoryService' => __DIR__ . '/../..' . '/app/Services/CategoryService.php',
         'App\\Services\\CogsComponentService' => __DIR__ . '/../..' . '/app/Services/CogsComponentService.php',
         'App\\Services\\CogsService' => __DIR__ . '/../..' . '/app/Services/CogsService.php',
+<<<<<<< HEAD
+=======
+        'App\\Services\\CustomerService' => __DIR__ . '/../..' . '/app/Services/CustomerService.php',
+>>>>>>> CRUD-goodsrack-scenario
         'App\\Services\\DivisionService' => __DIR__ . '/../..' . '/app/Services/DivisionService.php',
         'App\\Services\\GoodsRackService' => __DIR__ . '/../..' . '/app/Services/GoodsRackService.php',
         'App\\Services\\GoodsService' => __DIR__ . '/../..' . '/app/Services/GoodsService.php',
@@ -611,6 +630,7 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'Cron\\HoursField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/HoursField.php',
         'Cron\\MinutesField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MinutesField.php',
         'Cron\\MonthField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/MonthField.php',
+        'CustomersTableSeeder' => __DIR__ . '/../..' . '/database/seeds/CustomersTableSeeder.php',
         'DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeds/DatabaseSeeder.php',
         'DeepCopy\\DeepCopy' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/DeepCopy.php',
         'DeepCopy\\Exception\\CloneException' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/Exception/CloneException.php',
@@ -3622,6 +3642,9 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'SebastianBergmann\\Timer\\Timer' => __DIR__ . '/..' . '/phpunit/php-timer/src/Timer.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
         'SourcesTableSeeder' => __DIR__ . '/../..' . '/database/seeds/SourcesTableSeeder.php',
+        'StockOpnameDetailTableSeeder' => __DIR__ . '/../..' . '/database/seeds/StockOpnameDetailTableSeeder.php',
+        'StockOpnameDetailsTableSeeder' => __DIR__ . '/../..' . '/database/seeds/StockOpnameDetailsTableSeeder.php',
+        'StockOpnameTableSeeder' => __DIR__ . '/../..' . '/database/seeds/StockOpnameTableSeeder.php',
         'SuppliersTableSeeder' => __DIR__ . '/../..' . '/database/seeds/SuppliersTableSeeder.php',
         'Symfony\\Component\\Console\\Application' => __DIR__ . '/..' . '/symfony/console/Application.php',
         'Symfony\\Component\\Console\\CommandLoader\\CommandLoaderInterface' => __DIR__ . '/..' . '/symfony/console/CommandLoader/CommandLoaderInterface.php',

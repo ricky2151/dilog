@@ -131,22 +131,14 @@ class RackController extends Controller
         $this->rackService->handleInvalidParameter($id);
         $this->rackService->handleModelNotFound($id);
 
-        $goods_racks_delete = Arr::pull($data,'goods_racks_delete');
-        $goods_racks_update = Arr::pull($data,'goods_racks_update');
-
-        $this->rackService->checkRelationship($id,collect($goods_racks_delete)->pluck("id"));
-        $this->rackService->checkRelationship($id,collect($goods_racks_update)->pluck("id"));
-
         $rack = $this->rack->find($id);
         
         DB::beginTransaction();
         try {
-            $goods_racks_new = Arr::pull($data,'goods_racks_new');
+            $goodsRacks = Arr::pull($data,'goods_racks');
             
             $rack->update($data);
-            is_null($goods_racks_new) ? "" : $rack->goodsRack()->createMany($goods_racks_new);
-            $rack->updateManyAtribut($goods_racks_update);
-            $rack->deleteManyAtribut($goods_racks_delete);
+            is_null($goodsRacks) ? "" : $rack->updateGoodsRack($goodsRacks);
 
             DB::commit();
         }catch (\Throwable $e) {

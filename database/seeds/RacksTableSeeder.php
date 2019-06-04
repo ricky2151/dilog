@@ -16,12 +16,12 @@ class RacksTableSeeder extends Seeder
         $faker = Faker::create();
         Rack::create([
             'name' => "Rack Buku",
-            'warehouse_id' => rand(1,4)
+            'warehouse_id' => 1
         ]);
 
         Rack::create([
-            'name' => "Rack Daging",
-            'warehouse_id' => rand(1,4)
+            'name' => "Rack Buku",
+            'warehouse_id' => 2
         ]);
 
         Rack::create([
