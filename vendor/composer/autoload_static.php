@@ -479,10 +479,7 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Http\\Controllers\\api\\CategoryPriceSellingController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/CategoryPriceSellingController.php',
         'App\\Http\\Controllers\\api\\CogsComponentController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/CogsComponentController.php',
         'App\\Http\\Controllers\\api\\CogsController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/CogsController.php',
-<<<<<<< HEAD
-=======
         'App\\Http\\Controllers\\api\\CustomerController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/CustomerController.php',
->>>>>>> CRUD-goodsrack-scenario
         'App\\Http\\Controllers\\api\\DivisionController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/DivisionController.php',
         'App\\Http\\Controllers\\api\\GoodsController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/GoodsController.php',
         'App\\Http\\Controllers\\api\\GoodsRackController' => __DIR__ . '/../..' . '/app/Http/Controllers/api/GoodsRackController.php',
@@ -511,10 +508,7 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Http\\Requests\\StoreCategoryPriceSelling' => __DIR__ . '/../..' . '/app/Http/Requests/StoreCategoryPriceSelling.php',
         'App\\Http\\Requests\\StoreCogs' => __DIR__ . '/../..' . '/app/Http/Requests/StoreCogs.php',
         'App\\Http\\Requests\\StoreCogsComponent' => __DIR__ . '/../..' . '/app/Http/Requests/StoreCogsComponent.php',
-<<<<<<< HEAD
-=======
         'App\\Http\\Requests\\StoreCustomer' => __DIR__ . '/../..' . '/app/Http/Requests/StoreCustomer.php',
->>>>>>> CRUD-goodsrack-scenario
         'App\\Http\\Requests\\StoreDivision' => __DIR__ . '/../..' . '/app/Http/Requests/StoreDivision.php',
         'App\\Http\\Requests\\StoreGoods' => __DIR__ . '/../..' . '/app/Http/Requests/StoreGoods.php',
         'App\\Http\\Requests\\StoreGoodsRack' => __DIR__ . '/../..' . '/app/Http/Requests/StoreGoodsRack.php',
@@ -533,10 +527,7 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Http\\Requests\\UpdateCategoryPriceSelling' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateCategoryPriceSelling.php',
         'App\\Http\\Requests\\UpdateCogs' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateCogs.php',
         'App\\Http\\Requests\\UpdateCogsComponent' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateCogsComponent.php',
-<<<<<<< HEAD
-=======
         'App\\Http\\Requests\\UpdateCustomer' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateCustomer.php',
->>>>>>> CRUD-goodsrack-scenario
         'App\\Http\\Requests\\UpdateDivision' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateDivision.php',
         'App\\Http\\Requests\\UpdateGoods' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateGoods.php',
         'App\\Http\\Requests\\UpdateGoodsRack' => __DIR__ . '/../..' . '/app/Http/Requests/UpdateGoodsRack.php',
@@ -586,10 +577,7 @@ class ComposerStaticInit82c3cd79c11bb40b25e16ef197c0bd03
         'App\\Services\\CategoryService' => __DIR__ . '/../..' . '/app/Services/CategoryService.php',
         'App\\Services\\CogsComponentService' => __DIR__ . '/../..' . '/app/Services/CogsComponentService.php',
         'App\\Services\\CogsService' => __DIR__ . '/../..' . '/app/Services/CogsService.php',
-<<<<<<< HEAD
-=======
         'App\\Services\\CustomerService' => __DIR__ . '/../..' . '/app/Services/CustomerService.php',
->>>>>>> CRUD-goodsrack-scenario
         'App\\Services\\DivisionService' => __DIR__ . '/../..' . '/app/Services/DivisionService.php',
         'App\\Services\\GoodsRackService' => __DIR__ . '/../..' . '/app/Services/GoodsRackService.php',
         'App\\Services\\GoodsService' => __DIR__ . '/../..' . '/app/Services/GoodsService.php',
