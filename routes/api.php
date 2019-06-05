@@ -80,6 +80,12 @@ Route::group([
     //Division
     Route::resource('divisions', 'DivisionController');
 
+    //Periode
+    Route::resource('periodes', 'PeriodeController');
+
+    //MaterialRequest
+    Route::resource('materialRequests', 'MaterialRequestController');
+
     //Customer
     Route::resource('customers', 'CustomerController');
 });

@@ -32,4 +32,8 @@ class Division extends Model
     public function users(){
         return $this->hasMany('App\Models\User');
     }
+
+    public function materialRequest(){
+        return $this->hasMany('App\Models\MaterialRequest');
+    }
 }

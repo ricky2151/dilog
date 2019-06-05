@@ -39,7 +39,10 @@ class DatabaseSeeder extends Seeder
             DivisionsTableSeeder::class,
             CustomersTableSeeder::class,
             StockOpnameDetailsTableSeeder::class,
-            StockOpnameTableSeeder::class
+            StockOpnameTableSeeder::class,
+            PeriodeTableSeeder::class,
+            MaterialRequestsTableSeeder::class,
+            MaterialRequestDetailsTableSeeder::class
         ]);
     }
 }
