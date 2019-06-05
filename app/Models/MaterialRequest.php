@@ -11,6 +11,19 @@ class MaterialRequest extends Model
         'code', 'division_id','request_by_user_id','status','periode_id'
     ];
 
+    public function updateDetailMaterialRequest($materialRequestDetails){
+        foreach($materialRequestDetails as $materialRequestDetail){
+            if($materialRequestDetail['type'] == 1) {
+                $this->materialRequestDetails()->create($materialRequestDetail);
+            }
+            else if($materialRequestDetail['type'] == 0) {
+                $this->materialRequestDetails()->find($materialRequestDetail['id'])->update($materialRequestDetail);
+            } else {
+                $this->materialRequestDetails()->find($materialRequestDetail['id'])->delete();
+            }
+        }
+    }
+
     public function period(){
         return $this->belongsTo('App\Models\Period');
     }

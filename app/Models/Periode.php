@@ -11,6 +11,10 @@ class Periode extends Model
         'name', 'from','to','status'
     ];
 
+    public static function getPeriodeActive(){
+        return Periode::Where("status","1")->first();
+    }
+
     public function materialRequests(){
         return $this->hasMany('App\Models\MaterialRequest')->orderBy('updated_at', 'desc');
     }

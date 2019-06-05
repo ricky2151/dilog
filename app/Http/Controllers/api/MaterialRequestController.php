@@ -8,101 +8,155 @@ use App\Http\Requests\UpdateMaterialRequest;
 use App\Models\MaterialRequest;
 use App\Models\User;
 use App\Models\Division;
+use App\Models\Periode;
+use App\Models\Goods;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\DB;
+use App\Exceptions\DatabaseTransactionErrorException;
 
 class MaterialRequestController extends Controller
 {
-    private $materialRequestService,$materialRequest;
+    private $materialRequestService, $materialRequest, $user, $goods, $periode;
 
-    public function __construct(MaterialRequestService $materialRequestService, MaterialRequest $materialRequest)
+    public function __construct(MaterialRequestService $materialRequestService, MaterialRequest $materialRequest, Goods $goods, Periode $periode)
     {
         $this->materialRequestService = $materialRequestService;
         $this->materialRequest = $materialRequest;
+        $this->goods = $goods;
+        $this->periode = $periode;
+        $this->user = auth('api')->user();
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the Material Request.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
-        $materialRequests = $this->materialRequest->latest()->get();
-        $user = User::find(1);
-        $materialRequest = $this->materialRequest->find(2)->pic_user_name;
-        return $materialRequest;
-        // $materialRequests = $materialRequests->map(function ($materialRequest) { 
-        //     $materialRequest = Arr::add($materialRequest, 'warehouse_name', $materialRequest['warehouse']['name']);
-        //     return Arr::except($materialRequest, ['warehouse']);
-        // });
-
-        return formatResponse(false,(["materialRequests"=>$materialRequests]));
+        return formatResponse(false,(["material_request"=>$this->user->division->materialRequest]));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form for creating a new Material Request.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function create()
     {
-        //
+        return formatResponse(false,(["material_request"=>$this->materialRequestService->createForm()]));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in Material Request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\StoreMaterialRequest  $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(StoreMaterialRequest $request)
     {
-        //
+        $data = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            $materialRequestDetails = collect(Arr::pull($data,'material_request_details'))->unique(function ($item) {
+                return $item['goods_id'];
+            })->toArray();
+
+            $data = Arr::add($data, 'division_id', $this->user->division['id']);
+            $data = Arr::add($data, 'periode_id', $this->periode->getPeriodeActive()['id']);
+            
+            $materialRequest = $this->user->materialRequests()->create($data);
+            $materialRequest->materialRequestDetails()->createMany($materialRequestDetails);
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("MaterialRequest");
+        }
+        return formatResponse(false,(["material_request"=>["Material Request successfully created"]]));
+
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified Material Request.
      *
-     * @param  \App\Models\MaterialRequest  $materialRequest
-     * @return \Illuminate\Http\Response
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function show(MaterialRequest $materialRequest)
+    public function show($id)
     {
-        //
+        $this->materialRequestService->handleInvalidParameter($id);
+        $this->materialRequestService->handleModelNotFound($id);
+
+        return formatResponse(false,(["material_request"=>$this->materialRequest->find($id)->materialRequestDetails]));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the specified Material Request.
      *
-     * @param  \App\Models\MaterialRequest  $materialRequest
-     * @return \Illuminate\Http\Response
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function edit(MaterialRequest $materialRequest)
+    public function edit($id)
     {
-        //
+        $this->materialRequestService->handleInvalidParameter($id);
+        $this->materialRequestService->handleModelNotFound($id);
+
+        return formatResponse(false,(["material_request"=>$this->materialRequestService->editForm($id)]));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified Material Request in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\MaterialRequest  $materialRequest
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\UpdateMaterialRequest  $request
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(Request $request, MaterialRequest $materialRequest)
+    public function update(UpdateMaterialRequest $request, $id)
     {
-        //
+        $this->materialRequestService->handleInvalidParameter($id);
+        $this->materialRequestService->handleModelNotFound($id);
+
+        $data = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            $materialRequestDetails = collect(Arr::pull($data,'material_request_details'))->unique(function ($item) {
+                return $item['goods_id'];
+            })->toArray();
+
+            $this->materialRequest->find($id)->updateDetailMaterialRequest($materialRequestDetails);
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("MaterialRequest");
+        }
+        return formatResponse(false,(["material_request"=>["Material Request successfully updated"]]));
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\MaterialRequest  $materialRequest
-     * @return \Illuminate\Http\Response
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function destroy(MaterialRequest $materialRequest)
+    public function destroy($id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $this->materialRequest->find($id)->materialRequestDetails()->delete();
+            $this->materialRequest->find($id)->delete();
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollback();
+            return $e;
+            throw new DatabaseTransactionErrorException("MaterialRequest");
+        }
+        return formatResponse(false,(["material_request"=>["Material Request deleted successfully"]]));
     }
 }

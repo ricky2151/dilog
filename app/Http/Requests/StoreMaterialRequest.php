@@ -27,10 +27,7 @@ class StoreMaterialRequest extends FormRequest
     {
         return [
             "code" => "required|string",
-            "division_id" => "required|integer|exists:divisions,id",
-            "request_by_user_id" => "required|integer|exists:users,id",
-            "periode_id" => "required|integer|exists:periodes,id",
-            "material_request_details.*.goods_id" => "required|integer|exists:divisions,id",
+            "material_request_details.*.goods_id" => "required|integer|exists:goods,id",
             "material_request_details.*.qty" => "required|integer|min:1",
             "material_request_details.*.notes" => "required|string",
         ];

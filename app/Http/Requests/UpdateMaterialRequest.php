@@ -26,16 +26,12 @@ class UpdateMaterialRequest extends FormRequest
     public function rules()
     {
         return [
-            "code" => "required|string",
-            "division_id" => "required|integer|exists:divisions,id",
-            "request_by_user_id" => "required|integer|exists:users,id",
-            "status" => "required|boolean",
-            "periode_id" => "required|integer|exists:periodes,id",
-            // "material_request_details.*.id" => "required|integer|exists:divisions,id",
-            // "material_request_details.*.goods_id" => "required|integer|exists:divisions,id",
-            // "material_request_details.*.qty" => "",
-            // "material_request_details.*.status" => "",
-            // "material_request_details.*.notes" => "",
+            // "code" => "required|string",
+            "material_request_details.*.id" => "filled|integer|exists:material_request_details,id",
+            "material_request_details.*.goods_id" => "filled|integer|exists:goods,id",
+            "material_request_details.*.qty" => "filled|integer|min:1",
+            "material_request_details.*.notes" => "filled|string",
+            'material_request_details.*.type'=> "required|in:1,0,-1" //1 : new, 0 : update, -1 : delete
         ];
     }
 

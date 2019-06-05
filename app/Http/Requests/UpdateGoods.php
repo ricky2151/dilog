@@ -61,7 +61,7 @@ class UpdateGoods extends FormRequest
             'price_sellings.*.category_price_selling_id' => "required|integer|exists:category_price_sellings,id",
             'price_sellings.*.price' => "required|integer|min:0",
             'price_sellings.*.free' => "required|boolean",
-            'price_sellings.*.type'=> "required|in:1,0,-1",//1 : update, 0 : update, -1 : delete
+            'price_sellings.*.type'=> "required|in:1,0,-1",//1 : new, 0 : update, -1 : delete
 
             'is_image_delete' => "required|boolean"
         ];
