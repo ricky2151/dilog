@@ -10,6 +10,7 @@ import * as VueGoogleMaps from 'vue2-google-maps'
 import colors from 'vuetify/es5/util/colors'
 import PluginValidation from './plugin/PluginValidation'
 
+require('./css/custom/basic.css');
 Vue.use(PluginValidation);
 
 
