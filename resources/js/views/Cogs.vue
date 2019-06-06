@@ -135,20 +135,20 @@
             :items="cogs"
             class=""
         >
-        <template v-slot:items="props">
-            <td>{{ props.item.name }}</td>
-            <td class="text-xs-right">{{ props.item.nominal }}</td>
-            <td class="text-xs-right">{{ props.item.types.name }}</td>
-            <td>
-                <v-btn class='button-action' v-on:click='get_data_before_edit(props.index)' color="primary" fab depressed small dark v-on="on">
-                    <v-icon small>edit</v-icon>
-                </v-btn>
-                <v-btn class='button-action' v-on:click='delete_cogs(props.index)' color="red" fab small dark depressed>
-                    <v-icon small>delete</v-icon>
-                </v-btn>
+            <template v-slot:items="props">
+                <td>{{ props.item.name }}</td>
+                <td class="text-xs-right">{{ props.item.nominal }}</td>
+                <td class="text-xs-right">{{ props.item.types.name }}</td>
+                <td>
+                    <v-btn class='button-action' v-on:click='get_data_before_edit(props.index)' color="primary" fab depressed small dark v-on="on">
+                        <v-icon small>edit</v-icon>
+                    </v-btn>
+                    <v-btn class='button-action' v-on:click='delete_cogs(props.index)' color="red" fab small dark depressed>
+                        <v-icon small>delete</v-icon>
+                    </v-btn>
 
-            </td>
-        </template>
+                </td>
+            </template>
         </v-data-table>
     </div>
 </template>
