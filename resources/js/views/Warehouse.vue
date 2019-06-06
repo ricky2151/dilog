@@ -8,14 +8,119 @@
 <template>
 
     <div>
-        <v-dialog v-model="dialog_createedit" fullscreen>
-            <v-form v-model="valid" ref='formCreateEdit' class='fixfullscreen'>
-                <v-card class='fixfullscreen'>
+
+        <!-- POPUP DETAIL RACK -->
+        <v-dialog v-model="dialog_detailracks" width=750>
+            <v-card>
+                <v-toolbar dark color="menu">
+                    <v-btn icon dark v-on:click="closedialog_detailracks()">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Detail Racks</v-toolbar-title>
+
+                </v-toolbar>
+                <div style='padding:30px'>
+
+                    <v-text-field
+                        v-model="popup_search_detailracks"
+                        append-icon="search"
+                        label="Search"
+                        single-line
+                        hide-details
+                      ></v-text-field>
+                    <v-data-table
+                    disable-initial-sort
+                    :headers="headers_popup_detailracks"
+                    :items="popup_detailracks"
+                    :search="popup_search_detailracks"
+                    class=""
+                    >
+                    <template v-slot:items="props">
+                        <td>{{ props.index + 1 }}</td>
+                        <td>{{ props.item.name }}</td>
+                        
+                    </template>
+                    </v-data-table>
+                </div>
+            </v-card>
+        </v-dialog>
+
+        <!-- POPUP DETAIL GOODS -->
+        <v-dialog v-model="dialog_detailgoods" width=750>
+            <v-card>
+                <v-toolbar dark color="menu">
+                    <v-btn icon dark v-on:click="closedialog_detailgoods()">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Detail Goods</v-toolbar-title>
+
+                </v-toolbar>
+                <div style='padding:30px'>
+
+                    <v-text-field
+                        v-model="popup_search_detailgoods"
+                        append-icon="search"
+                        label="Search"
+                        single-line
+                        hide-details
+                      ></v-text-field>
+                    <v-data-table
+                    disable-initial-sort
+                    :headers="headers_popup_detailgoods"
+                    :items="popup_detailgoods"
+                    :search="popup_search_detailgoods"
+                    class=""
+                    >
+                    <template v-slot:items="props">
+                        <td>{{ props.index + 1 }}</td>
+                        <td>{{ props.item.rack_name }}</td>
+                        <td>{{ props.item.goods_name }}</td>
+                        <td>{{ props.item.stock }}</td>
+                        
+                    </template>
+                    </v-data-table>
+                </div>
+            </v-card>
+        </v-dialog>
+
+        <!-- POPUP STOCK OPNAME -->
+        <v-dialog v-model="dialog_stockopname" width=750>
+            <v-card>
+                <v-toolbar dark color="menu">
+                    <v-btn icon dark v-on:click="closedialog_stockopname()">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Dialog Stock Opname</v-toolbar-title>
+
+                </v-toolbar>
+                <div style='padding:30px'>
+
+                    <v-text-field :rules='this.$list_validation.max_req' v-model='input.name' label="Name" counter=191></v-text-field>
+
+                    <v-text-field :rules='this.$list_validation.max_req' disabled v-model='input.user' label="User" counter=191></v-text-field>
+
+                    <v-text-field :rules='this.$list_validation.max_req' disabled v-model='input.warehouse' label="Warehouse" counter=191></v-text-field>
+
+                    <v-text-field :rules='this.$list_validation.max_req' disabled v-model='input.notes' label="Notes" counter=191></v-text-field>
+
+                    <v-btn color='primary'>Add</v-btn>
+
+                    <div class='container'>
+                        <cp-stock-opname :prop_id_stockopname='temp'></cp-stock-opname>
+                    </div>
+                </div>
+            </v-card>
+        </v-dialog>
+
+
+        <v-dialog v-model="dialog_createedit">
+            <v-form v-model="valid" ref='formCreateEdit'>
+                <v-card>
                     <v-toolbar dark color="menu">
                         <v-btn icon dark v-on:click="closedialog_createedit()">
                             <v-icon>close</v-icon>
                         </v-btn>
-                        <v-toolbar-title v-html='idx_data_edit == -1 ?"Add Warehouse":"Edit Warehouse"'></v-toolbar-title>
+                        <v-toolbar-title v-html='id_data_edit == -1 ?"Add Warehouse":"Edit Warehouse"'></v-toolbar-title>
 
                     </v-toolbar>
                     <v-stepper v-model="e6" vertical>
@@ -101,7 +206,11 @@
                         <v-stepper-step :complete="e6 > 2" step="2" editable><h3>Create Rack</h3></v-stepper-step>
 
                         <v-stepper-content step="2">
+                            <v-select v-model='interaction.create_rack.method' :items="[{id:0, name:'Create New'},{id:1, name:'Copy From Warehouse'} ]" item-text='name' item-value='id' label="Select Method"></v-select>
+
+                            <!-- CREATE NEW RACK -->
                             <v-combobox
+                                v-show='interaction.create_rack.method == 0'
                                 v-model='input.racks'
                                 label="Type rack"
                                 chips
@@ -109,26 +218,47 @@
                                 prepend-icon="filter_list"
                                 solo
                                 multiple
-                                v-on:keyup.enter="updateChip()"
+                                v-on:keyup.enter="table_rack().updateChip()"
                                 >
                                     <template v-slot:selection="data">
                                         <v-chip
                                           :selected="data.selected"
                                           close
                                           
-                                          v-on:input="removeChip(data.item)"
+                                          v-on:input="table_rack().removeChip(data.item)"
 
                                         >
                                             <strong>{{ data.item.name }}</strong>
                                         </v-chip>
                                     </template>
                             </v-combobox>
+
+                            <!-- COPY FROM WAREHOUSE -->
+                            <div v-show='interaction.create_rack.method == 1'>
+                                <v-select v-model='interaction.create_rack.selected_warehouse' :items='ref_input.warehouse' item-text='name' item-value='id' label='Select Warehouse'>
+                                </v-select>
+                                <b>Select Rack</b>
+                                <v-data-table
+                                    :headers="[{text:'Rack', value:'rack'},{text:'Action', value:'action'}]"
+                                    :items='ref_input.rack'
+                                >
+                                    <template v-slot:items="props">
+                                        <td v-if='props.item.warehouse_id == interaction.create_rack.selected_warehouse'> 
+                                            {{props.item.name}}
+                                        </td>
+                                        <td v-if='props.item.warehouse_id == interaction.create_rack.selected_warehouse'> 
+                                            Copy Goods
+                                        </td>
+                                    </template>
+
+                                </v-data-table>
+                            </div>
                             
                         </v-stepper-content>
 
                         
 
-                        <v-btn v-on:click='save_warehouse()' >submit</v-btn>
+                        <v-btn v-on:click='save_data()' >submit</v-btn>
                         
                     </v-stepper>
                 </v-card>
@@ -138,29 +268,64 @@
 
         <v-toolbar flat color="white">
             <v-toolbar-title>Warehouse Data</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark>
-                Add Data
-            </v-btn>
         </v-toolbar>
+        <v-layout row class='bgwhite'>
+            <v-flex xs3>
+                <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='marginleft30'>
+                    Add Data
+                </v-btn>
+            </v-flex>
+            <v-flex xs12 class="text-xs-right">
+
+                <v-text-field
+                    class='marginhorizontal10 searchwidth d-inline-block'
+                    v-model="search_data"
+                    append-icon="search"
+                    label="Search"
+                    single-line
+                    hide-details
+                ></v-text-field>
+            </v-flex>
+            
+        </v-layout>
         <v-data-table
             disable-initial-sort
             :headers="headers"
-            :items="warehouses"
+            :items="data_table"
+            :search='search_data'
             class=""
         >
         <template v-slot:items="props">
+            <td>{{ props.index + 1 }}</td>
             <td>{{ props.item.name }}</td>
             <td class="text-xs-right">{{ props.item.address }}</td>
             <td class="text-xs-right">{{ props.item.telp }}</td>
             <td class="text-xs-right">{{ props.item.pic }}</td>
             <td>
-                <v-btn class='button-action' v-on:click='get_data_before_edit(props.index)' color="primary" fab depressed small dark v-on="on">
-                    <v-icon small>edit</v-icon>
-                </v-btn>
-                <v-btn class='button-action' v-on:click='delete_warehouses(props.index)' color="red" fab small dark depressed>
-                    <v-icon small>delete</v-icon>
-                </v-btn>
+                <div class="text-xs-left">
+                    <v-menu offset-y>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          color="primary"
+                          dark
+                          v-on="on"
+                        >
+                          Action
+                        </v-btn>
+                      </template>
+                      <v-list>
+                        <v-list-tile
+                          v-for="(item, index) in action_items"
+                          :key="index"
+                          v-on:click="action_change(props.item.id,index)"
+                          
+                        >
+                          <v-list-tile-title>{{ item }}</v-list-tile-title>
+                        </v-list-tile>
+                      </v-list>
+                    </v-menu>
+                </div>
+               
 
             </td>
         </template>
@@ -172,22 +337,42 @@
 
 
 import axios from 'axios'
+import mxCrudChildForm from '../mixin/mxCrudChildForm';
+import cpStockOpname from './../components/cpStockOpname.vue'
 export default {
+    name:'Warehouse',
+    components:{
+        cpStockOpname,
+    },
     data () {
         return {
+            temp:1,
+            name_table:'warehouses',
+            header_api:{
+                'Accept': 'application/json',
+                'Content-type': 'application/json'
+            },
+
+            action_items: ['Edit', 'Rack', 'Goods', 'Stock OP', 'Delete'],
+
             on:false,
             valid:false,
+
             my_location:{lat:10, lng:10},
             markers:[{
             	position:{lat:10,lng:10}
             	}],
 
+
             dialog_createedit:false,
+            dialog_detailracks:false,
+            dialog_detailgoods:false,
+            dialog_stockopname:false,
+
+
             e6:1,
 
-            dialog_stock:false,
-
-            idx_data_edit:-1,
+            id_data_edit:-1,
 
             input_before_edit:{ //variabel ini digunakan untuk menampung input sebelum di klik submit saat edit
                 
@@ -201,9 +386,60 @@ export default {
                 lat:null,
                 lng:null,
                 racks:[],
+                copy_racks:[],
             },
 
+            ref_input:
+            {
+                warehouse:[
+                    {
+                        id:2,
+                        name:'cobawarehouse2',
+                    },
+                    {
+                        id:3,
+                        name:'cobawarehouse3',
+                    },
+                ],
+                rack:[
+                    {
+                        id:4,
+                        name:'cobarack1',
+                        warehouse_id:'2',
+                        warehouse_name:'cobawarehouse2',
+                    },
+                    {
+                        id:5,
+                        name:'cobarack2',
+                        warehouse_id:'2',
+                        warehouse_name:'cobawarehouse2',
+                    },
+                    {
+                        id:6,
+                        name:'cobarack3',
+                        warehouse_id:'3',
+                        warehouse_name:'cobawarehouse3',
+                    },
+                    ,
+                    {
+                        id:7,
+                        name:'cobarack4',
+                        warehouse_id:'3',
+                        warehouse_name:'cobawarehouse3',
+                    },
+                    ,
+                    {
+                        id:8,
+                        name:'cobarack5',
+                        warehouse_id:'3',
+                        warehouse_name:'cobawarehouse3',
+                    },
+                ]
+            },
+
+
             headers: [
+                { text: 'No', value: 'no'},
                 { text: 'Name', value: 'name'},
                 { text: 'Address', value: 'address', align:'right' },
                 { text: 'Telephone', value: 'telp', align:'right' },
@@ -211,29 +447,107 @@ export default {
                 { text: 'Action', align:'left',width:'15%',sortable:false},
             ],
 
+            headers_popup_detailracks:[
+                { text: 'No', value:'no'},
+                { text: 'Racks', value:'name'},
+                
+            ],
 
-            warehouses: []
+            headers_popup_detailgoods:[
+                { text: 'No', value:'no'},
+                { text: 'Racks', value:'rack'},
+                { text: 'Goods', value:'goods'},
+                { text: 'Stock', value:'stock'},
+            ],
+
+
+            data_table: [],
+            search_data:null,
+
+            popup_detailracks:
+            [
+                {
+                    rack:'Meja',
+                    stock:12,
+                }
+            ],
+            popup_search_detailracks :null,
+
+            popup_detailgoods:
+            [
+                {
+                    rack_name:'Rack1',
+                    goods_name:'goods1',
+                    stock:12,
+                }
+            ],
+            popup_search_detailgoods:null,
+
+            interaction:
+            {
+                create_rack:
+                {
+                    method:-1, //jika 0, maka create new rack, jika 1 maka copy dari    warehouse
+                    selected_warehouse:null, //warehouse yang dipilih saat user menggunakan copy from warehouse
+                    selected_rack:null, //rack yang dipilih beserta apakah copy goodsnya juga atau tidak
+                }
+                
+
+            }
         }
     },
     methods: {
 
-        
-
-        removeChip(item){
-            this.input.racks.splice(this.input.racks.indexOf(item), 1);
-            this.input.racks = [...this.input.racks];
-        },
-        updateChip(item)
+        action_change(id_datatable,idx_action)
         {
-            //console.log(this.input.racks);
-            var temprack = this.input.racks;
-            var tempdata = temprack[temprack.length - 1];
-            this.removeChip(tempdata);
-            this.input.racks.push({name:tempdata});
-
-
+            
+            //console.log('action_change');
+            //console.log(this.action_selected);
+            // console.log(this.action_selected == 'Rack');
+            if(idx_action == 0)
+            {
+                this.get_data_before_edit(id_datatable);
+            }
+            else if(idx_action == 1)
+            {
+                
+                this.opendialog_detailracks(id_datatable);
+            }
+            else if(idx_action == 2)
+            {
+                this.opendialog_detailgoods(id_datatable);
+                
+            }
+            else if(idx_action == 3)
+            {
+                this.opendialog_stockopname(id_datatable); 
+            }
+            else if(idx_action == 4)
+            {
+                this.delete_data(id_datatable);
+            }
             
         },
+
+        table_rack()
+        {
+            var self = this;
+            return{
+                removeChip(item){
+                    this.input.racks.splice(this.input.racks.indexOf(item), 1);
+                    this.input.racks = [...this.input.racks];
+                },
+                updateChip(item)
+                {
+                    //console.log(this.input.racks);
+                    var temprack = this.input.racks;
+                    var tempdata = temprack[temprack.length - 1];
+                    this.removeChip(tempdata);
+                    this.input.racks.push({name:tempdata});
+                },
+            }
+        },
+        
         
         get_my_location(){
 			navigator.geolocation.getCurrentPosition((position) => {
@@ -258,17 +572,48 @@ export default {
 			
 		},
 
+        opendialog_detailracks(id_edit_popup_detailracks)
+        {
+            this.dialog_detailracks = true;
+            //this.get_popup_detailracks(id_edit_popup_detailracks);
+        },
+        closedialog_detailracks()
+        {
+            this.dialog_detailracks = false;
+        },
+
+        opendialog_detailgoods(id_edit_popup_detailgoods)
+        {
+            this.dialog_detailgoods = true;
+            //
+        },
+        closedialog_detailgoods()
+        {
+            this.dialog_detailgoods = false;
+        },
+
+        opendialog_stockopname(id_edit_popup_stockopname)
+        {
+            this.dialog_stockopname = true;
+            //
+        },
+        closedialog_stockopname()
+        {
+            this.dialog_stockopname = false;
+        },
+
+
         closedialog_createedit(){
-            this.idx_data_edit = -1;
+            this.id_data_edit = -1;
             this.dialog_createedit = false;
         },
-        opendialog_createedit(idx_data_edit,r){
-            console.log('masuk opendialog_createedit : ' + idx_data_edit);
-            if(idx_data_edit != -1)
+        opendialog_createedit(id_data_edit,r){
+            console.log('masuk opendialog_createedit : ' + id_data_edit);
+            if(id_data_edit != -1)
             {
                 console.log('masuk if ');
-                this.idx_data_edit = idx_data_edit;
-                this.convert_data_input_warehouse(r);
+                this.id_data_edit = id_data_edit;
+                this.convert_data_input(r);
                 
             }
             else
@@ -301,9 +646,9 @@ export default {
         showTable(r)
         {
             
-            this.warehouses = r.data.items.warehouse;
+            this.data_table = r.data.items.warehouse;
         },
-        convert_data_input_warehouse(r)
+        convert_data_input(r)
         {
             console.log('masuk convert data');
             console.log(r);
@@ -324,7 +669,7 @@ export default {
             this.input_before_edit = JSON.parse(JSON.stringify(this.input));
             
         },
-        prepare_data_form_warehouse()
+        prepare_data_form()
         {
             //prepare data selalu dari this.input, tapi bandingkan dulu dengan this.input_before_edit
             
@@ -333,7 +678,7 @@ export default {
 
 
 
-            if(this.idx_data_edit != -1) //jika sedang diedit
+            if(this.id_data_edit != -1) //jika sedang diedit
             {
 
                 //data yang harus dikirim saat update :
@@ -458,7 +803,7 @@ export default {
             formData.append('token', localStorage.getItem('token'));
             return formData;
         },
-        get_warehouse() {
+        get_data() {
             console.log('halo');
             axios.get('/api/warehouses', {
                 params:{
@@ -483,13 +828,13 @@ export default {
             });
 
         },
-        save_warehouse()
+        save_data()
         {
             if(this.valid)
             {
-                if(this.idx_data_edit != -1) //jika sedang diedit
+                if(this.id_data_edit != -1) //jika sedang diedit
                 {
-                    axios.post('api/warehouses/' + this.warehouses[this.idx_data_edit].id,this.prepare_data_form_warehouse(),
+                    axios.post('api/warehouses/' + this.findDataById(this.id_data_edit).id,this.prepare_data_form(),
                         {
                             headers: {
                                 'Accept': 'application/json',
@@ -499,7 +844,7 @@ export default {
                         this.get_warehouse();
                         this.closedialog_createedit();
                         this.clear_input();
-                        this.idx_data_edit = -1;
+                        this.id_data_edit = -1;
                         swal("Good job!", "Data saved !", "success");
                     });
                     
@@ -508,7 +853,7 @@ export default {
                 else //jika sedang tambah data
                 {
                    
-                    axios.post('api/warehouses',this.prepare_data_form_warehouse(),
+                    axios.post('api/warehouses',this.prepare_data_form(),
                     {
                         headers: {
                             'Accept': 'application/json',
@@ -518,7 +863,7 @@ export default {
                         this.get_warehouse();
                         this.closedialog_createedit();
                         this.clear_input();
-                        this.idx_data_edit = -1;
+                        this.id_data_edit = -1;
                         swal("Good job!", "Data saved !", "success");
                     })
                     .catch(function (error)
@@ -540,7 +885,7 @@ export default {
                 swal('Form Is not Valid', "Please check your input" , 'error');
             }
         },
-        delete_warehouses(idx_data_delete){
+        delete_data(idx_data_delete){
             
             swal({
                     title: "Are you sure want to delete this item?",
@@ -551,7 +896,7 @@ export default {
                 })
                 .then((willDelete) => {
                     if (willDelete) {
-                        axios.delete('api/warehouses/' + this.warehouses[idx_data_delete].id,{
+                        axios.delete('api/warehouses/' + this.findDataById(this.id_data_edit).id,{
                             data:{
                                 token: localStorage.getItem('token')    
                             }
@@ -577,7 +922,7 @@ export default {
         },
         get_data_before_edit(idx_edit)
         {
-            var id_edit = this.warehouses[idx_edit].id;
+            var id_edit = this.findDataById(this.id_data_edit).id;
             axios.get('/api/warehouses/' + id_edit + '/edit', {
                 params:{
                     token: localStorage.getItem('token')
@@ -609,9 +954,12 @@ export default {
     },
     mounted(){
         //console.log('masuksini');
-         this.get_warehouse();
+         this.get_data();
          this.get_my_location();
     },
+    mixins:[
+        mxCrudChildForm,
+    ]
 }
 </script>
 
