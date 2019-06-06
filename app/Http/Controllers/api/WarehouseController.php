@@ -227,7 +227,7 @@ class WarehouseController extends Controller
      */
     public function create()
     {
-        return formatResponse(false,(["material_request"=>$this->warehouseService->createForm()]));
+        return formatResponse(false,($this->warehouseService->createForm()));
     }
 
     /**
