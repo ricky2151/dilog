@@ -55,13 +55,13 @@ class UpdateGoods extends FormRequest
             'pricelists.*.supplier_id' => "required|integer|exists:suppliers,id",
             'pricelists.*.price' => "required|integer",
 
-            'price_sellings.*.id' => "required|integer|exists:price_sellings,id",
-            'price_sellings.*.warehouse_id' => "required|integer|exists:warehouses,id",
-            'price_sellings.*.stock_cut_off' => "required|integer|min:0",
-            'price_sellings.*.category_price_selling_id' => "required|integer|exists:category_price_sellings,id",
-            'price_sellings.*.price' => "required|integer|min:0",
-            'price_sellings.*.free' => "required|boolean",
-            'price_sellings.*.type'=> "required|in:1,0,-1",//1 : update, 0 : update, -1 : delete
+            'price_sellings.*.id' => "filled|integer|exists:price_sellings,id",
+            'price_sellings.*.warehouse_id' => "filled|integer|exists:warehouses,id",
+            'price_sellings.*.stock_cut_off' => "filled|integer|min:0",
+            'price_sellings.*.category_price_selling_id' => "filled|integer|exists:category_price_sellings,id",
+            'price_sellings.*.price' => "filled|integer|min:0",
+            'price_sellings.*.free' => "filled|boolean",
+            'price_sellings.*.type'=> "required|in:1,0,-1",//1 : new, 0 : update, -1 : delete
 
             'is_image_delete' => "required|boolean"
         ];
