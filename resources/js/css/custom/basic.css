@@ -37,3 +37,10 @@
 .margintopmin5{
 	margin-top: -5px !important;
 }
+
+.margintop10bottom0
+{
+	margin-top: 10px !important;
+	margin-bottom: 0px !important;
+}
+
