@@ -16,3 +16,24 @@
 .button-action i{
     font-size: 14px !important;
 }
+.margin10{
+	margin:10px;
+}
+.bgwhite
+{
+	background-color: white !important;
+}
+.marginleft30{
+	margin-left: 30px !important;
+}
+.marginhorizontal10{
+	margin-left: 10px !important;
+	margin-right: 10px !important;
+}
+.searchwidth{
+	width: 50% !important;
+}
+
+.margintopmin5{
+	margin-top: -5px !important;
+}
