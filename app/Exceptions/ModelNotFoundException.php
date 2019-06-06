@@ -10,7 +10,7 @@ class ModelNotFoundException extends Exception
         return response()->json([
             "error" => true,
             "message" => [
-                $error => ["$error not found"]]
+                $error => ["not found"]]
         ]);
     }
 }

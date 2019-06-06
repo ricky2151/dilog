@@ -7,25 +7,176 @@
 <template>
     <div>
         
-        <v-dialog v-model="dialog_createedit" fullscreen>
-            <v-form v-model="valid" ref='formCreateEdit' class='fixfullscreen'>
-                <v-card class='fixfullscreen'>
+        <!-- POPUP DETAIL RACK -->
+        <v-dialog v-model="dialog_detailracks" width=750>
+            <v-card>
+                <v-toolbar dark color="menu">
+                    <v-btn icon dark v-on:click="closedialog_detailracks()">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Detail Racks</v-toolbar-title>
+
+                </v-toolbar>
+                <div style='padding:30px'>
+
+                    <v-text-field
+                        v-model="popup_search_detailracks"
+                        append-icon="search"
+                        label="Search"
+                        single-line
+                        hide-details
+                      ></v-text-field>
+                    <v-data-table
+                    disable-initial-sort
+                    :headers="headers_popup_detailracks"
+                    :items="popup_detailracks"
+                    :search="popup_search_detailracks"
+                    class=""
+                    >
+                    <template v-slot:items="props">
+                        <td>{{ props.index + 1 }}</td>
+                        <td>{{ props.item.rack }}</td>
+                        <td>{{ props.item.stock }}</td>
+                    </template>
+                    </v-data-table>
+                </div>
+            </v-card>
+        </v-dialog>
+
+         <!-- POPUP SP -->
+        <v-dialog v-model="dialog_detailsellingprices" width=750>
+            <v-card>
+                <v-toolbar dark color="menu">
+                    <v-btn icon dark v-on:click="closedialog_detailsellingprices()">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Detail Selling Price</v-toolbar-title>
+
+                </v-toolbar>
+                <div style='padding:30px'>
+
+                    <v-text-field
+                        v-model="popup_search_detailsellingprices"
+                        append-icon="search"
+                        label="Search"
+                        single-line
+                        hide-details
+                      ></v-text-field>
+                    <v-data-table
+                    disable-initial-sort
+                    :headers="headers_popup_detailsellingprices"
+                    :items="popup_detailsellingprices"
+                    :search="popup_search_detailsellingprices"
+                    class=""
+                    >
+                    <template v-slot:items="props">
+                        <td>{{ props.index + 1 }}</td>
+                        <td>{{ props.item.warehouse_name }}</td>
+                        <td>{{ props.item.stock_cut_off }}</td>
+                        <td>{{ props.item.category_price_selling_name }}</td>
+                        <td>{{ props.item.price }}</td>
+                        <td>{{ props.item.discount }}</td>
+                        <td>{{ props.item.free ? "Free" : "Not Free" }}</td>
+                    </template>
+                    </v-data-table>
+                </div>
+            </v-card>
+        </v-dialog>
+
+         <!-- POPUP STOCK CARD --> <!-- MASIH DITANYAKAN -->
+        <v-dialog v-model="dialog_detailracks" width=750>
+            <v-card>
+                <v-toolbar dark color="menu">
+                    <v-btn icon dark v-on:click="closedialog_detailracks()">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Detail Racks</v-toolbar-title>
+
+                </v-toolbar>
+                <div style='padding:30px'>
+
+                    <v-text-field
+                        v-model="popup_search_detailracks"
+                        append-icon="search"
+                        label="Search"
+                        single-line
+                        hide-details
+                      ></v-text-field>
+                    <v-data-table
+                    disable-initial-sort
+                    :headers="headers_popup_detailracks"
+                    :items="popup_detailracks"
+                    :search="popup_search_detailracks"
+                    class=""
+                    >
+                    <template v-slot:items="props">
+                        <td>{{ props.index + 1 }}</td>
+                        <td>{{ props.item.rack }}</td>
+                        <td>{{ props.item.stock }}</td>
+                    </template>
+                    </v-data-table>
+                </div>
+            </v-card>
+        </v-dialog>
+
+         <!-- POPUP PRICELIST -->
+        <v-dialog v-model="dialog_detailpricelists" width=750>
+            <v-card>
+                <v-toolbar dark color="menu">
+                    <v-btn icon dark v-on:click="closedialog_detailpricelists()">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Detail Price List</v-toolbar-title>
+
+                </v-toolbar>
+                <div style='padding:30px'>
+
+                    <v-text-field
+                        v-model="popup_search_detailpricelists"
+                        append-icon="search"
+                        label="Search"
+                        single-line
+                        hide-details
+                      ></v-text-field>
+                    <v-data-table
+                    disable-initial-sort
+                    :headers="headers_popup_detailpricelists"
+                    :items="popup_detailpricelists"
+                    :search="popup_search_detailpricelists"
+                    class=""
+                    >
+                    <template v-slot:items="props">
+                        <td>{{ props.index + 1 }}</td>
+                        <td>{{ props.item.supplier }}</td>
+                        <td>{{ props.item.price }}</td>
+                    </template>
+                    </v-data-table>
+                </div>
+            </v-card>
+        </v-dialog>
+
+        <!-- POPUP CREATE EDIT -->
+
+
+        <v-dialog v-model="dialog_createedit">
+            <v-form v-model="valid" ref='formCreateEdit'>
+                <v-card>
                     <v-toolbar dark color="menu">
                         <v-btn icon dark v-on:click="closedialog_createedit()">
                             <v-icon>close</v-icon>
                         </v-btn>
-                        <v-toolbar-title>Add goods</v-toolbar-title>
+                        <v-toolbar-title v-html='id_data_edit == -1 ?"Add Goods":"Edit Goods"'></v-toolbar-title>
 
                     </v-toolbar>
-                    <v-stepper v-model="e6" vertical>
+                    <v-stepper v-model="e6" vertical >
 
                         <!-- ==== STEPPER 1 ==== -->
 
-                        <v-stepper-step :complete="e6 > 1" step="1" editable>
+                        <v-stepper-step :complete="e6 > 1" step="1" >
                             <h3>Goods Data</h3>
                         </v-stepper-step>
 
-                        <v-stepper-content step="1">
+                        <v-stepper-content step="1" editable='id_data_edit != -1'>
                             
                             <v-layout row>
                                 <v-flex xs9>
@@ -38,16 +189,17 @@
                             
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-text-field class="pa-2" :rules="this.$list_validation.max" v-model='input.desc' label="Description" counter=191 required></v-text-field>
+                                    <v-textarea
+                                      label="Description"
+                                      v-model='input.desc'
+                                      :rules='this.$list_validation.max'
+                                    ></v-textarea>
+                                    
                                 </v-flex>
                             </v-layout>
 
                             <v-layout row>
-                                <v-flex xs6>
-                                    <v-text-field class="pa-2" :rules="this.$list_validation.numeric_req" v-model='input.margin' label="Margin" required></v-text-field>
-                                </v-flex>
-                                
-                                <v-flex xs6>
+                                <v-flex xs12>
                                     <v-text-field class="pa-2" :rules="this.$list_validation.numeric_req" v-model='input.status' label="Status" required></v-text-field>
                                 </v-flex>
                             </v-layout>
@@ -89,10 +241,14 @@
                             </v-layout>
 
                             <v-layout row>
-                                <v-flex xs12>
+                                <v-flex xs6>
+                                    <v-text-field class='pa-2' :rules="this.$list_validation.numeric" v-model='input.avgprice' label="AVG Price" required></v-text-field>
+                                </v-flex>
+                                <v-flex xs6>
                                     <v-text-field class='pa-2' :rules="this.$list_validation.numeric" v-model='input.tax' label="Tax" required></v-text-field>
                                 </v-flex>
                             </v-layout>
+
 
                             <v-layout row>
                                 <v-flex xs12>
@@ -106,17 +262,100 @@
                                 </v-flex>
                             </v-layout>
 
+                            <v-layout row>
+                                <v-flex xs12>
+                                    <v-text-field class="pa-2" :rules="this.$list_validation.numeric_req" v-model='input.margin' label="Margin" required></v-text-field>
+                                </v-flex>
+                            </v-layout>
                                 
                             <v-btn color='primary' v-on:click='e6=2'>Continue</v-btn>
                                 
                             
                         </v-stepper-content>
 
+
+
                         <!-- ==== STEPPER 2 ==== -->
 
-                        <v-stepper-step :complete="e6 > 2" step="2" editable><h3>Goods Category</h3></v-stepper-step>
+                        <v-stepper-step :complete="e6 > 2" step="2"><h3>Price Selling</h3></v-stepper-step>
 
                         <v-stepper-content step="2">
+
+
+                            <v-select v-model='temp_input.price_sellings.warehouse' :items="ref_input.warehouse" item-text='name' return-object label="Select Warehouse"></v-select>
+
+                            <v-text-field v-model="temp_input.price_sellings.stock_cut_off" label="Stock Cut Off" required></v-text-field>
+
+                            <v-select v-model='temp_input.price_sellings.categorypriceselling' :items="ref_input.categorypriceselling" item-text='name' return-object label="Select Category Price Selling"></v-select>
+    
+                            <v-text-field v-model="temp_input.price_sellings.price" disabled label="Price" required></v-text-field>                            
+                            <v-select v-model='temp_input.price_sellings.free' :items="ref_input.free" item-text='name' return-object label="Free"></v-select>
+
+                            
+                            
+                            <v-toolbar flat color="white" >
+                                
+                                <v-spacer></v-spacer>
+                                <v-btn v-if='temp_input.id_edit_price_sellings != -1' color="red" dark v-on:click='table_priceselling().canceledit()'>
+                                    Cancel
+                                </v-btn>
+                                
+                                <v-btn color="primary" dark v-on:click='table_priceselling().save()' v-html='temp_input.id_edit_price_sellings == -1?"Add to Table":"Save Changes"'>
+                                </v-btn>
+                            </v-toolbar>
+                            
+
+
+                            <v-toolbar flat color="white" >
+                                <v-toolbar-title>Price Sellings Data</v-toolbar-title>
+                                
+                            </v-toolbar>
+                            
+
+                            <v-data-table
+                                disable-initial-sort
+                                :headers="[
+                                {text:'No', value:'no'},
+                                {text:'Warehouse',value:'warehouse'},
+                                {text:'Stock Cut Off',value:'stock_cut_off'},
+                                {text:'Category',value:'category'},
+                                {text:'Price',value:'price'},
+                                {text:'Free',value:'free'},
+                                {text:'Action',align:'left',width:'15%',sortable:false}
+                                ]"
+                                :items="input.price_sellings"
+                                class=""
+                            >
+
+                                <template v-slot:items="props">
+                                    <td>{{ props.index + 1 }}</td>
+                                    <td>{{ props.item.warehouse.name }}</td>
+                                    <td>{{ props.item.stock_cut_off }}</td>
+                                    <td>{{ props.item.categorypriceselling.name }}</td>
+                                    <td>{{ props.item.price }}</td>
+                                    <td>{{ props.item.free.name }}</td>
+                                    <td>
+                                        <v-btn class='button-action' v-on:click='table_priceselling().showData(props.index)' color="primary" fab depressed small dark v-on="on">
+                                            <v-icon small>edit</v-icon>
+                                        </v-btn>
+                                        <v-btn class='button-action' v-on:click='table_priceselling().delete(props.index)' color="red" fab small dark depressed>
+                                            <v-icon small>delete</v-icon>
+                                        </v-btn>
+
+                                    </td>
+                                </template>
+                            </v-data-table>
+                            <v-btn color='primary' v-on:click='e6=3'>Continue</v-btn>
+
+                        </v-stepper-content>
+
+
+
+                        <!-- ==== STEPPER 3 ==== -->
+
+                        <v-stepper-step :complete="e6 > 3" step="3"><h3>Goods Category</h3></v-stepper-step>
+
+                        <v-stepper-content step="3">
                             <v-combobox
                                 v-model='input.category_goods'
                                 :items="ref_input.category"
@@ -134,20 +373,20 @@
                                         <v-chip
                                           :selected="data.selected"
                                           close
-                                          v-on:input="removeChip(data.item)"
+                                          v-on:input="table_category().removeChip(data.item)"
                                         >
                                             <strong>{{ data.item.name }}</strong>
                                         </v-chip>
                                     </template>
                             </v-combobox>
-                            <v-btn color='primary' v-on:click='e6=3'>Continue</v-btn>
+                            <v-btn color='primary' v-on:click='e6=4'>Continue</v-btn>
                         </v-stepper-content>
 
-                        <!-- ==== STEPPER 3 ==== -->
+                        <!-- ==== STEPPER 4 ==== -->
 
-                        <v-stepper-step :complete="e6 > 3" step="3" editable><h3>Goods Attribute</h3></v-stepper-step>
+                        <v-stepper-step :complete="e6 > 4" step="4" ><h3>Goods Attribute</h3></v-stepper-step>
 
-                        <v-stepper-content step="3">
+                        <v-stepper-content step="4">
 
 
                             <v-select v-model='temp_input.attribute_goods.attribute' :items="ref_input.attribute" item-text='name' return-object label="Select Attribute"></v-select>
@@ -200,15 +439,15 @@
                                     </td>
                                 </template>
                             </v-data-table>
-                            <v-btn color='primary' v-on:click='e6=4'>Continue</v-btn>
+                            <v-btn color='primary' v-on:click='e6=5'>Continue</v-btn>
 
                         </v-stepper-content>
 
-                        <!-- ==== STEPPER 4 ==== -->
+                        <!-- ==== STEPPER 5 ==== -->
 
-                        <v-stepper-step step="4" editable><h3>Goods Material</h3></v-stepper-step>
+                        <v-stepper-step step="5" :complete="e6 > 5" ><h3>Goods Material</h3></v-stepper-step>
 
-                        <v-stepper-content step="4">
+                        <v-stepper-content step="5">
                             <!-- <v-select v-model='temp_input.material_goods.name' :items="ref_input.material" item-text='name' return-object label="Select Material"></v-select> -->
                             
                             <v-text-field v-model="temp_input.material_goods.name" label="Name" required></v-text-field>
@@ -263,11 +502,72 @@
                                     </td>
                                 </template>
                             </v-data-table>
+                            <v-btn color='primary' v-on:click='e6=6'>Continue</v-btn>
+                        </v-stepper-content>
+
+                        <!-- ==== STEPPER 6 ==== -->
+
+                        <v-stepper-step :complete="e6 > 6" step="6"><h3>Price List</h3></v-stepper-step>
+
+                        <v-stepper-content step="6">
+
+
+                            <v-select v-model='temp_input.pricelists.supplier' :items="ref_input.supplier" item-text='name_company' return-object label="Select Supplier"></v-select>
                             
+
+
+                            <v-text-field v-model="temp_input.pricelists.price" label="Value" required></v-text-field>
+                            
+                            <v-toolbar flat color="white" >
+                                
+                                <v-spacer></v-spacer>
+                                <v-btn v-if='temp_input.id_edit_pricelists != -1' color="red" dark v-on:click='table_pricelist().canceledit()'>
+                                    Cancel
+                                </v-btn>
+                                
+                                <v-btn color="primary" dark v-on:click='table_pricelist().save()' v-html='temp_input.id_edit_pricelists == -1?"Add to Table":"Save Changes"'>
+                                </v-btn>
+                            </v-toolbar>
+                            
+
+
+                            <v-toolbar flat color="white" >
+                                <v-toolbar-title>Pricelist Data</v-toolbar-title>
+                                
+                            </v-toolbar>
+                            
+
+                            <v-data-table
+                                disable-initial-sort
+                                :headers="[
+                                {text:'Supplier', value:'supplier'},
+                                {text:'Price',value:'price',align:'right'},
+                                {text:'Action',align:'left',width:'15%',sortable:false}
+                                ]"
+                                :items="input.pricelists"
+                                class=""
+                            >
+
+                                <template v-slot:items="props">
+                                    <td>{{ props.item.supplier.name_company }}</td>
+                                    <td class="text-xs-right">{{ props.item.price }}</td>
+                                    <td>
+                                        <v-btn class='button-action' v-on:click='table_pricelist().showData(props.index)' color="primary" fab depressed small dark v-on="on">
+                                            <v-icon small>edit</v-icon>
+                                        </v-btn>
+                                        <v-btn class='button-action' v-on:click='table_pricelist().delete(props.index)' color="red" fab small dark depressed>
+                                            <v-icon small>delete</v-icon>
+                                        </v-btn>
+
+                                    </td>
+                                </template>
+                            </v-data-table>
+                            
+
                         </v-stepper-content>
                         
-                        <v-btn v-on:click='save_goods()' >submit</v-btn>
-                        
+                        <v-btn v-on:click='save_data()' >submit</v-btn>
+                        {{input}}
                         
                         
                     </v-stepper>
@@ -276,31 +576,72 @@
         </v-dialog>
 
         <v-toolbar flat color="white">
-            <v-toolbar-title>goods Data</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark>
-                Add Data
-            </v-btn>
+            <v-toolbar-title>Goods Data</v-toolbar-title>
+            
+            
         </v-toolbar>
+        <v-layout row class='bgwhite'>
+            <v-flex xs3>
+                <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='marginleft30'>
+                    Add Data
+                </v-btn>
+            </v-flex>
+            <v-flex xs12 class="text-xs-right">
+
+                <v-text-field
+                    class='marginhorizontal10 searchwidth d-inline-block'
+                    v-model="search_data"
+                    append-icon="search"
+                    label="Search"
+                    single-line
+                    hide-details
+                ></v-text-field>
+            </v-flex>
+            
+        </v-layout>
+        
         <v-data-table
             disable-initial-sort
             :headers="headers"
-            :items="goods"
+            :items="data_table"
+            :search="search_data"
             class=""
         >
         <template v-slot:items="props">
+            <td>{{ props.index + 1 }}</td>
             <td>{{ props.item.name }}</td>
             <td class="text-xs-right">{{ props.item.code }}</td>
             <td class="text-xs-right">{{ props.item.value }}</td>
             <td class="text-xs-right">{{ props.item.status }}</td>
             <td class="text-xs-right">{{ props.item.last_buy_pricelist }}</td>
+            <td class="text-xs-right">{{ props.item.avg_price }}</td>
+            <td class="text-xs-right">{{ props.item.stock }}</td>
+            <td class="text-xs-right">{{ props.item.avg_price * props.item.stock }}</td>
             <td>
-                <v-btn class='button-action' v-on:click='get_data_before_edit(props.index)' color="primary" fab depressed small dark v-on="on">
-                    <v-icon small>edit</v-icon>
-                </v-btn>
-                <v-btn class='button-action' v-on:click='delete_goods(props.index)' color="red" fab small dark depressed>
-                    <v-icon small>delete</v-icon>
-                </v-btn>
+                <div class="text-xs-left">
+                    <v-menu offset-y>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          color="primary"
+                          dark
+                          v-on="on"
+                        >
+                          Action
+                        </v-btn>
+                      </template>
+                      <v-list>
+                        <v-list-tile
+                          v-for="(item, index) in action_items"
+                          :key="index"
+                          v-on:click="action_change(props.item.id,index)"
+                          
+                        >
+                          <v-list-tile-title>{{ item }}</v-list-tile-title>
+                        </v-list-tile>
+                      </v-list>
+                    </v-menu>
+                </div>
+                
 
             </td>
         </template>
@@ -310,17 +651,36 @@
 
 <script>
 import axios from 'axios'
+import mxCrudChildForm from '../mixin/mxCrudChildForm';
 export default {
+    errorCaptured (err, vm, info) {
+    this.error = `${err.stack}\n\nfound in ${info} of component`
+    return false
+  },
     data () {
         return {
+            name_table:'goods',
+            header_api:{
+                'Accept': 'application/json',
+                'Content-type': 'multipart/form-data'
+            },
+
+            action_items: ['Edit', 'Rack', 'SP', 'Stock Card', 'Supplier', 'COGS', 'Delete'],
             
+            
+
             valid:false,
             on:false,
-            dialog_createedit:false,
-            e6:1,
-            dialog_stock:false,
 
-            idx_data_edit:-1,
+            dialog_createedit:false,
+            dialog_detailracks:false,
+            dialog_detailsellingprices:false,
+            dialog_detailpricelists:false,
+            dialog_detailstockcards:false,
+
+            e6:1,
+
+            id_data_edit:-1,
 
             preview:{
                 thumbnail:'',
@@ -340,17 +700,22 @@ export default {
                 thumbnail_filename:'', //tidak ikut dikirim ke server (cuman muncul di form)
                 thumbnail_file:'', //ini akan dikirim ke server
                 avgprice_status:'',
+                avgprice:'',
                 tax:'',
                 unit_id:'', 
                 cogs_id:'',
                 category_goods:[],
                 attribute_goods:[],
-                material_goods:[]
+                material_goods:[],
+                price_sellings:[],
+                pricelists:[],
             },
 
             temp_input:{
                 id_edit_attribute_goods:-1, //artinya add data,
                 id_edit_material_goods:-1, //artinya add data,
+                id_edit_price_sellings:-1, //artinya add data
+                id_edit_pricelists:-1, //artinya add data
                 attribute_goods:
                 {
                     attribute:
@@ -365,7 +730,32 @@ export default {
                    
                     total:null,
                     adjust:null,
-                }
+                },
+                price_sellings:
+                {
+                    warehouse:
+                    {
+                        id:null,
+                        name:null
+                    },
+                    stock_cut_off:null,
+                    categorypriceselling:
+                    {
+                        id:null,
+                        name:null
+                    },
+                    price:null,
+                    free:null,
+                },
+                pricelists:
+                {
+                    supplier:
+                    {
+                        id:null,
+                        name_company:null,
+                    },
+                    price:null,
+                },
             },
 
 
@@ -404,39 +794,308 @@ export default {
                     {id:4,name:'payung cantik'},
                     {id:3,name:'gelas cantik'},
                 ],
-
-                //statis
                 avgprice_status:[
                     {value:1,name:'True'},
                     {value:0,name:'False'},
+                ],
+                free:[
+                    {value:1,name:'True'},
+                    {value:2,name:'False'},
+                ],
+                warehouse:[
+                    {id:3,name:'coba warehouse1'},
+                    {id:4,name:'coba warehouse2'},
+                ],
+                categorypriceselling:[
+                    {id:3,name:'coba categorypriceselling1'},
+                    {id:4,name:'coba categorypriceselling2'},
+                ],
+                supplier:[
+                    {id:3,name_company:'Borobudur Silver'},
+                    {id:4,name_company:'Cocoon'},
                 ]
+
             },
             
 
             
 
             headers: [
+                { text: 'No', value: 'no'},
                 { text: 'Name', value: 'name'},
                 { text: 'Code', value: 'code', align:'right' },
                 { text: 'Value', value: 'value', align:'right' },
                 { text: 'Status', value: 'status', align:'right' },
                 { text: 'Last Buy Pricelist', value: 'last_buy_pricelist', align:'right' },
-                { text: 'Action', align:'left',width:'15%',sortable:false},
+                { text: 'AVGPrice', value: 'avgprice', align:'right' },
+                { text: 'Stock', value: 'stock', align:'right' },
+                { text: 'Inventory Value', value: 'inventory_value', align:'right' },
+                { text: 'Action', align:'left',sortable:false, width:'15%'},
+            ],
+
+            headers_popup_detailracks : [
+                { text: 'No', value:'no'},
+                { text: 'Racks', value:'rack'},
+                { text: 'Stock', value:'stock'},
+
+            ],
+
+            headers_popup_detailsellingprices : [
+                { text: 'No', value:'no'},
+                { text: 'Warehouse', value:'warehouse_name'},
+                { text: 'Stock Cut Off', value:'stock_cut_off'},
+                { text: 'Category', value:'category_price_selling_name'},
+                { text: 'Price', value:'price'},
+                { text: 'Discount', value:'discount'},
+                { text: 'Free', value:'free'},
+
+            ],
+
+            headers_popup_detailstockcards : [
+
+
+            ],
+
+            headers_popup_detailpricelists : [
+                { text: 'No', value:'no'},
+                { text: 'Supplier', value:'supplier'},
+                { text: 'Price', value:'price'},
+
+
             ],
 
 
-            goods: []
+            data_table:[],
+            search_data: null,
+
+            popup_detailracks :
+            [
+                {
+                    rack:'meja',
+                    stock:12,
+                },
+                {
+                    rack:'kursi',
+                    stock:13,
+                },
+                {
+                    rack:'indomie',
+                    stock:10,
+                },
+            ],
+            popup_search_detailracks:null,
+
+            popup_detailsellingprices :
+            [
+                {
+                    warehouse_name:'warehouse1',
+                    stock_cut_off:1000,
+                    category_price_selling_name:'category1',
+                    price:10000,
+                    discount:100,
+                    free:1
+                },
+                {
+                    warehouse_name:'warehouse2',
+                    stock_cut_off:1000,
+                    category_price_selling_name:'category1',
+                    price:10000,
+                    discount:100,
+                    free:1
+                },
+                {
+                    warehouse_name:'warehouse3',
+                    stock_cut_off:1000,
+                    category_price_selling_name:'category2',
+                    price:10000,
+                    discount:100,
+                    free:0
+                },
+            ],
+            popup_search_detailsellingprices:null,
+
+            popup_detailstockcards :
+            [
+               
+            ],
+            popup_search_detailstockcards:null,
+
+            popup_detailpricelists :
+            [
+                {
+                    supplier:'supplier1',
+                    price:12000,
+                },
+                {
+                    supplier:'supplier2',
+                    price:130000,
+                },
+                {
+                    supplier:'supplier3',
+                    price:10000,
+                },
+            ],
+            popup_search_detailpricelists:null,
         }
     },
+    computed: {
+        com_last_buy_pricelist()
+        {
+            return this.input.last_buy_pricelist;
+        },
+        com_margin()
+        {
+            return this.input.margin;
+        },
+    },
+    watch: {
+        com_last_buy_pricelist()
+        {
+
+            this.temp_input.price_sellings.price = parseInt(this.input.last_buy_pricelist) + parseInt(this.input.margin);
+        },
+        com_margin()
+        {
+            this.temp_input.price_sellings.price = parseInt(this.input.last_buy_pricelist) + parseInt(this.input.margin);
+        }
+        
+    },
     methods: {
+        action_change(id_datatable,idx_action)
+        {
+            
+            //console.log('action_change');
+            //console.log(this.action_selected);
+            // console.log(this.action_selected == 'Rack');
+            if(idx_action == 0)
+            {
+                this.get_data_before_edit(id_datatable);
+            }
+            else if(idx_action == 1)
+            {
+                
+                this.opendialog_detailracks(id_datatable);
+            }
+            else if(idx_action == 2)
+            {
+                this.opendialog_detailsellingprices(id_datatable);
+            }
+            else if(idx_action == 3)
+            {
+                //opendialog_detailstockcards(id_datatable);
+            }
+            else if(idx_action == 4)
+            {
+                this.opendialog_detailpricelists(id_datatable);
+            }
+            else if(idx_action == 5)
+            {
+
+            }
+            else if(idx_action == 6)
+            {
+
+                this.delete_data(id_datatable);
+            }
+            //this.action_selected[id_datatable] = null;
+        },
+        table_pricelist()
+        {
+            var self = this;
+            return{
+                showData(idx){ 
+                    self.temp_input.pricelists = JSON.parse(JSON.stringify(self.input.pricelists[idx]));
+                    self.temp_input.id_edit_pricelists = idx;
+                },
+                clearTempInput(){
+                    for (var key in self.temp_input.pricelists)
+                    {
+                        if(self.temp_input.pricelists[key])
+                            self.temp_input.pricelists[key] = null;
+                    }
+                },
+                save(){ //bisa edit / add
+                    var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_pricelists));
+                    if(id_edit == -1)
+                    {
+                        var temp = JSON.parse(JSON.stringify(self.temp_input.pricelists));
+                    
+                        self.input.pricelists.push(temp);
+                        
+                    }
+                    else
+                    {
+                        self.input.pricelists[id_edit] = JSON.parse(JSON.stringify(self.temp_input.pricelists));
+                        self.temp_input.id_edit_pricelists = -1;
+
+                    }
+                    this.clearTempInput();
+                },
+                canceledit(){
+                    this.clearTempInput();
+                    self.temp_input.id_edit_pricelists = -1;
+                },
+                delete(idx)
+                {
+                    self.input.pricelists.splice(idx,1);
+                }
+
+
+
+            }
+        },
+        table_priceselling()
+        {
+            var self = this;
+            return{
+                showData(idx){ 
+                    self.temp_input.price_sellings = JSON.parse(JSON.stringify(self.input.price_sellings[idx]));
+                    self.temp_input.id_edit_price_sellings = idx;
+                },
+                clearTempInput(){
+                    for (var key in self.temp_input.price_sellings)
+                    {
+
+                        if(self.temp_input.price_sellings[key] && key != "price")
+                            self.temp_input.price_sellings[key] = null;
+                    }
+                },
+                save(){ //bisa edit / add
+                    var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_price_sellings));
+                    if(id_edit == -1)
+                    {
+                        var temp = JSON.parse(JSON.stringify(self.temp_input.price_sellings));
+                    
+                        self.input.price_sellings.push(temp);
+                        
+                    }
+                    else
+                    {
+                        self.input.price_sellings[id_edit] = JSON.parse(JSON.stringify(self.temp_input.price_sellings));
+                        self.temp_input.id_edit_price_sellings = -1;
+
+                    }
+                    this.clearTempInput();
+                },
+                canceledit(){
+                    this.clearTempInput();
+                    self.temp_input.id_edit_price_sellings = -1;
+                },
+                delete(idx)
+                {
+                    self.input.price_sellings.splice(idx,1);
+                }
+
+
+
+            }
+        },
+
         table_attribute()
         {
             var self = this;
             return{
-
-                
-                showData(idx){
-                    
+                showData(idx){ 
                     self.temp_input.attribute_goods = JSON.parse(JSON.stringify(self.input.attribute_goods[idx]));
                     self.temp_input.id_edit_attribute_goods = idx;
                 },
@@ -446,7 +1105,6 @@ export default {
                         if(self.temp_input.attribute_goods[key])
                             self.temp_input.attribute_goods[key] = null;
                     }
-                    
                 },
                 save(){ //bisa edit / add
                     var id_edit = JSON.parse(JSON.stringify(self.temp_input.id_edit_attribute_goods));
@@ -534,15 +1192,23 @@ export default {
             }
         },
 
-        removeChip(item){
-            this.input.category_goods.splice(this.input.category_goods.indexOf(item), 1);
-            this.input.category_goods = [...this.input.category_goods];
+        table_category()
+        {
+            var self = this;
+            return{
+                removeChip(item){
+                    self.input.category_goods.splice(self.input.category_goods.indexOf(item), 1);
+                    self.input.category_goods = [...self.input.category_goods];
+                },
+            }
         },
+
+        
         checkItemInList(){
             var temp = this.input.category_goods;
             if (!temp[temp.length - 1].hasOwnProperty('id')) //artinya cuman asal enter, tanpa ambil item dari ref_input
             {
-                this.removeChip(temp[temp.length - 1]);
+                this.table_category().removeChip(temp[temp.length - 1]);
             }
         },
 
@@ -580,46 +1246,109 @@ export default {
         pickFile () {
             var el = document.getElementById('btn_upload_thumbnail').click();
         },
+
+
+        
+        closedialog_detailracks(){
+            this.dialog_detailracks = false;
+        },
+        opendialog_detailracks(id_edit_popup_detailracks)
+        {
+
+            this.dialog_detailracks = true;
+            this.get_popup_detailracks(id_edit_popup_detailracks);
+
+        },
+
+        closedialog_detailsellingprices(){
+            this.dialog_detailsellingprices = false;
+        },
+        opendialog_detailsellingprices(id_edit_popup_detailsellingprices)
+        {
+
+            this.dialog_detailsellingprices = true;
+            this.get_popup_detailsellingprices(id_edit_popup_detailsellingprices);
+
+        },
+
+        closedialog_detailstockcards(){
+            this.dialog_detailstockcards = false;
+        },
+        opendialog_detailstockcards(id_edit_popup_detailstockcards)
+        {
+
+            this.dialog_detailstockcards = true;
+            this.get_popup_detailstockcards(id_edit_popup_detailstockcards);
+
+        },
+
+        closedialog_detailpricelists(){
+            this.dialog_detailpricelists = false;
+        },
+        opendialog_detailpricelists(id_edit_popup_detailpricelists)
+        {
+
+            this.dialog_detailpricelists = true;
+            this.get_popup_detailpricelists(id_edit_popup_detailpricelists);
+
+        },
+
+
         
 
-        closedialog_createedit(){
-            this.dialog_createedit = false;
-        },
-        opendialog_createedit(idx_data_edit,r){
-            if(idx_data_edit != -1)
-            {
-                this.idx_data_edit = idx_data_edit;
-                this.convert_data_input_goods(r);
-                
-            }
 
-            this.dialog_createedit = true;
-        },
         clear_input(){
-            for (var key in self.input)
+            this.$refs.formCreateEdit.resetValidation();
+            this.preview.thumbnail = '';
+            for (var key in this.input)
             {
-                if(self.input[key])
-                    self.input[key] = null;
+                if(this.input[key])
+                {
+                    if(Array.isArray(this.input[key]))
+                    {
+                        this.input[key] = [];     
+                    }
+                    else
+                    {
+                        this.input[key] = "";
+                    }
+                    
+                    
+                }
+                    
             }
+            //this.$refs.formCreateEdit.reset();
+
         },
         
         showTable(r)
         {
             //console.log(r.data.items.goods[0]);
 
-            this.goods = r.data.items.goods;
+            this.data_table = r.data.items.goods;
+
+            
+            
         },
         
         fill_select_master_data(r)
         {
             //console.log(r.data.items[0].units);
-            this.ref_input.unit = r.data.items[0].units;
-            this.ref_input.cogs = r.data.items[0].cogs;
-            this.ref_input.category = r.data.items[0].categories;
-            this.ref_input.attribute = r.data.items[0].attributes;
-            this.ref_input.material = r.data.items[0].materials;
+            console.log(r.data.items.units);
+            this.ref_input.unit = r.data.items.units;
+            this.ref_input.cogs = r.data.items.cogs;
+            this.ref_input.category = r.data.items.categories;
+            this.ref_input.attribute = r.data.items.attributes;
+            this.ref_input.warehouse = r.data.items.warehouses;
+            this.ref_input.categorypriceselling = r.data.items.category_price_sellings;
+            //hapus yang tidak penting
+            delete r.data.items.suppliers.name_owner;
+            delete r.data.items.suppliers.name_pic;
+            delete r.data.items.suppliers.name_sales;
+            this.ref_input.supplier = r.data.items.suppliers;
+            //this.ref_input.material = r.data.items[0].materials;
         },
-        convert_data_input_goods(r)
+        convert_data_input(r)
         {
             var temp_r = r.data.items.goods;
             this.input.name = temp_r.name;
@@ -630,13 +1359,15 @@ export default {
             this.input.status = temp_r.status;
             this.input.last_buy_pricelist = temp_r.last_buy_pricelist;
             this.input.barcode_master = temp_r.barcode_master;
-            this.input.avgprice_status = temp_r.avgprice_status;
+            this.input.avgprice_status = temp_r.avg_price_status;
+            this.input.avgprice = temp_r.avg_price;
             this.input.tax = temp_r.tax;
             this.input.unit_id = temp_r.unit_id;
             this.input.cogs_id = temp_r.cogs_id;
             this.preview.thumbnail = temp_r.thumbnail;
 
-            console.log(temp_r.category_goods);
+            console.log('testing convert_data_input_goods');
+            console.log(temp_r);
             this.input.category_goods = temp_r.category_goods;
 
             for(var i = 0;i<temp_r.attribute_goods.length;i++)
@@ -649,13 +1380,58 @@ export default {
                     value:temp_r.attribute_goods[i].value,
                 })
             }
+
+            for(var i = 0;i<temp_r.price_sellings.length;i++)
+            {  
+                var temp_name_free = '';
+                if(temp_r.price_sellings[i].free == 1)
+                {
+                    temp_name_free = 'true';
+                }
+                else
+                {
+                    temp_name_free = 'false';
+                }
+                this.input.price_sellings.push({
+                    id:temp_r.price_sellings[i].id,
+                    warehouse:{
+                        id: temp_r.price_sellings[i].warehouse_id,
+                        name: temp_r.price_sellings[i].warehouse_name,
+                    },
+                    stock_cut_off:temp_r.price_sellings[i].stock_cut_off,
+                    categorypriceselling:
+                    {
+                        id: temp_r.price_sellings[i].category_price_selling_id,
+                        name: temp_r.price_sellings[i].category_price_selling_name,
+                    },
+                    price:temp_r.price_sellings[i].price,
+                    free:
+                    {
+                        value: temp_r.price_sellings[i].free,
+                        name:temp_name_free,
+                    }
+                })
+            }
+
+            for(var i = 0;i<temp_r.pricelists.length;i++)
+            {  
+                this.input.pricelists.push({
+                    supplier:{
+                        id: temp_r.pricelists[i].id,
+                        name_company: temp_r.pricelists[i].name_company,
+                    },
+                    price:temp_r.pricelists[i].price,
+                })
+            }
+
+
             this.input.material_goods = temp_r.material_goods;
 
             
             this.input_before_edit = JSON.parse(JSON.stringify(this.input));
             
         },
-        prepare_data_form_goods()
+        prepare_data_form()
         {
             //prepare data selalu dari this.input, tapi bandingkan dulu dengan this.input_before_edit
             
@@ -664,7 +1440,7 @@ export default {
 
 
 
-            if(this.idx_data_edit != -1) //jika sedang diedit
+            if(this.id_data_edit != -1) //jika sedang diedit
             {
 
                 //data yang harus dikirim saat update :
@@ -685,11 +1461,12 @@ export default {
                 if(this.input.barcode_master != this.input_before_edit.barcode_master) formData.append('barcode_master', this.input.barcode_master);
                 if(this.input.thumbnail_file != this.input_before_edit.thumbnail_file) formData.append('thumbnail', this.input.thumbnail_file); 
                 if(this.input.avgprice_status != this.input_before_edit.avgprice_status) formData.append('avgprice_status', this.input.avgprice_status);
+                if(this.input.avgprice != this.input_before_edit.avgprice) formData.append('avgprice', this.input.avgprice);
                 if(this.input.tax != this.input_before_edit.tax) formData.append('tax', this.input.tax);
                 if(this.input.unit_id != this.input_before_edit.unit_id) formData.append('unit_id', this.input.unit_id);
                 if(this.input.cogs_id != this.input_before_edit.cogs_id) formData.append('cogs_id', this.input.cogs_id);
 
-                //2. kirim data goods_attribute dan goods_category
+                //2. kirim data goods_attribute, goods_category, pricelist
                 for(var i = 0;i<this.input.category_goods.length;i++)
                 {
                     formData.append('category_goods[' + i + '][category_id]',this.input.category_goods[i].id);
@@ -700,6 +1477,14 @@ export default {
                     console.log(this.input.attribute_goods[i]);
                     formData.append('attribute_goods[' + i + '][attribute_id]',this.input.attribute_goods[i].attribute.id);
                     formData.append('attribute_goods[' + i + '][value]',this.input.attribute_goods[i].value);
+
+                }
+
+                for(var i = 0;i<this.input.pricelists.length;i++)
+                {
+                    
+                    formData.append('pricelists[' + i + '][supplier_id]',this.input.pricelists[i].supplier.id);
+                    formData.append('pricelists[' + i + '][price]',this.input.pricelists[i].price);
 
                 }
 
@@ -717,9 +1502,10 @@ export default {
                     var temp = this.input.material_goods[i];
                     if(temp.id == null)
                     {
-                        formData.append('material_goods_new[' + counteridx + '][name]', temp.name);
-                        formData.append('material_goods_new[' + counteridx + '][adjust]', temp.adjust);
-                        formData.append('material_goods_new[' + counteridx + '][total]', temp.total);
+                        formData.append('material_goods[' + counteridx + '][name]', temp.name);
+                        formData.append('material_goods[' + counteridx + '][adjust]', temp.adjust);
+                        formData.append('material_goods[' + counteridx + '][total]', temp.total);
+                        formData.append('material_goods[' + counteridx + '][type]', '1');
                         counteridx++;
                     }
                     else
@@ -741,10 +1527,11 @@ export default {
 
                         if(edittrue)
                         {
-                            formData.append('material_goods_update[' + counteridx + '][id]', temp.id);
-                            formData.append('material_goods_update[' + counteridx + '][name]', temp.name);
-                            formData.append('material_goods_update[' + counteridx + '][adjust]', temp.adjust);
-                            formData.append('material_goods_update[' + counteridx + '][total]', temp.total);
+                            formData.append('material_goods[' + counteridx + '][id]', temp.id);
+                            formData.append('material_goods[' + counteridx + '][name]', temp.name);
+                            formData.append('material_goods[' + counteridx + '][adjust]', temp.adjust);
+                            formData.append('material_goods[' + counteridx + '][total]', temp.total);
+                            formData.append('material_goods[' + counteridx + '][type]', '0');
                             counteridx++;
                         }
 
@@ -767,19 +1554,99 @@ export default {
 
                     if(deletetrue)
                     {
-                        formData.append('material_goods_delete[' + counteridx + '][id]', this.input_before_edit.material_goods[i].id);
+                        formData.append('material_goods[' + counteridx + '][id]', this.input_before_edit.material_goods[i].id);
+                        formData.append('material_goods[' + counteridx + '][type]', '-1');
                         counteridx++;
                     }
                 }
 
-                //4. tambahin is_image_deleted
+                
+                //4. kirim data price selling yang berubah, ditambah, dan dihapus
+                
+                //cek di input cocokin dengan input_before_edit
+                //1. cek apakah ada id nya atau tidak, jika tidak memiliki id, pasti itu tambah baru
+                //2. jika punya id, cocokan dengan input_before_edit, jika sama berarti tidak diedit, jika beda berarti diedit
+
+                //temp adalah data dari input
+                //temp2 adalah data dari input_before_edit
+                var counteridx = 0;
+                for(var i = 0;i<this.input.price_sellings.length;i++)
+                {
+                    var temp = this.input.price_sellings[i];
+                    if(temp.id == null)
+                    {
+                        formData.append('price_sellings[' + counteridx + '][warehouse_id]', temp.warehouse.id);
+                        formData.append('price_sellings[' + counteridx + '][stock_cut_off]', temp.stock_cut_off);
+                        formData.append('price_sellings[' + counteridx + '][category_price_selling_id]', temp.categorypriceselling.id);
+                        formData.append('price_sellings[' + counteridx + '][price]', temp.price);
+                        formData.append('price_sellings[' + counteridx + '][free]', temp.free.value);
+                        formData.append('price_sellings[' + counteridx + '][type]', '1');
+                        counteridx++;
+                    }
+                    else
+                    {
+                        //cocokan dengan input_before_edit
+                        var edittrue = false;
+                        for(var j = 0;j<this.input_before_edit.price_sellings.length;j++)
+                        {
+                            var temp2 = this.input_before_edit.price_sellings[i];
+                            if(temp.id == temp2.id)
+                            {
+                                if(temp.warehouse.id != temp2.warehouse.id || temp.stock_cut_off != temp2.stock_cut_off || temp.categorypriceselling.id != temp2.categorypriceselling.id || temp.price != temp2.price || temp.free != temp2.free) //jika ada salah satu saja yang berbeda, maka ini pasti diedit
+                                {
+                                    edittrue = true;
+                                }
+                                break;
+                            }
+                        }
+
+                        if(edittrue)
+                        {
+                            formData.append('price_sellings[' + counteridx + '][id]', temp.id);
+                            formData.append('price_sellings[' + counteridx + '][warehouse_id]', temp.warehouse.id);
+                            formData.append('price_sellings[' + counteridx + '][stock_cut_off]', temp.stock_cut_off);
+                            formData.append('price_sellings[' + counteridx + '][category_price_selling_id]', temp.categorypriceselling.id);
+                            formData.append('price_sellings[' + counteridx + '][price]', temp.price);
+                            formData.append('price_sellings[' + counteridx + '][free]', temp.free.value);
+                            formData.append('price_sellings[' + counteridx + '][type]', '0');
+                            counteridx++;
+                        }
+
+                    }
+                }
+
+                //cek di input_before_edit cocokin dengan input
+                //1. jika ada data dengan id yang tidak ada di data input, berarti data tersebut pasti dihapus
+                for(var i = 0;i<this.input_before_edit.price_sellings.length;i++)
+                {
+                    var deletetrue = true;
+                    for(var j=0;j<this.input.price_sellings.length;j++)
+                    {
+                        if(this.input.price_sellings[j].id == this.input_before_edit.price_sellings[i].id)
+                        {
+                            deletetrue = false;
+                            break;
+                        }
+                    }
+
+                    if(deletetrue)
+                    {
+                        formData.append('price_sellings[' + counteridx + '][id]', this.input_before_edit.price_sellings[i].id);
+                        formData.append('price_sellings[' + counteridx + '][type]', '-1');
+                        counteridx++;
+                    }
+                }
+
+
+
+                //5. tambahin is_image_deleted
                 if(this.input.thumbnail_file.length > 0 && this.input_before_edit.thumbnail_file == null)
                 {
-                    formData.append('is_image_deleted', '1');
+                    formData.append('is_image_delete', '1');
                 }
                 else
                 {
-                    formData.append('is_image_deleted', '0');   
+                    formData.append('is_image_delete', '0');   
                 }
                 formData.append('_method', 'patch');
 
@@ -803,6 +1670,7 @@ export default {
                 formData.append('barcode_master', this.input.barcode_master);
                 formData.append('thumbnail', this.input.thumbnail_file); 
                 formData.append('avgprice_status', this.input.avgprice_status);
+                formData.append('avgprice', this.input.avgprice);
                 formData.append('tax', this.input.tax);
                 formData.append('unit_id', this.input.unit_id);
                 formData.append('cogs_id', this.input.cogs_id);
@@ -838,184 +1706,57 @@ export default {
             formData.append('token', localStorage.getItem('token'));
             return formData;
         },
-        get_goods() {
+        
+        
+        
 
-            axios.get('/api/goods', {
-                params:{
+
+        get_popup_detailracks(id_edit_popup_detailracks){
+            axios.get('api/goods/' + id_edit_popup_detailracks + '/racks',{
+                params : {
                     token: localStorage.getItem('token')
                 }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r => this.showTable(r))
-            .catch(function (error)
-            {
-                if(error.response.status == 422)
-                {
-                    swal('Request Failed', 'Check your internet connection !', 'error');
-                }
-                else
-                {
-                    swal('Unkown Error', error.response.data , 'error');
-                }
-            });
-        },
-        save_goods()
-        {
-            if(this.valid)
-            {
-                if(this.idx_data_edit != -1) //jika sedang diedit
-                {
-                    axios.post('api/goods/' + this.goods[this.idx_data_edit].id,this.prepare_data_form_goods(),
-                    {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    }
-                    }).then((r)=> {
-                        this.get_goods();
-                        this.closedialog_createedit();
-                        this.clear_input();
-                        this.idx_data_edit = -1;
-                        swal("Good job!", "Data saved !", "success");
-                    })
-                    .catch(function (error)
-                    {
-                        if(error.response.status == 422)
-                        {
-                            swal('Request Failed', 'Check your internet connection !', 'error');
-                        }
-                        else
-                        {
-                            swal('Unkown Error', error.response.data , 'error');
-                        }
-                    });
 
-                    
-                }
-                else //jika sedang tambah data
-                {
-
-                    axios.post('api/goods',this.prepare_data_form_goods(),
-                    {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                        }
-                    }).then((r)=> {
-                        this.get_goods();
-                        this.closedialog_createedit();
-                        this.clear_input();
-                        this.idx_data_edit = -1;
-                        swal("Good job!", "Data saved !", "success");
-                    })
-                    .catch(function (error)
-                    {   
-                        if(error.response.status == 422)
-                        {
-                            swal('Request Failed', 'Check your internet connection !', 'error');
-                        }
-                        else
-                        {
-                            swal('Unkown Error', error.response.data , 'error');
-                        }
-                    });                         
-                }
-                
-            }
-            else
-            {
-                swal('Form Is not Valid', "Please check your input" , 'error');
-            }
-        },
-        delete_goods(idx_data_delete){
-            
-            swal({
-                    title: "Are you sure want to delete this item?",
-                    text: "Once deleted, it can't be undone",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        axios.delete('api/goods/' + this.goods[idx_data_delete].id,{
-                            data:{
-                                token: localStorage.getItem('token')    
-                            }
-                            
-                        }).then((r)=>{
-                            this.get_goods();
-                            swal("Good job!", "Data Deleted !", "success");
-                            
-                        })
-                        .catch(function (error)
-                        {
-                            if(error.response.status == 422)
-                            {
-                                swal('Request Failed', 'Check your internet connection !', 'error');
-                            }
-                            else
-                            {
-                                swal('Unkown Error', error.response.data , 'error');
-                            }
-                        });
-                    }
-            });
-        },
-        get_master_data()
-        {
-            axios.get('/api/goods/create', {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r => this.fill_select_master_data(r))
-            .catch(function (error)
-            {
-                if(error.response.status == 422)
-                {
-                    swal('Request Failed', 'Check your internet connection !', 'error');
-                }
-                else
-                {
-                    swal('Unkown Error', error.response.data , 'error');
-                }
-            });
-        },
-        get_data_before_edit(idx_edit)
-        {
-            var id_edit = this.goods[idx_edit].id;
-            axios.get('/api/goods/' + id_edit, {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r=> {
-
-                this.opendialog_createedit(idx_edit,r); //idx_edit bukan id_edit !
+            }).then((r) => {
+                this.popup_detailracks = r.data.items.goods;
             })
-            .catch(function (error)
-            {
-                if(error.response.status == 422)
-                {
-                    swal('Request Failed', 'Check your internet connection !', 'error');
-                }
-                else
-                {
-                    swal('Unkown Error', error.response.data , 'error');
-                }
-            });
         },
 
+
+        get_popup_detailsellingprices(id_edit_popup_detailsellingprices){
+            axios.get('api/goods/' + id_edit_popup_detailsellingprices + '/sellingPrices',{
+                params : {
+                    token: localStorage.getItem('token')
+                }
+
+            }).then((r) => {
+                this.popup_detailsellingprices = r.data.items.goods;
+            })
+        },
+
+
+        get_popup_detailstockcards(id_edit_popup_detailstockcards){
+            axios.get('api/goods/' + id_edit_popup_detailstockcards + '/racks',{
+                params : {
+                    token: localStorage.getItem('token')
+                }
+
+            }).then((r) => {
+                this.popup_detailstockcards = r.data.items.goods;
+            })
+        },
+
+
+        get_popup_detailpricelists(id_edit_popup_detailpricelists){
+            axios.get('api/goods/' + id_edit_popup_detailpricelists + '/pricelists',{
+                params : {
+                    token: localStorage.getItem('token')
+                }
+
+            }).then((r) => {
+                this.popup_detailpricelists = r.data.items.goods;
+            })
+        },
 
 
 
@@ -1037,6 +1778,7 @@ export default {
             this.input.last_buy_pricelist = '160';
             this.input.barcode_master = 'X123';
             this.input.avgprice_status = 1;
+            this.input.avgprice = 100000;
             this.input.tax = '180';
             this.input.unit_id = '1';
             this.input.cogs_id = '2';
@@ -1048,11 +1790,14 @@ export default {
     },
     mounted(){
         
-        this.get_goods();
+        this.get_data();
         this.get_master_data();
         //this.testing_input();
 
     },
+    mixins:[
+        mxCrudChildForm,
+    ],
 }
 </script>
 

@@ -6,6 +6,10 @@ use App\Http\Requests\StoreRack;
 use App\Http\Requests\UpdateRack;
 use App\Services\RackService;
 use App\Models\Rack;
+use App\Exceptions\DatabaseTransactionErrorException;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -26,9 +30,25 @@ class RackController extends Controller
     public function index()
     {
         $this->rackService->handleEmptyModel();
-
         $racks = $this->rack->latest()->get();
+
+        $racks = $racks->map(function ($rack) { 
+            $rack = Arr::add($rack, 'warehouse_name', $rack['warehouse']['name']);
+            return Arr::except($rack, ['warehouse']);
+        });
+
         return formatResponse(false,(["racks"=>$racks]));
+    }
+
+    /**
+     * Show the form for creating a new Rack.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function create()
+    {
+        $this->rackService->handleGetAllDataForGoodsCreation();
+        return formatResponse(false,($this->rack->allDataCreate()));
     }
 
     /**
@@ -41,7 +61,21 @@ class RackController extends Controller
     {
         $data = $request->validated();
 
-        $this->rack->create($data);
+        $goodsRacks = collect(Arr::pull($data,'goods_racks'))->unique(function ($item) {
+            return $item['goods_id'].$item['stock'];
+        })->toArray();
+
+        DB::beginTransaction();
+        try {
+            $rack = $this->rack->create($data);
+            $rack->goodsRack()->createMany($goodsRacks);
+
+            DB::commit();
+        }catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("Rack");
+        }
+
         return formatResponse(false,(["rack"=>["rack successfully created"]]));
     }
 
@@ -57,7 +91,31 @@ class RackController extends Controller
         $this->rackService->handleModelNotFound($id);
 
         $rack = $this->rack->find($id);
+        $rack = collect($rack)->put('warehouse_name',$rack->warehouse->name);
+        
         return formatResponse(false,(["rack"=>$rack]));
+    }
+
+    /**
+     * Show the form for editing the specified rack.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id)
+    {
+        $this->rackService->handleInvalidParameter($id);
+        $this->rackService->handleModelNotFound($id);
+        $this->rackService->handleGetAllDataForGoodsCreation();
+
+        $allMaterial = collect($this->rack->allDataCreate());
+
+        $rack = $this->rack->find($id);
+        $rack = collect($rack);
+        
+        $concatenated = $rack->union($allMaterial)->union($this->showFormatData($id));
+
+        return formatResponse(false,(["rack"=>$concatenated]));
     }
 
     /**
@@ -69,10 +127,26 @@ class RackController extends Controller
      */
     public function update(UpdateRack $request, $id)
     {
+        $data = $request->validated();
         $this->rackService->handleInvalidParameter($id);
         $this->rackService->handleModelNotFound($id);
 
-        $this->rack->find($id)->update($request->validated());
+        $rack = $this->rack->find($id);
+        
+        DB::beginTransaction();
+        try {
+            $goodsRacks = Arr::pull($data,'goods_racks');
+            
+            $rack->update($data);
+            is_null($goodsRacks) ? "" : $rack->updateGoodsRack($goodsRacks);
+
+            DB::commit();
+        }catch (\Throwable $e) {
+            DB::rollback();
+            return $e;
+            throw new DatabaseTransactionErrorException("Rack");
+        }
+
         return formatResponse(false,(["rack"=>["rack was successfully updated"]]));
     }
 
@@ -86,8 +160,36 @@ class RackController extends Controller
     {
         $this->rackService->handleInvalidParameter($id);
         $this->rackService->handleModelNotFound($id);
+        DB::beginTransaction();
+        try {
+            $this->rack->find($id)->goodsRack()->delete();
+            $this->rack->find($id)->delete();
 
-        $this->rack->find($id)->delete();
+            DB::commit();
+        }catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("Rack");
+        }
+        
         return formatResponse(false,(["rack"=>["rack deleted successfully"]]));
+    }
+
+    /**
+     * Format goods relation data in method show.
+     *
+     * @param  $id
+     * @return Illuminate\Support\Collection
+     */
+    public function showFormatData($id){
+        $goodsRacks = $this->rack->find($id)->goodsRack;
+
+        $goodsRacks = $goodsRacks->map(function ($goodsRack) { 
+            $goodsRack = Arr::add($goodsRack, 'goods_name', $goodsRack['goods']['name']);
+            return Arr::except($goodsRack, ['goods']);
+        });
+
+        $data = collect(["goods_racks" => $goodsRacks]);
+
+        return $data;
     }
 }

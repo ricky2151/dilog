@@ -1,50 +1,86 @@
 <div>
     <v-container fluid>
-        <h3>attributes</h3>
+        <h3>Attribute</h3>
     </v-container>
 </div>
 
 <template>
     <div>
+
+        
+
+        <!-- POPUP CREATE EDIT -->
         <v-dialog v-model="dialog_createedit" width=750>
             <v-card>
                 <v-toolbar dark color="menu">
                     <v-btn icon dark v-on:click="closedialog_createedit()">
                         <v-icon>close</v-icon>
                     </v-btn>
-                    <v-toolbar-title>Add attributes</v-toolbar-title>
+                    <v-toolbar-title v-html='id_data_edit == -1 ?"Add Attribute":"Edit Attribute"'></v-toolbar-title>
 
                 </v-toolbar>
-                <div class='padding30'>
-                    <v-text-field v-model='input.name' label="Name" required></v-text-field>
-                    <v-btn v-on:click='save_attribute()' >submit</v-btn>
-                </div>
+                <v-form v-model="valid" style='padding:30px' ref='formCreateEdit'>
+                    <v-text-field :rules="this.$list_validation.max_req" v-model='input.name' label="Name" required></v-text-field>
+                    <v-btn v-on:click='save_data()' >submit</v-btn>
+                </v-form>
             </v-card>
         </v-dialog>
 
         <v-toolbar flat color="white">
-            <v-toolbar-title>attributes Data</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark>
-                Add Data
-            </v-btn>
+            <v-toolbar-title>Units Data</v-toolbar-title>
         </v-toolbar>
+        <v-layout row class='bgwhite'>
+            <v-flex xs3>
+                <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='marginleft30'>
+                    Add Data
+                </v-btn>
+            </v-flex>
+            <v-flex xs12 class="text-xs-right">
+                <v-text-field
+                    class='marginhorizontal10 searchwidth d-inline-block'
+                    v-model="search_data"
+                    append-icon="search"
+                    label="Search"
+                    single-line
+                    hide-details
+                ></v-text-field>
+            </v-flex>
+        </v-layout>
         <v-data-table
             disable-initial-sort
             :headers="headers"
-            :items="attributes"
+            :items="data_table"
+            :search="search_data"
             class=""
         >
         <template v-slot:items="props">
+            <td>{{ props.index + 1 }}</td>
             <td>{{ props.item.name }}</td>
-            <td>
-                <v-btn class='button-action' v-on:click='opendialog_createedit(props.index)' color="primary" fab depressed small dark v-on="on">
-                    <v-icon small>edit</v-icon>
-                </v-btn>
-                <v-btn class='button-action' v-on:click='delete_attribute(props.index)' color="red" fab small dark depressed>
-                    <v-icon small>delete</v-icon>
-                </v-btn>
 
+            <td>
+                <div class="text-xs-left">
+                    <v-menu offset-y>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          color="primary"
+                          dark
+                          v-on="on"
+                        >
+                          Action
+                        </v-btn>
+                      </template>
+                      <v-list>
+                        <v-list-tile
+                          v-for="(item, index) in action_items"
+                          :key="index"
+                          v-on:click="action_change(props.item.id,index)"
+                          
+                        >
+                          <v-list-tile-title>{{ item }}</v-list-tile-title>
+                        </v-list-tile>
+                      </v-list>
+                    </v-menu>
+                </div>
             </td>
         </template>
         </v-data-table>
@@ -53,127 +89,100 @@
 
 <script>
 import axios from 'axios'
+import mxCrudBasic from '../mixin/mxCrudBasic';
+
 export default {
     data () {
         return {
+            name_table:'attributes',
+            header_api:{
+                'Accept': 'application/json',
+                'Content-type': 'application/json'
+            },
+
+
+            action_items: ['Edit', 'Delete'],
             on:false,
 
+            valid:null,
             dialog_createedit:false,
-            dialog_stock:false,
+            
+            
 
-            idx_data_edit:-1,
+            id_data_edit:-1,
 
             input:{
                 name:'',    
             },
+            input_before_edit:null, //variabel ini digunakan untuk menampung input sebelum di klik submit saat edit
             
 
             headers: [
+                { text: 'No', value: 'no'},
                 { text: 'Name', value: 'name'},
-                { text: 'Action', align:'left',width:'15%',sortable:false},
+                { text: 'Action', align:'left',sortable:false, width:'15%'},
+
             ],
 
 
-            attributes: []
+            data_table:[],
+            search_data: null,
+            
         }
     },
     methods: {
-        closedialog_createedit(){
-            this.dialog_createedit = false;
-        },
-        opendialog_createedit(idx_data_edit){
-            if(idx_data_edit != -1)
+
+        action_change(id,idx_action)
+        {
+            if(idx_action == 0)
             {
-                this.idx_data_edit = idx_data_edit;
-
-                
-                this.input.name = this.attributes[this.idx_data_edit].name;
+                this.opendialog_createedit(id)
             }
+            else if(idx_action == 1)
+            {
+                this.delete_data(id);
+            }
+        },
 
-            this.dialog_createedit = true;
+
+
+        convert_data_input(tempobject)
+        {
+            this.input.name = tempobject.name;
+            this.input_before_edit = JSON.parse(JSON.stringify(this.input));
+        },
+
+        prepare_data_form()
+        {
+            const formData = new FormData();
+            if(this.id_data_edit == -1) //jika add data
+            {
+                formData.append('name', this.input.name);
+            }
+            else //jika edit data
+            {
+                if(this.input.name != this.input_before_edit.name) 
+                    formData.append('name', this.input.name);
+                formData.append('_method','patch');
+            }
+            formData.append('token', localStorage.getItem('token'));
+            return formData;
+        },
+
+        showTable(r) 
+        {
+            this.data_table = r.data.items.attributes;
         },
         
-        showTable(r)
-        {
-            
-            this.attributes = r.data.items.attributes;
-        },
-        get_attribute() {
-
-            axios.get('/api/attributes', {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r => this.showTable(r))
-        },
-        save_attribute()
-        {
-            if(this.idx_data_edit != -1) //jika sedang diedit
-            {
-                axios.patch('api/attributes/' + this.attributes[this.idx_data_edit].id,{
-                    name: this.input.name,
-                    token: localStorage.getItem('token')
-                }).then((r) => {
-                    this.get_attribute();
-                    this.closedialog_createedit();
-                    swal("Good job!", "Data saved !", "success");
-                    this.idx_data_edit = -1;
-                    this.input.name = '';
-                });
-                
-                
-                
-
-                
-            }
-            else //jika sedang tambah data
-            {
-                axios.post('api/attributes',{
-                    name: this.input.name,
-                    token: localStorage.getItem('token')
-                }).then((r)=> {
-                    this.get_attribute();
-                    this.closedialog_createedit();
-                    swal("Good job!", "Data saved !", "success");
-                });
-            }
-        },
-        delete_attribute(idx_data_delete){
-            
-            swal({
-                    title: "Are you sure want to delete this item?",
-                    text: "Once deleted, it can't be undone",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        axios.delete('api/attributes/' + this.attributes[idx_data_delete].id,{
-                            data:{
-                                token: localStorage.getItem('token')    
-                            }
-                            
-                        }).then((r)=>{
-                            this.get_attribute();
-                            swal("Good job!", "Data Deleted !", "success");
-                            
-                        });
-                    }
-            });
-        }
-
 
     },
     mounted(){
-        this.get_attribute();
+        this.get_data();
+
     },
+    mixins:[
+        mxCrudBasic
+    ],
 }
 </script>
-
 

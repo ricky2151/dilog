@@ -31,7 +31,8 @@ class StoreUser extends FormRequest
             'password' => 'required|min:8|string',
             'role_id' => 'required|integer|min:1|exists:roles,id',
             'warehouse_id' => "required|integer|min:1",
-            'job_title' => "required|string"
+            'job_title' => "required|string",
+            'division_id' => 'filled|exists:divisions,id'
         ];
     }
     

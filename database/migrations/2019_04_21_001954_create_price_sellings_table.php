@@ -15,13 +15,14 @@ class CreatePriceSellingsTable extends Migration
     {
         Schema::create('price_sellings', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('good_rack_id')->unsigned();
+            $table->integer('goods_id')->unsigned();
+            $table->integer('warehouse_id')->unsigned();
             $table->integer('stock_cut_off')->unsigned();
             $table->integer('category_price_selling_id')->unsigned();
             $table->integer('price')->unsigned();
-            $table->integer('discount')->unsigned()->nullable();
             $table->boolean('free');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -31,7 +31,8 @@ class UpdateUser extends FormRequest
             'email' => 'email|string|unique:users,email',
             'role_id' => 'integer|min:1|exists:roles,id',
             'warehouse_id' => "integer|min:1",
-            'job_title' => "string"
+            'job_title' => "string",
+            'division_id' => 'filled|exists:divisions,id'
         ];
     }
 

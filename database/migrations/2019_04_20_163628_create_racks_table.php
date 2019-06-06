@@ -16,6 +16,7 @@ class CreateRacksTable extends Migration
         Schema::create('racks', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->unique(['name','warehouse_id']);
             $table->integer('warehouse_id')->unsigned();
             $table->timestamps();
             $table->softDeletes();

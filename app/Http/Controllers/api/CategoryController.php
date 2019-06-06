@@ -5,6 +5,8 @@ namespace App\Http\Controllers\api;
 use App\Http\Requests\StoreCategory;
 use App\Http\Requests\UpdateCategory;
 use App\Services\CategoryService;
+use Illuminate\Support\Facades\DB;
+use App\Exceptions\DatabaseTransactionErrorException;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -18,6 +20,7 @@ class CategoryController extends Controller
         $this->categoryService = $categoryService;
         $this->category = $category;
     }
+
     /**
      * Display a listing of the category.
      *
@@ -30,6 +33,18 @@ class CategoryController extends Controller
         return formatResponse(false,(["categories"=>$categories]));
     }
 
+    /**
+     * Display a listing of the goods with stock in this category.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function goodsCategory($id)
+    {
+        $this->categoryService->handleEmptyModel();
+        $goods = $this->category->find($id)->goodsStock();
+
+        return formatResponse(false,(["categories"=>$goods]));
+    }
 
     /**
      * Store a newly created category in storage.
@@ -87,8 +102,18 @@ class CategoryController extends Controller
         $this->categoryService->handleInvalidParameter($id);
         $this->categoryService->handleModelNotFound($id);
 
-        $this->category->find($id)->goods()->sync([]);
-        $this->category->find($id)->delete();
+        DB::beginTransaction();
+        try {
+            $this->category->find($id)->goods()->sync([]);
+            $this->category->find($id)->delete();
+
+            DB::commit();
+        }catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("Category");
+        }
+
+        
         
         return formatResponse(false,(["category"=>["category deleted successfully"]]));
     }
