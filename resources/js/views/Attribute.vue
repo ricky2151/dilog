@@ -27,7 +27,7 @@
         </v-dialog>
 
         <v-toolbar flat color="white">
-            <v-toolbar-title>Units Data</v-toolbar-title>
+            <v-toolbar-title>Attributes Data</v-toolbar-title>
         </v-toolbar>
         <v-layout row class='bgwhite'>
             <v-flex xs3>

@@ -17,11 +17,11 @@ export default {
             this.dialog_createedit = false;
         },
         
-        opendialog_createedit(id_data_edit,r){
+        opendialog_createedit(id_data_edit){
             if(id_data_edit != -1)
             {
                 this.id_data_edit = id_data_edit;
-                this.convert_data_input(r);
+                this.convert_data_input(this.findDataById(id_data_edit));
                 
             }
             else
