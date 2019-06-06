@@ -1,5 +1,6 @@
 export default {
 	methods:{
+
 		findDataById(id)
 		{
 			
@@ -52,7 +53,7 @@ export default {
             }
         },
 
-        save_data() //tdk bisa
+        save_data() 
         {
             
 
