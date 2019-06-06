@@ -52,10 +52,10 @@
 	        </v-card-title>
 
 	        <v-card-actions>
-				<v-btn flat><v-icon>print</v-icon></v-btn>
-				<v-btn flat><v-icon>check</v-icon></v-btn>
-				<v-btn flat><v-icon>edit</v-icon></v-btn>
-				<v-btn flat><v-icon>delete</v-icon></v-btn>
+				<v-btn flat style='min-width: 0px !important;'><v-icon>print</v-icon></v-btn>
+				<v-btn flat style='min-width: 0px !important;'><v-icon>check</v-icon></v-btn>
+				<v-btn flat style='min-width: 0px !important;'><v-icon>edit</v-icon></v-btn>
+				<v-btn flat style='min-width: 0px !important;'><v-icon>delete</v-icon></v-btn>
 			</v-card-actions>
 		</v-card>
 	</div>
