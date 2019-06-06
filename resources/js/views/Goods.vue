@@ -168,15 +168,15 @@
                         <v-toolbar-title v-html='id_data_edit == -1 ?"Add Goods":"Edit Goods"'></v-toolbar-title>
 
                     </v-toolbar>
-                    <v-stepper v-model="e6" vertical>
+                    <v-stepper v-model="e6" vertical >
 
                         <!-- ==== STEPPER 1 ==== -->
 
-                        <v-stepper-step :complete="e6 > 1" step="1" editable>
+                        <v-stepper-step :complete="e6 > 1" step="1" >
                             <h3>Goods Data</h3>
                         </v-stepper-step>
 
-                        <v-stepper-content step="1">
+                        <v-stepper-content step="1" editable='id_data_edit != -1'>
                             
                             <v-layout row>
                                 <v-flex xs9>
@@ -277,7 +277,7 @@
 
                         <!-- ==== STEPPER 2 ==== -->
 
-                        <v-stepper-step :complete="e6 > 2" step="2" editable><h3>Price Selling</h3></v-stepper-step>
+                        <v-stepper-step :complete="e6 > 2" step="2"><h3>Price Selling</h3></v-stepper-step>
 
                         <v-stepper-content step="2">
 
@@ -353,7 +353,7 @@
 
                         <!-- ==== STEPPER 3 ==== -->
 
-                        <v-stepper-step :complete="e6 > 3" step="3" editable><h3>Goods Category</h3></v-stepper-step>
+                        <v-stepper-step :complete="e6 > 3" step="3"><h3>Goods Category</h3></v-stepper-step>
 
                         <v-stepper-content step="3">
                             <v-combobox
@@ -384,7 +384,7 @@
 
                         <!-- ==== STEPPER 4 ==== -->
 
-                        <v-stepper-step :complete="e6 > 4" step="4" editable><h3>Goods Attribute</h3></v-stepper-step>
+                        <v-stepper-step :complete="e6 > 4" step="4" ><h3>Goods Attribute</h3></v-stepper-step>
 
                         <v-stepper-content step="4">
 
@@ -445,7 +445,7 @@
 
                         <!-- ==== STEPPER 5 ==== -->
 
-                        <v-stepper-step step="5" :complete="e6 > 5" editable><h3>Goods Material</h3></v-stepper-step>
+                        <v-stepper-step step="5" :complete="e6 > 5" ><h3>Goods Material</h3></v-stepper-step>
 
                         <v-stepper-content step="5">
                             <!-- <v-select v-model='temp_input.material_goods.name' :items="ref_input.material" item-text='name' return-object label="Select Material"></v-select> -->
@@ -507,7 +507,7 @@
 
                         <!-- ==== STEPPER 6 ==== -->
 
-                        <v-stepper-step :complete="e6 > 6" step="6" editable><h3>Price List</h3></v-stepper-step>
+                        <v-stepper-step :complete="e6 > 6" step="6"><h3>Price List</h3></v-stepper-step>
 
                         <v-stepper-content step="6">
 

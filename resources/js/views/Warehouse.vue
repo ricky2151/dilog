@@ -95,7 +95,7 @@
                 </v-toolbar>
                 <div style='padding:30px'>
 
-                    <v-text-field :rules='this.$list_validation.max_req' v-model='input.name' label="Name" counter=191></v-text-field>
+                    <v-text-field :rules='this.$list_validation.max_req' v-model='input.name' label=name counter=191></v-text-field>
 
                     <v-text-field :rules='this.$list_validation.max_req' disabled v-model='input.user' label="User" counter=191></v-text-field>
 
@@ -134,13 +134,13 @@
                         <v-stepper-content step="1">
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-text-field :rules='this.$list_validation.max_req' v-model='input.name' label="Name" counter=191></v-text-field>
+                                    <v-text-field :rules='this.$list_validation.max_req' v-model='input.name' label=name counter=191></v-text-field>
                                 </v-flex>
                             </v-layout>
 
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-text-field :rules='this.$list_validation.max_req' counter=20 v-model='input.telp' label="Telp"></v-text-field>
+                                    <v-text-field :rules='this.$list_validation.max_req' counter=20 v-model='input.telp' label=telp></v-text-field>
                                 </v-flex>
                             </v-layout>
 
@@ -177,19 +177,19 @@
                             
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-text-field :rules='this.$list_validation.max_req' counter=191 v-model='input.address' label="Address"></v-text-field>
+                                    <v-text-field :rules='this.$list_validation.max_req' counter=191 v-model='input.address' label=address></v-text-field>
                                 </v-flex>
                             </v-layout>
 
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-text-field :rules='this.$list_validation.email_req' counter=191 v-model='input.email' label="Email"></v-text-field>
+                                    <v-text-field :rules='this.$list_validation.email_req' counter=191 v-model='input.email' label=email></v-text-field>
                                 </v-flex>
                             </v-layout>
 
                             <v-layout row>
                                 <v-flex xs12>
-                                    <v-text-field :rules='this.$list_validation.max_req' counter=191 v-model='input.pic' label="PIC"></v-text-field>
+                                    <v-text-field :rules='this.$list_validation.max_req' counter=191 v-model='input.pic' label=pic></v-text-field>
                                 </v-flex>
                             </v-layout>
 
@@ -206,11 +206,11 @@
                         <v-stepper-step :complete="e6 > 2" step="2" editable><h3>Create Rack</h3></v-stepper-step>
 
                         <v-stepper-content step="2">
-                            <v-select v-model='interaction.create_rack.method' :items="[{id:0, name:'Create New'},{id:1, name:'Copy From Warehouse'} ]" item-text='name' item-value='id' label="Select Method"></v-select>
+                            <v-select v-if='id_data_edit == -1' v-model='interaction.create_rack.method' :items="[{id:0, name:'Create New'},{id:1, name:'Copy From Warehouse'} ]" item-text='name' item-value='id' label="Select Method"></v-select>
 
                             <!-- CREATE NEW RACK -->
                             <v-combobox
-                                v-show='interaction.create_rack.method == 0'
+                                v-show='interaction.create_rack.method == 0 || id_data_edit != -1'
                                 v-model='input.racks'
                                 label="Type rack"
                                 chips
@@ -234,20 +234,24 @@
                             </v-combobox>
 
                             <!-- COPY FROM WAREHOUSE -->
-                            <div v-show='interaction.create_rack.method == 1'>
+                            <div v-show='interaction.create_rack.method == 1 && id_data_edit == -1'>
                                 <v-select v-model='interaction.create_rack.selected_warehouse' :items='ref_input.warehouse' item-text='name' item-value='id' label='Select Warehouse'>
                                 </v-select>
                                 <b>Select Rack</b>
                                 <v-data-table
                                     :headers="[{text:'Rack', value:'rack'},{text:'Action', value:'action'}]"
-                                    :items='ref_input.rack'
+                                    :items='filtered_racks'
                                 >
                                     <template v-slot:items="props">
-                                        <td v-if='props.item.warehouse_id == interaction.create_rack.selected_warehouse'> 
-                                            {{props.item.name}}
+                                        <td> 
+                                            
+                                            <v-checkbox v-model='filtered_racks[props.index].select_rack' :label='props.item.name' class=''></v-checkbox>
+                                            
                                         </td>
-                                        <td v-if='props.item.warehouse_id == interaction.create_rack.selected_warehouse'> 
-                                            Copy Goods
+                                        <td> 
+                                            
+                                            <v-checkbox v-model='filtered_racks[props.index].select_copy' v-if='filtered_racks[props.index].is_have_goods == true' :label='"Copy Goods"' class=''></v-checkbox>
+                                            
                                         </td>
                                     </template>
 
@@ -336,9 +340,9 @@
 <script>
 
 
-import axios from 'axios'
+import axios from 'axios';
 import mxCrudChildForm from '../mixin/mxCrudChildForm';
-import cpStockOpname from './../components/cpStockOpname.vue'
+import cpStockOpname from './../components/cpStockOpname.vue';
 export default {
     name:'Warehouse',
     components:{
@@ -392,14 +396,7 @@ export default {
             ref_input:
             {
                 warehouse:[
-                    {
-                        id:2,
-                        name:'cobawarehouse2',
-                    },
-                    {
-                        id:3,
-                        name:'cobawarehouse3',
-                    },
+                    
                 ],
                 rack:[
                     {
@@ -489,7 +486,7 @@ export default {
                 {
                     method:-1, //jika 0, maka create new rack, jika 1 maka copy dari    warehouse
                     selected_warehouse:null, //warehouse yang dipilih saat user menggunakan copy from warehouse
-                    selected_rack:null, //rack yang dipilih beserta apakah copy goodsnya juga atau tidak
+                    list_rack:[], //rack yang dipilih beserta apakah copy goodsnya juga atau tidak
                 }
                 
 
@@ -545,10 +542,150 @@ export default {
                     this.removeChip(tempdata);
                     this.input.racks.push({name:tempdata});
                 },
+
+                
             }
         },
         
-        
+        fill_select_master_data(r) //fill select master data tidak selalu masuk ke ref_input !!!
+        {
+            //var temp_r = r.data.items.warehouses;
+            var temp_r = [
+                {
+                    id: 1,
+                    name: "Bakpia Ku",
+                    address: "89696 Raymond Locks Suite 778\nRoweberg, MT 27491-6639",
+                    lat: "Suscipit in et non.",
+                    lng: "Ullam molestiae.",
+                    telp: "+6207219900426",
+                    email: "rosemarie58@gmail.com",
+                    pic: "Coleman Parker",
+                    created_at: "2019-06-02 14:01:20",
+                    updated_at: "2019-06-02 14:01:20",
+                    deleted_at: null,
+                    racks: [
+                        {
+                            id: 1,
+                            name: "Rack Buku",
+                            warehouse_id: 1,
+                            created_at: "2019-06-02 14:01:20",
+                            updated_at: "2019-06-02 14:01:20",
+                            deleted_at: null,
+                            is_have_goods: true
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: "Bakpia Tugu",
+                    address: "805 McGlynn Village Suite 031\nAnnamariefurt, ID 84198",
+                    lat: "Repellat et modi.",
+                    lng: "Cumque facilis ipsa.",
+                    telp: "+6258713342150",
+                    email: "mona37@west.net",
+                    pic: "Katlyn Stamm",
+                    created_at: "2019-06-02 14:01:20",
+                    updated_at: "2019-06-02 14:01:20",
+                    deleted_at: null,
+                    racks: [
+                        {
+                            id: 2,
+                            name: "Rack Buku",
+                            warehouse_id: 2,
+                            created_at: "2019-06-02 14:01:20",
+                            updated_at: "2019-06-02 14:01:20",
+                            deleted_at: null,
+                            is_have_goods: true
+                        },
+                        {
+                            id: 4,
+                            name: "Rack Sapi",
+                            warehouse_id: 2,
+                            created_at: "2019-06-02 14:01:20",
+                            updated_at: "2019-06-02 14:01:20",
+                            deleted_at: null,
+                            is_have_goods: true
+                        }
+                    ]
+                },
+                {
+                    id: 3,
+                    name: "Bakpia Kukus",
+                    address: "973 Champlin Point Suite 414\nLake Michele, MA 59833-5409",
+                    lat: "Laborum aspernatur.",
+                    lng: "Sunt repellendus.",
+                    telp: "+6213323545308",
+                    email: "lang.orion@dach.com",
+                    pic: "Melisa Gusikowski DDS",
+                    created_at: "2019-06-02 14:01:20",
+                    updated_at: "2019-06-02 14:01:20",
+                    deleted_at: null,
+                    racks: []
+                },
+                {
+                    id: 4,
+                    name: "Bakpia Pathok",
+                    address: "6095 Lorna Turnpike Suite 514\nPort Tobyview, NV 38517",
+                    lat: "Suscipit quia.",
+                    lng: "Minima quasi.",
+                    telp: "+62 843 5822 5454",
+                    email: "adah.wehner@wintheiser.net",
+                    pic: "Dr. Sidney Jacobi V",
+                    created_at: "2019-06-02 14:01:20",
+                    updated_at: "2019-06-02 14:01:20",
+                    deleted_at: null,
+                    racks: [
+                        {
+                            id: 3,
+                            name: "Rack Ayam",
+                            warehouse_id: 4,
+                            created_at: "2019-06-02 14:01:20",
+                            updated_at: "2019-06-02 14:01:20",
+                            deleted_at: null,
+                            is_have_goods: true
+                        }
+                    ]
+                }
+            ];
+
+
+            //fill warehouse -> ref_input & rack -> interaction
+            for(var i =0;i<temp_r.length;i++)
+            {
+                console.log('masukan ke ref_input wraehouse');
+                //fill warehouse
+                this.ref_input.warehouse.push
+                ({
+                    id: temp_r[i].id,
+                    name: temp_r[i].name,
+                });
+
+                //fill rack
+                if(temp_r[i].racks.length > 0)
+                {
+                    var name_warehouse = temp_r[i].name;
+                    var id_warehouse = temp_r[i].id;
+                    for(var j = 0;j<temp_r[i].racks.length;j++)
+                    {
+                        this.interaction.create_rack.list_rack.push
+                        ({
+                            id:temp_r[i].racks[j].id,
+                            name:temp_r[i].racks[j].name,
+                            is_have_goods:temp_r[i].racks[j].is_have_goods,
+                            warehouse_id:id_warehouse,
+                            warehouse_name:name_warehouse,
+                            select_rack:false,
+                            select_copy:false,
+                        })
+                    }
+                }
+            }
+
+            
+
+
+
+        },
         get_my_location(){
 			navigator.geolocation.getCurrentPosition((position) => {
 		        this.my_location = {
@@ -575,7 +712,7 @@ export default {
         opendialog_detailracks(id_edit_popup_detailracks)
         {
             this.dialog_detailracks = true;
-            //this.get_popup_detailracks(id_edit_popup_detailracks);
+            this.get_popup_detailracks(id_edit_popup_detailracks);
         },
         closedialog_detailracks()
         {
@@ -603,46 +740,9 @@ export default {
         },
 
 
-        closedialog_createedit(){
-            this.id_data_edit = -1;
-            this.dialog_createedit = false;
-        },
-        opendialog_createedit(id_data_edit,r){
-            console.log('masuk opendialog_createedit : ' + id_data_edit);
-            if(id_data_edit != -1)
-            {
-                console.log('masuk if ');
-                this.id_data_edit = id_data_edit;
-                this.convert_data_input(r);
-                
-            }
-            else
-            {
-                this.clear_input();
-            }
 
-            this.dialog_createedit = true;
-        },
-        clear_input(){
-            this.$refs.formCreateEdit.resetValidation();
-            for (var key in this.input)
-            {
-                if(this.input[key])
-                {
-                    if(Array.isArray(this.input[key]))
-                    {
-                        this.input[key] = [];     
-                    }
-                    else
-                    {
-                        this.input[key] = "";
-                    }
-                    
-                    
-                }
-                    
-            }
-        },
+
+
         showTable(r)
         {
             
@@ -803,159 +903,28 @@ export default {
             formData.append('token', localStorage.getItem('token'));
             return formData;
         },
-        get_data() {
-            console.log('halo');
-            axios.get('/api/warehouses', {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r => this.showTable(r))
-            .catch(function (error)
-            {
-                if(error.response.status == 422)
-                {
-                    swal('Request Failed', 'Check your internet connection !', 'error');
-                }
-                else
-                {
-                    swal('Unkown Error', error.response.data , 'error');
-                }
-            });
 
-        },
-        save_data()
+
+
+
+
+
+
+    },
+    computed: {
+        filtered_racks()
         {
-            if(this.valid)
-            {
-                if(this.id_data_edit != -1) //jika sedang diedit
-                {
-                    axios.post('api/warehouses/' + this.findDataById(this.id_data_edit).id,this.prepare_data_form(),
-                        {
-                            headers: {
-                                'Accept': 'application/json',
-                                'Content-type': 'application/json'
-                        },
-                    }).then((r) => {
-                        this.get_warehouse();
-                        this.closedialog_createedit();
-                        this.clear_input();
-                        this.id_data_edit = -1;
-                        swal("Good job!", "Data saved !", "success");
-                    });
-                    
-                    
-                }
-                else //jika sedang tambah data
-                {
-                   
-                    axios.post('api/warehouses',this.prepare_data_form(),
-                    {
-                        headers: {
-                            'Accept': 'application/json',
-                            'Content-type': 'application/json'
-                        },
-                    }).then((r)=> {
-                        this.get_warehouse();
-                        this.closedialog_createedit();
-                        this.clear_input();
-                        this.id_data_edit = -1;
-                        swal("Good job!", "Data saved !", "success");
-                    })
-                    .catch(function (error)
-                    {   
-                        if(error.response.status == 422)
-                        {
-                            swal('Request Failed', 'Check your internet connection !', 'error');
-                        }
-                        else
-                        {
-                            swal('Unkown Error', error.response.data , 'error');
-                        }
-                    }); 
-                }
-
-            }
-            else
-            {
-                swal('Form Is not Valid', "Please check your input" , 'error');
-            }
-        },
-        delete_data(idx_data_delete){
-            
-            swal({
-                    title: "Are you sure want to delete this item?",
-                    text: "Once deleted, it can't be undone",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        axios.delete('api/warehouses/' + this.findDataById(this.id_data_edit).id,{
-                            data:{
-                                token: localStorage.getItem('token')    
-                            }
-                            
-                        }).then((r)=>{
-                            this.get_warehouse();
-                            swal("Good job!", "DaRta Deleted !", "success");
-                            
-                        })
-                        .catch(function (error)
-                        {
-                            if(error.response.status == 422)
-                            {
-                                swal('Request Failed', 'Check your internet connection !', 'error');
-                            }
-                            else
-                            {
-                                swal('Unkown Error', error.response.data , 'error');
-                            }
-                        });
-                    }
+            return this.interaction.create_rack.list_rack.filter((row) => {
+                return (row.warehouse_id == this.interaction.create_rack.selected_warehouse);
             });
-        },
-        get_data_before_edit(idx_edit)
-        {
-            var id_edit = this.findDataById(this.id_data_edit).id;
-            axios.get('/api/warehouses/' + id_edit + '/edit', {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r=> {
-
-                this.opendialog_createedit(idx_edit,r); //idx_edit bukan id_edit !
-            })
-            .catch(function (error)
-            {
-                
-                if(error.response.status == 422)
-                {
-                    swal('Request Failed', 'Check your internet connection !', 'error');
-                }
-                else
-                {
-                    swal('Unkown Error', error.response.data , 'error');
-                }
-            });
-        },
-
-
+        }
     },
     mounted(){
         //console.log('masuksini');
          this.get_data();
          this.get_my_location();
+         this.get_master_data();
+
     },
     mixins:[
         mxCrudChildForm,
