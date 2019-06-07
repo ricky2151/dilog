@@ -33,16 +33,6 @@ class DivisionController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function create()
-    {
-        return formatResponse(false,([$this->division->allDataCreate()]));
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\StoreDivision  $request
@@ -66,7 +56,7 @@ class DivisionController extends Controller
         $this->divisionService->handleInvalidParameter($id);
         $this->divisionService->handleModelNotFound($id);
 
-        $division = collect($this->division->find($id))->union(collect(["user_pic"=>$this->division->find($id)->pic_user]));
+        $division = $this->division->find($id);
         return formatResponse(false,(["division"=>$division]));
     }
 
@@ -81,8 +71,7 @@ class DivisionController extends Controller
         $this->divisionService->handleInvalidParameter($id);
         $this->divisionService->handleModelNotFound($id);
 
-        $division = collect($this->division->find($id))->union(collect(["user_pic"=>$this->division->find($id)->pic_user]))->union($this->division->find($id)->allDataUpdate());       
-        
+        $division = $this->division->find($id);
         return formatResponse(false,(["division"=>$division]));
     }
 

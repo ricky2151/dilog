@@ -26,7 +26,6 @@ class UpdateMaterialRequest extends FormRequest
     public function rules()
     {
         return [
-            // "code" => "required|string",
             "material_request_details.*.id" => "filled|integer|exists:material_request_details,id",
             "material_request_details.*.goods_id" => "filled|integer|exists:goods,id",
             "material_request_details.*.qty" => "filled|integer|min:1",

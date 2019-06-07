@@ -40,8 +40,10 @@ class PeriodeController extends Controller
     public function store(StorePeriode $request)
     {
         $data = $request->validated();
+        
+        $periode = $this->periode->create($data);
+        $periode->update(['code'=>"P-".$periode['id']]);
 
-        $this->periode->create($data);
         return formatResponse(false,(["periode"=>["periode successfully created"]]));
     }
 

@@ -13,28 +13,28 @@ class MaterialRequestsTableSeeder extends Seeder
     public function run()
     {
         MaterialRequest::create([
-            "code" => "Material Request 1",
+            "code" => "MR-1",
             "division_id" => 1,
             "request_by_user_id" => 1,
             "periode_id"=> 1
         ]);
 
         MaterialRequest::create([
-            "code" => "Material Request 2",
+            "code" => "MR-2",
             "division_id" => 2,
             "request_by_user_id" => 2,
             "periode_id"=> 2
         ]);
 
         MaterialRequest::create([
-            "code" => "Material Request 3",
+            "code" => "MR-3",
             "division_id" => 3,
             "request_by_user_id" => 3,
             "periode_id"=> 3
         ]);
 
         MaterialRequest::create([
-            "code" => "Material Request 4",
+            "code" => "MR-4",
             "division_id" => 4,
             "request_by_user_id" => 4,
             "periode_id"=> 4

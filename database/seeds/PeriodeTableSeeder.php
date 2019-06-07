@@ -16,25 +16,29 @@ class PeriodeTableSeeder extends Seeder
         Periode::create([
             "name" => "Periode 1",
             "from" => Carbon::parse('2000-01-01'),
-            "to" => Carbon::parse('2000-03-31')
+            "to" => Carbon::parse('2000-03-31'),
+            "code" => "P-1"
         ]);
 
         Periode::create([
             "name" => "Periode 2",
             "from" => Carbon::parse('2000-04-01'),
-            "to" => Carbon::parse('2000-06-30')
+            "to" => Carbon::parse('2000-06-30'),
+            "code" => "P-2"
         ]);
 
         Periode::create([
             "name" => "Periode 3",
             "from" => Carbon::parse('2000-07-01'),
-            "to" => Carbon::parse('2000-09-30')
+            "to" => Carbon::parse('2000-09-30'),
+            "code" => "P-3"
         ]);
 
         Periode::create([
             "name" => "Periode 4",
             "from" => Carbon::parse('2000-10-01'),
-            "to" => Carbon::parse('2000-12-31')
+            "to" => Carbon::parse('2000-12-31'),
+            "code" => "P-4"
         ]);
     }
 }

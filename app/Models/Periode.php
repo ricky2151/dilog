@@ -8,11 +8,16 @@ class Periode extends Model
 {
     //Status is condition this periode where value 1 = active and 0 = not active
     protected $fillable = [
-        'name', 'from','to','status'
+        'name', 'from','to','status', 'code'
     ];
 
     public static function getPeriodeActive(){
         return Periode::Where("status","1")->first();
+    }
+
+    public static function getNewCode(){
+        $lastId = collect(Periode::orderBy('id','desc')->first(['id']))->get('id');
+        return "P-".($lastId+1);
     }
 
     public function materialRequests(){
