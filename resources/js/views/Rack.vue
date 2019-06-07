@@ -102,7 +102,7 @@
                         </v-stepper-content>
 
                         
-                        {{ref_input}}
+                        
                         <v-btn v-on:click='save_rack()' >submit</v-btn>
                         
                         

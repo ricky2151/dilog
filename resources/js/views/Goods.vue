@@ -567,7 +567,7 @@
                         </v-stepper-content>
                         
                         <v-btn v-on:click='save_data()' >submit</v-btn>
-                        {{input}}
+                        
                         
                         
                     </v-stepper>
