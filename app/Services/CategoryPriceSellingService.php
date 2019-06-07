@@ -10,14 +10,14 @@ class CategoryPriceSellingService
 {
     public function handleEmptyModel(){
         if(CategoryPriceSelling::all()->count() === 0){
-            throw new CustomModelNotFoundException("categoryPriceSelling"); 
+            throw new CustomModelNotFoundException("category_price_selling"); 
         } 
 
     }
 
     public function handleInvalidParameter($id){
         if(!$this->isParameterValid($id)){
-            throw new InvalidParameterException(json_encode(["categoryPriceSelling"=>["parameter invalid"]]));
+            throw new InvalidParameterException(json_encode(["category_price_selling"=>["parameter invalid"]]));
         }
     }
 
@@ -27,7 +27,7 @@ class CategoryPriceSellingService
         }
         catch(ModelNotFoundException $e)
         {
-            throw new CustomModelNotFoundException("categoryPriceSelling"); 
+            throw new CustomModelNotFoundException("category_price_selling"); 
         }
     }
 

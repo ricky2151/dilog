@@ -35,7 +35,8 @@ class StoreGoods extends FormRequest
             'last_buy_pricelist' => "integer|nullable",
             'barcode_master' => "string|nullable",
             "thumbnail" => "nullable|image|max:2048|mimes:jpeg,bmp,png,jpg",
-            'avgprice_status' => "required|boolean",
+            'avg_price_status' => "required|boolean",
+            'avg_price' => "required|integer|min:0",
             'tax' => "integer|nullable",
             'unit_id' => "required|integer|exists:units,id",
             'cogs_id' => "required|integer|exists:cogs,id",
@@ -44,7 +45,14 @@ class StoreGoods extends FormRequest
             'category_goods.*.category_id'=> "required|integer|exists:categories,id",
             'material_goods.*.total'=> "required|integer|min:1",
             'material_goods.*.adjust'=> "string|nullable",
-            'material_goods.*.name'=> "required|string"
+            'material_goods.*.name'=> "required|string",
+            'pricelists.*.supplier_id' => "required|integer|exists:suppliers,id",
+            'pricelists.*.price' => "required|integer",
+            'price_sellings.*.warehouse_id' => "required|integer|exists:warehouses,id",
+            'price_sellings.*.stock_cut_off' => "required|integer|min:0",
+            'price_sellings.*.category_price_selling_id' => "required|integer|exists:category_price_sellings,id",
+            'price_sellings.*.price' => "required|integer|min:0",
+            'price_sellings.*.free' => "required|boolean",
         ];
     }
 

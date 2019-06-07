@@ -35,21 +35,34 @@ class UpdateGoods extends FormRequest
             'last_buy_pricelist' => "filled|integer",
             'barcode_master' => "filled|string",
             "thumbnail" => "image|max:2048|mimes:jpeg,bmp,png,jpg",
-            'avgprice_status' => "filled|boolean",
+            'avg_price_status' => "filled|boolean",
+            'avg_price' => "filled|integer|min:0",
             'tax' => "filled|integer",
             'unit_id' => "filled|integer|exists:units,id",
             'cogs_id' => "filled|integer|exists:cogs,id",
+            
             'attribute_goods.*.value'=> "required|integer|min:1",
             'attribute_goods.*.attribute_id'=> "required|integer|exists:attributes,id",
+            
             'category_goods.*.category_id'=> "required|integer|exists:categories,id",
-            'material_goods_update.*.id'=> "filled|required_with:material_goods_update.*.total,material_goods_update.*.adjust,material_goods_update.*.name|integer|exists:materials,id",
-            'material_goods_update.*.total'=> "filled|integer|min:1",
-            'material_goods_update.*.adjust'=> "nullable",
-            'material_goods_update.*.name'=> "filled|string",
-            'material_goods_new.*.total'=> "filled|required_with:material_goods_new.*.name,material_goods_new.*.adjust|integer|min:1",
-            'material_goods_new.*.adjust'=> "string|nullable",
-            'material_goods_new.*.name'=> "filled|required_with:material_goods_new.*.total,material_goods_new.*.adjust|string",
-            'material_goods_delete.*.id'=> "filled|integer|exists:materials,id",
+            
+            'material_goods.*.id' => "filled|integer|exists:materials,id",
+            'material_goods.*.total'=> "filled|integer|min:1",
+            'material_goods.*.adjust'=> "string|nullable",
+            'material_goods.*.name'=> "filled|string",
+            'material_goods.*.type'=> "required|in:1,0,-1",//1 : new, 0 : update, -1 : delete
+
+            'pricelists.*.supplier_id' => "required|integer|exists:suppliers,id",
+            'pricelists.*.price' => "required|integer",
+
+            'price_sellings.*.id' => "filled|integer|exists:price_sellings,id",
+            'price_sellings.*.warehouse_id' => "filled|integer|exists:warehouses,id",
+            'price_sellings.*.stock_cut_off' => "filled|integer|min:0",
+            'price_sellings.*.category_price_selling_id' => "filled|integer|exists:category_price_sellings,id",
+            'price_sellings.*.price' => "filled|integer|min:0",
+            'price_sellings.*.free' => "filled|boolean",
+            'price_sellings.*.type'=> "required|in:1,0,-1",//1 : new, 0 : update, -1 : delete
+
             'is_image_delete' => "required|boolean"
         ];
     }

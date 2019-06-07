@@ -12,17 +12,17 @@ class SourcesTableSeeder extends Seeder
      */
     public function run()
     {
-        Source::create([
-            'name' => "Source 1"
-        ]);
-        Source::create([
-            'name' => "Source 2"
-        ]);
-        Source::create([
-            'name' => "Source 3"
-        ]);
-        Source::create([
-            'name' => "Source 4"
-        ]);
+        // Source::create([
+        //     'name' => "Source 1"
+        // ]);
+        // Source::create([
+        //     'name' => "Source 2"
+        // ]);
+        // Source::create([
+        //     'name' => "Source 3"
+        // ]);
+        // Source::create([
+        //     'name' => "Source 4"
+        // ]);
     }
 }

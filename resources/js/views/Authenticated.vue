@@ -230,55 +230,84 @@ export default {
                     subroutes:[
                     {
                         subicon:"category",
-                        subtitle:"Goods Category",
+                        subtitle:"Goods Categories",
                         subaction: "/category"
                     },
                     {
                         subicon:"dns",
-                        subtitle:"Goods Unit",
+                        subtitle:"Goods Units",
                         subaction: "/unit"
                     },
                     {
                         subicon:"build",
-                        subtitle:"Goods Attribute",
+                        subtitle:"Goods Attributes",
                         subaction: "/attribute"
                     },
 
                     {
                         subicon:"bookmarks",
-                        subtitle:"COGS Type",
+                        subtitle:"COGS Types",
                         subaction: "/type"
                     },
                     {
                         subicon:"compare_arrows",
-                        subtitle:"Price Category",
+                        subtitle:"Selling Price Categories",
                         subaction: "/categorypriceselling"
                     },
 
                     {
-                        subicon:"description",
-                        subtitle:"Batch Source",
-                        subaction: "/source"
+                        subicon:"widgets",
+                        subtitle:"Goods",
+                        subaction: "/goods"
                     },
 
+                    {
+                        subicon:"monetization_on",
+                        subtitle:"COGS",
+                        subaction: "/cogs"
+                    },
+
+                    {
+                        subicon:"perm_contact_calendar",
+                        subtitle:"Suppliers",
+                        subaction: "/supplier"
+                    },
+
+                    {
+                        subicon:"person_pin",
+                        subtitle:"Customers",
+                        subaction: "/customer"
+                    },
+                    
                     ]
                 },
                 {
-                    icon: "widgets",
-                    title : "Goods",
-                    action : "/goods",
-                },
-                {
-                    icon: "store",
-                    title: "Warehouse",
-                    action: "/warehouse",
-                },
-                {
-                    icon: "store",
-                    title : "Goods",
-                    route : "/goods",
-                }
+                    icon: "local_convenience_store",
+                    title: "Stock",
+                    subroutes:[
+                    {
+                        subicon:"store",
+                        subtitle:"Warehouses",
+                        subaction: "/warehouse"
+                    },
+                    {
+                        subicon:"assignment_returned",
+                        subtitle:"Goods Racks",
+                        subaction: "/goodsrack"
+                    },
+                    {
+                        subicon:"dns",
+                        subtitle:"Racks",
+                        subaction: "/rack"
+                    },
 
+                   
+                    
+                    ]
+                },
+
+                
+               
             ],
             toolbarMenu: [
                 {

@@ -27,6 +27,7 @@ class GoodsController extends Controller
         $this->path = 'goods';
         $this->user = auth('api')->user();
     }
+
     /**
      * Display a listing of the goods.
      *
@@ -35,10 +36,52 @@ class GoodsController extends Controller
     public function index()
     {
         $this->goodsService->handleEmptyModel();
-        $CollectionGoods = $this->goods->latest()->get();
-        foreach($CollectionGoods as $goods){
-            Arr::set($goods, 'thumbnail', Storage::url($goods["thumbnail"]));
-        }
+        $CollectionGoods = $this->goods->index();
+
+        return formatResponse(false,(["goods"=>$CollectionGoods]));
+    }
+
+    /**
+     * Display a listing of the rack in specific goods.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function racks($id)
+    {
+        $this->goodsService->handleInvalidParameter($id);
+        $this->goodsService->handleModelNotFound($id);
+
+        $CollectionGoods = $this->goods->find($id)->getRack();
+
+        return formatResponse(false,(["goods"=>$CollectionGoods]));
+    }
+
+    /**
+     * Display a listing of the selling price in specific goods.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function sellingPrices($id)
+    {
+        $this->goodsService->handleInvalidParameter($id);
+        $this->goodsService->handleModelNotFound($id);
+
+        $CollectionGoods = $this->goods->find($id)->getSellingPrices();
+
+        return formatResponse(false,(["goods"=>$CollectionGoods]));
+    }
+
+    /**
+     * Display a listing of the pricelist in specific goods.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function pricelists($id)
+    {
+        $this->goodsService->handleInvalidParameter($id);
+        $this->goodsService->handleModelNotFound($id);
+
+        $CollectionGoods = $this->goods->find($id)->getPricelist();
 
         return formatResponse(false,(["goods"=>$CollectionGoods]));
     }
@@ -50,9 +93,9 @@ class GoodsController extends Controller
      */
     public function create()
     {
-        $this->goodsService->handleGetAllDataForGoodsCreation();
+        // $this->goodsService->handleGetAllDataForGoodsCreation();
         $data = $this->goods->allDataCreate();
-        return formatResponse(false,([$data]));
+        return formatResponse(false,($data));
     }
 
     /**
@@ -77,13 +120,25 @@ class GoodsController extends Controller
             $category_goods = collect(Arr::pull($data,'category_goods'))->unique(function ($item) {
                 return $item['category_id'];
             });
+
+            $pricelists = collect(Arr::pull($data,'pricelists'))->unique(function ($item) {
+                return $item['supplier_id'].$item['price'];
+            });
+
+            $priceSellings = collect(Arr::pull($data,'price_sellings'))->unique(function ($item) {
+                return $item['warehouse_id'];
+            })->toArray();
             
-            $material_goods = Arr::pull($data,'material_goods');
+            $material_goods = collect(Arr::pull($data,'material_goods'))->unique(function ($item) {
+                return $item['name'];
+            })->toArray();
 
             $goods = $this->user->goods()->create($data);
             $goods->attributes()->attach($attribute_goods);
             $goods->categories()->attach($category_goods);
+            $goods->suppliers()->attach($pricelists);
             $goods->materials()->createMany($material_goods);
+            $goods->priceSelling()->createMany($priceSellings);
 
             DB::commit();
         } catch (\Throwable $e) {
@@ -95,7 +150,7 @@ class GoodsController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified goods.
      *
      * @param  $id
      * @return \Illuminate\Http\JsonResponse
@@ -104,7 +159,23 @@ class GoodsController extends Controller
     {
         $this->goodsService->handleInvalidParameter($id);
         $this->goodsService->handleModelNotFound($id);
-        $this->goodsService->handleGetAllDataForGoodsCreation();
+
+        $goods = $this->goods->find($id);
+
+        return formatResponse(false,(["goods"=>$goods]));
+    }
+
+    /**
+     * Show the form for editing the specified goods.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id)
+    {
+        $this->goodsService->handleInvalidParameter($id);
+        $this->goodsService->handleModelNotFound($id);
+        // $this->goodsService->handleGetAllDataForGoodsCreation();
 
         $allMaterial = collect($this->goods->allDataCreate());
 
@@ -114,6 +185,7 @@ class GoodsController extends Controller
         
         $concatenated = $goods->union($allMaterial)->union($this->showFormatData($id));
 
+        // return  $this->goods->find($id)->suppliers;
         return formatResponse(false,(["goods"=>$concatenated]));
     }
 
@@ -129,12 +201,6 @@ class GoodsController extends Controller
         $data = $request->validated();
         $this->goodsService->handleInvalidParameter($id);
         $this->goodsService->handleModelNotFound($id);
-
-        $material_goods_delete = Arr::pull($data,'material_goods_delete');
-        $material_goods_update = Arr::pull($data,'material_goods_update');
-
-        $this->goodsService->checkRelationship($id,collect($material_goods_delete)->pluck("id"));
-        $this->goodsService->checkRelationship($id,collect($material_goods_update)->pluck("id"));
 
         $goods = $this->goods->find($id);
 
@@ -153,14 +219,26 @@ class GoodsController extends Controller
                 return $item['category_id'];
             });
 
-            $material_goods_new = Arr::pull($data,'material_goods_new');
+            $pricelists = collect(Arr::pull($data,'pricelists'))->unique(function ($item) {
+                return $item['supplier_id'].$item['price'];
+            });
+
+            $priceSellings = collect(Arr::pull($data,'price_sellings'))->unique(function ($item) {
+                return $item['warehouse_id'];
+            })->toArray();
+            
+            $material_goods = collect(Arr::pull($data,'material_goods'))->unique(function ($item) {
+                return $item['name'];
+            })->toArray();
+
+            // return $material_goods;
             
             $goods->update($data);
             $goods->attributes()->sync($attribute_goods);
             $goods->categories()->sync($category_goods);
-            is_null($material_goods_new) ? "" : $goods->materials()->createMany($material_goods_new);
-            $goods->updateManyAtribut($material_goods_update);
-            $goods->deleteManyAtribut($material_goods_delete);
+            $goods->suppliers()->sync($pricelists);
+            is_null($priceSellings) ? "" : $goods->updatePriceSellings($priceSellings);
+            is_null($material_goods) ? "" : $goods->updateMaterials($material_goods);
 
             $this->goodsService->handleUpdateImage($request->file("thumbnail"),$oldThumnail, $path, $this->path,$data["is_image_delete"]);
 
@@ -183,14 +261,18 @@ class GoodsController extends Controller
     {
         $this->goodsService->handleInvalidParameter($id);
         $this->goodsService->handleModelNotFound($id);
-        deleteImage($this->goods->find($id)->thumbnail);
-
+        $thumbnail = $this->goods->find($id)->thumbnail;
         DB::beginTransaction();
         try {
             $this->goods->find($id)->attributes()->sync([]);
             $this->goods->find($id)->categories()->sync([]);
+            $this->goods->find($id)->suppliers()->sync([]);
             $this->goods->find($id)->materials()->delete();
+            $this->goods->find($id)->goodsRack()->delete();
+
             $this->goods->find($id)->delete();
+            deleteImage($thumbnail);
+
             DB::commit();
         }catch (\Throwable $e) {
             DB::rollback();
@@ -211,6 +293,10 @@ class GoodsController extends Controller
         $goodsAttributes = $this->goods->find($id)->attributes;
         $goodsCategories = $this->goods->find($id)->categories;
         $goodsMaterials = $this->goods->find($id)->materials;
+        $pricelists = $this->goods->find($id)->suppliers;
+        $priceSellings = $this->goods->find($id)->getSellingPrices();
+
+        // return $pricelists;
 
         $goodsAttributes = $goodsAttributes->map(function ($item) {
             return ['id' => $item['id'], 'name' => $item['name'],'value'=> $item['pivot']['value']];
@@ -220,7 +306,13 @@ class GoodsController extends Controller
             return ['id' => $item['id'], 'name' => $item['name']];
         });
 
-        $data = collect(["attribute_goods" => $goodsAttributes, "category_goods"=>$goodsCategories , "material_goods" => $goodsMaterials]);
+        $pricelists = $pricelists->map(function ($item) {
+            $item = Arr::add($item, 'price', $item['pivot']['price']);
+            return Arr::except($item, ['pivot']);
+        });
+
+
+        $data = collect(["price_sellings"=>$priceSellings,"pricelists" => $pricelists,"attribute_goods" => $goodsAttributes, "category_goods"=>$goodsCategories , "material_goods" => $goodsMaterials]);
 
         return $data;
     }

@@ -30,7 +30,19 @@ class DatabaseSeeder extends Seeder
             CogsComponentsTableSeeder::class,
             SourcesTableSeeder::class,
             CategoryPriceSellingsTableSeeder::class,
-            MaterialsTableSeeder::class
+            MaterialsTableSeeder::class,
+            PriceSellingsTableSeeder::class,
+            GoodsRacksTableSeeder::class,
+            BatchsTableSeeder::class,
+            SuppliersTableSeeder::class,
+            PricelistsTableSeeder::class,
+            DivisionsTableSeeder::class,
+            CustomersTableSeeder::class,
+            StockOpnameDetailsTableSeeder::class,
+            StockOpnameTableSeeder::class,
+            PeriodeTableSeeder::class,
+            MaterialRequestsTableSeeder::class,
+            MaterialRequestDetailsTableSeeder::class
         ]);
     }
 }

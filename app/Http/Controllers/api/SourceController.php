@@ -5,6 +5,8 @@ namespace App\Http\Controllers\api;
 use App\Services\SourceService;
 use App\Http\Requests\StoreSource;
 use App\Http\Requests\UpdateSource;
+use App\Exceptions\DatabaseTransactionErrorException;
+use Illuminate\Support\Facades\DB;
 use App\Models\Source;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -87,7 +89,16 @@ class SourceController extends Controller
         $this->sourceService->handleInvalidParameter($id);
         $this->sourceService->handleModelNotFound($id);
 
-        $this->source->find($id)->delete();
+        try {
+            $this->source->find($id)->goodsRacks()->sync([]);
+            $this->source->find($id)->delete();
+
+            DB::commit();
+        }catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("Source");
+        }
+        
         return formatResponse(false,(["source"=>["source deleted successfully"]]));
     }
 }
