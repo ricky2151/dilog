@@ -12,33 +12,12 @@ class AttributeGoodsTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('attribute_goods')->insert([
-            'goods_id' => 1,
-            'attribute_id' => 1,
-            'value' => 10,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-        DB::table('attribute_goods')->insert([
-            'goods_id' => 1,
-            'attribute_id' => 2,
-            'value' => 10,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-        DB::table('attribute_goods')->insert([
-            'goods_id' => 2,
-            'attribute_id' => 1,
-            'value' => 10,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-        DB::table('attribute_goods')->insert([
-            'goods_id' => 2,
-            'attribute_id' => 2,
-            'value' => 10,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+        for ($i=1; $i < 104; $i++) {
+            DB::table('attribute_goods')->insert([
+                'goods_id' => $i,
+                'attribute_id' => rand(1,4),
+                'value' => 10,
+            ]);
+        }
     }
 }

@@ -12,29 +12,13 @@ class MaterialsTableSeeder extends Seeder
      */
     public function run()
     {
-        Material::create([
-            "name" => "Material 1",
-            "goods_id" => 1,
-            "total" => 100,
-            "adjust" => "1 meter"
-        ]);
-        Material::create([
-            "name" => "Material 2",
-            "goods_id" => 2,
-            "total" => 200,
-            "adjust" => "1 meter"
-        ]);
-        Material::create([
-            "name" => "Material 3",
-            "goods_id" => 3,
-            "total" => 300,
-            "adjust" => "1 meter"
-        ]);
-        Material::create([
-            "name" => "Material 4",
-            "goods_id" => 4,
-            "total" => 400,
-            "adjust" => "1 meter"
-        ]);
+        for ($i=0; $i < 100; $i++) {
+            Material::create([
+                "name" => "Material 1",
+                "goods_id" => rand(1,4),
+                "total" => rand(100, 200),
+                "adjust" => "1 meter"
+            ]);
+        }
     }
 }

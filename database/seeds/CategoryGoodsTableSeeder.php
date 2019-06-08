@@ -12,29 +12,11 @@ class CategoryGoodsTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('category_goods')->insert([
-            'goods_id' => 1,
-            'category_id' => 1,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-        DB::table('category_goods')->insert([
-            'goods_id' => 1,
-            'category_id' => 2,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-        DB::table('category_goods')->insert([
-            'goods_id' => 2,
-            'category_id' => 1,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
-        DB::table('category_goods')->insert([
-            'goods_id' => 2,
-            'category_id' => 2,
-            'created_at' => now(),
-            'updated_at' => now()
-        ]);
+        for ($i=1; $i < 104; $i++) {
+            DB::table('category_goods')->insert([
+                'goods_id' => $i,
+                'category_id' => rand(1,4),
+            ]);
+        }
     }
 }
