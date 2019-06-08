@@ -24,5 +24,23 @@ class UnitTableSeeder extends Seeder
         Unit::create([
             'name' => "unit 4"
         ]);
+        Unit::create([
+            'name' => "unit 5"
+        ]);
+        Unit::create([
+            'name' => "unit 6"
+        ]);
+        Unit::create([
+            'name' => "unit 7"
+        ]);
+        Unit::create([
+            'name' => "unit 8"
+        ]);
+        Unit::create([
+            'name' => "unit 9"
+        ]);
+        Unit::create([
+            'name' => "unit 10"
+        ]);
     }
 }

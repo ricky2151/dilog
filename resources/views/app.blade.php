@@ -11,7 +11,6 @@
     <meta name="description" content="Warehousing app">
     <meta name="author" content="Dilog">
     <link rel="stylesheet" href="{{ asset(mix('/css/app.css')) }}">
-    @laravelPWA
 </head>
 <body>
     <div id="app">
