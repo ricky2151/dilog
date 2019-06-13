@@ -16,7 +16,7 @@ class CreateCategoryPriceSellingsTable extends Migration
         Schema::create('category_price_sellings', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->integer('diskon')->nullable();
+            $table->integer('discount')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

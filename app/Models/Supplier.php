@@ -25,5 +25,8 @@ class Supplier extends Model
         return $this->belongsToMany('App\Models\Goods','pricelists','supplier_id','goods_id')->withPivot('price')->withTimestamps()->orderBy('pivot_updated_at', 'desc');
     }
 
+    public function pricelists(){
+        return $this->hasMany('App\Models\Pricelist');
+    }
 
 }
