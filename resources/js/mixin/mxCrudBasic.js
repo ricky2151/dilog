@@ -1,6 +1,6 @@
 export default {
 	methods:{
-
+        
 		findDataById(id, justreturnno = false)
 		{
 			

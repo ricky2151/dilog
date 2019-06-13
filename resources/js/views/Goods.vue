@@ -290,10 +290,10 @@
 
                             <v-select v-model='temp_input.price_sellings.categorypriceselling' :items="ref_input.categorypriceselling" item-text='name' return-object label="Select Category Price Selling"></v-select>
     
-                            <v-text-field v-model="temp_input.price_sellings.price" disabled label="Price" required></v-text-field>                            
+                            <v-text-field v-model="com_price" disabled label="Price" required></v-text-field>                            
                             <v-select v-model='temp_input.price_sellings.free' :items="ref_input.free" item-text='name' return-object label="Free"></v-select>
 
-                            
+                            {{temp_input.price_sellings.price}}
                             
                             <v-toolbar flat color="white" >
                                 
@@ -522,7 +522,7 @@
                             
 
 
-                            <v-text-field v-model="temp_input.pricelists.price" label="Value" required></v-text-field>
+                            <v-text-field v-model="temp_input.pricelists.price" label="Price" required></v-text-field>
                             
                             <v-toolbar flat color="white" >
                                 
@@ -569,11 +569,11 @@
                                 </template>
                             </v-data-table>
                             
-
+                            <v-btn color='gray' v-on:click='e6=5'>Back</v-btn>
                         </v-stepper-content>
                         
                         <v-btn v-on:click='save_data()' >submit</v-btn>
-                        <v-btn color='gray' v-on:click='e6=5'>Back</v-btn>
+
                         
                         
                         
@@ -954,6 +954,15 @@ export default {
         {
             return this.input.margin;
         },
+        com_price : 
+        {
+            get: function()
+            {
+                return this.strToPrice(parseInt(this.input.last_buy_pricelist) + parseInt(this.input.margin));    
+            }
+            
+        }
+
     },
     watch: {
         com_last_buy_pricelist()
