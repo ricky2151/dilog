@@ -17,14 +17,6 @@ class Supplier extends Model
         return ['goods' => Goods::all(['id','name'])];
     }
 
-    public function updateData($goods){
-
-    }
-
-    public function goods(){
-        return $this->belongsToMany('App\Models\Goods','pricelists','supplier_id','goods_id')->withPivot('price')->withTimestamps()->orderBy('pivot_updated_at', 'desc');
-    }
-
     public function pricelists(){
         return $this->hasMany('App\Models\Pricelist');
     }
