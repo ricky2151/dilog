@@ -6,6 +6,8 @@
 
 <template>
     <div>
+
+        <!-- POPUP DETAIL GOODS -->
         <v-dialog v-model="dialog_detailgoods" width=750>
             <v-card>
                 <v-toolbar dark color="menu">
@@ -16,7 +18,6 @@
 
                 </v-toolbar>
                 <div style='padding:30px'>
-
                     <v-text-field
                         v-model="popup_search_detailgoods"
                         append-icon="search"
@@ -41,51 +42,78 @@
             </v-card>
         </v-dialog>
 
-
+        <!-- POPUP CREATE EDIT -->
         <v-dialog v-model="dialog_createedit" width=750>
             <v-card>
                 <v-toolbar dark color="menu">
                     <v-btn icon dark v-on:click="closedialog_createedit()">
                         <v-icon>close</v-icon>
                     </v-btn>
-                    <v-toolbar-title v-html='idx_data_edit == -1 ?"Add Categories":"Edit Categories"'></v-toolbar-title>
+                    <v-toolbar-title v-html='id_data_edit == -1 ?"Add Categories":"Edit Categories"'></v-toolbar-title>
 
                 </v-toolbar>
-                <form style='padding:30px'>
-                    <v-text-field v-model='input.name' label="Name" required></v-text-field>
-                    <v-btn v-on:click='save_category()' >submit</v-btn>
-                </form>
+                <v-form v-model="valid" style='padding:30px' ref='formCreateEdit'>
+                    <v-text-field :rules="this.$list_validation.max_req" v-model='input.name' label="Name" required></v-text-field>
+                    <v-btn v-on:click='save_data()' >submit</v-btn>
+                </v-form>
             </v-card>
         </v-dialog>
 
         <v-toolbar flat color="white">
-            <v-toolbar-title>categories Data</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark>
-                Add Data
-            </v-btn>
+            <v-toolbar-title>Categories Data</v-toolbar-title>
         </v-toolbar>
+        <v-layout row class='bgwhite'>
+            <v-flex xs3>
+                <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='marginleft30'>
+                    Add Data
+                </v-btn>
+            </v-flex>
+            <v-flex xs12 class="text-xs-right">
+                <v-text-field
+                    class='marginhorizontal10 searchwidth d-inline-block'
+                    v-model="search_data"
+                    append-icon="search"
+                    label="Search"
+                    single-line
+                    hide-details
+                ></v-text-field>
+            </v-flex>
+        </v-layout>
         <v-data-table
             disable-initial-sort
             :headers="headers"
-            :items="categories"
+            :items="data_table"
+            :search="search_data"
             class=""
         >
         <template v-slot:items="props">
+            <td>{{ props.index + 1 }}</td>
             <td>{{ props.item.name }}</td>
-            <td>
-                <v-btn class='button-action' v-on:click='opendialog_detailgoods(props.index)' color="primary" block dark v-on="on">
-                    Goods
-                </v-btn>
-            </td>
-            <td>
-                <v-btn class='button-action' v-on:click='opendialog_createedit(props.index)' color="primary" fab depressed small dark v-on="on">
-                    <v-icon small>edit</v-icon>
-                </v-btn>
-                <v-btn class='button-action' v-on:click='delete_category(props.index)' color="red" fab small dark depressed>
-                    <v-icon small>delete</v-icon>
-                </v-btn>
 
+            <td>
+                <div class="text-xs-left">
+                    <v-menu offset-y>
+                      <template v-slot:activator="{ on }">
+                        <v-btn
+                          color="primary"
+                          dark
+                          v-on="on"
+                        >
+                          Action
+                        </v-btn>
+                      </template>
+                      <v-list>
+                        <v-list-tile
+                          v-for="(item, index) in action_items"
+                          :key="index"
+                          v-on:click="action_change(props.item.id,index)"
+                          
+                        >
+                          <v-list-tile-title>{{ item }}</v-list-tile-title>
+                        </v-list-tile>
+                      </v-list>
+                    </v-menu>
+                </div>
             </td>
         </template>
         </v-data-table>
@@ -94,26 +122,38 @@
 
 <script>
 import axios from 'axios'
+import mxCrudBasic from '../mixin/mxCrudBasic';
+
 export default {
     data () {
         return {
+            name_table:'categories',
+            header_api:{
+                'Accept': 'application/json',
+                'Content-type': 'application/json'
+            },
+
+
+            action_items: ['Edit','Goods', 'Delete'],
             on:false,
 
+            valid:null,
             dialog_createedit:false,
             dialog_detailgoods:false,
-            dialog_stock:false,
+            
 
-            idx_data_edit:-1,
+            id_data_edit:-1,
 
             input:{
                 name:'',    
             },
+            input_before_edit:null, //variabel ini digunakan untuk menampung input sebelum di klik submit saat edit
             
 
             headers: [
-                { text: 'Name', value: 'name',width:'70%'},
-                { text: 'Goods', align:'left',width:'15%',sortable:false},
-                { text: 'Action', align:'left',width:'15%',sortable:false},
+                { text: 'No', value: 'no'},
+                { text: 'Name', value: 'name'},
+                { text: 'Action', align:'left',sortable:false, width:'15%'},
 
             ],
 
@@ -124,7 +164,9 @@ export default {
 
             ],
 
-            categories: [],
+            data_table:[],
+            search_data: null,
+            
 
             popup_detailgoods :
             [
@@ -145,138 +187,76 @@ export default {
         }
     },
     methods: {
-        closedialog_detailgoods(){
+
+        action_change(id,idx_action)
+        {
+            if(idx_action == 0)
+            {
+                this.opendialog_createedit(id)
+            }
+            else if(idx_action == 1)
+            {
+                this.opendialog_detailgoods(id);
+            }
+            else if(idx_action == 2)
+            {
+                this.delete_data(id);
+            }
+        },
+
+        opendialog_detailgoods(id_edit)
+        {
+            this.dialog_detailgoods = true;
+            var temp_popup = this.get_popup_detail(id_edit, 'goods');
+            if(temp_popup != null)
+            {
+                this.popup_detailgoods = temp_popup.categories;    
+            }
+            
+            
+        },
+
+        closedialog_detailgoods(){ 
             this.dialog_detailgoods = false;
         },
-        opendialog_detailgoods(idx_edit_popup_detailgoods)
+
+        convert_data_input(tempobject)
         {
-
-            this.dialog_detailgoods = true;
-            this.get_popup_detailgoods(idx_edit_popup_detailgoods);
-
+            this.input.name = tempobject.name;
+            this.input_before_edit = JSON.parse(JSON.stringify(this.input));
         },
-        closedialog_createedit(){
-            this.idx_data_edit = -1;
-            this.dialog_createedit = false;
-        },
-        opendialog_createedit(idx_data_edit){
-            if(idx_data_edit != -1)
+
+        prepare_data_form()
+        {
+            const formData = new FormData();
+            if(this.id_data_edit == -1) //jika add data
             {
-                this.idx_data_edit = idx_data_edit;
-
-                
-                this.input.name = this.categories[this.idx_data_edit].name;
+                formData.append('name', this.input.name);
             }
+            else //jika edit data
+            {
+                if(this.input.name != this.input_before_edit.name) 
+                    formData.append('name', this.input.name);
+                formData.append('_method','patch');
+            }
+            formData.append('token', localStorage.getItem('token'));
+            return formData;
+        },
 
-            this.dialog_createedit = true;
+        showTable(r) 
+        {
+            this.data_table = r.data.items.categories;
         },
         
-        showTable(r)
-        {
-            
-            this.categories = r.data.items.categories;
-        },
-        get_category() {
-
-            axios.get('/api/categories', {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r => this.showTable(r))
-        },
-        save_category()
-        {
-            if(this.idx_data_edit != -1) //jika sedang diedit
-            {
-                axios.patch('api/categories/' + this.categories[this.idx_data_edit].id,{
-                    name: this.input.name,
-                    token: localStorage.getItem('token')
-                }).then((r) => {
-                    this.get_category();
-                    this.closedialog_createedit();
-                    swal("Good job!", "Data saved !", "success");
-                    this.idx_data_edit = -1;
-                    this.input.name = '';
-                });
-                
-                
-                
-
-                
-            }
-            else //jika sedang tambah data
-            {
-                axios.post('api/categories',{
-                    name: this.input.name,
-                    token: localStorage.getItem('token')
-                }).then((r)=> {
-                    this.get_category();
-                    this.closedialog_createedit();
-                    swal("Good job!", "Data saved !", "success");
-                });
-            }
-        },
-        delete_category(idx_data_delete){
-            
-            swal({
-                    title: "Are you sure want to delete this item?",
-                    text: "Once deleted, it can't be undone",
-                    icon: "warning",
-                    buttons: true,
-                    dangerMode: true,
-                })
-                .then((willDelete) => {
-                    if (willDelete) {
-                        axios.delete('api/categories/' + this.categories[idx_data_delete].id,{
-                            data:{
-                                token: localStorage.getItem('token')    
-                            }
-                            
-                        }).then((r)=>{
-                            this.get_category();
-                            swal("Good job!", "Data Deleted !", "success");
-                            
-                        });
-                    }
-            });
-        },
-        get_popup_detailgoods(idx_edit_popup_detailgoods){
-            axios.get('api/categories/' + this.categories[idx_edit_popup_detailgoods].id + '/goods',{
-                params : {
-                    token: localStorage.getItem('token')
-                }
-
-            }).then((r) => {
-                this.popup_detailgoods = r.data.items.categories;
-            })
-        }
-
 
     },
     mounted(){
-        this.get_category();
+        this.get_data();
+
     },
+    mixins:[
+        mxCrudBasic
+    ],
 }
 </script>
 
-<style>
-
-.text-link{
-    color:blue;
-    text-decoration: underline;
-    cursor:pointer;
-}
-.button-action{
-    width: 30px;
-    height: 30px;
-}
-.button-action i{
-    font-size: 14px !important;
-}
-
-</style>

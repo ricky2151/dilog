@@ -221,6 +221,16 @@ class WarehouseController extends Controller
     }
 
     /**
+     * Show the form for creating a new Warehouse.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function create()
+    {
+        return formatResponse(false,($this->warehouseService->createForm()));
+    }
+
+    /**
      * Store a newly created Warehouse in storage.
      *
      * @param  \Illuminate\Http\StoreWarehouse  $request

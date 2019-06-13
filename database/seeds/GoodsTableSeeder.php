@@ -2,6 +2,7 @@
 
 use App\Models\Goods;
 use Illuminate\Database\Seeder;
+use Faker\Factory as Faker;
 
 class GoodsTableSeeder extends Seeder
 {
@@ -12,6 +13,8 @@ class GoodsTableSeeder extends Seeder
      */
     public function run()
     {
+        $faker = Faker::create();
+
         Goods::create([
             'name' => "Buku avenger:end game",
             'code' => "11011",
@@ -83,5 +86,25 @@ class GoodsTableSeeder extends Seeder
             'unit_id' => 1,
             'cogs_id' => 1
         ]);
+
+        for ($i=1; $i < 100; $i++) {
+            Goods::create([
+                'name' => "Buku " . $faker->name,
+                'code' => rand(1000, 9000),
+                'desc' => "Buku " . $faker->name,
+                'margin' => 1,
+                'value' => 1,
+                'status' => 1,
+                'last_buy_pricelist' => rand(10000, 90000),
+                'barcode_master' => "XXID" . rand(100,200),
+                'thumbnail' => "goods/default.png",
+                'avg_price_status' => true,
+                'avg_price' => rand(100,200),
+                'user_id' => rand(1,10),
+                'tax' => 5,
+                'unit_id' => rand(1,4),
+                'cogs_id' => rand(1,4)
+            ]);
+        }
     }
 }

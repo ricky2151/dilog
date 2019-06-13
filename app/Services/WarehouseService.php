@@ -37,6 +37,13 @@ class WarehouseService
         }
     }
 
+    public function createForm(){
+        return ['warehouses' => $this->warehouse->all()->map(function($item){
+            $item['racks'] = $item->getRackWithHaveGoods();
+            return $item;
+        })];
+    }
+
     public function storeStockOpnamesDetails($data, $goodsWithStock, $stockOpnamesId){
 
         $data = collect(Arr::pull($data,'detail_stock_opname'))->unique(function ($item) {

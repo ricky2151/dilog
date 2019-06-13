@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Models\MaterialRequestDetail;
+use Faker\Factory as Faker;
 
 class MaterialRequestDetailsTableSeeder extends Seeder
 {
@@ -12,32 +13,17 @@ class MaterialRequestDetailsTableSeeder extends Seeder
      */
     public function run()
     {
-        MaterialRequestDetail::create([
-            "material_request_id" => 1,
-            "goods_id" => 1,
-            "qty" => 1,
-            "notes"=> "barang keperluan 1",
-        ]);
-
-        MaterialRequestDetail::create([
-            "material_request_id" => 2,
-            "goods_id" => 2,
-            "qty" => 2,
-            "notes"=> "barang keperluan 2",
-        ]);
-
-        MaterialRequestDetail::create([
-            "material_request_id" => 3,
-            "goods_id" => 3,
-            "qty" => 3,
-            "notes"=> "barang keperluan 3",
-        ]);
-
-        MaterialRequestDetail::create([
-            "material_request_id" => 4,
-            "goods_id" => 4,
-            "qty" => 4,
-            "notes"=> "barang keperluan 4",
-        ]);
+        $faker = Faker::create();
+        
+        for ($i=1; $i < 100; $i++) {
+            for ($j=0; $j < 10; $j++) {
+                MaterialRequestDetail::create([
+                    "material_request_id" => $i,
+                    "goods_id" => rand(1,4),
+                    "qty" => rand(10, 100),
+                    "notes"=> $faker->sentence,
+                ]);
+            }
+        }
     }
 }

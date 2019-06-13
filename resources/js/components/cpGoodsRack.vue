@@ -136,7 +136,7 @@
                                 </template>
                             </v-data-table>
                             <v-btn color='primary' v-on:click='e6=3'>Continue</v-btn>
-                            {{input}}
+                            
                         </v-stepper-content>
 
                         <!-- ==== STEPPER 3 ==== -->
