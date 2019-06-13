@@ -290,7 +290,8 @@
 
                             <v-select v-model='temp_input.price_sellings.categorypriceselling' :items="ref_input.categorypriceselling" item-text='name' return-object label="Select Category Price Selling"></v-select>
     
-                            <v-text-field v-model="com_price" disabled label="Price" required></v-text-field>                            
+                            <v-text-field v-model="com_price" disabled label="Price" required></v-text-field> 
+                            <!-- <label>{{com_price}}</label> -->
                             <v-select v-model='temp_input.price_sellings.free' :items="ref_input.free" item-text='name' return-object label="Free"></v-select>
 
                             {{temp_input.price_sellings.price}}
@@ -954,12 +955,9 @@ export default {
         {
             return this.input.margin;
         },
-        com_price : 
+        com_price()
         {
-            get: function()
-            {
-                return this.strToPrice(parseInt(this.input.last_buy_pricelist) + parseInt(this.input.margin));    
-            }
+            return this.strToPrice((parseInt(this.input.margin) + parseInt(this.input.last_buy_pricelist)).toString(), "Rp. ") ; 
             
         }
 
@@ -1808,6 +1806,7 @@ export default {
         
         this.get_data();
         this.get_master_data();
+        this.strToPrice("9000");
         //this.testing_input();
 
     },
