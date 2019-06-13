@@ -136,7 +136,7 @@
             class=""
         >
             <template v-slot:items="props">
-                <td>{{ props.item.name }}</td>
+                <td>{{ findDataById(props.item.id,true) }}</td>
                 <td class="text-xs-right">{{ props.item.nominal }}</td>
                 <td class="text-xs-right">{{ props.item.types.name }}</td>
                 <td>

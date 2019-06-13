@@ -1,14 +1,17 @@
 export default {
 	methods:{
 
-		findDataById(id)
+		findDataById(id, justreturnno = false)
 		{
 			
 			for(var i = 0;i<this.data_table.length;i++)
 			{
 				if(this.data_table[i].id == id)
 				{
-					return this.data_table[i];
+                    if(!justreturnno)
+                       return this.data_table[i];
+                    else
+                        return this.data_table.length - i;
 				}
 			}
 		},

@@ -33,7 +33,7 @@
                     class=""
                     >
                     <template v-slot:items="props">
-                        <td>{{ props.index + 1 }}</td>
+                        <td>{{ findDataById(props.item.id,true) }}</td>
                         <td>{{ props.item.name }}</td>
                         <td>{{ props.item.stock }}</td>
                     </template>

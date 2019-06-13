@@ -54,7 +54,7 @@
             class=""
         >
         <template v-slot:items="props">
-            <td>{{ props.index + 1 }}</td>
+            <td>{{ findDataById(props.item.id,true) }}</td>
             <td>{{ props.item.name }}</td>
 
             <td>
@@ -94,6 +94,13 @@ import mxCrudBasic from '../mixin/mxCrudBasic';
 export default {
     data () {
         return {
+            pagination: {
+              descending: true,
+              page: 1,
+              rowsPerPage: 5,
+              sortBy: 'no',
+              totalItems: 'no'
+            },
             name_table:'units',
             header_api:{
                 'Accept': 'application/json',
@@ -172,6 +179,7 @@ export default {
         showTable(r) 
         {
             this.data_table = r.data.items.units;
+
         },
         
 
