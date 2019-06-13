@@ -267,8 +267,10 @@
                                     <v-text-field class="pa-2" :rules="this.$list_validation.numeric_req" v-model='input.margin' label="Margin" required></v-text-field>
                                 </v-flex>
                             </v-layout>
-                                
+                            
+
                             <v-btn color='primary' v-on:click='e6=2'>Continue</v-btn>
+                              
                                 
                             
                         </v-stepper-content>
@@ -346,6 +348,7 @@
                                 </template>
                             </v-data-table>
                             <v-btn color='primary' v-on:click='e6=3'>Continue</v-btn>
+                            <v-btn color='gray' v-on:click='e6=1'>Back</v-btn>
 
                         </v-stepper-content>
 
@@ -380,6 +383,7 @@
                                     </template>
                             </v-combobox>
                             <v-btn color='primary' v-on:click='e6=4'>Continue</v-btn>
+                            <v-btn color='gray' v-on:click='e6=2'>Back</v-btn>
                         </v-stepper-content>
 
                         <!-- ==== STEPPER 4 ==== -->
@@ -440,6 +444,7 @@
                                 </template>
                             </v-data-table>
                             <v-btn color='primary' v-on:click='e6=5'>Continue</v-btn>
+                            <v-btn color='gray' v-on:click='e6=3'>Back</v-btn>
 
                         </v-stepper-content>
 
@@ -503,6 +508,7 @@
                                 </template>
                             </v-data-table>
                             <v-btn color='primary' v-on:click='e6=6'>Continue</v-btn>
+                            <v-btn color='gray' v-on:click='e6=4'>Back</v-btn>
                         </v-stepper-content>
 
                         <!-- ==== STEPPER 6 ==== -->
@@ -567,6 +573,7 @@
                         </v-stepper-content>
                         
                         <v-btn v-on:click='save_data()' >submit</v-btn>
+                        <v-btn color='gray' v-on:click='e6=5'>Back</v-btn>
                         
                         
                         
