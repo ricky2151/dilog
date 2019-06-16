@@ -290,7 +290,6 @@
                     hide-details
                 ></v-text-field>
             </v-flex>
-            
         </v-layout>
         <v-data-table
             disable-initial-sort
@@ -300,7 +299,7 @@
             class=""
         >
         <template v-slot:items="props">
-            <td>{{ findDataById(props.item.id,true) }}</td>
+            <td>{{ props.item.no }}</td>
             <td>{{ props.item.name }}</td>
             <td class="text-xs-right">{{ props.item.address }}</td>
             <td class="text-xs-right">{{ props.item.telp }}</td>
@@ -350,7 +349,7 @@ export default {
     },
     data () {
         return {
-            temp:1,
+            
             name_table:'warehouses',
             header_api:{
                 'Accept': 'application/json',
@@ -763,9 +762,6 @@ export default {
 
             this.input.racks = temp_r.racks; //ini bisa berubah
 
-            
-
-            
             this.input_before_edit = JSON.parse(JSON.stringify(this.input));
             
         },

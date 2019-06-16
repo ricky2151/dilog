@@ -616,7 +616,7 @@
             class=""
         >
         <template v-slot:items="props">
-            <td>{{ findDataById(props.item.id,true) }}</td>
+            <td>{{ props.item.no }}</td>
             <td>{{ props.item.name }}</td>
             <td class="text-xs-right">{{ props.item.code }}</td>
             <td class="text-xs-right">{{ props.item.value }}</td>
@@ -959,7 +959,8 @@ export default {
         {
             return this.strToPrice((parseInt(this.input.margin) + parseInt(this.input.last_buy_pricelist)).toString(), "Rp. ") ; 
             
-        }
+        },
+
 
     },
     watch: {

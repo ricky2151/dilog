@@ -54,7 +54,7 @@
             class=""
         >
         <template v-slot:items="props">
-            <td>{{ findDataById(props.item.id,true) }}</td>
+            <td>{{ props.item.no }}</td>
             <td>{{ props.item.name }}</td>
 
             <td>
