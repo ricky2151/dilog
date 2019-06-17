@@ -121,9 +121,7 @@ class GoodsController extends Controller
                 return $item['category_id'];
             });
 
-            $pricelists = collect(Arr::pull($data,'pricelists'))->unique(function ($item) {
-                return $item['supplier_id'].$item['price'];
-            });
+            $pricelists = collect(Arr::pull($data,'pricelists'))->toArray();
 
             $priceSellings = collect(Arr::pull($data,'price_sellings'))->unique(function ($item) {
                 return $item['warehouse_id'];
@@ -136,9 +134,9 @@ class GoodsController extends Controller
             $goods = $this->user->goods()->create($data);
             $goods->attributes()->attach($attribute_goods);
             $goods->categories()->attach($category_goods);
-            $goods->suppliers()->attach($pricelists);
             $goods->materials()->createMany($material_goods);
             $goods->priceSelling()->createMany($priceSellings);
+            $goods->pricelists()->createMany($pricelists);
 
             DB::commit();
         } catch (\Throwable $e) {
@@ -219,9 +217,7 @@ class GoodsController extends Controller
                 return $item['category_id'];
             });
 
-            $pricelists = collect(Arr::pull($data,'pricelists'))->unique(function ($item) {
-                return $item['supplier_id'].$item['price'];
-            });
+            $pricelists = collect(Arr::pull($data,'pricelists'))->toArray();
 
             $priceSellings = collect(Arr::pull($data,'price_sellings'))->unique(function ($item) {
                 return $item['warehouse_id'];
@@ -234,9 +230,9 @@ class GoodsController extends Controller
             // return $material_goods;
             
             $goods->update($data);
+            $goods->pricelists()->createMany($pricelists);
             $goods->attributes()->sync($attribute_goods);
             $goods->categories()->sync($category_goods);
-            $goods->suppliers()->sync($pricelists);
             is_null($priceSellings) ? "" : $goods->updatePriceSellings($priceSellings);
             is_null($material_goods) ? "" : $goods->updateMaterials($material_goods);
 
@@ -266,7 +262,7 @@ class GoodsController extends Controller
         try {
             $this->goods->find($id)->attributes()->sync([]);
             $this->goods->find($id)->categories()->sync([]);
-            $this->goods->find($id)->suppliers()->sync([]);
+            $this->goods->find($id)->pricelists()->delete();
             $this->goods->find($id)->materials()->delete();
             $this->goods->find($id)->goodsRack()->delete();
 
@@ -293,7 +289,7 @@ class GoodsController extends Controller
         $goodsAttributes = $this->goods->find($id)->attributes;
         $goodsCategories = $this->goods->find($id)->categories;
         $goodsMaterials = $this->goods->find($id)->materials;
-        $pricelists = $this->goods->find($id)->suppliers;
+        $pricelists = $this->goods->find($id)->pricelists;
         $priceSellings = $this->goods->find($id)->getSellingPrices();
 
         // return $pricelists;
@@ -307,8 +303,8 @@ class GoodsController extends Controller
         });
 
         $pricelists = $pricelists->map(function ($item) {
-            $item = Arr::add($item, 'price', $item['pivot']['price']);
-            return Arr::except($item, ['pivot']);
+            $item = Arr::add($item, 'name_company', $item['supplier']['name_company']);
+            return Arr::except($item, ['supplier']);
         });
 
 

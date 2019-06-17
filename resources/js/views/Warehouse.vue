@@ -270,19 +270,20 @@
             </v-form>
         </v-dialog>
 
-        <v-toolbar flat color="white">
-            <v-toolbar-title>Warehouse Data</v-toolbar-title>
-        </v-toolbar>
-        <v-layout row class='bgwhite'>
-            <v-flex xs3>
-                <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='marginleft30'>
+        <v-layout row class='bgwhite margintop10'>
+            <v-flex xs6>
+                <div class='marginleft30 margintop10'>
+                    <v-icon class='icontitledatatable'>store</v-icon>
+                    <h2 class='titledatatable'>Warehouse Data</h2>
+                    <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='btnadddata'>
                     Add Data
                 </v-btn>
+                </div>
+                
             </v-flex>
             <v-flex xs12 class="text-xs-right">
-
                 <v-text-field
-                    class='marginhorizontal10 searchwidth d-inline-block'
+                    class='d-inline-block searchdatatable'
                     v-model="search_data"
                     append-icon="search"
                     label="Search"
@@ -290,17 +291,16 @@
                     hide-details
                 ></v-text-field>
             </v-flex>
-            
         </v-layout>
         <v-data-table
             disable-initial-sort
             :headers="headers"
             :items="data_table"
             :search='search_data'
-            class=""
+            class="datatable"
         >
         <template v-slot:items="props">
-            <td>{{ props.index + 1 }}</td>
+            <td>{{ props.item.no }}</td>
             <td>{{ props.item.name }}</td>
             <td class="text-xs-right">{{ props.item.address }}</td>
             <td class="text-xs-right">{{ props.item.telp }}</td>
@@ -313,6 +313,7 @@
                           color="primary"
                           dark
                           v-on="on"
+                          class='btnaction'
                         >
                           Action
                         </v-btn>
@@ -350,7 +351,7 @@ export default {
     },
     data () {
         return {
-            temp:1,
+            
             name_table:'warehouses',
             header_api:{
                 'Accept': 'application/json',
@@ -763,9 +764,6 @@ export default {
 
             this.input.racks = temp_r.racks; //ini bisa berubah
 
-            
-
-            
             this.input_before_edit = JSON.parse(JSON.stringify(this.input));
             
         },

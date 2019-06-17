@@ -57,10 +57,10 @@ class SupplierController extends Controller
 
         DB::beginTransaction();
         try {
-            $goods = collect(Arr::pull($data,'pricelists'));
+            $pricelists = collect(Arr::pull($data,'pricelists'))->toArray();
 
             $supplier = $this->supplier->create($data);
-            $supplier->goods()->attach($goods);
+            $supplier->pricelists()->createMany($pricelists);
 
             DB::commit();
         }catch (\Throwable $e) {
@@ -127,10 +127,10 @@ class SupplierController extends Controller
         $supplier = $this->supplier->find($id);
         DB::beginTransaction();
         try {
-            $goods = collect(Arr::pull($data,'pricelists'));
+            $pricelists = collect(Arr::pull($data,'pricelists'))->toArray();
 
             $supplier->update($data);
-            $supplier->goods()->sync($goods);
+            $supplier->pricelists()->createMany($pricelists);
 
             DB::commit();
         }catch (\Throwable $e) {
@@ -174,14 +174,14 @@ class SupplierController extends Controller
      * @return Illuminate\Support\Collection
      */
     public function showFormatData($id){
-        $goods = $this->supplier->find($id)->goods;
+        $pricelists = $this->supplier->find($id)->pricelists;
 
-        $goods = $goods->map(function ($item) { 
-            $goods = Arr::add($item['pivot'], 'goods_name', $item['name']);
-            return $goods;
+        $pricelists = $pricelists->map(function ($item) { 
+            $item = Arr::add($item, 'goods_name', $item['goods']['name']);
+            return Arr::except($item,['goods']);
         });
 
-        $data = collect(["pricelists" => $goods]);
+        $data = collect(["pricelists" => $pricelists]);
 
         return $data;
     }

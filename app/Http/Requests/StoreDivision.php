@@ -27,8 +27,7 @@ class StoreDivision extends FormRequest
     {
         return [
             "name" => "required|string",
-            "status" => "required|boolean",
-            "pic_user_id" => "filled|integer|exists:users,id"
+            "mr_enable" => "required|boolean"
         ];
     }
 

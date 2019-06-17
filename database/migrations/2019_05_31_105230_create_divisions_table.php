@@ -16,8 +16,7 @@ class CreateDivisionsTable extends Migration
         Schema::create('divisions', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->boolean('status');
-            $table->integer('pic_user_id')->unsigned()->nullable();
+            $table->boolean('mr_enable');
             $table->timestamps();
             $table->softDeletes();
         });

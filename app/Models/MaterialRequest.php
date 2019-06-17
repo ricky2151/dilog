@@ -39,8 +39,4 @@ class MaterialRequest extends Model
     public function user(){
         return $this->belongsTo('App\Models\User','request_by_user_id','id');
     }
-
-    public function pic_user_name(){
-        return $this->belongsTo('App\Models\User','request_by_user_id','id');
-    }
 }

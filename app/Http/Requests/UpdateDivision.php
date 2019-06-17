@@ -27,8 +27,7 @@ class UpdateDivision extends FormRequest
     {
         return [
             "name" => "filled|string",
-            "status" => "filled|boolean",
-            "pic_user_id" => "filled|integer|exists:users,id"
+            "mr_enable" => "filled|boolean"
         ];
     }
 

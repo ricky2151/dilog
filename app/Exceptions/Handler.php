@@ -90,6 +90,9 @@ class Handler extends ExceptionHandler
         elseif($exception instanceof ModelNotFoundException){
             return ModelNotFoundException::render($exception->getMessage());
         }
+        elseif($exception instanceof DivisionNotPermittedException){
+            return DivisionNotPermittedException::render();
+        }
         elseif($exception instanceof MethodNotAllowedHttpException){
             return response()->json(['error' => true, 'message' => ["route"=>'Method not allowed']]);
         }
