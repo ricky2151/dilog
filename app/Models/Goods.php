@@ -58,10 +58,14 @@ class Goods extends Model
     public function goodsRack(){
         return $this->hasMany('App\Models\GoodsRack');
     }
-
-    public function suppliers(){
-        return $this->belongsToMany('App\Models\Supplier','pricelists','goods_id','supplier_id')->withPivot('price')->withTimestamps()->orderBy('pivot_updated_at', 'desc');
+    
+    public function pricelists(){
+        return $this->hasMany('App\Models\Pricelist');
     }
+
+    // public function suppliers(){
+    //     return $this->belongsToMany('App\Models\Supplier','pricelists','goods_id','supplier_id')->withPivot('price')->withTimestamps()->orderBy('pivot_updated_at', 'desc');
+    // }
 
     public function user(){
         return $this->belongsTo('App\Models\User');
