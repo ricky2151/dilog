@@ -27,18 +27,20 @@
             </v-card>
         </v-dialog>
 
-        <v-toolbar flat color="white">
-            <v-toolbar-title>Selling Price Category Data</v-toolbar-title>
-        </v-toolbar>
-        <v-layout row class='bgwhite'>
-            <v-flex xs3>
-                <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='marginleft30'>
+        <v-layout row class='bgwhite margintop10'>
+            <v-flex xs6>
+                <div class='marginleft30 margintop10'>
+                    <v-icon class='icontitledatatable'>compare_arrows</v-icon>
+                    <h2 class='titledatatable'>Category Price Sellings Data</h2>
+                    <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='btnadddata'>
                     Add Data
                 </v-btn>
+                </div>
+                
             </v-flex>
             <v-flex xs12 class="text-xs-right">
                 <v-text-field
-                    class='marginhorizontal10 searchwidth d-inline-block'
+                    class='d-inline-block searchdatatable'
                     v-model="search_data"
                     append-icon="search"
                     label="Search"
@@ -52,7 +54,7 @@
             :headers="headers"
             :items="data_table"
             :search="search_data"
-            class=""
+            class="datatable"
         >
         <template v-slot:items="props">
             <td>{{ props.item.no }}</td>
@@ -67,6 +69,7 @@
                           color="primary"
                           dark
                           v-on="on"
+                          class='btnaction'
                         >
                           Action
                         </v-btn>

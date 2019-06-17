@@ -1,5 +1,9 @@
 import mxStringProcessing from '../mixin/mxStringProcessing'
+import cpHeaderDataTable from './../components/cpHeaderDataTable.vue'
 export default {
+    components:{
+        cpHeaderDataTable,
+    },
 	methods:{
         
 		findDataById(id)
