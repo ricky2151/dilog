@@ -13,43 +13,20 @@ class WarehousesTableSeeder extends Seeder
      */
     public function run()
     {
-        //
+
+        $warehouses = ['Bakpia Ku', 'Bakpia Tugu', 'Bakpia Kukus', 'Bakpia Pathuk 25', 'Bakpia Pathuk 75', 'Bakpia Djava', 'Bakpia BW', 'Cakekinian', 'Hudson Cake', 'Cake Masa Depan'];
+
         $faker = Faker::create();
-        Warehouse::create([
-            'name' => "Bakpia Ku",
-            'address' => $faker->address,
-            'lat' => $faker->text(20),
-            'lng' => $faker->text(20),
-            'telp' => $faker->numerify('+62###########'),
-            'email' => $faker->email,
-            'pic' => $faker->name
-        ]);
-        Warehouse::create([
-            'name' => "Bakpia Tugu",
-            'address' => $faker->address,
-            'lat' => $faker->text(20),
-            'lng' => $faker->text(20),
-            'telp' => $faker->numerify('+62###########'),
-            'email' => $faker->email,
-            'pic' => $faker->name
-        ]);
-        Warehouse::create([
-            'name' => "Bakpia Kukus",
-            'address' => $faker->address,
-            'lat' => $faker->text(20),
-            'lng' => $faker->text(20),
-            'telp' => $faker->numerify('+62###########'),
-            'email' => $faker->email,
-            'pic' => $faker->name
-        ]);
-        Warehouse::create([
-            'name' => "Bakpia Pathok",
-            'address' => $faker->address,
-            'lat' => $faker->text(20),
-            'lng' => $faker->text(20),
-            'telp' => $faker->numerify('+62 ### #### ####'),
-            'email' => $faker->email,
-            'pic' => $faker->name
-        ]);
+        foreach ($warehouses as $key => $warehouse) {
+            Warehouse::create([
+                'name' => $warehouse,
+                'address' => $faker->address,
+                'lat' => $faker->text(20),
+                'lng' => $faker->text(20),
+                'telp' => $faker->numerify('+62###########'),
+                'email' => $faker->email,
+                'pic' => $faker->name
+            ]);
+        }
     }
 }

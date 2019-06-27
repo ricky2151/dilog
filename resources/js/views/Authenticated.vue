@@ -87,7 +87,7 @@
                 <v-container fluid>
                     <v-layout row>
                         <v-flex xs3>
-                            <v-avatar :tile="tile" :size="avatarSize" color="grey lighten-4">
+                            <v-avatar color="grey lighten-4">
                                 <img src="/assets/images/logo.png"></img>
                             </v-avatar>
                         </v-flex>
@@ -101,23 +101,23 @@
                 <v-divider class='white'></v-divider>
 
 
-                <v-list>
+                <v-list expand>
                     <!--  -->
                     <div v-for="(item,index) in routes">
 
 
                         <v-list-group
-
+                            value='true'
                             v-if="item.subroutes"
                             router
                             :key="'menu'+index"
-                            v-model="item.active"
-
+                            
+                            
                             no-action
                             >
                             <template v-slot:activator>
-                                <v-list-tile :active-class='active-menu'>
-                                    <v-list-tile-action class='ltc-icon'>
+                                <v-list-tile >
+                                    <v-list-tile-action class='ltc-icon' >
                                         <v-icon class='color-text-sidebar icon-sidebar'>{{ item.icon }}</v-icon>
                                     </v-list-tile-action>
                                     <v-list-tile-content >
@@ -132,7 +132,8 @@
                                 :key="subItem.subtitle"
                                 :to="subItem.subaction"
                                 class='sub-menu'
-
+                                
+                                
                                 @click=""
                             >
                                 <v-list-tile-action class='ltc-icon'>
@@ -152,6 +153,7 @@
                             router
                             :to="item.action"
                             :key="'menu'+index"
+
                             >
                             <v-list-tile-action class='ltc-icon'>
                                 <v-icon class='color-text-sidebar icon-sidebar'>{{ item.icon }}</v-icon>

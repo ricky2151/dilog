@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\Models\Customer;
+use Faker\Factory as Faker;
 
 class CustomersTableSeeder extends Seeder
 {
@@ -12,28 +13,13 @@ class CustomersTableSeeder extends Seeder
      */
     public function run()
     {
-        Customer::create([
-            "name" => "Customer 1",
-            "no_hp" => "089111111",
-            "address" => "Address 1"
-        ]);
-
-        Customer::create([
-            "name" => "Customer 2",
-            "no_hp" => "089111112",
-            "address" => "Address 2"
-        ]);
-
-        Customer::create([
-            "name" => "Customer 3",
-            "no_hp" => "089111113",
-            "address" => "Address 3"
-        ]);
-
-        Customer::create([
-            "name" => "Customer 4",
-            "no_hp" => "089111114",
-            "address" => "Address 4"
-        ]);
+        $faker = Faker::create();
+        for ($i=0; $i < 100; $i++) {
+            Customer::create([
+                "name" => $faker->name,
+                "no_hp" => $faker->phoneNumber,
+                "address" => $faker->address
+            ]);
+        }
     }
 }

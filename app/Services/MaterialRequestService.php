@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Exceptions\InvalidParameterException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\ModelNotFoundException as CustomModelNotFoundException;
+use App\Exceptions\DivisionNotPermittedException;
 use App\Models\MaterialRequest;
 use App\Models\User;
 use App\Models\Division;
@@ -27,6 +28,12 @@ class MaterialRequestService
         $periode = $this->periode->getPeriodeActive();
 
         return ["goods"=>$goods,'periode' => $periode];
+    }
+
+    public function checkDivision($division){
+        if($division['mr_enable'] == 0){
+            throw new DivisionNotPermittedException(); 
+        }
     }
 
     public function editForm($id){

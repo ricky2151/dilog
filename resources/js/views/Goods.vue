@@ -267,8 +267,10 @@
                                     <v-text-field class="pa-2" :rules="this.$list_validation.numeric_req" v-model='input.margin' label="Margin" required></v-text-field>
                                 </v-flex>
                             </v-layout>
-                                
+                            
+
                             <v-btn color='primary' v-on:click='e6=2'>Continue</v-btn>
+                              
                                 
                             
                         </v-stepper-content>
@@ -288,10 +290,11 @@
 
                             <v-select v-model='temp_input.price_sellings.categorypriceselling' :items="ref_input.categorypriceselling" item-text='name' return-object label="Select Category Price Selling"></v-select>
     
-                            <v-text-field v-model="temp_input.price_sellings.price" disabled label="Price" required></v-text-field>                            
+                            <v-text-field v-model="com_price" disabled label="Price" required></v-text-field> 
+                            <!-- <label>{{com_price}}</label> -->
                             <v-select v-model='temp_input.price_sellings.free' :items="ref_input.free" item-text='name' return-object label="Free"></v-select>
 
-                            
+                            {{temp_input.price_sellings.price}}
                             
                             <v-toolbar flat color="white" >
                                 
@@ -346,6 +349,7 @@
                                 </template>
                             </v-data-table>
                             <v-btn color='primary' v-on:click='e6=3'>Continue</v-btn>
+                            <v-btn color='gray' v-on:click='e6=1'>Back</v-btn>
 
                         </v-stepper-content>
 
@@ -380,6 +384,7 @@
                                     </template>
                             </v-combobox>
                             <v-btn color='primary' v-on:click='e6=4'>Continue</v-btn>
+                            <v-btn color='gray' v-on:click='e6=2'>Back</v-btn>
                         </v-stepper-content>
 
                         <!-- ==== STEPPER 4 ==== -->
@@ -440,6 +445,7 @@
                                 </template>
                             </v-data-table>
                             <v-btn color='primary' v-on:click='e6=5'>Continue</v-btn>
+                            <v-btn color='gray' v-on:click='e6=3'>Back</v-btn>
 
                         </v-stepper-content>
 
@@ -503,6 +509,7 @@
                                 </template>
                             </v-data-table>
                             <v-btn color='primary' v-on:click='e6=6'>Continue</v-btn>
+                            <v-btn color='gray' v-on:click='e6=4'>Back</v-btn>
                         </v-stepper-content>
 
                         <!-- ==== STEPPER 6 ==== -->
@@ -516,7 +523,7 @@
                             
 
 
-                            <v-text-field v-model="temp_input.pricelists.price" label="Value" required></v-text-field>
+                            <v-text-field v-model="temp_input.pricelists.price" label="Price" required></v-text-field>
                             
                             <v-toolbar flat color="white" >
                                 
@@ -563,11 +570,12 @@
                                 </template>
                             </v-data-table>
                             
-
+                            <v-btn color='gray' v-on:click='e6=5'>Back</v-btn>
                         </v-stepper-content>
                         
                         <v-btn v-on:click='save_data()' >submit</v-btn>
-                        {{input}}
+
+                        
                         
                         
                     </v-stepper>
@@ -575,21 +583,20 @@
             </v-form>
         </v-dialog>
 
-        <v-toolbar flat color="white">
-            <v-toolbar-title>Goods Data</v-toolbar-title>
-            
-            
-        </v-toolbar>
-        <v-layout row class='bgwhite'>
-            <v-flex xs3>
-                <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='marginleft30'>
+        <v-layout row class='bgwhite margintop10'>
+            <v-flex xs6>
+                <div class='marginleft30 margintop10'>
+                    <v-icon class='icontitledatatable'>widgets</v-icon>
+                    <h2 class='titledatatable'>Goods Data</h2>
+                    <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='btnadddata'>
                     Add Data
                 </v-btn>
+                </div>
+                
             </v-flex>
             <v-flex xs12 class="text-xs-right">
-
                 <v-text-field
-                    class='marginhorizontal10 searchwidth d-inline-block'
+                    class='d-inline-block searchdatatable'
                     v-model="search_data"
                     append-icon="search"
                     label="Search"
@@ -597,7 +604,6 @@
                     hide-details
                 ></v-text-field>
             </v-flex>
-            
         </v-layout>
         
         <v-data-table
@@ -605,10 +611,10 @@
             :headers="headers"
             :items="data_table"
             :search="search_data"
-            class=""
+            class="datatable"
         >
         <template v-slot:items="props">
-            <td>{{ props.index + 1 }}</td>
+            <td>{{ props.item.no }}</td>
             <td>{{ props.item.name }}</td>
             <td class="text-xs-right">{{ props.item.code }}</td>
             <td class="text-xs-right">{{ props.item.value }}</td>
@@ -625,6 +631,7 @@
                           color="primary"
                           dark
                           v-on="on"
+                          class='btnaction'
                         >
                           Action
                         </v-btn>
@@ -947,6 +954,13 @@ export default {
         {
             return this.input.margin;
         },
+        com_price()
+        {
+            return this.strToPrice((parseInt(this.input.margin) + parseInt(this.input.last_buy_pricelist)).toString(), "Rp. ") ; 
+            
+        },
+
+
     },
     watch: {
         com_last_buy_pricelist()
@@ -1792,6 +1806,7 @@ export default {
         
         this.get_data();
         this.get_master_data();
+        this.strToPrice("9000");
         //this.testing_input();
 
     },

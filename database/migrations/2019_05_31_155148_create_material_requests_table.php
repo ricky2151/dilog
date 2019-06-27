@@ -15,7 +15,7 @@ class CreateMaterialRequestsTable extends Migration
     {
         Schema::create('material_requests', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('code');
+            $table->string('code')->unique()->nullable();
             $table->integer('division_id')->unsigned();
             $table->integer('request_by_user_id')->unsigned();
             $table->boolean('status')->default(0); // 0 : belum direspon, 1 : sudah direspon
