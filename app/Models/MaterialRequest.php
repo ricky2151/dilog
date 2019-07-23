@@ -24,6 +24,10 @@ class MaterialRequest extends Model
         }
     }
 
+    public static function getMaterialRequestInActivePeriode(){
+        return auth('api')->user()->division->materialRequest->where('periode_id',Periode::getPeriodeActive()['id'])->flatten(1);
+    }
+
     public function period(){
         return $this->belongsTo('App\Models\Period');
     }

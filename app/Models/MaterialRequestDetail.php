@@ -15,4 +15,8 @@ class MaterialRequestDetail extends Model
         return $this->belongsTo('App\Models\MaterialRequest');
     }
 
+    public function goods(){
+        return $this->belongsTo('App\Models\Goods');
+    }
+
 }
