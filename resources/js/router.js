@@ -20,6 +20,7 @@ import Cogs from './views/Cogs'
 import Rack from './views/Rack'
 import Supplier from './views/Supplier'
 import Customer from './views/Customer'
+import Coba from './views/Coba'
 
 import Login from './views/Login'
 import Logout from './views/Logout'
@@ -55,6 +56,8 @@ const routes = [
             { path: '/supplier', component: Supplier},
             { path: '/customer', component: Customer},
             { path: '/logout', component: Logout, },
+
+            { path: '/coba', component: Coba, },
         ],
         meta: { requiresAuth: true }
     },

@@ -3,7 +3,7 @@ export default {
 	methods:{
         
 
-		opendialog_createedit(id_data_edit,r){ //tdk bisa
+		opendialog_createedit(id_data_edit,r){ //tdk bisa, nanti dihapus karena udah ada di component
 	        if(id_data_edit != -1)
 	        {
 	            this.id_data_edit = id_data_edit;
@@ -20,34 +20,9 @@ export default {
 
 
         
-        get_master_data()
-        {
-            axios.get('/api/' + this.name_table +'/create', {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r => this.fill_select_master_data(r))
-            .catch(function (error)
-            {
-                console.log("error : ")
-                console.log(error)
-                if(error.response.status == 422)
-                {
-                    swal('Request Failed', 'Check your internet connection !', 'error');
-                }
-                else
-                {
-                    swal('Unkown Error', error.response.data , 'error');
-                }
-            });
-        },
+        
 
-        get_data_before_edit(id_edit)
+        get_data_before_edit(id_edit) //nanti dihapus karena sudah ada di component
         {
             
             axios.get('/api/' + this.name_table +'/' + id_edit + '/edit', {

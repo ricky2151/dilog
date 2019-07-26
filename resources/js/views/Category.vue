@@ -42,6 +42,23 @@
             </v-card>
         </v-dialog>
 
+        <!-- POPUP CREATE EDIT BARU -->
+        <cp-form 
+
+        :prop_isEdit='id_data_edit'
+        :prop_title='info_table.table_name'
+        prop_countStep='1'
+        prop_editableEdit='true'
+        prop_editableAdd='true'
+        :prop_dataInfo='info_table.data'
+        :prop_tableName='name_table'
+        :prop_widthForm='info_table.widthForm'
+        ref="cpForm"
+
+        ></cp-form>
+
+        <!-- ================================ -->
+
         <!-- POPUP CREATE EDIT -->
         <v-dialog v-model="dialog_createedit" width=750>
             <v-card>
@@ -65,7 +82,7 @@
                 <div class='marginleft30 margintop10'>
                     <v-icon class='icontitledatatable'>category</v-icon>
                     <h2 class='titledatatable'>Categories Data</h2>
-                    <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='btnadddata'>
+                    <v-btn v-on:click='$refs.cpForm.open_dialog(-1)' color="primary" dark class='btnadddata'>
                     Add Data
                 </v-btn>
                 </div>
@@ -131,6 +148,8 @@ import mxCrudBasic from '../mixin/mxCrudBasic';
 export default {
     data () {
         return {
+            info_table:{},
+
             name_table:'categories',
             header_api:{
                 'Accept': 'application/json',
@@ -196,6 +215,7 @@ export default {
         {
             if(idx_action == 0)
             {
+                
                 this.opendialog_createedit(id)
             }
             else if(idx_action == 1)
@@ -256,6 +276,9 @@ export default {
     },
     mounted(){
         this.get_data();
+        this.name_table = "categories";
+
+        this.info_table = this.database[this.name_table];
 
     },
     mixins:[

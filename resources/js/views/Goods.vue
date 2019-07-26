@@ -7,84 +7,27 @@
 <template>
     <div>
         
-        <!-- POPUP DETAIL RACK -->
-        <v-dialog v-model="dialog_detailracks" width=750>
-            <v-card>
-                <v-toolbar dark color="menu">
-                    <v-btn icon dark v-on:click="closedialog_detailracks()">
-                        <v-icon>close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title>Detail Racks</v-toolbar-title>
+        <!-- LIST POPUP DETAIL -->
+        <cp-detail 
+         
+        v-if='notNullObject(info_table.get_data_detail)'
+        v-for='(data_detail,key,index) in info_table.get_data_detail'
 
-                </v-toolbar>
-                <div style='padding:30px'>
+        :prop_title='"Detail " + data_detail.title' 
+        :prop_response_attribute='info_table.table_name'
+        :prop_headers='data_detail.headers'
+        :prop_columns='data_detail.single'
+        :ref='"cpDetail"+ removeSpace(data_detail.title)'
+        :key='key'
 
-                    <v-text-field
-                        v-model="popup_search_detailracks"
-                        append-icon="search"
-                        label="Search"
-                        single-line
-                        hide-details
-                      ></v-text-field>
-                    <v-data-table
-                    disable-initial-sort
-                    :headers="headers_popup_detailracks"
-                    :items="popup_detailracks"
-                    :search="popup_search_detailracks"
-                    class=""
-                    >
-                    <template v-slot:items="props">
-                        <td>{{ props.index + 1 }}</td>
-                        <td>{{ props.item.rack }}</td>
-                        <td>{{ props.item.stock }}</td>
-                    </template>
-                    </v-data-table>
-                </div>
-            </v-card>
-        </v-dialog>
-
-         <!-- POPUP SP -->
-        <v-dialog v-model="dialog_detailsellingprices" width=750>
-            <v-card>
-                <v-toolbar dark color="menu">
-                    <v-btn icon dark v-on:click="closedialog_detailsellingprices()">
-                        <v-icon>close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title>Detail Selling Price</v-toolbar-title>
-
-                </v-toolbar>
-                <div style='padding:30px'>
-
-                    <v-text-field
-                        v-model="popup_search_detailsellingprices"
-                        append-icon="search"
-                        label="Search"
-                        single-line
-                        hide-details
-                      ></v-text-field>
-                    <v-data-table
-                    disable-initial-sort
-                    :headers="headers_popup_detailsellingprices"
-                    :items="popup_detailsellingprices"
-                    :search="popup_search_detailsellingprices"
-                    class=""
-                    >
-                    <template v-slot:items="props">
-                        <td>{{ props.index + 1 }}</td>
-                        <td>{{ props.item.warehouse_name }}</td>
-                        <td>{{ props.item.stock_cut_off }}</td>
-                        <td>{{ props.item.category_price_selling_name }}</td>
-                        <td>{{ props.item.price }}</td>
-                        <td>{{ props.item.discount }}</td>
-                        <td>{{ props.item.free ? "Free" : "Not Free" }}</td>
-                    </template>
-                    </v-data-table>
-                </div>
-            </v-card>
-        </v-dialog>
+        ></cp-detail>
+        <!----------------------->
+        
+        
+        
 
          <!-- POPUP STOCK CARD --> <!-- MASIH DITANYAKAN -->
-        <v-dialog v-model="dialog_detailracks" width=750>
+        <!-- <v-dialog v-model="dialog_detailracks" width=750>
             <v-card>
                 <v-toolbar dark color="menu">
                     <v-btn icon dark v-on:click="closedialog_detailracks()">
@@ -117,44 +60,9 @@
                     </v-data-table>
                 </div>
             </v-card>
-        </v-dialog>
+        </v-dialog> -->
 
-         <!-- POPUP PRICELIST -->
-        <v-dialog v-model="dialog_detailpricelists" width=750>
-            <v-card>
-                <v-toolbar dark color="menu">
-                    <v-btn icon dark v-on:click="closedialog_detailpricelists()">
-                        <v-icon>close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title>Detail Price List</v-toolbar-title>
-
-                </v-toolbar>
-                <div style='padding:30px'>
-
-                    <v-text-field
-                        v-model="popup_search_detailpricelists"
-                        append-icon="search"
-                        label="Search"
-                        single-line
-                        hide-details
-                      ></v-text-field>
-                    <v-data-table
-                    disable-initial-sort
-                    :headers="headers_popup_detailpricelists"
-                    :items="popup_detailpricelists"
-                    :search="popup_search_detailpricelists"
-                    class=""
-                    >
-                    <template v-slot:items="props">
-                        <td>{{ props.index + 1 }}</td>
-                        <td>{{ props.item.supplier }}</td>
-                        <td>{{ props.item.price }}</td>
-                    </template>
-                    </v-data-table>
-                </div>
-            </v-card>
-        </v-dialog>
-
+        
         <!-- POPUP CREATE EDIT -->
 
 
@@ -659,13 +567,21 @@
 <script>
 import axios from 'axios'
 import mxCrudChildForm from '../mixin/mxCrudChildForm';
+
+
 export default {
     errorCaptured (err, vm, info) {
     this.error = `${err.stack}\n\nfound in ${info} of component`
     return false
-  },
+    },
+
+    components:{
+        
+    },
     data () {
         return {
+            info_table:{},
+
             name_table:'goods',
             header_api:{
                 'Accept': 'application/json',
@@ -840,109 +756,13 @@ export default {
                 { text: 'Action', align:'left',sortable:false, width:'15%'},
             ],
 
-            headers_popup_detailracks : [
-                { text: 'No', value:'no'},
-                { text: 'Racks', value:'rack'},
-                { text: 'Stock', value:'stock'},
-
-            ],
-
-            headers_popup_detailsellingprices : [
-                { text: 'No', value:'no'},
-                { text: 'Warehouse', value:'warehouse_name'},
-                { text: 'Stock Cut Off', value:'stock_cut_off'},
-                { text: 'Category', value:'category_price_selling_name'},
-                { text: 'Price', value:'price'},
-                { text: 'Discount', value:'discount'},
-                { text: 'Free', value:'free'},
-
-            ],
-
-            headers_popup_detailstockcards : [
-
-
-            ],
-
-            headers_popup_detailpricelists : [
-                { text: 'No', value:'no'},
-                { text: 'Supplier', value:'supplier'},
-                { text: 'Price', value:'price'},
-
-
-            ],
+            
 
 
             data_table:[],
             search_data: null,
 
-            popup_detailracks :
-            [
-                {
-                    rack:'meja',
-                    stock:12,
-                },
-                {
-                    rack:'kursi',
-                    stock:13,
-                },
-                {
-                    rack:'indomie',
-                    stock:10,
-                },
-            ],
-            popup_search_detailracks:null,
-
-            popup_detailsellingprices :
-            [
-                {
-                    warehouse_name:'warehouse1',
-                    stock_cut_off:1000,
-                    category_price_selling_name:'category1',
-                    price:10000,
-                    discount:100,
-                    free:1
-                },
-                {
-                    warehouse_name:'warehouse2',
-                    stock_cut_off:1000,
-                    category_price_selling_name:'category1',
-                    price:10000,
-                    discount:100,
-                    free:1
-                },
-                {
-                    warehouse_name:'warehouse3',
-                    stock_cut_off:1000,
-                    category_price_selling_name:'category2',
-                    price:10000,
-                    discount:100,
-                    free:0
-                },
-            ],
-            popup_search_detailsellingprices:null,
-
-            popup_detailstockcards :
-            [
-               
-            ],
-            popup_search_detailstockcards:null,
-
-            popup_detailpricelists :
-            [
-                {
-                    supplier:'supplier1',
-                    price:12000,
-                },
-                {
-                    supplier:'supplier2',
-                    price:130000,
-                },
-                {
-                    supplier:'supplier3',
-                    price:10000,
-                },
-            ],
-            popup_search_detailpricelists:null,
+            
         }
     },
     computed: {
@@ -987,12 +807,13 @@ export default {
             }
             else if(idx_action == 1)
             {
-                
-                this.opendialog_detailracks(id_datatable);
+                this.debugLog('nol')
+                this.opendialog_detail(id_datatable, 'cpDetailRacks', 'racks');
+
             }
             else if(idx_action == 2)
             {
-                this.opendialog_detailsellingprices(id_datatable);
+                this.opendialog_detail(id_datatable, 'cpDetailPriceSellings', 'sellingPrices');
             }
             else if(idx_action == 3)
             {
@@ -1000,7 +821,7 @@ export default {
             }
             else if(idx_action == 4)
             {
-                this.opendialog_detailpricelists(id_datatable);
+                this.opendialog_detail(id_datatable, 'cpDetailPricelists', 'pricelists');
             }
             else if(idx_action == 5)
             {
@@ -1263,49 +1084,8 @@ export default {
 
 
         
-        closedialog_detailracks(){
-            this.dialog_detailracks = false;
-        },
-        opendialog_detailracks(id_edit_popup_detailracks)
-        {
-
-            this.dialog_detailracks = true;
-            this.get_popup_detailracks(id_edit_popup_detailracks);
-
-        },
-
-        closedialog_detailsellingprices(){
-            this.dialog_detailsellingprices = false;
-        },
-        opendialog_detailsellingprices(id_edit_popup_detailsellingprices)
-        {
-
-            this.dialog_detailsellingprices = true;
-            this.get_popup_detailsellingprices(id_edit_popup_detailsellingprices);
-
-        },
-
-        closedialog_detailstockcards(){
-            this.dialog_detailstockcards = false;
-        },
-        opendialog_detailstockcards(id_edit_popup_detailstockcards)
-        {
-
-            this.dialog_detailstockcards = true;
-            this.get_popup_detailstockcards(id_edit_popup_detailstockcards);
-
-        },
-
-        closedialog_detailpricelists(){
-            this.dialog_detailpricelists = false;
-        },
-        opendialog_detailpricelists(id_edit_popup_detailpricelists)
-        {
-
-            this.dialog_detailpricelists = true;
-            this.get_popup_detailpricelists(id_edit_popup_detailpricelists);
-
-        },
+        
+        
 
 
         
@@ -1724,6 +1504,7 @@ export default {
         
         
 
+       
 
         get_popup_detailracks(id_edit_popup_detailracks){
             axios.get('api/goods/' + id_edit_popup_detailracks + '/racks',{
@@ -1772,7 +1553,7 @@ export default {
             })
         },
 
-
+        
 
         //TESTING INPUT
         testing_input(){
@@ -1807,6 +1588,11 @@ export default {
         this.get_data();
         this.get_master_data();
         this.strToPrice("9000");
+        this.name_table = "goods";
+
+        this.info_table = this.database[this.name_table];
+        
+        
         //this.testing_input();
 
     },
