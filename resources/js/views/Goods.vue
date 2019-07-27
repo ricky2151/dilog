@@ -14,7 +14,7 @@
         v-for='(data_detail,key,index) in info_table.get_data_detail'
 
         :prop_title='"Detail " + data_detail.title' 
-        :prop_response_attribute='info_table.table_name'
+        :prop_response_attribute='info_table.singular_name'
         :prop_headers='data_detail.headers'
         :prop_columns='data_detail.single'
         :ref='"cpDetail"+ removeSpace(data_detail.title)'
@@ -807,7 +807,7 @@ export default {
             }
             else if(idx_action == 1)
             {
-                this.debugLog('nol')
+                
                 this.opendialog_detail(id_datatable, 'cpDetailRacks', 'racks');
 
             }
@@ -1587,7 +1587,7 @@ export default {
         
         this.get_data();
         this.get_master_data();
-        this.strToPrice("9000");
+        
         this.name_table = "goods";
 
         this.info_table = this.database[this.name_table];

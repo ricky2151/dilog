@@ -12,9 +12,9 @@
 
                 </v-toolbar>
                 <div style='padding:30px'>
-
+                    
                     <v-text-field
-                        v-model="search"
+                        v-model="search_data"
                         append-icon="search"
                         label="Search"
                         single-line
@@ -24,7 +24,7 @@
                     disable-initial-sort
                     :headers="prop_headers"
                     :items="data"
-                    :search="search"
+                    :search="search_data"
                     class=""
                     >
                     <template v-slot:items="props">
@@ -53,7 +53,7 @@
             return{
                 //for element
                 dialog:null,
-                search:null,
+                search_data:null,
 
                 //for data
                 data:[],

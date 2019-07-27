@@ -8,7 +8,7 @@
 						<v-btn icon dark v-on:click='close_dialog()'>
 							<v-icon>close</v-icon>
 						</v-btn>
-						<v-toolbar-title v-html='prop_idEdit == -1 ? "Add " + prop_title : "Edit " + prop_title'></v-toolbar-title>
+						<v-toolbar-title v-html='id_edit == -1 ? "Add " + prop_title : "Edit " + prop_title'></v-toolbar-title>
 					</v-toolbar>
 
 					<v-stepper v-model='stepNow' vertical>
@@ -16,7 +16,7 @@
 							<v-stepper-step :complete='stepNow > (indexStep + 1)' step="indexStep + 1">
 								<h3>{{prop_title}} Data</h3>
 							</v-stepper-step>
-							<v-stepper-content step='indexStep + 1' editable='prop_idEdit == -1 ? prop_editableEdit : prop_editableAdd'>
+							<v-stepper-content step='indexStep + 1' editable='id_edit == -1 ? prop_editableEdit : prop_editableAdd'>
 								<v-layout row 
 								v-for='(columns,key,idx) in prop_dataInfo.form_single' :key='key'>
 									<v-flex 
@@ -86,8 +86,12 @@
                                     </v-flex>
                                 </v-layout>
                             </v-stepper-content>
+
                         </div>
+
+                        <v-btn v-on:click='save_data()' class='floatright marginright25'>submit</v-btn>
                     </v-stepper>
+
                 </v-card>
             </v-form>
         </v-dialog>
@@ -99,7 +103,7 @@
 
 	export default{
 		props:[
-		'prop_idEdit', 
+		
 		'prop_title', 
 		'prop_countStep', 
 		'prop_editableEdit', 
@@ -107,6 +111,8 @@
 		'prop_dataInfo',
 		'prop_tableName',
 		'prop_widthForm',
+		'prop_singularName',
+		'prop_ref',
 		],
 		data() {
 			return {
@@ -114,12 +120,21 @@
 				dialog_form:false,
 				valid:null,
 				stepNow:null,
+				id_edit:-1,
 
 				//for data
 				input : [],
+				input_before_edit : [],
 				ref_input : [],
 				preview : [],
-				url : null,
+				url_edit : null,
+				url_store : null,
+				url_update : null,
+				url_create : null,
+				header_api:{
+	                'Accept': 'application/json',
+	                'Content-type': 'application/json' //default
+	            },
 
 				//for element & data
 
@@ -131,21 +146,23 @@
 			//for element
 			close_dialog()
 			{
-				this.prop_idEdit = -1;
+				this.id_edit = -1;
             	this.dialog_form = false;
 			},
-			open_dialog(id)
+			async open_dialog(id)
 			{
 
 				 if(id != -1)
 		        {
-		            this.prop_idEdit = id;
-		            var r = this.get_data_before_edit(id);
+		            this.id_edit = id;
+		            let r = await this.get_data_before_edit(id);
+		            
 		            this.convert_data_input(r);
 		            
 		        }
 		        else
 		        {
+		        	this.id_edit = -1;
 		        	this.clear_input();
 		        }
 		        this.dialog_form = true;
@@ -184,50 +201,45 @@
 	        },
 			get_data_before_edit(id_edit) //nanti dihapus karena sudah ada di component
 	        {
+	        	
+	        	try{
+		            var response = axios.get(this.url_edit, {
+		                params:{
+		                    token: localStorage.getItem('token')
+		                }
+		            },{
+		                headers: {
+		                    'Accept': 'application/json',
+		                    'Content-type': 'application/json'
+		                }
+		            });
+		            return response
+	            	
+
+	        	}
+	        	catch (error)
+	        	{
+	        		console.log('error try catch : ' + error);
+	        		result_data = false;
+	        	}
+
+	        	//return result_data;
+
 	            
-	            axios.get(this.url, {
-	                params:{
-	                    token: localStorage.getItem('token')
-	                }
-	            },{
-	                headers: {
-	                    'Accept': 'application/json',
-	                    'Content-type': 'application/json'
-	                }
-	            }).then(r=> {
-
-	                return r;
-	            })
-	            .catch(function (error)
-	            {
-	                console.log("error : ")
-	                console.log(error)
-	                if(error.response.status == 422)
-	                {
-	                    swal('Request Failed', 'Check your internet connection !', 'error');
-	                }
-	                else
-	                {
-	                    swal('Unkown Error', error.response.data , 'error');
-	                }
-	            });
+	            
+	            
 	        },
-	        convert_data_input(r)
+	        convert_data_input(r) //pengisian data response api ke this.input
 	        {
-	        	var temp_r = r.data.items[this.prop_tableName];
+	        	console.log(r);
+	        	var temp_r = r.data.items[this.prop_singularName];
 
-	        	//isi data single
-	        	for (var key in this.prop_dataInfo.form_single) {
-				    // skip loop if the property is from prototype
-				    if (!this.prop_dataInfo.form_single.hasOwnProperty(key)) continue;
-				    
-				    for(var nameColumn in key)
-				    {
-				    	// skip loop if the property is from prototype
-				    	if (!key.hasOwnProperty(nameColumn)) continue;
-
-				    	//cek jika gambar, maka tidak dimasukan ke input, tapi ke preview
-				    	if(this.prop_dataInfo.single[nameColumn].type == 'img')
+	        	for(var i = 0;i<this.prop_dataInfo.form_single.length;i++)
+	        	{
+	        		for(var j =0;j<this.prop_dataInfo.form_single[i].length;j++)
+	        		{
+	        			var nameColumn = this.prop_dataInfo.form_single[i][j];
+	        			if(this.prop_dataInfo.single[nameColumn].type == 'img')
 				    	{
 				    		this.preview[this.prop_dataInfo.single[nameColumn].previewVariable] = temp_r[nameColumn];
 				    	}
@@ -235,19 +247,100 @@
 				    	{
 				    		this.input[nameColumn] = temp_r[nameColumn];
 				    	}
-				    }
-				    
-				}
+	        		}
+	        	}
+	        	
 
 
 				//isi data multiple
+
+
+				this.input_before_edit = JSON.parse(JSON.stringify(this.input));
 	        },
+
+	        prepare_data_form()
+	        {
+	            const formData = new FormData();
+
+	            for(var i = 0;i<this.prop_dataInfo.form_single.length;i++)
+	        	{
+	        		for(var j =0;j<this.prop_dataInfo.form_single[i].length;j++)
+	        		{
+	        			var nameColumn = this.prop_dataInfo.form_single[i][j];
+	        			if(this.prop_dataInfo.single[nameColumn].type == 'img')
+				    	{
+				    		this.header_api['Content-type'] = 'multipart/form-data';
+				    		var temp_fileVariable = this.prop_dataInfo.single[nameColumn].fileVariable;
+				    		if((this.input[temp_fileVariable] != this.input_before_edit[temp_fileVariable]) || this.id_edit == -1)
+				    			formData.append(nameColumn, this.input[temp_fileVariable]);
+				    	}
+				    	else
+				    	{
+				    		if((this.input[nameColumn] != this.input_before_edit[nameColumn]) || this.id_edit == -1)
+				    			formData.append(nameColumn, this.input[nameColumn]);
+				    	}
+	        		}
+	        	}
+
+
+	            if(this.id_edit != -1) //jika edit data
+	            {
+	            	formData.append('_method','patch');
+	            }
+	            formData.append('token', localStorage.getItem('token'));
+	            return formData;
+	        },
+
+	        save_data()
+	        {
+	        	if(this.id_edit != -1) //jika sedang diedit
+	            {
+	                
+	                axios.post(
+	                	this.url_update,
+	                	this.prepare_data_form(),
+	                	this.header_api).then((r) => {
+	                	this.clear_input();
+	                    this.close_dialog();
+	                    this.id_edit = -1;
+	                    this.$emit('done');
+	                    swal("Good job!", "Data saved !", "success");
+	                    
+	                    
+	                    
+	                }).catch(function (error)
+	                {
+	                    
+	                    if(error.response.status == 422)
+	                    {
+	                        swal('Request Failed', 'Check your internet connection !', 'error');
+	                    }
+	                    else
+	                    {
+	                        swal('Unkown Error', error.response.data , 'error');
+	                    }
+	                });
+	                
+	            }
+	            else //jika sedang tambah data
+	            {
+	            	
+	                axios.post(
+	                	this.url_store,
+	                	this.prepare_data_form(),
+	                	this.header_api).then((r)=> {
+	                    this.clear_input();
+	                    this.close_dialog();
+	                    this.$emit('done');
+	                    swal("Good job!", "Data saved !", "success");
+	                });
+	            }
+	        }
 
 	        	
 		},
 		mounted(){
-			console.log('mounted');
-			console.log(this.prop_title);
+			
 		}
 	}
 </script>

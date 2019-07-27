@@ -3,19 +3,12 @@ export default {
 	methods:{
         
 
-        opendialog_createedit(id_data_edit){
-            if(id_data_edit != -1)
-            {
-                this.id_data_edit = id_data_edit;
-                this.convert_data_input(this.findDataById(id_data_edit));
-                
-            }
-            else
-            {
-                this.clear_input();
-            }
-
-            this.dialog_createedit = true;
+        opendialog_createedit(id){
+            this.$refs['cpForm'].url_edit = this.generate_url(this.info_table.table_name, 'edit', id);
+            this.$refs['cpForm'].url_store = this.generate_url(this.info_table.table_name, 'store');
+            this.$refs['cpForm'].url_update = this.generate_url(this.info_table.table_name, 'update', id);
+            this.$refs['cpForm'].url_create = this.generate_url(this.info_table.table_name, 'create');
+            this.$refs['cpForm'].open_dialog(id);
         },
 
 

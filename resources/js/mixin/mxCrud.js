@@ -30,8 +30,8 @@ export default {
 
         opendialog_detail(id,ref,last_url)
         {
-            //this.debugLog(this.$refs);
-            this.$refs[ref][0].url = 'api/' + this.info_table.table_name +'/' + id + '/' + last_url;
+           
+            this.$refs[ref][0].url = this.generate_url(this.info_table.table_name, 'detail', id, last_url);
             
 
             //this.$refs['cpDetailRacks'].open_dialog();

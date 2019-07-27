@@ -21,10 +21,12 @@ export default
 				{
 					table_name : 'categories',
 					title : 'Category',
-					response_attribute : 'categories',
+					singular_name : 'category',
+					plural_name : 'categories',
 					widthForm : '750',
 					data : 
 					{
+						
 						form_single : [['name']],
 						single : 
 						{
@@ -38,13 +40,33 @@ export default
 							},
 
 						}
+					},
+					get_data_detail : 
+					{
+						"goods":
+						{
+							table_name : 'goods',
+							title : 'Goods',
+							single : 
+							{
+								'id' : {show : false},
+								'name' : {show : true},
+								'stock' : {show : true},
+							},
+							headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'Stock', value:'stock'},
+							]
+						},
 					}
 				},
 				"goods" : 
 				{
 					table_name : 'goods',
 					title : 'Goods',
-					response_attribute : 'goods',
+					singular_name : 'goods',
+					plural_name : 'goods',
 					widthForm : 'fullscreen',
 					data : 
 					{
@@ -161,7 +183,6 @@ export default
 						{
 							table_name : 'racks',
 							title : 'Racks',
-							response_attribute : 'goods',
 							single : 
 							{
 								'id' : {show : false},
@@ -169,16 +190,15 @@ export default
 								'stock' : {show : true},
 							},
 							headers: [
-								{ text: 'No'},
-                				{ text: 'Racks'},
-                				{ text: 'Stock'},
+								{ text: 'No', value:'no'},
+                				{ text: 'Racks', value:'rack'},
+                				{ text: 'Stock', value:'stock'},
 							]
 						},
 						"price_sellings":
 						{
 							table_name : 'price_sellings',
 							title : 'Price Sellings',
-							response_attribute : 'goods',
 							single : 
 							{
 								'id' : {show : false},
@@ -192,23 +212,22 @@ export default
 								'free' : {show : true},
 							},
 							headers: [
-								{ text: 'No'},
-                				{ text: 'Warehouse'},
-                				{ text: 'Stock Cut Off'},
-                				{ text: 'Category Price Selling'},
-                				{ text: 'Price'},
-                				{ text: 'Free'},
+								{ text: 'No', value:'no'},
+                				{ text: 'Warehouse', value:'warehouse_name'},
+                				{ text: 'Stock Cut Off', value:'stock_cut_off'},
+                				{ text: 'Category Price Selling', value:'category_price_selling_name'},
+                				{ text: 'Price', value:'price'},
+                				{ text: 'Free', value:'free'},
 							]
 						},
 						"pricelists": //belum jadi
 						{
 							table_name : 'pricelists',
 							title : 'Pricelists',
-							response_attribute : 'goods',
 							single : ['id', 'supplier_id', 'goods_id', 'price'],
 							read : [''],
 							headers: [
-								{ text: 'No'},
+								{ text: 'No', value:'no'},
                 				{ text: 'Supplier'},
                 				{ text: 'Goods'},
                 				{ text: 'Price'},
@@ -224,7 +243,34 @@ export default
 		}
 	},
 	methods:{
-		
+		generate_url(table,type,id,tableDetail)
+		{
+
+			var result = '';
+			if(type == 'index' || type == 'store')
+			{
+				result = '/api/' + table;
+			}
+			else if(type == 'edit')
+			{
+				result = '/api/' + table + '/' + id + '/edit';
+			}
+			else if(type == 'detail')
+			{
+				
+				result = '/api/' + table + '/' + id + '/' + tableDetail;
+			}
+			else if(type == 'update' || type == 'delete')
+			{
+				result = '/api/' + table + '/' + id;
+			}
+			else if(type == 'create')
+			{
+				result = '/api/' + table + '/create';
+			}
+			return result;
+			
+		}
 		
 	}	
 }

@@ -102,3 +102,13 @@
 {
 	height: 30px !important;
 }
+
+.floatright
+{
+	float:right !important;
+}
+
+.marginright25
+{
+	margin-right: 25px !important;
+}

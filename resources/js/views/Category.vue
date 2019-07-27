@@ -7,45 +7,28 @@
 <template>
     <div>
 
-        <!-- POPUP DETAIL GOODS -->
-        <v-dialog v-model="dialog_detailgoods" width=750>
-            <v-card>
-                <v-toolbar dark color="menu">
-                    <v-btn icon dark v-on:click="closedialog_detailgoods()">
-                        <v-icon>close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title>Detail Goods</v-toolbar-title>
+        <!-- LIST POPUP DETAIL -->
+        <cp-detail 
+         
+        v-if='notNullObject(info_table.get_data_detail)'
+        v-for='(data_detail,key,index) in info_table.get_data_detail'
 
-                </v-toolbar>
-                <div style='padding:30px'>
-                    <v-text-field
-                        v-model="popup_search_detailgoods"
-                        append-icon="search"
-                        label="Search"
-                        single-line
-                        hide-details
-                      ></v-text-field>
-                    <v-data-table
-                    disable-initial-sort
-                    :headers="headers_popup_detailgoods"
-                    :items="popup_detailgoods"
-                    :search="popup_search_detailgoods"
-                    class=""
-                    >
-                    <template v-slot:items="props">
-                        <td>{{ props.item.no }}</td>
-                        <td>{{ props.item.name }}</td>
-                        <td>{{ props.item.stock }}</td>
-                    </template>
-                    </v-data-table>
-                </div>
-            </v-card>
-        </v-dialog>
+        :prop_title='"Detail " + data_detail.title' 
+        :prop_response_attribute='info_table.table_name'
+        :prop_headers='data_detail.headers'
+        :prop_columns='data_detail.single'
+        :ref='"cpDetail"+ removeSpace(data_detail.title)'
+        :key='key'
+
+        ></cp-detail>
+        <!----------------------->
+
+        
 
         <!-- POPUP CREATE EDIT BARU -->
         <cp-form 
 
-        :prop_isEdit='id_data_edit'
+        
         :prop_title='info_table.table_name'
         prop_countStep='1'
         prop_editableEdit='true'
@@ -53,28 +36,15 @@
         :prop_dataInfo='info_table.data'
         :prop_tableName='name_table'
         :prop_widthForm='info_table.widthForm'
+        :prop_singularName='info_table.singular_name'
+        v-on:done='get_data()'
         ref="cpForm"
 
         ></cp-form>
 
         <!-- ================================ -->
 
-        <!-- POPUP CREATE EDIT -->
-        <v-dialog v-model="dialog_createedit" width=750>
-            <v-card>
-                <v-toolbar dark color="menu">
-                    <v-btn icon dark v-on:click="closedialog_createedit()">
-                        <v-icon>close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title v-html='id_data_edit == -1 ?"Add Categories":"Edit Categories"'></v-toolbar-title>
-
-                </v-toolbar>
-                <v-form v-model="valid" style='padding:30px' ref='formCreateEdit'>
-                    <v-text-field :rules="this.$list_validation.max_req" v-model='input.name' label="Name" required></v-text-field>
-                    <v-btn v-on:click='save_data()' >submit</v-btn>
-                </v-form>
-            </v-card>
-        </v-dialog>
+       
 
 
         <v-layout row class='bgwhite margintop10'>
@@ -82,7 +52,7 @@
                 <div class='marginleft30 margintop10'>
                     <v-icon class='icontitledatatable'>category</v-icon>
                     <h2 class='titledatatable'>Categories Data</h2>
-                    <v-btn v-on:click='$refs.cpForm.open_dialog(-1)' color="primary" dark class='btnadddata'>
+                    <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='btnadddata'>
                     Add Data
                 </v-btn>
                 </div>
@@ -161,16 +131,7 @@ export default {
             on:false,
 
             valid:null,
-            dialog_createedit:false,
-            dialog_detailgoods:false,
             
-
-            id_data_edit:-1,
-
-            input:{
-                name:'',    
-            },
-            input_before_edit:null, //variabel ini digunakan untuk menampung input sebelum di klik submit saat edit
             
 
             headers: [
@@ -180,33 +141,13 @@ export default {
 
             ],
 
-            headers_popup_detailgoods : [
-                { text: 'No', value:'no'},
-                { text: 'Goods', value:'name'},
-                { text: 'Stock', value:'stock'},
-
-            ],
+           
 
             data_table:[],
             search_data: null,
             
 
-            popup_detailgoods :
-            [
-                {
-                    name:'meja',
-                    stock:12,
-                },
-                {
-                    name:'kursi',
-                    stock:13,
-                },
-                {
-                    name:'indomie',
-                    stock:10,
-                },
-            ],
-            popup_search_detailgoods:null,
+            
         }
     },
     methods: {
@@ -220,7 +161,7 @@ export default {
             }
             else if(idx_action == 1)
             {
-                this.opendialog_detailgoods(id);
+                this.opendialog_detail(id, 'cpDetailGoods', 'goods');
             }
             else if(idx_action == 2)
             {
@@ -228,44 +169,8 @@ export default {
             }
         },
 
-        opendialog_detailgoods(id_edit)
-        {
-            this.dialog_detailgoods = true;
-            var temp_popup = this.get_popup_detail(id_edit, 'goods');
-            if(temp_popup != null)
-            {
-                this.popup_detailgoods = temp_popup.categories;    
-            }
-            
-            
-        },
 
-        closedialog_detailgoods(){ 
-            this.dialog_detailgoods = false;
-        },
-
-        convert_data_input(tempobject)
-        {
-            this.input.name = tempobject.name;
-            this.input_before_edit = JSON.parse(JSON.stringify(this.input));
-        },
-
-        prepare_data_form()
-        {
-            const formData = new FormData();
-            if(this.id_data_edit == -1) //jika add data
-            {
-                formData.append('name', this.input.name);
-            }
-            else //jika edit data
-            {
-                if(this.input.name != this.input_before_edit.name) 
-                    formData.append('name', this.input.name);
-                formData.append('_method','patch');
-            }
-            formData.append('token', localStorage.getItem('token'));
-            return formData;
-        },
+        
 
         showTable(r) 
         {
@@ -277,7 +182,6 @@ export default {
     mounted(){
         this.get_data();
         this.name_table = "categories";
-
         this.info_table = this.database[this.name_table];
 
     },
