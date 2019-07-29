@@ -96,6 +96,9 @@ class Handler extends ExceptionHandler
         elseif($exception instanceof MethodNotAllowedHttpException){
             return response()->json(['error' => true, 'message' => ["route"=>'Method not allowed']]);
         }
+        elseif($exception instanceof InvalidChangeStatusPoException){
+            return InvalidChangeStatusPoException::render($exception->getMessage());
+        }
         return parent::render($request, $exception);
     }
 }
