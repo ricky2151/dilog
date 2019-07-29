@@ -32,6 +32,7 @@ class PurchaseOrder extends Model
 
     public function approve(){
         $this->status = 3;
+        $this->approved_by_user_id = auth('api')->user()->id;
         $this->save();
     }
 
