@@ -3,11 +3,15 @@ import mxDatabase from '../mixin/mxDatabase'
 import mxVariableProcess from '../mixin/mxVariableProcess'
 import cpDetail from './../components/popup/cpDetail.vue'
 import cpForm from './../components/form/cpForm.vue'
+import cpDatatable from './../components/datatable/cpDatatable.vue'
+import cpHeader from './../components/datatable/cpHeader.vue'
 
 export default {
     components:{
         cpDetail,
         cpForm,
+        cpDatatable,
+        cpHeader
     },
 	methods:{
         debugLog(item) {
@@ -17,16 +21,24 @@ export default {
 		findDataById(id)
 		{
 			
-			for(var i = 0;i<this.data_table.length;i++)
+			for(var i = 0;i<this.$refs['cpDatatable'].data_table.length;i++)
 			{
-				if(this.data_table[i].id == id)
+				if(this.$refs['cpDatatable'].data_table[i].id == id)
 				{
                     
-                    return this.data_table[i];
+                    return this.$refs['cpDatatable'].data_table[i];
                     
 				}
 			}
 		},
+
+        opendialog_createedit(id){
+            this.$refs['cpForm'].url_edit = this.generate_url(this.info_table.table_name, 'edit', id);
+            this.$refs['cpForm'].url_store = this.generate_url(this.info_table.table_name, 'store');
+            this.$refs['cpForm'].url_update = this.generate_url(this.info_table.table_name, 'update', id);
+            this.$refs['cpForm'].url_create = this.generate_url(this.info_table.table_name, 'create');
+            this.$refs['cpForm'].open_dialog(id);
+        },
 
         opendialog_detail(id,ref,last_url)
         {
@@ -40,90 +52,11 @@ export default {
             
         },
 
-		closedialog_createedit(){  //nanti dihapus, karena sudah ada di compoenent form
-            this.id_data_edit = -1;
-            this.dialog_createedit = false;
-        },
+		
+        refresh_table() {
 
-        clear_input(){
-            this.$refs.formCreateEdit.resetValidation();
-            
-            for (var key in this.input)
-            {
-                if(this.input[key])
-                {
-                    if(Array.isArray(this.input[key]))
-                    {
-                        this.input[key] = [];     
-                    }
-                    else
-                    {
-                        this.input[key] = "";
-                    }   
-                }
-            }
-        },
+            this.$refs.cpDatatable.get_data();
 
-        save_data() 
-        {
-            
-
-            if(this.id_data_edit != -1) //jika sedang diedit
-            {
-                
-                axios.post(
-                	'api/' + this.name_table + '/' + this.findDataById(this.id_data_edit).id,
-                	this.prepare_data_form(),
-                	this.header_api).then((r) => {
-                	this.clear_input();
-                    this.get_data();
-                    this.closedialog_createedit();
-                    swal("Good job!", "Data saved !", "success");
-                    this.id_data_edit = -1;
-                    
-                }).catch(function (error)
-                {
-                    
-                    if(error.response.status == 422)
-                    {
-                        swal('Request Failed', 'Check your internet connection !', 'error');
-                    }
-                    else
-                    {
-                        swal('Unkown Error', error.response.data , 'error');
-                    }
-                });
-                
-            }
-            else //jika sedang tambah data
-            {
-                axios.post(
-                	'api/' + this.name_table,
-                	this.prepare_data_form(),
-                	this.header_api).then((r)=> {
-                    this.clear_input();
-                    this.get_data();
-                    this.closedialog_createedit();
-                    swal("Good job!", "Data saved !", "success");
-                });
-            }
-        },
-
-        get_data() {
-
-            axios.get('/api/' + this.name_table, {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },this.header_api).then((r) => {
-
-            	
-            	this.showTable(r);
-            	for(var i = 0;i<this.data_table.length;i++)
-            	{
-            		this.data_table[i].no = this.data_table.length - i;
-            	}
-            })
         },
 
         delete_data(id_data_delete){
@@ -137,13 +70,13 @@ export default {
                 })
                 .then((willDelete) => {
                     if (willDelete) {
-                        axios.delete('api/' + this.name_table + '/' + this.findDataById(id_data_delete).id,{
+                        axios.delete(this.generate_url(this.name_table,'delete',this.findDataById(id_data_delete).id),{
                             data:{
                                 token: localStorage.getItem('token')    
                             }
                             
                         }).then((r)=>{
-                            this.get_data();
+                            this.refresh_table();
                             swal("Good job!", "Data Deleted !", "success");
                             
                         });
@@ -153,44 +86,36 @@ export default {
 
         get_master_data()
         {
-            axios.get('/api/' + this.name_table +'/create', {
-                params:{
-                    token: localStorage.getItem('token')
-                }
-            },{
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json'
-                }
-            }).then(r => this.fill_select_master_data(r))
-            .catch(function (error)
+            if(this.info_table.request_master_data)
             {
-                console.log("error : ")
-                console.log(error)
-                if(error.response.status == 422)
+                axios.get(this.generate_url(this.name_table, 'create'), {
+                    params:{
+                        token: localStorage.getItem('token')
+                    }
+                },{
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    }
+                }).then(r => this.$refs['cpForm'].fill_select_master_data(r))
+                .catch(function (error)
                 {
-                    swal('Request Failed', 'Check your internet connection !', 'error');
-                }
-                else
-                {
-                    swal('Unkown Error', error.response.data , 'error');
-                }
-            });
+                    console.log("error : ")
+                    console.log(error)
+                    if(error.response.status == 422)
+                    {
+                        swal('Request Failed', 'Check your internet connection !', 'error');
+                    }
+                    else
+                    {
+                        swal('Unkown Error', error.response.data , 'error');
+                    }
+                });
+
+            }
         },
 
         
-        get_popup_detail(id_edit, path)
-        {
-        	
-        	axios.get('api/' + this.name_table + '/' + this.findDataById(id_edit).id + '/' + path,{
-                params : {
-                    token: localStorage.getItem('token')
-                }
-
-            }).then((r) => {
-                return r.data.items;
-            })
-        },
 
 
         

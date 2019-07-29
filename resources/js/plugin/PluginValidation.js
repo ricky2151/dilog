@@ -21,7 +21,7 @@ export default {
   		],
 
   		selectdata_req : [
-  			v => v > 0 || 'Please fill the blank !',
+  			v => v != null || 'Please fill the blank !',
   		],
 
   		selecttf_req : [

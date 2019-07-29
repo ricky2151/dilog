@@ -3,20 +3,20 @@ export default {
 	methods:{
         
 
-		opendialog_createedit(id_data_edit,r){ //tdk bisa, nanti dihapus karena udah ada di component
-	        if(id_data_edit != -1)
-	        {
-	            this.id_data_edit = id_data_edit;
+		// opendialog_createedit(id_data_edit,r){ //tdk bisa, nanti dihapus karena udah ada di component
+	 //        if(id_data_edit != -1)
+	 //        {
+	 //            this.id_data_edit = id_data_edit;
 	            
-	            this.convert_data_input(r);
+	 //            this.convert_data_input(r);
 	            
-	        }
-	        else
-	        {
-	        	this.clear_input();
-	        }
-	        this.dialog_createedit = true;
-        },
+	 //        }
+	 //        else
+	 //        {
+	 //        	this.clear_input();
+	 //        }
+	 //        this.dialog_createedit = true;
+  //       },
 
 
         
