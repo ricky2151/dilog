@@ -320,7 +320,7 @@ export default {
     },
     mounted(){
         
-        this.get_cogs();
+        this.get_data();
         this.get_master_data();
         //this.testing_input();
 

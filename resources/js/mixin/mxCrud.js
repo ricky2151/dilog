@@ -1,11 +1,19 @@
 import mxStringProcessing from '../mixin/mxStringProcessing'
-import cpHeaderDataTable from './../components/cpHeaderDataTable.vue'
+import mxDatabase from '../mixin/mxDatabase'
+import mxVariableProcess from '../mixin/mxVariableProcess'
+import cpDetail from './../components/popup/cpDetail.vue'
+import cpForm from './../components/form/cpForm.vue'
+
 export default {
     components:{
-        cpHeaderDataTable,
+        cpDetail,
+        cpForm,
     },
 	methods:{
-        
+        debugLog(item) {
+            console.log('ini debugLog');
+            console.log(item);
+        },
 		findDataById(id)
 		{
 			
@@ -20,7 +28,19 @@ export default {
 			}
 		},
 
-		closedialog_createedit(){ 
+        opendialog_detail(id,ref,last_url)
+        {
+           
+            this.$refs[ref][0].url = this.generate_url(this.info_table.table_name, 'detail', id, last_url);
+            
+
+            //this.$refs['cpDetailRacks'].open_dialog();
+            //this.debugLog(this.$refs[ref].prop_title);
+            this.$refs[ref][0].open_dialog();
+            
+        },
+
+		closedialog_createedit(){  //nanti dihapus, karena sudah ada di compoenent form
             this.id_data_edit = -1;
             this.dialog_createedit = false;
         },
@@ -131,6 +151,34 @@ export default {
             });
         },
 
+        get_master_data()
+        {
+            axios.get('/api/' + this.name_table +'/create', {
+                params:{
+                    token: localStorage.getItem('token')
+                }
+            },{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            }).then(r => this.fill_select_master_data(r))
+            .catch(function (error)
+            {
+                console.log("error : ")
+                console.log(error)
+                if(error.response.status == 422)
+                {
+                    swal('Request Failed', 'Check your internet connection !', 'error');
+                }
+                else
+                {
+                    swal('Unkown Error', error.response.data , 'error');
+                }
+            });
+        },
+
+        
         get_popup_detail(id_edit, path)
         {
         	
@@ -149,5 +197,7 @@ export default {
 	},
 	mixins:[
 		mxStringProcessing,
+        mxDatabase,
+        mxVariableProcess,
 	]
 }
