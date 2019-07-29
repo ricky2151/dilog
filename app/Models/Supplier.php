@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Arr;
 
 class Supplier extends Model
 {
@@ -19,6 +20,18 @@ class Supplier extends Model
 
     public function pricelists(){
         return $this->hasMany('App\Models\Pricelist');
+    }
+
+    public function purchaseOrder(){
+        return $this->hasMany('App\Models\PurchaseOrder');
+    }
+
+    public function goodsWithPricelists(){
+        $data = $this->pricelists->groupBy('goods_id')->map(function ($item, $key) {
+            return Arr::add(Goods::find($key),'pricelist',$item);
+        })->sortKeys();
+
+        return $data->values();
     }
 
 }

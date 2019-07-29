@@ -88,4 +88,19 @@ Route::group([
 
     //Customer
     Route::resource('customers', 'CustomerController');
+
+    //PurchaseRequest
+    Route::resource('purchaseRequests', 'PurchaseRequestController');
+
+    //PurchaseOrder
+    Route::resource('purchaseOrders', 'PurchaseOrderController');
+    Route::patch('/purchaseOrders/{id}/approve','PurchaseOrderController@approve');
+    Route::patch('/purchaseOrders/{id}/submit','PurchaseOrderController@submit');
+
+    //PurchaseOrderDetail
+    // Route::get('/purchaseOrders/{purchaseOrderId}/purchaseOrderDetails/create','PurchaseOrderDetailController@create');
+
+    // 
+    Route::resource('purchaseOrderDetails', 'PurchaseOrderDetailController');
+
 });

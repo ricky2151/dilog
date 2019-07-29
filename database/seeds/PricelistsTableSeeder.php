@@ -14,7 +14,7 @@ class PricelistsTableSeeder extends Seeder
     {
         for ($i=0; $i < 100; $i++) {
             DB::table('pricelists')->insert([
-                'goods_id' => 1,
+                'goods_id' => rand(1,4),
                 'supplier_id' => rand(1,4),
                 'price' => rand(10000, 1000000),
                 'created_at' => now(),
