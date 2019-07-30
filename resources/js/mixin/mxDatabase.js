@@ -12,6 +12,14 @@ export default
 	//img => v-text-field + input + img
 	//s => v-select
 
+	//editable => bisa next ke step berikutnya
+
+	//index pada single merepresentasikan input.[index pada single]
+	//ref pada input tipe select, tidak perlu dituliskan karena pasti ref_input.[nama tabel]
+
+	//send type : 
+	//1. langsung kirim hasil akhir
+	//2. kirim hasil akhir dengan penjelasan apa yang diinsert, apa yang diupdate, dan apa yang didelete
 
 	data () {
 		return{
@@ -21,22 +29,44 @@ export default
 				{
 					table_name : 'categories',
 					title : 'Category',
+					icon : 'category',
+
 					singular_name : 'category',
 					plural_name : 'categories',
+
 					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit','Goods', 'Delete'],
+
+					request_master_data : false,
 					data : 
 					{
-						
+						datatable:[
+							{
+								column : 'name',
+							},
+							// {
+							// 	column : '',
+							// 	value : ['name', '*', 'qty']
+							// }
+						],
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
 						form_single : [['name']],
 						single : 
 						{
 							'id' : {
 								label : '',
-								header : '',
 							},
 							'name' : {
 								label : 'Name', width:12, type:'tf', validation:'max_req',
-								header : 'Name',
 							},
 
 						}
@@ -65,114 +95,264 @@ export default
 				{
 					table_name : 'goods',
 					title : 'Goods',
+					icon : 'widgets',
+
 					singular_name : 'goods',
 					plural_name : 'goods',
+
 					widthForm : 'fullscreen',
+					editable_edit : true,
+					editable_add : true,
+					count_step : 6,
+
+					actions:['Edit', 'Rack', 'SP', 'Stock Card', 'Supplier', 'COGS', 'Delete'],
+
+					request_master_data : true,
 					data : 
 					{
-						form_single : [['name', 'code'], ['desc'],['status'], ['value', 'last_buy_pricelist'], ['barcode_master'], ['thumbnail'], ['avg_price_status'], ['avg_price', 'tax'], ['unit_id'], ['cogs_id'], ['margin']],
+						custom_master_data : {
+							'avg_price_status':[
+			                    {value:1,name:'True'},
+			                    {value:0,name:'False'},
+			                ],
+			                'free':[
+			                    {value:1,name:'True'},
+			                    {value:0,name:'False'},
+			                ],
+						},
+						datatable:[
+							{ column : 'name' }, { column : 'code' }, { column : 'value' }, { column : 'status' }, { column : 'last_buy_pricelist' }, { column : 'avg_price' }, { column : 'stock' }, { column : '', value : ['avg_price', '*', 'stock'] },
+						],
+						headers: [
+			                { text: 'No', value: 'no'},
+			                { text: 'Name', value: 'name'},
+			                { text: 'Code', value: 'code', align:'right' },
+			                { text: 'Value', value: 'value', align:'right' },
+			                { text: 'Status', value: 'status', align:'right' },
+			                { text: 'Last Buy Pricelist', value: 'last_buy_pricelist', align:'right' },
+			                { text: 'AVGPrice', value: 'avgprice', align:'right' },
+			                { text: 'Stock', value: 'stock', align:'right' },
+			                { text: 'Inventory Value', value: 'inventory_value', align:'right' },
+			                { text: 'Action', align:'left',sortable:false, width:'15%'},
+			            ],
+						form_single : [['name', 'code'], ['desc'],['status'], ['value', 'last_buy_pricelist'], ['barcode_master'], ['thumbnail'], ['avg_price_status'], ['avg_price', 'tax'], ['unit'], ['cogs'], ['margin']],
 						single : 
 						{
 							'id' : { 
 								label : '', 
-								header : ''
 							},
 							'name' : { 
 								label : 'Name', width:9, type:'tf', validation:'max_req',
-								header : 'Name'
 							},
 							'code' : { 
 								label : 'Code', width:3, type:'tf', validation:'max_req',
-								header : 'Code'
 							},
 							'desc' : { 
 								label : 'Description', width:12, type:'ta', validation:'max',
-								header : 'Description'
 							},
 							'margin' : { 
 								label : 'Margin', width:12, type:'tf', validation:'numeric_req',
-								header : 'Margin'
 							},
 							'value' : { 
 								label : 'Value', width:6, type:'tf', validation:'numeric_req',
-								header : 'Value'
 							},
 							'status' : { 
-								label : 'Status', width:6,  type:'tf', validation:'numeric_req',
-								header : 'Status'
+								label : 'Status', width:12,  type:'tf', validation:'numeric_req',
 							},
 							'last_buy_pricelist' : { 
-								label : 'Last Buy Pricelist', width:12,  type:'tf', validation:'numeric',
-								header : 'Last Buy Pricelist'
+								label : 'Last Buy Pricelist', width:6,  type:'tf', validation:'numeric',
 							},
 							'barcode_master' : { 
 								label : 'Barcode', width:12,  type:'tf', validation:'max',
-								header : 'Barcode'
 							},
 							'avg_price_status' : { 
-								label : 'Average Price Status', width:12, type:'s', validation:'selecttf_req', 
-								itemText:'name', itemValue:'value',
-								header : 'AVG Price Status'
+								label : 'Average Price Status', width:12, type:'s', 
+								itemText:'name', itemValue:'value', column:'avg_price_status'
 							},
 							'avg_price' : { 
 								label : 'Average Price', width:6, type:'tf', validation:'numeric',
-								header : 'Average Price'
 							},
 							'tax' : { 
 								label : 'Tax', width:6, type:'tf', validation:'numeric',
-								header : 'Tax'
 							},
-							'unit_id' : { 
+							'unit' : { 
 								label : 'Unit', width:12, type:'s', validation:'selectdata_req', 
-								itemText:'name', itemValue:'id',
-								header : 'Unit'
+								itemText:'name', itemValue:'id', column:'unit_id'
 							},
-							'cogs_id' : { 
+							'cogs' : { 
 								label : 'COGS', width:12, type:'s', validation:'selectdata_req', 
-								itemText:'name', itemValue:'id',
-								header : 'COGS'
+								itemText:'name', itemValue:'id', column:'cogs_id'
 							},
 							'thumbnail' : { 
-								label : 'Thumbnail', width:12,  type:'image', validation:'',
-								fileNameVariable : 'thumbnail_filename', fileVariable : 'thumbnail_file', previewVariable : 'thumbnail', idButton : 'btn_upload_thumbnail',
-								header : 'Thumbnail'
+								label : 'Thumbnail', width:12,  type:'img', validation:'',
+								fileNameVariable : 'thumbnail_filename', fileVariable : 'thumbnail_file', previewVariable : 'thumbnail',
 							},
 							
 						},
 						
+						form_multiple : ['price_sellings', 'category_goods', 'attribute_goods', 'pricelists', 'materials'],
 						multiple : {
 							"category_goods":
 							{
-								table_name : 'category_goods',
 								title : 'Gooods Category',
-								headers: 
-								[
-									{ text: 'No'},
-	                				{ text: 'Category'},
-								],
-								label : ['Name'],
-								read : ['name'],
-								single : ['id', 'name'],
+								type : 'chips',
+								item_value : 'id',
+								item_text : 'name',
+								ref_table : 'category',
+								column : 'category_id',
+								send_type : '1' //langsung
 							},
 							"attribute_goods":
 							{
-								table_name : 'attribute_goods',
-								single : ['id', 'name', 'value'],
+								title : 'Goods Attributes',
+								type : 'table',
+
+								singular_name : 'attribute_goods',
+								plural_name : 'attribute_goods',
+
+								datatable : [{column : ['attribute', 'name']}, {column : ['value']}],
+								headers: 
+								[
+									{ text: 'No', value:'no'},
+	                				{ text: 'Attribute', value:'attribute'},
+	                				{ text: 'Value', value:'value'},
+	                				{ text: 'Action', align:'left',sortable:false, width:'15%'},
+								],
+								form_single:[['attribute'], ['value']],
+								single : 
+								{
+									'id' : { 
+										label : '', 
+									},
+									'attribute' : { 
+										label : 'Attribute', width:12, type:'s',
+										itemText:'name', itemValue:'id', column:'attribute_id'
+									},
+									'value' : { 
+										label : 'Value', width:12, type:'tf', column:'value'
+									},
+									
+								},
+								send_type : '1'
 							},
 							"price_sellings":
 							{
-								table_name : 'price_sellings',
-								single : ['id', 'goods_id', 'warehouse_id', 'stock_cut_off', 'category_price_selling_id', 'price', 'free', 'warehouse_name', 'category_price_selling_name'],
+								title : 'Goods Price Sellings',
+								type : 'table',
+
+								singular_name : 'price_sellings',
+								plural_name : 'price_sellings',
+
+								datatable : [{column : ['warehouse', 'name']}, {column : ['stock_cut_off']}, {column : ['category_price_selling','name']}, {column : ['price']}, {column : ['free','name']}],
+								headers: 
+								[
+									{ text: 'No', value:'no'},
+	                				{ text: 'Warehouse', value:'warehouse'},
+	                				{ text: 'Stock Cut Off', value:'stock_cut_off'},
+	                				{ text: 'Category Price Selling', value:'category_price_selling'},
+	                				{ text: 'Price', value:'price'},
+	                				{ text: 'Free', value:'free'},
+	                				{ text: 'Action', align:'left',sortable:false, width:'15%'},
+								],
+								form_single:[['warehouse'], ['stock_cut_off'], ['category_price_selling'], ['price'], ['free']],
+								single : 
+								{
+									'id' : { 
+										label : '', 
+									},
+									'warehouse' : { 
+										label : 'Warehouse', width:12, type:'s',
+										itemText:'name', itemValue:'id', column:'warehouse_id'
+									},
+									'stock_cut_off' : { 
+										label : 'Stock Cut Off', width:12, type:'tf', column:'stock_cut_off'
+									},
+									'category_price_selling' : { 
+										label : 'Category Price Selling', width:12, type:'s',
+										itemText:'name', itemValue:'id', column:'category_price_selling_id'
+									},
+									'price' : { 
+										label : 'Price', width:12, type:'tf',
+										value : ['margin', '+', 'last_buy_pricelist'], disabled : true, column:'price'
+									},
+									'free' : { 
+										label : 'Free', width:12, type:'s',
+										itemText:'name', itemValue:'value', column:'free'
+									},
+									
+								},
+								send_type : '2' //menggunakan type (insert, update, delete)
 							},
 							"pricelists":
 							{
-								table_name : 'pricelists',
-								single : ['id', 'supplier_id', 'goods_id', 'price', 'name_company']
+								title : 'Goods Pricelists',
+								type : 'table',
+
+								singular_name : 'pricelists',
+								plural_name : 'pricelists',
+
+								datatable : [{column : ['supplier', 'name_company']}, {column : ['price']} ],
+								headers: 
+								[
+									{ text: 'No', value:'no'},
+	                				{ text: 'Supplier', value:'supplier'},
+	                				{ text: 'Price', value:'price'},
+	                				{ text: 'Action', align:'left',sortable:false, width:'15%'},
+								],
+
+								form_single:[['supplier'], ['price']],
+								single : 
+								{
+									'id' : { 
+										label : '', 
+									},
+									'supplier' : { 
+										label : 'Supplier', width:12, type:'s',
+										itemText:'name_company', itemValue:'id', column:'supplier_id'
+									},
+									'price' : { 
+										label : 'Price', width:12, type:'tf', column:'price'
+									},
+									
+								},
+								send_type : '1'
 							},
-							"material_goods":
+							"materials":
 							{
-								table_name : 'material_goods',
-								single : ['id', 'name', 'goods_id', 'total', 'adjust']
+								title : 'Goods Materials',
+								type : 'table',
+
+								singular_name : 'materials',
+								plural_name : 'materials',
+
+								datatable : [{column : ['name']}, {column : ['total']}, {column : ['adjust']} ],
+								headers: 
+								[
+									{ text: 'No', value:'no'},
+	                				{ text: 'Name', value:'material'},
+	                				{ text: 'Total', value:'total'},
+	                				{ text: 'Adjust', value:'adjust'},
+	                				{ text: 'Action', align:'left',sortable:false, width:'15%'},
+								],
+
+								form_single:[['name'], ['total'], ['adjust']],
+								single : 
+								{
+									'id' : { 
+										label : '', 
+									},
+									'name' : { 
+										label : 'Name', width:12, type:'tf', column:'name'
+									},
+									'total' : { 
+										label : 'Total', width:12, type:'tf', column:'total'
+									},
+									'adjust' : { 
+										label : 'Adjust', width:12, type:'tf', column:'adjust'
+									},
+									
+								},
+								send_type : '2'
 							}
 						}
 					},
@@ -220,19 +400,19 @@ export default
                 				{ text: 'Free', value:'free'},
 							]
 						},
-						"pricelists": //belum jadi
-						{
-							table_name : 'pricelists',
-							title : 'Pricelists',
-							single : ['id', 'supplier_id', 'goods_id', 'price'],
-							read : [''],
-							headers: [
-								{ text: 'No', value:'no'},
-                				{ text: 'Supplier'},
-                				{ text: 'Goods'},
-                				{ text: 'Price'},
-							]
-						},
+						// "pricelists": //belum jadi
+						// {
+						// 	table_name : 'pricelists',
+						// 	title : 'Pricelists',
+						// 	single : ['id', 'supplier_id', 'goods_id', 'price'],
+						// 	read : [''],
+						// 	headers: [
+						// 		{ text: 'No', value:'no'},
+      //           				{ text: 'Supplier'},
+      //           				{ text: 'Goods'},
+      //           				{ text: 'Price'},
+						// 	]
+						// },
 
 					}
 
@@ -270,6 +450,106 @@ export default
 			}
 			return result;
 			
+		},
+		generate_input(table)
+		{
+			if(table)
+			{
+				var result = {};
+				if(this.database[table].data.single)
+				{
+					
+					var form_single = this.database[table].data.form_single;
+
+					for(var i = 0;i<form_single.length;i++)
+		        	{
+		        		for(var j =0;j<form_single[i].length;j++)
+		        		{
+		        			var nameColumn = form_single[i][j];
+		        			result[nameColumn] = null;
+		        		}
+		        	}
+				}
+
+				if(this.database[table].data.multiple)
+				{
+					
+					var form_multiple = this.database[table].data.form_multiple;
+					var multiple = this.database[table].data.multiple;
+
+					for(var i = 0;i<form_multiple.length;i++)
+					{
+						var name_child_form = form_multiple[i];
+						result[name_child_form] = [];
+
+						
+
+					}
+				}
+				
+				
+				return result;
+
+
+			}
+			
+		},
+		generate_preview(table) //sementara ini baru untuk single dulu yang image
+		{
+			if(table)
+			{
+				if(this.database[table].data.single)
+				{
+					var result = {};
+					var form_single = this.database[table].data.form_single;
+					var single = this.database[table].data.single;
+
+
+					for(var i = 0;i<form_single.length;i++)
+		        	{
+		        		for(var j =0;j<form_single[i].length;j++)
+		        		{
+		        			var nameColumn = form_single[i][j];
+		        			if(single[nameColumn].type == 'img')
+		        			{
+		        				result[nameColumn] = null;
+		        			}
+		        			
+		        		}
+		        	}
+				}
+
+			}
+			return result;
+		},
+		generate_temp_input(table)
+		{
+			if(table)
+			{
+				if(this.database[table].data.multiple)
+				{
+					var result = {};
+					var form_multiple = this.database[table].data.form_multiple;
+					var multiple = this.database[table].data.multiple;
+
+					for(var i = 0;i<form_multiple.length;i++)
+					{
+						var name_child_form = form_multiple[i];
+						var obj = multiple[name_child_form];
+						if(obj.type == 'table')
+						{
+							var temp_result = {};
+							Object.keys(obj.single).map(function(key, index) {
+								temp_result[key] = null;
+							});
+							temp_result['idx_edit'] = -1;
+							result[name_child_form] = temp_result;
+						}
+					}
+				}
+
+			}
+			return result;
 		}
 		
 	}	
