@@ -71,7 +71,7 @@ class AttributeController extends Controller
         $this->attributeService->handleInvalidParameter($id);
         $this->attributeService->handleModelNotFound($id);
 
-        return formatResponse(false,(["attribute"=>$this->attribute->find($id)]));
+        return formatResponse(false,(["attribute"=>$this->attribute->find($id), "master_data"=>[]]));
     }
 
     /**
