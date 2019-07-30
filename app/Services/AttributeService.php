@@ -8,11 +8,17 @@ use App\Models\Attribute;
 
 class AttributeService
 {
+    private $attribute;
+
+    public function __construct(Attribute $attribute)
+    {
+        $this->attribute = $attribute;
+    }
+
     public function handleEmptyModel(){
-        if(Attribute::all()->count() === 0){
+        if($this->attribute->all()->count() === 0){
             throw new CustomModelNotFoundException("attribute"); 
         } 
-
     }
 
     public function handleInvalidParameter($id){
@@ -23,7 +29,7 @@ class AttributeService
 
     public function handleModelNotFound($id){
         try{
-            $user = Attribute::findOrFail($id);
+            $user = $this->attribute->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {
