@@ -76,6 +76,21 @@ class CategoryController extends Controller
     }
 
     /**
+     *  Show the form for editing the specified category.
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id)
+    {
+        $this->categoryService->handleInvalidParameter($id);
+        $this->categoryService->handleModelNotFound($id);
+
+        $category = $this->category->find($id);
+        return formatResponse(false,(["category"=>$category]));
+    }
+
+    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\UpdateCategory  $request
