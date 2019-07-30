@@ -29,8 +29,8 @@ class CategoryController extends Controller
     public function index()
     {
         $this->categoryService->handleEmptyModel();
-        $categories = $this->category->latest()->get();
-        return formatResponse(false,(["categories"=>$categories]));
+
+        return formatResponse(false,(["categories"=>$this->category->latest()->get()]));
     }
 
     /**
@@ -41,9 +41,8 @@ class CategoryController extends Controller
     public function goodsCategory($id)
     {
         $this->categoryService->handleEmptyModel();
-        $goods = $this->category->find($id)->goodsStock();
 
-        return formatResponse(false,(["categories"=>$goods]));
+        return formatResponse(false,(["goods"=>$this->category->find($id)->goodsWithStock()]));
     }
 
     /**
@@ -61,7 +60,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified category.
      *
      * @param  $id
      * @return \Illuminate\Http\JsonResponse
@@ -70,9 +69,8 @@ class CategoryController extends Controller
     {
         $this->categoryService->handleInvalidParameter($id);
         $this->categoryService->handleModelNotFound($id);
-
-        $category = $this->category->find($id);
-        return formatResponse(false,(["category"=>$category]));
+        
+        return formatResponse(false,(["category"=>$this->category->find($id)]));
     }
 
     /**
@@ -86,12 +84,11 @@ class CategoryController extends Controller
         $this->categoryService->handleInvalidParameter($id);
         $this->categoryService->handleModelNotFound($id);
 
-        $category = $this->category->find($id);
-        return formatResponse(false,(["category"=>$category]));
+        return formatResponse(false,(["category"=>$this->category->find($id), "master_data" => []]));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified category in storage.
      *
      * @param  \Illuminate\Http\UpdateCategory  $request
      * @param  $id
@@ -107,7 +104,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified category from storage.
      *
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response

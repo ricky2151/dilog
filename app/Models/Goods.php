@@ -159,6 +159,10 @@ class Goods extends Model
                     'categories',
                     'materials'
                 )->where('id',$id)->first();
+        $data['attribute_goods'] = $data['attributes'];
+        $data['category_goods'] = $data['categories'];
+        unset($data['attributes']);
+        unset($data['categories']);
         $data["thumbnail"] = Storage::url($data["thumbnail"]);
 
         return $data;
