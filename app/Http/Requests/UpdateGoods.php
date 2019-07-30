@@ -52,8 +52,10 @@ class UpdateGoods extends FormRequest
             'material_goods.*.name'=> "filled|string",
             'material_goods.*.type'=> "required|in:1,0,-1",//1 : new, 0 : update, -1 : delete
 
-            'pricelists.*.supplier_id' => "required|integer|exists:suppliers,id",
-            'pricelists.*.price' => "required|integer",
+            'pricelists.*.id' => "filled|integer|exists:pricelists,id",
+            'pricelists.*.supplier_id' => "filled|integer|exists:suppliers,id",
+            'pricelists.*.price' => "filled|integer",
+            'pricelists.*.type'=> "required|in:1,0,-1",//1 : new, 0 : update, -1 : delete
 
             'price_sellings.*.id' => "filled|integer|exists:price_sellings,id",
             'price_sellings.*.warehouse_id' => "filled|integer|exists:warehouses,id",

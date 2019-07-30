@@ -36,9 +36,8 @@ class GoodsController extends Controller
     public function index()
     {
         $this->goodsService->handleEmptyModel();
-        $CollectionGoods = $this->goods->index();
 
-        return formatResponse(false,(["goods"=>$CollectionGoods]));
+        return formatResponse(false,(["goods"=>$this->goods->index()]));
     }
 
     /**
@@ -51,9 +50,7 @@ class GoodsController extends Controller
         $this->goodsService->handleInvalidParameter($id);
         $this->goodsService->handleModelNotFound($id);
 
-        $CollectionGoods = $this->goods->find($id)->getRack();
-
-        return formatResponse(false,(["goods"=>$CollectionGoods]));
+        return formatResponse(false,(["racks"=>$this->goods->find($id)->getRack()]));
     }
 
     /**
@@ -66,9 +63,7 @@ class GoodsController extends Controller
         $this->goodsService->handleInvalidParameter($id);
         $this->goodsService->handleModelNotFound($id);
 
-        $CollectionGoods = $this->goods->find($id)->getSellingPrices();
-
-        return formatResponse(false,(["goods"=>$CollectionGoods]));
+        return formatResponse(false,(["price_sellings"=>$this->goods->find($id)->getSellingPrices()]));
     }
 
     /**
@@ -83,7 +78,7 @@ class GoodsController extends Controller
 
         $CollectionGoods = $this->goods->find($id)->getPricelist();
 
-        return formatResponse(false,(["goods"=>$CollectionGoods]));
+        return formatResponse(false,(["pricelists"=>$CollectionGoods]));
     }
 
     /**
@@ -93,9 +88,7 @@ class GoodsController extends Controller
      */
     public function create()
     {
-        // $this->goodsService->handleGetAllDataForGoodsCreation();
-        $data = $this->goods->allDataCreate();
-        return formatResponse(false,($data));
+        return formatResponse(false,($this->goods->getMasterData()));
     }
 
     /**
@@ -135,7 +128,7 @@ class GoodsController extends Controller
             $goods->attributes()->attach($attribute_goods);
             $goods->categories()->attach($category_goods);
             $goods->materials()->createMany($material_goods);
-            $goods->priceSelling()->createMany($priceSellings);
+            $goods->priceSellings()->createMany($priceSellings);
             $goods->pricelists()->createMany($pricelists);
 
             DB::commit();
@@ -158,9 +151,7 @@ class GoodsController extends Controller
         $this->goodsService->handleInvalidParameter($id);
         $this->goodsService->handleModelNotFound($id);
 
-        $goods = $this->goods->find($id);
-
-        return formatResponse(false,(["goods"=>$goods]));
+        return formatResponse(false,(["goods"=>$this->goods->find($id)]));
     }
 
     /**
@@ -174,17 +165,8 @@ class GoodsController extends Controller
         $this->goodsService->handleInvalidParameter($id);
         $this->goodsService->handleModelNotFound($id);
         // $this->goodsService->handleGetAllDataForGoodsCreation();
-
-        $allMaterial = collect($this->goods->allDataCreate());
-
-        $goods = $this->goods->find($id);
-        $goods["thumbnail"] = Storage::url($goods["thumbnail"]);
-        $goods = collect($goods);
         
-        $concatenated = $goods->union($allMaterial)->union($this->showFormatData($id));
-
-        // return  $this->goods->find($id)->suppliers;
-        return formatResponse(false,(["goods"=>$concatenated]));
+        return formatResponse(false,(["goods"=>$this->goods->getDataAndRelation($id), "master_data"=>$this->goods->getMasterData()]));
     }
 
     /**
@@ -230,11 +212,11 @@ class GoodsController extends Controller
             // return $material_goods;
             
             $goods->update($data);
-            $goods->pricelists()->createMany($pricelists);
             $goods->attributes()->sync($attribute_goods);
             $goods->categories()->sync($category_goods);
             is_null($priceSellings) ? "" : $goods->updatePriceSellings($priceSellings);
             is_null($material_goods) ? "" : $goods->updateMaterials($material_goods);
+            is_null($pricelists) ? "" : $goods->updatePricelists($pricelists);
 
             $this->goodsService->handleUpdateImage($request->file("thumbnail"),$oldThumnail, $path, $this->path,$data["is_image_delete"]);
 
@@ -257,16 +239,18 @@ class GoodsController extends Controller
     {
         $this->goodsService->handleInvalidParameter($id);
         $this->goodsService->handleModelNotFound($id);
-        $thumbnail = $this->goods->find($id)->thumbnail;
+
+        $thumbnail = $this->goods->thumbnail;
         DB::beginTransaction();
         try {
-            $this->goods->find($id)->attributes()->sync([]);
-            $this->goods->find($id)->categories()->sync([]);
-            $this->goods->find($id)->pricelists()->delete();
-            $this->goods->find($id)->materials()->delete();
-            $this->goods->find($id)->goodsRack()->delete();
+            $this->attributes()->sync([]);
+            $this->categories()->sync([]);
+            $this->pricelists()->delete();
+            $this->materials()->delete();
+            $this->goodsRack()->delete();
+            $this->priceSellings()->delete();
 
-            $this->goods->find($id)->delete();
+            $this->delete();
             deleteImage($thumbnail);
 
             DB::commit();
@@ -274,42 +258,7 @@ class GoodsController extends Controller
             DB::rollback();
             throw new DatabaseTransactionErrorException("Goods");
         }
-        
 
         return formatResponse(false,(["goods"=>["goods deleted successfully"]]));
-    }
-
-    /**
-     * Format goods relation data in method show.
-     *
-     * @param  $id
-     * @return Illuminate\Support\Collection
-     */
-    public function showFormatData($id){
-        $goodsAttributes = $this->goods->find($id)->attributes;
-        $goodsCategories = $this->goods->find($id)->categories;
-        $goodsMaterials = $this->goods->find($id)->materials;
-        $pricelists = $this->goods->find($id)->pricelists;
-        $priceSellings = $this->goods->find($id)->getSellingPrices();
-
-        // return $pricelists;
-
-        $goodsAttributes = $goodsAttributes->map(function ($item) {
-            return ['id' => $item['id'], 'name' => $item['name'],'value'=> $item['pivot']['value']];
-        });
-
-        $goodsCategories = $goodsCategories->map(function ($item) {
-            return ['id' => $item['id'], 'name' => $item['name']];
-        });
-
-        $pricelists = $pricelists->map(function ($item) {
-            $item = Arr::add($item, 'name_company', $item['supplier']['name_company']);
-            return Arr::except($item, ['supplier']);
-        });
-
-
-        $data = collect(["price_sellings"=>$priceSellings,"pricelists" => $pricelists,"attribute_goods" => $goodsAttributes, "category_goods"=>$goodsCategories , "material_goods" => $goodsMaterials]);
-
-        return $data;
     }
 }

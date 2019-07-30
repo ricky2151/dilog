@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use App\Http\Traits\Uuids;
 use Storage;
+use App\Exceptions\DatabaseTransactionErrorException;
+use Illuminate\Support\Facades\DB;
 
 class Goods extends Model
 {
@@ -28,12 +30,12 @@ class Goods extends Model
     public function updatePriceSellings($priceSellings){
         foreach($priceSellings as $priceSelling){
             if($priceSelling['type'] == 1) {
-                $this->priceSelling()->create($priceSelling);
+                $this->priceSellings()->create($priceSelling);
             }
             else if($priceSelling['type'] == 0) {
-                $this->priceSelling()->find($priceSelling['id'])->update($priceSelling);
+                $this->priceSellings()->find($priceSelling['id'])->update($priceSelling);
             } else {
-                $this->priceSelling()->find($priceSelling['id'])->delete();
+                $this->priceSellings()->find($priceSelling['id'])->delete();
             }
         }
     }
@@ -51,8 +53,17 @@ class Goods extends Model
         }
     }
 
-    public static function allDataCreate(){
-        return ['categories' => Category::all(['id','name']), 'warehouses' => Warehouse::all(['id','name']), 'category_price_sellings' => CategoryPriceSelling::all(['id','name']),'attributes' => Attribute::all(['id','name']),'units'=>Unit::all(['id','name']),'cogs'=>Cogs::all(['id','name']),'suppliers'=>Supplier::all(['id','name_company','name_owner','name_pic','name_sales'])];
+    public function updatePricelists($pricelists){
+        foreach($pricelists as $pricelist){
+            if($pricelist['type'] == 1) {
+                $this->pricelists()->create($pricelist);
+            }
+            else if($material['type'] == 0) {
+                $this->pricelists()->find($pricelist['id'])->update($pricelist);
+            } else {
+                $this->pricelists()->find($pricelist['id'])->delete();
+            }
+        }
     }
 
     public function goodsRack(){
@@ -91,7 +102,7 @@ class Goods extends Model
         return $this->hasMany('App\Models\Material')->orderBy('updated_at', 'desc');
     }
     
-    public function priceSelling(){
+    public function priceSellings(){
         return $this->hasMany('App\Models\PriceSelling')->orderBy('updated_at', 'desc');
     }
 
@@ -99,8 +110,8 @@ class Goods extends Model
         return collect($this->goodsRack)->sum('stock');
     }
 
-    public static function index(){
-        $collectionGoods = Goods::latest()->get();
+    public function index(){
+        $collectionGoods = $this->latest()->get();
 
         $collectionGoods = $collectionGoods->map(function ($item) {
             $item = collect($item)->put('stock', $item->stock());
@@ -121,7 +132,7 @@ class Goods extends Model
     }
 
     public function getSellingPrices(){
-        $priceSellings = $this->priceSelling->map(function ($item) {
+        $priceSellings = $this->priceSellings->map(function ($item) {
             $item = Arr::add($item, 'warehouse_name', $item['warehouse']['name']);
             $item = Arr::add($item, 'category_price_selling_name', $item['categoryPriceSelling']['name']);
             return Arr::except($item, ['warehouse','categoryPriceSelling']);
@@ -137,6 +148,31 @@ class Goods extends Model
 
         return $pricelists;
     }
-    
 
+    public function getDataAndRelation($id){
+        $data = $this->with('priceSellings',
+                    'priceSellings.warehouse:id,name',
+                    'priceSellings.categoryPriceSelling:id,name',
+                    'pricelists',
+                    'pricelists.supplier:id,name_company',
+                    'attributes',
+                    'categories',
+                    'materials'
+                )->where('id',$id)->first();
+        $data["thumbnail"] = Storage::url($data["thumbnail"]);
+
+        return $data;
+    }
+    
+    public function getMasterData(){
+        return [
+            'categories' => Category::all(['id','name']), 
+            'warehouses' => Warehouse::all(['id','name']), 
+            'category_price_sellings' => CategoryPriceSelling::all(['id','name']),
+            'attributes' => Attribute::all(['id','name']),
+            'units'=>Unit::all(['id','name']),
+            'cogs'=>Cogs::all(['id','name']),
+            'suppliers'=>Supplier::all(['id','name_company','name_owner','name_pic','name_sales'])
+        ];
+    }
 }
