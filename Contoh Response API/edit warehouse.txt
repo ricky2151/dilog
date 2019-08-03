@@ -1,0 +1,28 @@
+{
+    "error": false,
+    "items": {
+        "warehouse": {
+            "id": 1,
+            "name": "Bakpia Ku",
+            "address": "89696 Raymond Locks Suite 778\nRoweberg, MT 27491-6639",
+            "lat": "Suscipit in et non.",
+            "lng": "Ullam molestiae.",
+            "telp": "+6207219900426",
+            "email": "rosemarie58@gmail.com",
+            "pic": "Coleman Parker",
+            "created_at": "2019-06-02 14:01:20",
+            "updated_at": "2019-06-02 14:01:20",
+            "deleted_at": null,
+            "racks": [
+                {
+                    "id": 1,
+                    "name": "Rack Buku",
+                    "warehouse_id": 1,
+                    "created_at": "2019-06-02 14:01:20",
+                    "updated_at": "2019-06-02 14:01:20",
+                    "deleted_at": null
+                }
+            ]
+        }
+    }
+}

@@ -1,5 +1,5 @@
 <template>
-	<div v-if='prop_dataInfo'>
+	<div v-if='prop_dataInfo && finish_loading'>
 
 
 		<v-dialog v-if='prop_tempInput' v-model='dialog_form' :width='prop_widthForm'>
@@ -52,6 +52,38 @@
 										>
 										</v-text-field>
 
+										<template v-if='objColumn.type=="tf_gm"'>
+											<template v-if='objColumn.gm=="lat"'>
+												<GmapMap
+			                                        v-bind:center="my_location"
+			                                        v-bind:zoom="7"
+			                                        map-type-id="terrain"
+			                                        style="width: 500px; height: 300px"
+			                                    >
+			                                      <GmapMarker
+			                                        v-bind:key="index"
+			                                        v-for="(m, index) in markers"
+			                                        v-bind:position="m.position"
+			                                        @drag="updateMarkers"
+			                                        v-bind:clickable="true"
+			                                        v-bind:draggable="true"
+			                                        v:on-click="center=m.position"
+			                                      />
+			                                    </GmapMap>
+											</template>
+
+											<v-text-field
+											
+											:rules='$list_validation[objColumn.validation]'
+											:label='objColumn.label'
+											v-model='input[column]'
+											:disabled='objColumn.disabled'
+
+											class="pa-2"
+											>
+											</v-text-field>
+										</template>
+
 										<v-textarea
 										v-if='objColumn.type=="ta"'
 										:rules='$list_validation[objColumn.validation]'
@@ -71,7 +103,7 @@
 										v-model='input[column]'
 										:disabled='objColumn.disabled'
 
-										:items='ref_input[column]'
+										:items='ref_input[objColumn.table_ref]'
 										:item-text='objColumn.itemText'
 										return-object
 
@@ -117,7 +149,7 @@
 								<h3>{{prop_dataInfo.multiple[table_name].title}} Data  </h3>
 							</v-stepper-step>
 							<v-stepper-content :step='idx + 2'>
-								{{input}}
+								{{ref_input}}
 
 									<!-- TIPE CHIPS -->
 									<div v-if=' prop_dataInfo.multiple[table_name].type == "chips" '>
@@ -200,7 +232,7 @@
 												:label='objColumn.label'
 												v-model='temp_input[table_name][column]'
 
-												:items='ref_input[column]'
+												:items='ref_input[objColumn.table_ref]'
 												:item-text='objColumn.itemText'
 												return-object
 												:disabled='objColumn.disabled'
@@ -278,6 +310,36 @@
                         </template>
 	                    <!-- ============================ -->
 
+
+	                    <!-- FORM CUSTOM COMPONENT -->
+                        <template v-for='(component_name, idx) in prop_dataInfo.form_custom_component' >
+                        	<v-stepper-step :complete='stepNow > (idx + 2)' :step="idx + 2"  :editable='id_edit == -1 ? prop_editableAdd : prop_editableEdit'>
+								<h3>{{prop_dataInfo.custom_component[component_name].title}} Data  </h3>
+							</v-stepper-step>
+							<v-stepper-content :step='idx + 2'>
+								
+
+									<!-- TIPE CHIPS -->
+									<div v-if='component_name == "cpMakeOrCopyChild" '>
+										<cp-make-or-copy-child
+										:prop_id_edit='id_edit'
+										:prop_dataInfo='prop_dataInfo.custom_component[component_name]'
+										:prop_masterDataParent='master_data_parent'
+										:prop_headerChild='prop_dataInfo.custom_component[component_name].child.header'
+										>
+										</cp-make-or-copy-child>
+				                        
+									</div>
+
+									
+	                            	<v-btn color='primary' v-if='stepNow < prop_countStep' v-on:click='next_step()'>Continue</v-btn>
+				                	<v-btn color='gray' v-if='stepNow > 1' v-on:click='prev_step()'>Back</v-btn>
+                            </v-stepper-content>
+                        </template>
+	                    <!-- ============================ -->
+
+
+
                         <v-btn v-on:click='save_data()' class='floatright marginright25'>submit</v-btn>
                     </v-stepper>
 
@@ -288,6 +350,7 @@
 </template>
 <script>
 	import axios from 'axios'
+	import cpMakeOrCopyChild from './cpMakeOrCopyChild.vue'
 	
 
 	export default{
@@ -304,6 +367,7 @@
 		'prop_tempInput',
 		'prop_input',
 		'prop_preview',
+		'prop_urlGetMasterData'
 		],
 		data() {
 			return {
@@ -319,6 +383,8 @@
 				temp_input : {},
 				ref_input : [],
 				preview : [],
+				master_data_parent : [],
+				finish_loading:false,
 				url_edit : null,
 				url_store : null,
 				url_update : null,
@@ -328,6 +394,14 @@
 	                'Content-type': 'application/json' //default
 	            },
 
+
+	            useGm:false,
+	            my_location:{lat:10, lng:10},
+	            markers:[{
+	            	position:{lat:10,lng:10}
+	            }],
+
+
 				//for element & data
 
 
@@ -335,6 +409,17 @@
 		},
 		methods:
 		{
+			//for other component
+			request_master_data_parent()
+			{
+				this.$emit('request_master_data_parent');
+			},
+
+			get_master_data_parent_and_child()
+			{
+				
+			}
+
 			//for element
 			close_dialog()
 			{
@@ -352,6 +437,10 @@
 		        //console.log(this.prop_tempInput);
 		        this.temp_input = this.prop_tempInput;
 
+		        //untuk master data : 
+		        //jika sedang add data, maka dia harus request ke /create
+	        	//tapi jika sedang edit, tidak perlu request ke /create, karena waktu request /edit sudah ada
+
 
 				 if(id != -1) //sedang diedit
 		        {
@@ -359,19 +448,29 @@
 		            let r = await this.get_data_before_edit(id);
 		            
 		            this.convert_data_input(r);
+		            if(this.prop_urlGetMasterData != null)
+		            {
+		            	this.fill_select_master_data(r);
+		            }
+
 		            
 		        }
 		        else //sedang add
 		        {
 		        	this.id_edit = -1;
+		        	if(this.prop_urlGetMasterData != null)
+		        	{
+			        	this.get_master_data();
+		        		
+		        	}
 		        	
 		        }
-		        
-		        
 
+		        //request master data parent
+		        let r_md_parent = await this.request_master_data_parent();
+		        this.master_data_parent = r_md_parent;
 		        
-//		        this.set_temp_input();
-
+		        this.finish_loading = true;
 		        this.dialog_form = true;
 		        
 
@@ -470,6 +569,40 @@
 
 	        },
 
+	        get_master_data()
+	        {
+
+	            if(this.prop_urlGetMasterData != null)
+	            {
+	            	console.log('request master data');
+	                axios.get(this.prop_urlGetMasterData, {
+	                    params:{
+	                        token: localStorage.getItem('token')
+	                    }
+	                },{
+	                    headers: {
+	                        'Accept': 'application/json',
+	                        'Content-type': 'application/json'
+	                    }
+	                }).then(r => this.fill_select_master_data(r))
+	                .catch(function (error)
+	                {
+	                    console.log("error : ")
+	                    console.log(error)
+	                    if(error.response.status == 422)
+	                    {
+	                        swal('Request Failed', 'Check your internet connection !', 'error');
+	                    }
+	                    else
+	                    {
+	                        swal('Unkown Error', error.response.data , 'error');
+	                    }
+	                });
+
+	            }
+	        },
+
+
 			get_data_before_edit(id_edit) //nanti dihapus karena sudah ada di component
 	        {
 	        	
@@ -512,27 +645,14 @@
 	        		{
 	        			var nameColumn = this.prop_dataInfo.form_single[i][j];
 	        			var objColumn = this.prop_dataInfo.single[nameColumn];
-	        			// console.log('convert data input');
-	        			// console.log('name Column : ' + nameColumn);
-	        			// console.log('hasil temp r : ');
-	        			// console.log(temp_r[nameColumn]);
-	        			// console.log('objcolumn');
-	        			//console.log(objColumn);
 
 	        			if(objColumn.type == 'img')
 				    	{
-				    		// console.log('if img : ' + objColumn.previewVariable);
 				    		this.preview[objColumn.previewVariable] = temp_r[nameColumn];
 				    	}
 				    	else
 				    	{
-				    		console.log('pengisian :');
-				    		console.log('input ke ' + nameColumn + ' = '  + temp_r[nameColumn]);
-				    		console.log('==');
 				    		this.input[nameColumn] = temp_r[nameColumn];
-				    		
-				    		console.log(this.input);
-				    		console.log('=-=-=-=-=-=-=-');
 				    	}
 	        		}
 	        	}
@@ -541,50 +661,18 @@
 
 				//isi data multiple
 				
-				this.input.category_goods = temp_r.category_goods;
+				for(var i = 0;i<this.prop_dataInfo.form_multiple.length;i++)
+				{
+					var temp_name_table = this.prop_dataInfo.form_multiple[i];
 
-	            for(var i = 0;i<temp_r.attribute_goods.length;i++)
-	            {  
-	                this.input.attribute_goods.push({
-	                    attribute:{
-	                        id: temp_r.attribute_goods[i].id,
-	                        name: temp_r.attribute_goods[i].name,
-	                    },
-	                    value:temp_r.attribute_goods[i].value,
-	                })
-	            }
+					//bersihkan created_at, updated_at, deleted_at, dan kolom fk
+					
+					
+					this.input[temp_name_table] = temp_r[temp_name_table];
+				}
 
-	            for(var i = 0;i<temp_r.price_sellings.length;i++)
-	            {  
-	                var temp_name_free = '';
-	                if(temp_r.price_sellings[i].free == 1)
-	                {
-	                    temp_name_free = 'true';
-	                }
-	                else
-	                {
-	                    temp_name_free = 'false';
-	                }
-	                this.input.price_sellings.push({
-	                    id:temp_r.price_sellings[i].id,
-	                    warehouse:{
-	                        id: temp_r.price_sellings[i].warehouse_id,
-	                        name: temp_r.price_sellings[i].warehouse_name,
-	                    },
-	                    stock_cut_off:temp_r.price_sellings[i].stock_cut_off,
-	                    categorypriceselling:
-	                    {
-	                        id: temp_r.price_sellings[i].category_price_selling_id,
-	                        name: temp_r.price_sellings[i].category_price_selling_name,
-	                    },
-	                    price:temp_r.price_sellings[i].price,
-	                    free:
-	                    {
-	                        value: temp_r.price_sellings[i].free,
-	                        name:temp_name_free,
-	                    }
-	                })
-	            }
+	            
+
 
 				this.input_before_edit = JSON.parse(JSON.stringify(this.input));
 	        },
@@ -593,10 +681,20 @@
 	        {
 
 	        	var self = this;
-	            for(var index in r.data.items) { 
-				   this.ref_input[index] = r.data.items[index];
-				}
+	        	var temp_r;
+	        	if(this.id_edit == -1) //jika sedang add, maka kan dia manggilnya yang /create jadi langsung aja
+	        	{
+	        		temp_r = r.data.items;
+	        	}
+	        	else //jika sedang edit, maka kan dia dapet datanya sekalian waktu manggil /edit, nah jadi pembungkus arraynya adalah 'master_data'
+	        	{
+	        		temp_r = r.data.items.master_data;
+	        	}
 
+	            for(var index in temp_r) { 
+				   this.ref_input[index] = temp_r[index];
+				}
+				
 				//cek custom master data
 				Object.keys(this.prop_dataInfo.custom_master_data).map(function(key, index) {
 					var obj = self.prop_dataInfo.custom_master_data[key];
@@ -1001,6 +1099,22 @@
 			same_object(obj1,obj2)
 			{
 				return JSON.stringify(obj1) === JSON.stringify(obj2);
+			},
+
+			set_custom_single()
+			{
+				//1. cek apakah form ini menggunakan googlemap (googlemap hanya sebatas di single)
+				if(this.prop_dataInfo.custom_single.gm.active)
+				{
+					//set my_location awal
+					navigator.geolocation.getCurrentPosition((position) => {
+				        this.my_location = {
+				        	lat: position.coords.latitude,
+				        	lng: position.coords.longitude
+				        };
+				        this.markers[0].position = JSON.parse(JSON.stringify(this.my_location));
+				      });
+				}
 			},
 
 			set_watcher_custom_value()

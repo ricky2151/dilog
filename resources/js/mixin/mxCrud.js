@@ -84,36 +84,34 @@ export default {
             });
         },
 
-        get_master_data()
+        filterObject(obj, keySelected)
         {
-            if(this.info_table.request_master_data)
-            {
-                axios.get(this.generate_url(this.name_table, 'create'), {
-                    params:{
-                        token: localStorage.getItem('token')
-                    }
-                },{
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-type': 'application/json'
-                    }
-                }).then(r => this.$refs['cpForm'].fill_select_master_data(r))
-                .catch(function (error)
+            var listremove = [];
+            Object.keys(obj).map(function(key, index) {
+                var removethiskey = true;
+                for(var i = 0;i<keySelected.length;i++)
                 {
-                    console.log("error : ")
-                    console.log(error)
-                    if(error.response.status == 422)
+                    if(keySelected == key)
                     {
-                        swal('Request Failed', 'Check your internet connection !', 'error');
+                        removethiskey = false;
+                        break;
                     }
-                    else
-                    {
-                        swal('Unkown Error', error.response.data , 'error');
-                    }
-                });
+                }
 
+                if(removethiskey == true)
+                {
+                    listremove.push(key)
+                }
+
+            });
+
+            for(var i = 0;i<listremove.length;i++)
+            {
+                delete obj[listremove];
             }
-        },
+            return obj;
+        }
+        
 
         
 

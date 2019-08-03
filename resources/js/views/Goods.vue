@@ -1,8 +1,4 @@
-<div>
-    <v-container fluid>
-        <h3>goods</h3>
-    </v-container>
-</div>
+
 
 <template>
     <div>
@@ -14,7 +10,7 @@
         v-for='(data_detail,key,index) in info_table.get_data_detail'
 
         :prop_title='"Detail " + data_detail.title' 
-        :prop_response_attribute='info_table.singular_name'
+        :prop_response_attribute='info_table.key'
         :prop_headers='data_detail.headers'
         :prop_columns='data_detail.single'
         :ref='"cpDetail"+ removeSpace(data_detail.title)'
@@ -77,6 +73,8 @@
         :prop_tempInput='generate_temp_input(info_table.plural_name)'
         :prop_input='generate_input(info_table.plural_name)'
         :prop_preview='generate_preview(info_table.plural_name)'
+        :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.singular_name, "create") : null'
+
 
         v-on:done='refresh_table()'
         ref="cpForm"
@@ -187,8 +185,8 @@ export default {
     mounted(){
         
         this.info_table = this.database[this.name_table];
-        this.get_master_data();
-
+        
+        this.$refs['cpForm'].get_master_data();
 
 
     },
