@@ -1,0 +1,38 @@
+warehouses : [
+{
+	id : 1,
+	name : 'warehouse 1',
+	racks : 
+	[	
+		{
+			id : 1,
+			name : rack1,
+		},
+		{
+			id : 2,
+			name : rack2,
+		},
+		{
+			id : 3,
+			name : rack3,
+		}
+	],
+	id : 2,
+	name : 'warehouse 2',
+	racks : 
+	[	
+		{
+			id : 4,
+			name : rack4,
+		},
+		{
+			id : 5,
+			name : rack5,
+		},
+		{
+			id : 6,
+			name : rack6,
+		}
+	],
+	...
+}]
