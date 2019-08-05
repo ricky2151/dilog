@@ -2,7 +2,7 @@
 	<div v-if='prop_dataInfo && finish_loading'>
 
 
-		<v-dialog v-if='prop_tempInput' v-model='dialog_form' :width='prop_widthForm'>
+		<v-dialog v-model='dialog_form' :width='prop_widthForm'>
 			<v-form v-model='valid' ref='form'>
 
 				<v-card>
@@ -324,7 +324,7 @@
 										<cp-make-or-copy-child
 										:prop_id_edit='id_edit'
 										:prop_dataInfo='prop_dataInfo.custom_component[component_name]'
-										:prop_masterDataParent='master_data_parent'
+										:prop_urlMOCC='prop_dataInfo.custom_component[component_name].url'
 										:prop_headerChild='prop_dataInfo.custom_component[component_name].child.header'
 										>
 										</cp-make-or-copy-child>
@@ -367,7 +367,9 @@
 		'prop_tempInput',
 		'prop_input',
 		'prop_preview',
-		'prop_urlGetMasterData'
+		'prop_urlGetMasterData',
+		'prop_urlMOCC'
+
 		],
 		data() {
 			return {
@@ -383,7 +385,6 @@
 				temp_input : {},
 				ref_input : [],
 				preview : [],
-				master_data_parent : [],
 				finish_loading:false,
 				url_edit : null,
 				url_store : null,
@@ -407,18 +408,61 @@
 
 			}
 		},
+		components : 
+		{
+			cpMakeOrCopyChild,
+		},
 		methods:
 		{
-			//for other component
-			request_master_data_parent()
+			//standart function
+			check_property(obj, property_array)
 			{
-				this.$emit('request_master_data_parent');
+				//misal : 
+				//obj = a : {b : {c}}
+				//property_array = b,c,d
+
+				//macam-macam nilai result : 
+				//0 -> undefine
+				//1 -> define tapi kosong
+				//2 -> define tapi ada nilainya
+
+				var result = -1;
+				var temp = JSON.parse(JSON.stringify(obj));
+				var notundefined = true;
+				for(var i = 0;i<property_array.length;i++)
+				{
+					if(temp.hasOwnProperty(property_array[i]))
+					{
+						temp = temp[property_array[i]];
+					}
+					else
+					{
+						notundefined = false;
+						break;
+					}
+				}
+				if(notundefined)
+				{
+					if(temp.length > 0)
+					{
+						result = 2;
+					}
+					else
+					{
+						result = 1;
+					}
+				}
+				else
+				{
+					result = 0;
+				}
+				return result;
+
 			},
 
-			get_master_data_parent_and_child()
-			{
-				
-			}
+			//for other component
+			
+
 
 			//for element
 			close_dialog()
@@ -430,13 +474,12 @@
 			{
 
 				//startup
-		        this.clear_input();
+		        
 		        this.input = this.prop_input;
 		        this.preview = this.prop_preview;
 		        this.set_watcher_custom_value();
-		        //console.log(this.prop_tempInput);
 		        this.temp_input = this.prop_tempInput;
-
+		        this.set_custom_single();
 		        //untuk master data : 
 		        //jika sedang add data, maka dia harus request ke /create
 	        	//tapi jika sedang edit, tidak perlu request ke /create, karena waktu request /edit sudah ada
@@ -450,6 +493,7 @@
 		            this.convert_data_input(r);
 		            if(this.prop_urlGetMasterData != null)
 		            {
+
 		            	this.fill_select_master_data(r);
 		            }
 
@@ -461,14 +505,11 @@
 		        	if(this.prop_urlGetMasterData != null)
 		        	{
 			        	this.get_master_data();
-		        		
 		        	}
 		        	
 		        }
 
-		        //request master data parent
-		        let r_md_parent = await this.request_master_data_parent();
-		        this.master_data_parent = r_md_parent;
+		        
 		        
 		        this.finish_loading = true;
 		        this.dialog_form = true;
@@ -491,8 +532,7 @@
 			},
 			changeImage(e){
 
-				console.log('cek baca parameter');
-				console.log(e.explicitOriginalTarget.id);
+				
 				var id = e.explicitOriginalTarget.id //penyelamat :) ini sama saja dengan nama kolom
 				var fileNameVariable = this.prop_dataInfo.single[id].fileNameVariable;
 				var previewVariable = this.prop_dataInfo.single[id].previewVariable;
@@ -536,16 +576,17 @@
 
 
 			clear_input(){
-
-	            this.$refs.form.resetValidation();
-
-
-				for (var key in this.preview) {
-				    // skip loop if the property is from prototype
-				    if (!this.preview.hasOwnProperty(key)) continue;
-				    //clear preview
-				    this.preview[key] = '';
-				}
+            	this.$refs.form.resetValidation();
+	            if(this.preview)
+	            {
+					for (var key in this.preview) {
+					    // skip loop if the property is from prototype
+					    if (!this.preview.hasOwnProperty(key)) continue;
+					    //clear preview
+					    this.preview[key] = '';
+					}
+	            	
+	            }
 
 
 	            for (var key in this.input)
@@ -565,6 +606,9 @@
 	                }
 	                    
 	            }
+
+	            
+
 	            //this.$refs.formCreateEdit.reset();
 
 	        },
@@ -574,7 +618,7 @@
 
 	            if(this.prop_urlGetMasterData != null)
 	            {
-	            	console.log('request master data');
+	            	
 	                axios.get(this.prop_urlGetMasterData, {
 	                    params:{
 	                        token: localStorage.getItem('token')
@@ -652,6 +696,7 @@
 				    	}
 				    	else
 				    	{
+				    		
 				    		this.input[nameColumn] = temp_r[nameColumn];
 				    	}
 	        		}
@@ -682,6 +727,7 @@
 
 	        	var self = this;
 	        	var temp_r;
+
 	        	if(this.id_edit == -1) //jika sedang add, maka kan dia manggilnya yang /create jadi langsung aja
 	        	{
 	        		temp_r = r.data.items;
@@ -972,6 +1018,8 @@
 	        	}
 
 
+	        	//prepare form_custom_component
+	        	//1. cpMakeOrCopyChild
 	        		
 	        		
 	        	
@@ -1103,18 +1151,36 @@
 
 			set_custom_single()
 			{
-				//1. cek apakah form ini menggunakan googlemap (googlemap hanya sebatas di single)
-				if(this.prop_dataInfo.custom_single.gm.active)
+				if(this.prop_dataInfo.hasOwnProperty('custom_single'))
 				{
-					//set my_location awal
-					navigator.geolocation.getCurrentPosition((position) => {
-				        this.my_location = {
-				        	lat: position.coords.latitude,
-				        	lng: position.coords.longitude
-				        };
-				        this.markers[0].position = JSON.parse(JSON.stringify(this.my_location));
-				      });
+					//1. cek apakah form ini menggunakan googlemap (googlemap hanya sebatas di single)
+					if(this.prop_dataInfo.custom_single.hasOwnProperty('gm'))
+					{
+						if(this.prop_dataInfo.custom_single.gm.active)
+						{
+							//set my_location awal
+							navigator.geolocation.getCurrentPosition((position) => {
+						        this.my_location = {
+						        	lat: position.coords.latitude,
+						        	lng: position.coords.longitude
+						        };
+						        this.markers[0].position = JSON.parse(JSON.stringify(this.my_location));
+						      });
+						}
+						
+					}
+
 				}
+			},
+			updateMarkers(event){
+			
+				this.markers[0].position = {
+				    lat: event.latLng.lat(),
+				    lng: event.latLng.lng(),
+				  }
+				this.input.lat = this.markers[0].position.lat;
+			    this.input.lng = this.markers[0].position.lng;  
+				
 			},
 
 			set_watcher_custom_value()
@@ -1206,6 +1272,10 @@
 		mounted(){
 
 			
+		},
+		created()
+		{
+
 		}
 	}
 </script>

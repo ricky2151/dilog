@@ -7,14 +7,17 @@ warehouses : [
 		{
 			id : 1,
 			name : rack1,
+			is_have_goods : true
 		},
 		{
 			id : 2,
 			name : rack2,
+			is_have_goods : true
 		},
 		{
 			id : 3,
 			name : rack3,
+			is_have_goods : false
 		}
 	],
 	id : 2,
@@ -24,14 +27,17 @@ warehouses : [
 		{
 			id : 4,
 			name : rack4,
+			is_have_goods : true
 		},
 		{
 			id : 5,
 			name : rack5,
+			is_have_goods : true
 		},
 		{
 			id : 6,
 			name : rack6,
+			is_have_goods : true
 		}
 	],
 	...

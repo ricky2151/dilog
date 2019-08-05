@@ -22,41 +22,7 @@
         
         
 
-         <!-- POPUP STOCK CARD --> <!-- MASIH DITANYAKAN -->
-        <!-- <v-dialog v-model="dialog_detailracks" width=750>
-            <v-card>
-                <v-toolbar dark color="menu">
-                    <v-btn icon dark v-on:click="closedialog_detailracks()">
-                        <v-icon>close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title>Detail Racks</v-toolbar-title>
-
-                </v-toolbar>
-                <div style='padding:30px'>
-
-                    <v-text-field
-                        v-model="popup_search_detailracks"
-                        append-icon="search"
-                        label="Search"
-                        single-line
-                        hide-details
-                      ></v-text-field>
-                    <v-data-table
-                    disable-initial-sort
-                    :headers="headers_popup_detailracks"
-                    :items="popup_detailracks"
-                    :search="popup_search_detailracks"
-                    class=""
-                    >
-                    <template v-slot:items="props">
-                        <td>{{ props.index + 1 }}</td>
-                        <td>{{ props.item.rack }}</td>
-                        <td>{{ props.item.stock }}</td>
-                    </template>
-                    </v-data-table>
-                </div>
-            </v-card>
-        </v-dialog> -->
+        
 
         
         <!-- POPUP CREATE EDIT -->
@@ -108,6 +74,7 @@
         :prop_action_items='info_table.actions'
         :prop_plural_name='info_table.plural_name'
         :prop_url_index='generate_url(info_table.table_name, "index")'
+        :prop_filter='info_table.data.filter'
 
         v-on:action_clicked='action_change'
         ref="cpDatatable"
@@ -179,14 +146,6 @@ export default {
         
 
 
-
-
-    },
-    mounted(){
-        
-        this.info_table = this.database[this.name_table];
-        
-        this.$refs['cpForm'].get_master_data();
 
 
     },

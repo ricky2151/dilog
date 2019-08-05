@@ -6,7 +6,7 @@
 
 <template>
     <div>
-        <cp-goods-rack :prop_id_goods_for_table='id_goods_for_table' ></cp-goods-rack>
+        <cp-goods-rack :prop_list_filter='[["goods", "-1"]]' ></cp-goods-rack>
         
     </div>
     

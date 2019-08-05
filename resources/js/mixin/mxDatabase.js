@@ -25,6 +25,8 @@ export default
 		return{
 			database : 
 			{
+
+				//1. crud-categories
 				"categories" : 
 				{
 					table_name : 'categories',
@@ -45,15 +47,13 @@ export default
 					request_master_data : false,
 					data : 
 					{
+						custom_master_data : {},
 						datatable:[
 							{
 								column : 'name',
 							},
-							// {
-							// 	column : '',
-							// 	value : ['name', '*', 'qty']
-							// }
 						],
+						
 						headers: [
 								{ text: 'No', value:'no'},
                 				{ text: 'Name', value:'name'},
@@ -70,7 +70,12 @@ export default
 								label : 'Name', width:12, type:'tf', validation:'max_req',
 							},
 
-						}
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
 					},
 					get_data_detail : 
 					{
@@ -92,6 +97,307 @@ export default
 						},
 					}
 				},
+
+
+				//2. crud-units
+				"units" : 
+				{
+					table_name : 'units',
+					title : 'Unit',
+					icon : 'dns',
+
+					singular_name : 'unit',
+					plural_name : 'units',
+					column_desc : 'name', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Delete'],
+
+					request_master_data : false,
+					data : 
+					{
+						custom_master_data : {},
+						datatable:[
+							{
+								column : 'name',
+							},
+						],
+						
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						form_single : [['name']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'name' : {
+								label : 'Name', width:12, type:'tf', validation:'max_req',
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+
+				//3. crud-attributes
+				"attributes" : 
+				{
+					table_name : 'attributes',
+					title : 'Attribute',
+					icon : 'build',
+
+					singular_name : 'attribute',
+					plural_name : 'attributes',
+					column_desc : 'name', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Delete'],
+
+					request_master_data : false,
+					data : 
+					{
+						custom_master_data : {},
+						datatable:[
+							{
+								column : 'name',
+							},
+						],
+						
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						form_single : [['name']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'name' : {
+								label : 'Name', width:12, type:'tf', validation:'max_req',
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+
+
+				//4. crud-cogs
+				"cogs" : 
+				{
+					table_name : 'cogs',
+					title : 'COGS',
+					icon : 'monetization_on',
+
+					singular_name : 'cogs',
+					plural_name : 'cogs',
+					column_desc : 'name', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Delete'],
+
+					request_master_data : false,
+					data : 
+					{
+						custom_master_data : {},
+						datatable:[
+							{
+								column : 'name',
+							},
+						],
+						
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						form_single : [['name']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'name' : {
+								label : 'Name', width:12, type:'tf', validation:'max_req',
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+
+				//5. crud-category_price_sellings
+				"category_price_sellings" : 
+				{
+					table_name : 'category_price_sellings',
+					title : 'Category Price Selling',
+					icon : 'compare_arrows',
+
+					singular_name : 'category_price_selling',
+					plural_name : 'category_price_sellings',
+					column_desc : 'name', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Delete'],
+
+					request_master_data : false,
+					data : 
+					{
+						custom_master_data : {},
+						datatable:[
+							{
+								column : 'name',
+							},
+							{
+								column : 'discount',
+							},
+						],
+						
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'Discount', value:'discount'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						form_single : [['name'], ['discount']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'name' : {
+								label : 'Name', width:12, type:'tf', validation:'max_req',
+							},
+							'discount' : {
+								label : 'Discount', width:12, type:'tf', validation:'numeric_req',
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+
+				//6. crud-types
+				"types" : 
+				{
+					table_name : 'types',
+					title : 'Types',
+					icon : 'bookmarks',
+
+					singular_name : 'type',
+					plural_name : 'types',
+					column_desc : 'name', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Delete'],
+
+					request_master_data : false,
+					data : 
+					{
+						custom_master_data : {},
+						datatable:[
+							{
+								column : 'name',
+							},
+						],
+						
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						form_single : [['name']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'name' : {
+								label : 'Name', width:12, type:'tf', validation:'max_req',
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+
+				//7. crud-goods
 				"goods" : 
 				{
 					table_name : 'goods',
@@ -125,16 +431,17 @@ export default
 						datatable:[
 							{ column : 'name' }, { column : 'code' }, { column : 'value' }, { column : 'status' }, { column : 'last_buy_pricelist' }, { column : 'avg_price' }, { column : 'stock' }, { column : '', value : ['avg_price', '*', 'stock'] },
 						],
+						
 						headers: [
 			                { text: 'No', value: 'no'},
 			                { text: 'Name', value: 'name'},
-			                { text: 'Code', value: 'code', align:'right' },
-			                { text: 'Value', value: 'value', align:'right' },
-			                { text: 'Status', value: 'status', align:'right' },
-			                { text: 'Last Buy Pricelist', value: 'last_buy_pricelist', align:'right' },
-			                { text: 'AVGPrice', value: 'avgprice', align:'right' },
-			                { text: 'Stock', value: 'stock', align:'right' },
-			                { text: 'Inventory Value', value: 'inventory_value', align:'right' },
+			                { text: 'Code', value: 'code'},
+			                { text: 'Value', value: 'value'},
+			                { text: 'Status', value: 'status'},
+			                { text: 'Last Buy Pricelist', value: 'last_buy_pricelist'},
+			                { text: 'AVGPrice', value: 'avgprice'},
+			                { text: 'Stock', value: 'stock'},
+			                { text: 'Inventory Value', value: 'inventory_value'},
 			                { text: 'Action', align:'left',sortable:false, width:'15%'},
 			            ],
 						form_single : [['name', 'code'], ['desc'],['status'], ['value', 'last_buy_pricelist'], ['barcode_master'], ['thumbnail'], ['avg_price_status'], ['avg_price', 'tax'], ['unit'], ['cogs'], ['margin']],
@@ -422,6 +729,9 @@ export default
 
 
 				},
+
+
+				//8. crud-warehouses
 				"warehouses" : 
 				{
 					table_name : 'warehouses',
@@ -446,6 +756,7 @@ export default
 						datatable:[
 							{ column : 'name' }, { column : 'address' }, { column : 'telp' }, { column : 'pic' },
 						],
+						
 						headers: [
 			                { text: 'No', value: 'no'},
 			                { text: 'Name', value: 'name'},
@@ -503,10 +814,11 @@ export default
 							'cpMakeOrCopyChild' : 
 							{
 								title : 'Racks',
+								url : 'api/dummyresponse/selectrack',
 								parent : 
 								{
 									title : "Warehouse",
-									table_name : "warehouse",
+									table_name : "warehouses",
 									itemText : 'name',
 									itemValue : 'id'
 								},
@@ -515,7 +827,13 @@ export default
 									title : "Racks",
 									table_name : 'racks',
 									column_show : 'name',
+									flag_grandchild : 'is_have_goods',
 									header : [{text:'Rack', value:'rack'},{text:'Action', value:'action'}],
+								},
+								grandchild : 
+								{
+									title : "Goods",
+									
 								}
 
 							}
@@ -566,25 +884,351 @@ export default
                 				{ text: 'Free', value:'free'},
 							]
 						},
-						// "pricelists": //belum jadi
-						// {
-						// 	table_name : 'pricelists',
-						// 	title : 'Pricelists',
-						// 	single : ['id', 'supplier_id', 'goods_id', 'price'],
-						// 	read : [''],
-						// 	headers: [
-						// 		{ text: 'No', value:'no'},
-      //           				{ text: 'Supplier'},
-      //           				{ text: 'Goods'},
-      //           				{ text: 'Price'},
-						// 	]
-						// },
+
 
 					}
 
 
 
-				}
+				},
+
+				//9. crud-supplier
+				"suppliers" : 
+				{
+					table_name : 'suppliers',
+					title : 'Supplier',
+					icon : 'perm_contact_calendar',
+
+					singular_name : 'supplier',
+					plural_name : 'suppliers',
+					column_desc : 'name_company',
+
+					widthForm : 'fullscreen',
+					editable_edit : true,
+					editable_add : true,
+					count_step : 2,
+
+					actions:['Edit', 'Delete'],
+
+					request_master_data : true,
+					data : 
+					{
+						custom_master_data : {
+						},
+						datatable:[
+							{ column : 'name_company' }, { column : 'name_pic' }, { column : 'address' },
+						],
+						
+						headers: [
+			                { text: 'No', value: 'no'},
+			                { text: 'Company', value: 'name_company'},
+			                { text: 'PIC', value: 'name_pic'},
+			                { text: 'Address', value: 'address'},
+			                { text: 'Action', align:'left',sortable:false, width:'15%'},
+			            ],
+						form_single : [['name_company'],['name_owner'], ['name_pic'],['name_sales'], ['address'], ['no_telp_company'], ['no_telp_owner'], ['email'], ['fax'], ['npwp'], ['no_rek']],
+						single : 
+						{
+							'id' : { 
+								label : '', 
+							},
+							'name_company' : { 
+								label : 'Name Company', width:12, type:'tf', validation:'max_req',
+							},
+							'name_owner' : { 
+								label : 'Name Owner', width:12, type:'tf', validation:'max_req',
+							},
+							'name_pic' : { 
+								label : 'Name PIC', width:12, type:'tf', validation:'max_req',
+							},
+							'name_sales' : { 
+								label : 'Name Sales', width:12, type:'tf', validation:'max_req',
+							},
+							'address' : { 
+								label : 'Address', width:12, type:'tf', validation:'max_req',
+							},
+							'no_telp_company' : { 
+								label : 'No Telp Company', width:12, type:'tf', validation:'max_req',
+							},
+							'no_telp_owner' : { 
+								label : 'No Telp Owner', width:12,  type:'tf', validation:'max_req',
+							},
+							'email' : { 
+								label : 'Email', width:12,  type:'tf', validation:'email_req',
+							},
+							'fax' : { 
+								label : 'Fax', width:12,  type:'tf', validation:'max_req',
+							},
+							'npwp' : { 
+								label : 'NPWP', width:12, type:'tf', validation:'max_req', 
+							},
+							'no_rek' : { 
+								label : 'No Rekening', width:12, type:'tf', validation:'max_req',
+							},
+							
+							
+						},
+						
+						form_multiple : ['pricelists'],
+						multiple : {
+							"pricelists":
+							{
+								title : 'Pricelists',
+								type : 'table',
+
+								singular_name : 'pricelists',
+								plural_name : 'pricelists',
+
+								datatable : [{column : ['goods', 'name']}, {column : ['price']}],
+								headers: 
+								[
+									{ text: 'No', value:'no'},
+	                				{ text: 'Goods', value:'goods'},
+	                				{ text: 'Price', value:'price'},
+	                				{ text: 'Action', align:'left',sortable:false, width:'15%'},
+								],
+								form_single:[['goods'], ['price']],
+								single : 
+								{
+									'id' : { 
+										label : '', 
+									},
+									'goods' : { 
+										label : 'Goods', width:12, type:'s',
+										itemText:'name', itemValue:'id', column:'goods_id', table_ref:'goods'
+
+									},
+									'price' : { 
+										label : 'Price', width:12, type:'tf', column:'price'
+									},
+									
+								},
+								send_type : '1'
+							},
+							
+						}
+					},
+
+					get_data_detail : 
+					{
+						
+						
+
+					}
+
+
+
+				},
+
+				//10. crud-customer
+				"customers" : 
+				{
+					table_name : 'customers',
+					title : 'Customer',
+					icon : 'person_pin',
+
+					singular_name : 'customer',
+					plural_name : 'customers',
+					column_desc : 'name', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Delete'],
+
+					request_master_data : false,
+					data : 
+					{
+						custom_master_data : {},
+						datatable:[
+							{
+								column : 'name',
+							},
+							{
+								column : 'no_hp',
+							},
+							{
+								column : 'address',
+							},
+						],
+
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'No HP', value:'no_hp'},
+                				{ text: 'Address', value:'address'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						form_single : [['name'],['no_hp'],['address']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'name' : {
+								label : 'Name', width:12, type:'tf', validation:'max_req',
+							},
+							'no_hp' : {
+								label : 'No HP', width:12, type:'tf', validation:'max_req',
+							},
+							'address' : {
+								label : 'Address', width:12, type:'tf', validation:'max_req',
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+				//11. crud-goods_rack
+				"goods_rack" : 
+				{
+					table_name : 'goods_rack',
+					title : 'Goods Rack',
+					icon : 'assignment_returned',
+
+					singular_name : 'goods_rack',
+					plural_name : 'goods_rack',
+					column_desc : 'stock', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Delete'],
+
+					request_master_data : true,
+					data : 
+					{
+						custom_master_data : {},
+						datatable:[
+							{
+								column : 'goods_id',
+							},
+							{
+								column : 'rack_id',
+							},
+							{
+								column : 'stock',
+							},
+						],
+						
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Goods', value:'goods_id'},
+                				{ text: 'Rack', value:'rack_id'},
+                				{ text: 'Stock', value:'stock'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						form_single : [['goods'],['rack'],['stock']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'goods' : {
+								label : 'Goods', width:12, type:'s', validation:'selectdata_req', 
+								itemText:'name', itemValue:'id', column:'goods_id', table_ref:'goods'
+							},
+							'rack' : {
+								label : 'Racks', width:12, type:'s', validation:'selectdata_req', 
+								itemText:'name', itemValue:'id', column:'rack_id', table_ref:'racks'
+							},
+							'stock' : {
+								label : 'Stock', width:12, type:'tf', validation:'numeric_req',
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+				//12. crud-racks
+				"racks" : 
+				{
+					table_name : 'racks',
+					title : 'Rack',
+					icon : 'dns',
+
+					singular_name : 'rack',
+					plural_name : 'racks',
+					column_desc : 'name', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Goods', 'Delete'],
+
+					request_master_data : true,
+					data : 
+					{
+						custom_master_data : {},
+						datatable:[
+							{
+								column : 'name',
+							},
+							{
+								column : 'warehouse_name',
+							},
+						],
+
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'Warehouse', value:'warehouse_name'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						form_single : [['name'],['warehouse']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'name' : {
+								label : 'Name', width:12, type:'tf', validation:'max_req',
+								
+							},
+							'warehouse' : {
+								label : 'Warehouse', width:12, type:'s', validation:'selectdata_req',
+								itemText:'name', itemValue:'id', column:'warehouse_id', table_ref:'warehouses'
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
 			}
 		}
 	},

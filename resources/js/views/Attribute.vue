@@ -1,145 +1,104 @@
-<div>
-    <v-container fluid>
-        <h3>Attribute</h3>
-    </v-container>
-</div>
-
 <template>
-    <div>
+    <div class='bgwhite'>
+
+        <!-- LIST POPUP DETAIL -->
+        <cp-detail 
+         
+        v-if='notNullObject(info_table.get_data_detail)'
+        v-for='(data_detail,key,index) in info_table.get_data_detail'
+
+        :prop_title='"Detail " + data_detail.title' 
+        :prop_response_attribute='info_table.table_name'
+        :prop_headers='data_detail.headers'
+        :prop_columns='data_detail.single'
+        :ref='"cpDetail"+ removeSpace(data_detail.title)'
+        :key='key'
+
+        ></cp-detail>
+        <!----------------------->
 
         
 
         <!-- POPUP CREATE EDIT -->
-        <v-dialog v-model="dialog_createedit" width=750>
-            <v-card>
-                <v-toolbar dark color="menu">
-                    <v-btn icon dark v-on:click="closedialog_createedit()">
-                        <v-icon>close</v-icon>
-                    </v-btn>
-                    <v-toolbar-title v-html='id_data_edit == -1 ?"Add Attribute":"Edit Attribute"'></v-toolbar-title>
+        <cp-form 
 
-                </v-toolbar>
-                <v-form v-model="valid" style='padding:30px' ref='formCreateEdit'>
-                    <v-text-field :rules="this.$list_validation.max_req" v-model='input.name' label="Name" required></v-text-field>
-                    <v-btn v-on:click='save_data()' >submit</v-btn>
-                </v-form>
-            </v-card>
-        </v-dialog>
+        :prop_countStep='info_table.count_step' 
+        :prop_editableEdit='info_table.editable_edit'
+        :prop_editableAdd='info_table.editable_add'
+        :prop_title='info_table.title'
+        :prop_dataInfo='info_table.data'
+        :prop_tableName='name_table'
+        :prop_widthForm='info_table.widthForm'
+        :prop_singularName='info_table.singular_name'
+        
+        :prop_input='generate_input(info_table.plural_name)'
+        
+        :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.singular_name, "create") : null'
+        
 
-        <v-layout row class='bgwhite margintop10'>
-            <v-flex xs6>
-                <div class='marginleft30 margintop10'>
-                    <v-icon class='icontitledatatable'>build</v-icon>
-                    <h2 class='titledatatable'>Attributes Data</h2>
-                    <v-btn v-on:click='opendialog_createedit(-1)' color="primary" dark class='btnadddata'>
-                    Add Data
-                </v-btn>
-                </div>
-                
-            </v-flex>
-            <v-flex xs12 class="text-xs-right">
-                <v-text-field
-                    class='d-inline-block searchdatatable'
-                    v-model="search_data"
-                    append-icon="search"
-                    label="Search"
-                    single-line
-                    hide-details
-                ></v-text-field>
-            </v-flex>
-        </v-layout>
-        <v-data-table
-            disable-initial-sort
-            :headers="headers"
-            :items="data_table"
-            :search="search_data"
-            class="datatable"
-        >
-        <template v-slot:items="props">
-            <td>{{ props.item.no }}</td>
-            <td>{{ props.item.name }}</td>
+        v-on:done='refresh_table()'
+        ref="cpForm"
 
-            <td>
-                <div class="text-xs-left">
-                    <v-menu offset-y>
-                      <template v-slot:activator="{ on }">
-                        <v-btn
-                          color="primary"
-                          dark
-                          v-on="on"
-                          class='btnaction'
-                        >
-                          Action
-                        </v-btn>
-                      </template>
-                      <v-list>
-                        <v-list-tile
-                          v-for="(item, index) in action_items"
-                          :key="index"
-                          v-on:click="action_change(props.item.id,index)"
-                          
-                        >
-                          <v-list-tile-title>{{ item }}</v-list-tile-title>
-                        </v-list-tile>
-                      </v-list>
-                    </v-menu>
-                </div>
-            </td>
-        </template>
-        </v-data-table>
+        ></cp-form>
+
+        <!-- ================================ -->
+
+
+
+        <!-- HEADER DATATABLE -->
+       <cp-header
+       :prop_icon='info_table.icon'
+       :prop_title='info_table.title'
+       :prop_search_data='search_data'
+
+       v-on:search_change='search_data=$event'
+       v-on:add_clicked='opendialog_createedit(-1)'
+       >
+       </cp-header>
+
+       <!-- ================================ -->
+
+
+        
+        <!-- DATATABLE -->
+        
+        <cp-datatable 
+        v-if='info_table.data'
+
+        :prop_header='info_table.data.headers'
+        :prop_search_data='search_data'
+        :prop_infoDatatable='info_table.data.datatable'
+        :prop_action_items='info_table.actions'
+        :prop_plural_name='info_table.plural_name'
+        :prop_url_index='generate_url(info_table.table_name, "index")'
+        :prop_filter='info_table.data.filter'
+
+        v-on:action_clicked='action_change'
+        ref="cpDatatable"
+
+        ></cp-datatable>
+
+        <!-- ================================ -->
     </div>
 </template>
 
 <script>
-import axios from 'axios'
 import mxCrudBasic from '../mixin/mxCrudBasic';
 
 export default {
     data () {
         return {
+            info_table:{},
             name_table:'attributes',
-            header_api:{
-                'Accept': 'application/json',
-                'Content-type': 'application/json'
-            },
-
-
-            action_items: ['Edit', 'Delete'],
-            on:false,
-
-            valid:null,
-            dialog_createedit:false,
-            
-            
-
-            id_data_edit:-1,
-
-            input:{
-                name:'',    
-            },
-            input_before_edit:null, //variabel ini digunakan untuk menampung input sebelum di klik submit saat edit
-            
-
-            headers: [
-                { text: 'No', value: 'no'},
-                { text: 'Name', value: 'name'},
-                { text: 'Action', align:'left',sortable:false, width:'15%'},
-
-            ],
-
-
-            data_table:[],
             search_data: null,
-            
         }
     },
     methods: {
-
         action_change(id,idx_action)
         {
             if(idx_action == 0)
             {
-                this.opendialog_createedit(id)
+                this.opendialog_createedit(id);
             }
             else if(idx_action == 1)
             {
@@ -147,41 +106,9 @@ export default {
             }
         },
 
-
-
-        convert_data_input(tempobject)
-        {
-            this.input.name = tempobject.name;
-            this.input_before_edit = JSON.parse(JSON.stringify(this.input));
-        },
-
-        prepare_data_form()
-        {
-            const formData = new FormData();
-            if(this.id_data_edit == -1) //jika add data
-            {
-                formData.append('name', this.input.name);
-            }
-            else //jika edit data
-            {
-                if(this.input.name != this.input_before_edit.name) 
-                    formData.append('name', this.input.name);
-                formData.append('_method','patch');
-            }
-            formData.append('token', localStorage.getItem('token'));
-            return formData;
-        },
-
-        showTable(r) 
-        {
-            this.data_table = r.data.items.attributes;
-        },
-        
-
     },
-    mounted(){
-        this.get_data();
-
+    mounted(){      
+        this.info_table = this.database[this.name_table];
     },
     mixins:[
         mxCrudBasic

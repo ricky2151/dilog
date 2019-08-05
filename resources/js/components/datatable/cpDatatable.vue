@@ -53,6 +53,7 @@
 			'prop_action_items',
 			'prop_plural_name',
 			'prop_url_index',
+			'prop_filter'
 		],
 		data () {
 			return {
@@ -72,6 +73,7 @@
 	                }
 	            },this.header_api).then((r) => {
 	            	this.showTable(r);
+	            	console.log(r.data);
 	            	for(var i = 0;i<this.data_table.length;i++)
 	            	{
 	            		this.data_table[i].no = this.data_table.length - i;

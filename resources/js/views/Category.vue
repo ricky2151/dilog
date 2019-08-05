@@ -30,6 +30,11 @@
         :prop_tableName='name_table'
         :prop_widthForm='info_table.widthForm'
         :prop_singularName='info_table.singular_name'
+        
+        :prop_input='generate_input(info_table.plural_name)'
+        
+        :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.singular_name, "create") : null'
+        
 
         v-on:done='refresh_table()'
         ref="cpForm"
@@ -66,6 +71,7 @@
         :prop_action_items='info_table.actions'
         :prop_plural_name='info_table.plural_name'
         :prop_url_index='generate_url(info_table.table_name, "index")'
+        :prop_filter='info_table.data.filter'
 
         v-on:action_clicked='action_change'
         ref="cpDatatable"

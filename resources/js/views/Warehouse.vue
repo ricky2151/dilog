@@ -17,6 +17,38 @@
 
         ></cp-detail>
         <!----------------------->
+
+
+        <!-- VERY CUSTOM POPUP DETAIL -->
+        <!-- POPUP STOCK OPNAME -->
+        <v-dialog v-model="dialog_stockopname" width=750>
+            <v-card>
+                <v-toolbar dark color="menu">
+                    <v-btn icon dark v-on:click="closedialog_stockopname()">
+                        <v-icon>close</v-icon>
+                    </v-btn>
+                    <v-toolbar-title>Dialog Stock Opname</v-toolbar-title>
+
+                </v-toolbar>
+                <div style='padding:30px'>
+
+                    <v-text-field :rules='this.$list_validation.max_req' v-model='input.name' label=name counter=191></v-text-field>
+
+                    <v-text-field :rules='this.$list_validation.max_req' disabled v-model='input.user' label="User" counter=191></v-text-field>
+
+                    <v-text-field :rules='this.$list_validation.max_req' disabled v-model='input.warehouse' label="Warehouse" counter=191></v-text-field>
+
+                    <v-text-field :rules='this.$list_validation.max_req' disabled v-model='input.notes' label="Notes" counter=191></v-text-field>
+
+                    <v-btn color='primary'>Add</v-btn>
+
+                    <div class='container'>
+                        <cp-stock-opname :prop_id_stockopname='temp'></cp-stock-opname>
+                    </div>
+                </div>
+            </v-card>
+        </v-dialog>
+        <!-- ================================ -->
         
         
         
@@ -60,7 +92,7 @@
         
         <!-- POPUP CREATE EDIT -->
         <cp-form 
-
+        
         :prop_countStep='info_table.count_step' 
         :prop_editableEdit='info_table.editable_edit'
         :prop_editableAdd='info_table.editable_add'
@@ -73,7 +105,8 @@
         :prop_input='generate_input(info_table.plural_name)'
         :prop_preview='generate_preview(info_table.plural_name)'
         :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.singular_name, "create") : null'
-        v-on:request_master_data_parent='filterObject($refs["cpDatatable"].data_table, info_table.column_desc)'
+        :prop_urlMOCC='info_table.data.custom_component.cpMakeOrCopyChild.url'
+        
 
 
         v-on:done='refresh_table()'
@@ -108,6 +141,7 @@
         :prop_action_items='info_table.actions'
         :prop_plural_name='info_table.plural_name'
         :prop_url_index='generate_url(info_table.table_name, "index")'
+        :prop_filter='info_table.data.filter'
 
         v-on:action_clicked='action_change'
         ref="cpDatatable"
@@ -120,9 +154,13 @@
 
 <script>
 import mxCrudChildForm from '../mixin/mxCrudChildForm';
+import cpStockOpname from './../components/cpStockOpname.vue';
 
 
 export default {
+    components:{
+        cpStockOpname,
+    },
 
     data () {
         return {
@@ -131,7 +169,10 @@ export default {
             name_table:'warehouses',
             
             search_data: null,
-
+            finish_mounted:false,
+            input : [],
+            temp : null,
+            dialog_stockopname:false,
             
         }
     },
@@ -160,6 +201,7 @@ export default {
             else if(idx_action == 3)
             {
                 //stock opname
+                this.opendialog_stockopname(id_datatable);
             }
             else if(idx_action == 4)
             {
@@ -167,20 +209,21 @@ export default {
             }
             
         },
-        
+        opendialog_stockopname(id_edit_popup_stockopname)
+        {
+            this.dialog_stockopname = true;
+            //
+        },
+        closedialog_stockopname()
+        {
+            this.dialog_stockopname = false;
+        },
 
 
 
 
     },
-    mounted(){
-        
-        this.info_table = this.database[this.name_table];
-        
-        this.$refs['cpForm'].get_master_data();
 
-
-    },
     mixins:[
         mxCrudChildForm,
     ],

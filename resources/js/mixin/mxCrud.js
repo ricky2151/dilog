@@ -110,7 +110,7 @@ export default {
                 delete obj[listremove];
             }
             return obj;
-        }
+        },
         
 
         
@@ -118,6 +118,14 @@ export default {
 
         
 	},
+    created()
+    {
+        this.info_table = this.database[this.name_table];
+    },
+    mounted()
+    {
+        this.$refs['cpForm'].get_master_data();
+    },
 	mixins:[
 		mxStringProcessing,
         mxDatabase,
