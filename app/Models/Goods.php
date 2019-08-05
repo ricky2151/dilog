@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use App\Http\Traits\Uuids;
 use Storage;
 use App\Exceptions\DatabaseTransactionErrorException;
@@ -149,8 +150,45 @@ class Goods extends Model
         return $pricelists;
     }
 
+    public function formatDataRelationAttributeGoods($data){
+        $data['attribute_goods'] = $data['attribute_goods']->map(function($item){
+            return ['attribute'=>['id'=> $item['id'], 'name'=> $item['name']], "value" => $item['pivot']['value']];
+        });
+        return $data['attribute_goods'];
+    }
+
+    public function formatDataRelationCategoryGoods($data){
+        $data['category_goods'] = $data['category_goods']->map(function($item){
+            return ['category'=>['id'=> $item['id'], 'name'=> $item['name']]];
+        });
+        return $data['category_goods'];
+    }
+
+    public function selectedColoumns($data, $coloumn, $selectedColoumns){
+        $selectedColoumns = collect($selectedColoumns);
+        return $data->map(function($item) use($selectedColoumns, $coloumn){
+            $data = collect();
+            foreach ($selectedColoumns as $selectedColoumn) {
+                $data[Str::snake($selectedColoumn)] = $item["$selectedColoumn"];
+            }
+            if(is_null($coloumn)){
+                return $data;
+            }
+            else{
+                return ["$coloumn"=>$data];
+            }
+        });
+    }
+
+    public function jsonChangeKey($arr, $oldkey, $newkey) {
+        $json = str_replace('"'.$oldkey.'":', '"'.$newkey.'":', json_encode($arr));
+        return json_decode($json); 
+       }
+
     public function getDataAndRelation($id){
-        $data = $this->with('priceSellings',
+        $data = $this->with('unit:id,name',
+                    'cogs:id,name',
+                    'priceSellings',
                     'priceSellings.warehouse:id,name',
                     'priceSellings.categoryPriceSelling:id,name',
                     'pricelists',
@@ -161,9 +199,31 @@ class Goods extends Model
                 )->where('id',$id)->first();
         $data['attribute_goods'] = $data['attributes'];
         $data['category_goods'] = $data['categories'];
-        unset($data['attributes']);
-        unset($data['categories']);
+        
+        //olah data untuk user
+        $data['attribute_goods'] = $this->formatDataRelationAttributeGoods($data);
+        $data['category_goods'] = $this->selectedColoumns($data['category_goods'],'category',["id","name"]);
+        $data['price_sellings'] = $this->selectedColoumns($data['priceSellings'],null,["id","stock_cut_off","free","price","warehouse","categoryPriceSelling"]);
+        $tampPricelists = $this->selectedColoumns($data['pricelists'],null,["id","price","supplier"]);
+        $tampMaterials = $this->selectedColoumns($data['materials'],null,["id","name","total","adjust"]);
+
+        $data = Arr::except($data, 
+            ['attributes',
+            'categories',
+            'user_id',
+            'unit_id',
+            'cogs_id',
+            'created_at',
+            'updated_at',
+            'deleted_at',
+            'priceSellings',
+            'pricelists',
+            'materials'
+            ]);
+
         $data["thumbnail"] = Storage::url($data["thumbnail"]);
+        $data["pricelists"] = $tampPricelists;
+        $data["materials"] = $tampMaterials;
 
         return $data;
     }

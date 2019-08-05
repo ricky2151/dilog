@@ -27,9 +27,9 @@ class StoreMaterial extends FormRequest
     {
         return [
             'name' => "required|string",
-            'goods_id' => "required|integer|min:1|exists:types,id",
+            'goods_id' => "required|integer|min:1|exists:goods,id",
             'total' => "required|min:1|integer",
-            'adjust' => "string"
+            'adjust' => "filled|string"
         ];
     }
 

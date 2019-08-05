@@ -26,10 +26,10 @@ class UpdateMaterial extends FormRequest
     public function rules()
     {
         return [
-            'name' => "string",
-            'goods_id' => "integer|min:1|exists:types,id",
-            'total' => "min:1|integer",
-            'adjust' => "string"
+            'name' => "required|string",
+            'goods_id' => "required|integer|min:1|exists:goods,id",
+            'total' => "required|min:1|integer",
+            'adjust' => "filled|string"
         ];
     }
 
