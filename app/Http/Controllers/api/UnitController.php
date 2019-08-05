@@ -27,13 +27,11 @@ class UnitController extends Controller
     public function index()
     {
         $this->unitService->handleEmptyModel();
-
-        $units = $this->unit->latest()->get();
-        return formatResponse(false,(["units"=>$units]));
+        return formatResponse(false,(["units"=>$this->unit->latest()->get()]));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created unit in storage.
      *
      * @param  \Illuminate\Http\StoreUnit  $StoreUnit
      * @return \Illuminate\Http\JsonResponse
@@ -47,7 +45,7 @@ class UnitController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified unit.
      *
      * @param  $id
      * @return \Illuminate\Http\JsonResponse
@@ -62,7 +60,21 @@ class UnitController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Show the form for editing the specified unit.
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id)
+    {
+        $this->unitService->handleInvalidParameter($id);
+        $this->unitService->handleModelNotFound($id);
+
+        return formatResponse(false,(["unit"=>$this->unit->find($id,['id','name']),'master_data'=>[]]));
+    }
+
+    /**
+     * Update the specified unit in storage.
      *
      * @param  \Illuminate\Http\UpdateUnit  $request
      * @param  $id
@@ -78,7 +90,7 @@ class UnitController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified unit from storage.
      *
      * @param  $id
      * @return \Illuminate\Http\JsonResponse

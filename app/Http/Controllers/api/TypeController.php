@@ -19,7 +19,7 @@ class TypeController extends Controller
         $this->type = $type;
     }
     /**
-     * Display a listing of the resource.
+     * Display a listing of the type.
      *
      * @return \Illuminate\Http\JsonResponse
      */
@@ -32,7 +32,7 @@ class TypeController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created type in storage.
      *
      * @param  \Illuminate\Http\StoreType  $request
      * @return \Illuminate\Http\JsonResponse
@@ -46,7 +46,7 @@ class TypeController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified type.
      *
      * @param  $id
      * @return \Illuminate\Http\JsonResponse
@@ -56,12 +56,25 @@ class TypeController extends Controller
         $this->typeService->handleInvalidParameter($id);
         $this->typeService->handleModelNotFound($id);
 
-        $type = $this->type->find($id);
-        return formatResponse(false,(["type"=>$type]));
+        return formatResponse(false,(["type"=>$this->type->find($id)]));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Show the form for editing the specified type.
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id)
+    {
+        $this->typeService->handleInvalidParameter($id);
+        $this->typeService->handleModelNotFound($id);
+
+        return formatResponse(false,(["type"=>$this->type->find($id,['id','name']),'master_data'=>[]]));
+    }
+
+    /**
+     * Update the specified type in storage.
      *
      * @param  \Illuminate\Http\UpdateType  $request
      * @param  $id
@@ -77,7 +90,7 @@ class TypeController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified type from storage.
      *
      * @param  $id
      * @return \Illuminate\Http\Response

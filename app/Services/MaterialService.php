@@ -30,7 +30,7 @@ class MaterialService
 
     public function handleModelNotFound($id){
         try{
-            $user = $this->material->findOrFail($id);
+            $material = $this->material->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

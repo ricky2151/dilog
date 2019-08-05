@@ -84,7 +84,7 @@ class CategoryController extends Controller
         $this->categoryService->handleInvalidParameter($id);
         $this->categoryService->handleModelNotFound($id);
 
-        return formatResponse(false,(["category"=>$this->category->find($id), "master_data" => []]));
+        return formatResponse(false,(["category"=>$this->category->find($id,['id','name']), "master_data" => []]));
     }
 
     /**

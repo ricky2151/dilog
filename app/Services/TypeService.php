@@ -8,8 +8,15 @@ use App\Models\Type;
 
 class TypeService
 {
+    private $type;
+
+    public function __construct(Type $type)
+    {
+        $this->type = $type;
+    }
+
     public function handleEmptyModel(){
-        if(Type::all()->count() === 0){
+        if($this->type->all()->count() === 0){
             throw new CustomModelNotFoundException("type"); 
         } 
 
@@ -23,7 +30,7 @@ class TypeService
 
     public function handleModelNotFound($id){
         try{
-            $user = Type::findOrFail($id);
+            $type = $this->type->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {
