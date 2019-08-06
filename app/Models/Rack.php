@@ -50,8 +50,8 @@ class Rack extends Model
 
         $data = Arr::except($data, 
             ['warehouse_id',
-            'created_at',
             'warehouse_id',
+            'created_at',
             'updated_at',
             'deleted_at',
             'goodsRacks'
