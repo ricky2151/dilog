@@ -31,17 +31,8 @@ class GoodsRackController extends Controller
     public function index()
     {
         $this->goodsRackService->handleEmptyModel();
-        $goodsRacks = $this->goodsRack->latest()->get();
 
-        $goodsRacks = $goodsRacks->map(function ($goodsRack) {
-            
-            $goodsRack = Arr::add($goodsRack, 'goods_name', $goodsRack['goods']['name']);
-            $goodsRack = Arr::add($goodsRack, 'rack_name', $goodsRack['rack']['name']);
-
-            return Arr::except($goodsRack, ['goods','rack']);
-        });
-
-        return formatResponse(false,(["goods_rack"=>$goodsRacks]));
+        return formatResponse(false,(["goods_rack"=>$this->goodsRack->index()]));
     }
 
     /**
@@ -52,7 +43,7 @@ class GoodsRackController extends Controller
     public function create()
     {
         // $this->goodsRackService->handleGetAllDataForGoodsCreation();
-        return formatResponse(false,($this->goodsRack->allDataCreate()));
+        return formatResponse(false,($this->goodsRack->getMasterData()));
     }
 
     /**
@@ -105,15 +96,7 @@ class GoodsRackController extends Controller
     {
         $this->goodsRackService->handleInvalidParameter($id);
         $this->goodsRackService->handleModelNotFound($id);
-        // $this->goodsRackService->handleGetAllDataForGoodsCreation();
-
-        $allMaterial = collect($this->goodsRack->allDataCreate());
-        $goodsRack = collect($this->goodsRack->find($id));
-
-        // $concatenated = $goodsRack->union($allMaterial)->union($this->showFormatData($id));
-        $concatenated = $goodsRack->union($allMaterial);
-
-        return formatResponse(false,(["goods_rack"=>$concatenated]));
+        return formatResponse(false,(["goods_rack"=>$this->goodsRack->getDataAndRelation($id), "master_data"=>$this->goodsRack->getMasterData()]));
     }
 
     /**

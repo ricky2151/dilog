@@ -180,11 +180,6 @@ class Goods extends Model
         });
     }
 
-    public function jsonChangeKey($arr, $oldkey, $newkey) {
-        $json = str_replace('"'.$oldkey.'":', '"'.$newkey.'":', json_encode($arr));
-        return json_decode($json); 
-       }
-
     public function getDataAndRelation($id){
         $data = $this->with('unit:id,name',
                     'cogs:id,name',

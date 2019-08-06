@@ -27,8 +27,7 @@ class CategoryPriceSellingController extends Controller
     {
         $this->categoryPriceSellingService->handleEmptyModel();
 
-        $categoryPriceSellings = $this->categoryPriceSelling->latest()->get();
-        return formatResponse(false,(["categoryPriceSellings"=>$categoryPriceSellings]));
+        return formatResponse(false,(["category_price_sellings"=>$this->categoryPriceSelling->latest()->get()]));
     }
 
     /**
@@ -42,7 +41,7 @@ class CategoryPriceSellingController extends Controller
         $data = $request->validated();
 
         $this->categoryPriceSelling->create($data);
-        return formatResponse(false,(["categoryPriceSelling"=>["categoryPriceSelling successfully created"]]));
+        return formatResponse(false,(["category_price_selling"=>["Category Price Selling successfully created"]]));
     }
 
     /**
@@ -56,8 +55,21 @@ class CategoryPriceSellingController extends Controller
         $this->categoryPriceSellingService->handleInvalidParameter($id);
         $this->categoryPriceSellingService->handleModelNotFound($id);
 
-        $categoryPriceSelling = $this->categoryPriceSelling->find($id);
-        return formatResponse(false,(["categoryPriceSelling"=>$categoryPriceSelling]));
+        return formatResponse(false,(["category_price_selling"=>$this->categoryPriceSelling->find($id)]));
+    }
+
+    /**
+     * Show the form for editing the specified type.
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id)
+    {
+        $this->categoryPriceSellingService->handleInvalidParameter($id);
+        $this->categoryPriceSellingService->handleModelNotFound($id);
+
+        return formatResponse(false,(["category_price_selling"=>$this->categoryPriceSelling->find($id,['id','name','discount']),'master_data'=>[]]));
     }
 
     /**
@@ -73,7 +85,7 @@ class CategoryPriceSellingController extends Controller
         $this->categoryPriceSellingService->handleModelNotFound($id);
 
         $this->categoryPriceSelling->find($id)->update($request->validated());
-        return formatResponse(false,(["categoryPriceSelling"=>["categoryPriceSelling was successfully updated"]]));
+        return formatResponse(false,(["category_price_selling"=>["Category Price Selling was successfully updated"]]));
     }
 
     /**
@@ -88,6 +100,6 @@ class CategoryPriceSellingController extends Controller
         $this->categoryPriceSellingService->handleModelNotFound($id);
 
         $this->categoryPriceSelling->find($id)->delete();
-        return formatResponse(false,(["categoryPriceSelling"=>["categoryPriceSelling deleted successfully"]]));
+        return formatResponse(false,(["category_price_selling"=>["Category Price Selling deleted successfully"]]));
     }
 }

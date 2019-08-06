@@ -8,8 +8,16 @@ use App\Models\Division;
 
 class DivisionService
 {
+    private $division;
+
+    public function __construct(Division $division)
+    {
+        $this->division = $division;
+    }
+
+
     public function handleEmptyModel(){
-        if(Division::all()->count() === 0){
+        if($this->division->all()->count() === 0){
             throw new CustomModelNotFoundException("division"); 
         } 
 
@@ -23,7 +31,7 @@ class DivisionService
 
     public function handleModelNotFound($id){
         try{
-            $user = Division::findOrFail($id);
+            $division = $this->division->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

@@ -48,7 +48,7 @@ class RackController extends Controller
     public function create()
     {
         $this->rackService->handleGetAllDataForGoodsCreation();
-        return formatResponse(false,($this->rack->allDataCreate()));
+        return formatResponse(false,($this->rack->getMasterData()));
     }
 
     /**
@@ -68,7 +68,7 @@ class RackController extends Controller
         DB::beginTransaction();
         try {
             $rack = $this->rack->create($data);
-            $rack->goodsRack()->createMany($goodsRacks);
+            $rack->goodsRacks()->createMany($goodsRacks);
 
             DB::commit();
         }catch (\Throwable $e) {
@@ -108,14 +108,7 @@ class RackController extends Controller
         $this->rackService->handleModelNotFound($id);
         $this->rackService->handleGetAllDataForGoodsCreation();
 
-        $allMaterial = collect($this->rack->allDataCreate());
-
-        $rack = $this->rack->find($id);
-        $rack = collect($rack);
-        
-        $concatenated = $rack->union($allMaterial)->union($this->showFormatData($id));
-
-        return formatResponse(false,(["rack"=>$concatenated]));
+        return formatResponse(false,(["rack"=>$this->rack->getDataAndRelation($id), "master_data"=>$this->rack->getMasterData()]));
     }
 
     /**
@@ -162,7 +155,7 @@ class RackController extends Controller
         $this->rackService->handleModelNotFound($id);
         DB::beginTransaction();
         try {
-            $this->rack->find($id)->goodsRack()->delete();
+            $this->rack->find($id)->goodsRacks()->delete();
             $this->rack->find($id)->delete();
 
             DB::commit();
@@ -175,21 +168,25 @@ class RackController extends Controller
     }
 
     /**
-     * Format goods relation data in method show.
+     * get GoodRacks in spedcific racks
      *
      * @param  $id
-     * @return Illuminate\Support\Collection
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function showFormatData($id){
-        $goodsRacks = $this->rack->find($id)->goodsRack;
+    public function goodsRacks($id)
+    {
+        $this->rackService->handleInvalidParameter($id);
+        $this->rackService->handleModelNotFound($id);
 
-        $goodsRacks = $goodsRacks->map(function ($goodsRack) { 
-            $goodsRack = Arr::add($goodsRack, 'goods_name', $goodsRack['goods']['name']);
-            return Arr::except($goodsRack, ['goods']);
+        $data = $this->rack->find($id)->goodsRacks->map(function($item){
+            return ['id'=>$item['id'], 
+                'rack_id'=>$item['rack_id'], 
+                'rack_name'=>$item['rack']['name'],
+                'goods_id'=>$item['goods_id'], 
+                'goods_name'=>$item['goods']['name'],  
+                'stock'=>$item['stock']];
         });
 
-        $data = collect(["goods_racks" => $goodsRacks]);
-
-        return $data;
+        return formatResponse(false,(["goods_racks"=>$data]));
     }
 }

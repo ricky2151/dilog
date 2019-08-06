@@ -70,6 +70,7 @@ Route::group([
 
     //Rack
     Route::resource('racks', 'RackController');
+    Route::get('/racks/{id}/goodsRacks','RackController@goodsRacks');
 
     //GoodsRack
     Route::resource('goodsRacks', 'GoodsRackController');

@@ -28,8 +28,7 @@ class DivisionController extends Controller
     {
         $this->divisionService->handleEmptyModel();
 
-        $divisions = $this->division->latest()->get();
-        return formatResponse(false,(["divisions"=>$divisions]));
+        return formatResponse(false,(["divisions"=>$this->division->latest()->get()]));
     }
 
     /**
@@ -70,9 +69,8 @@ class DivisionController extends Controller
     {
         $this->divisionService->handleInvalidParameter($id);
         $this->divisionService->handleModelNotFound($id);
-
-        $division = $this->division->find($id);
-        return formatResponse(false,(["division"=>$division]));
+        
+        return formatResponse(false,(["division"=>$this->division->find($id,['id','name','mr_enable']), 'master_data'=>[]]));
     }
 
     /**
