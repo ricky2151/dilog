@@ -307,6 +307,36 @@ export default {
                     
                     ]
                 },
+                {
+                    icon: "business",
+                    title: "Purchase Order",
+                    action:'/PurchaseOrder',
+                    subroutes:[
+                    {
+                        subicon:"store",
+                        subtitle:"Purchase Order",
+                        subaction: "/purchaseorder"
+                    },
+                    {
+                        subicon:"play_arrow",
+                        subtitle:"PO Direct",
+                        subaction: "/podirect"
+                    },
+                    {
+                        subicon:"next_week",
+                        subtitle:"Material Request",
+                        subaction: "/MaterialRequest"
+                    },
+                    {
+                        subicon:"beenhere",
+                        subtitle:"Purchase Request",
+                        subaction: "/PurchaseRequest"
+                    },
+
+                   
+                    
+                    ]
+                },
 
                 
                

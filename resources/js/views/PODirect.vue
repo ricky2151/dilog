@@ -104,21 +104,21 @@ export default {
     data () {
         return {
             info_table:{},
-            name_table:'units',
+            name_table:'purchase_orders',
             search_data: null,
 
-            open_state : 'Unit',
+            open_state : 'PODirect',
             list_state : 
             {
-                'Unit' : {},
+                'PODirect' : {},
             },
             
             breadcrumbs:[
                 //level 1
                 {
-                    text: 'Unit',
+                    text: 'PO Direct',
                     disabled: false,
-                    cp : 'Unit',
+                    cp : 'PODirect',
                     before : null,
                 },
                 //level 2
@@ -140,7 +140,7 @@ export default {
         },
 
     },
-    mounted(){      
+    mounted(){   
         this.info_table = this.database[this.name_table];
     },
     mixins:[
