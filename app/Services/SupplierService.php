@@ -17,7 +17,7 @@ class SupplierService
 
     public function handleEmptyModel(){
         if($this->supplier->all()->count() === 0){
-            throw new CustomModelNotFoundException("source"); 
+            throw new CustomModelNotFoundException("supplier"); 
         } 
 
     }

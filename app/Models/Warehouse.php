@@ -74,7 +74,7 @@ class Warehouse extends Model
 
     public function getGoods(){
         $goods = $this->racks->map(function ($item) {
-            $goodsRack = $item->goodsRack->map(function ($data) {
+            $goodsRack = $item->goodsRacks->map(function ($data) {
                 return [$data['goods']];
             });
             return $goodsRack;
@@ -95,7 +95,7 @@ class Warehouse extends Model
 
     public function getGoodsRack(){
         $goodsRacks = $this->racks->map(function ($item) {
-            $goodsRack = $item->goodsRack->map(function ($data) {
+            $goodsRack = $item->goodsRacks->map(function ($data) {
                 return ['rack_id'=>$data['rack']['id'],'rack_name'=>$data['rack']['name'], 'stock'=>$data['stock'],'goods_id'=>$data['goods']['id'], 'goods_name'=>$data['goods']['name']];
             });
             return $goodsRack;

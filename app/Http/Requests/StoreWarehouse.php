@@ -36,7 +36,7 @@ class StoreWarehouse extends FormRequest
             "store_type" => "required|in:1, 2", // 1 : untuk copy rack+goods, 2 : untuk biasa
             "warehouse_id" => "required_if:store_type,1|integer|exists:warehouses,id",
             "copy_racks.*.id" => "required_if:store_type,1|integer|exists:racks,id",
-            "copy_racks.*.is_with_goods" => "filled|boolean",
+            "copy_racks.*.is_with_goods" => "required_if:store_type,1|boolean",
             "racks.*.name" => "required_if:store_type, 2|string"
         ];
     }
