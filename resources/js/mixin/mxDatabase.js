@@ -43,6 +43,7 @@ export default
 					count_step:1,
 
 					actions:['Edit','Goods', 'Delete'],
+					button_on_index : ['Add Data'],
 
 					request_master_data : false,
 					data : 
@@ -53,7 +54,6 @@ export default
 								column : 'name',
 							},
 						],
-						
 						headers: [
 								{ text: 'No', value:'no'},
                 				{ text: 'Name', value:'name'},
@@ -116,6 +116,7 @@ export default
 					count_step:1,
 
 					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
 
 					request_master_data : false,
 					data : 
@@ -174,6 +175,7 @@ export default
 					count_step:1,
 
 					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
 
 					request_master_data : false,
 					data : 
@@ -233,6 +235,7 @@ export default
 					count_step:1,
 
 					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
 
 					request_master_data : false,
 					data : 
@@ -291,6 +294,7 @@ export default
 					count_step:1,
 
 					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
 
 					request_master_data : false,
 					data : 
@@ -356,6 +360,7 @@ export default
 					count_step:1,
 
 					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
 
 					request_master_data : false,
 					data : 
@@ -414,6 +419,7 @@ export default
 					count_step : 6,
 
 					actions:['Edit', 'Rack', 'SP', 'Stock Card', 'Supplier', 'COGS', 'Delete'],
+					button_on_index : ['Add Data'],
 
 					request_master_data : true,
 					data : 
@@ -748,6 +754,7 @@ export default
 					count_step : 2,
 
 					actions:['Edit', 'Rack', 'Goods', 'Stock OP', 'Delete'],
+					button_on_index : ['Add Data'],
 
 					request_master_data : true,
 					data : 
@@ -909,6 +916,7 @@ export default
 					count_step : 2,
 
 					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
 
 					request_master_data : true,
 					data : 
@@ -1037,6 +1045,7 @@ export default
 					count_step:1,
 
 					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
 
 					request_master_data : false,
 					data : 
@@ -1108,6 +1117,7 @@ export default
 					count_step:1,
 
 					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
 
 					request_master_data : true,
 					data : 
@@ -1115,10 +1125,10 @@ export default
 						custom_master_data : {},
 						datatable:[
 							{
-								column : 'goods_id',
+								column : 'goods_name',
 							},
 							{
-								column : 'rack_id',
+								column : 'rack_name',
 							},
 							{
 								column : 'stock',
@@ -1127,8 +1137,8 @@ export default
 						
 						headers: [
 								{ text: 'No', value:'no'},
-                				{ text: 'Goods', value:'goods_id'},
-                				{ text: 'Rack', value:'rack_id'},
+                				{ text: 'Goods', value:'goods_name'},
+                				{ text: 'Rack', value:'rack_name'},
                 				{ text: 'Stock', value:'stock'},
                 				{ text: 'Action', value:'action',sortable:false, width:'15%'},
 						],
@@ -1181,6 +1191,88 @@ export default
 					count_step:1,
 
 					actions:['Edit', 'Goods', 'Delete'],
+					button_on_index : ['Add Data'],
+
+					request_master_data : true,
+					data : 
+					{
+						custom_master_data : {},
+						datatable:[
+							{
+								column : 'name',
+							},
+							{
+								column : 'warehouse_name',
+							},
+						],
+						filter_by_user : {
+							column : 'name',
+							title : 'Filter Rack',
+						},
+
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'Warehouse', value:'warehouse_name'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+						child_data : 
+						{
+							'goods_rack' : 
+							{
+								format_additional_data : 
+								{
+									'name' : 'name',
+								}
+							}
+						},
+
+						form_single : [['name'],['warehouse']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'name' : {
+								label : 'Name', width:12, type:'tf', validation:'max_req',
+								
+							},
+							'warehouse' : {
+								label : 'Warehouse', width:12, type:'s', validation:'selectdata_req',
+								itemText:'name', itemValue:'id', column:'warehouse_id', table_ref:'warehouses'
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+				//12. crud-purchase_orders
+				"purchase_orders" : 
+				{
+					table_name : 'purchase_orders',
+					title : 'Purchase Order',
+					icon : 'store',
+
+					singular_name : 'purchase_order',
+					plural_name : 'purchase_orders',
+					column_desc : 'total', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Detail', 'Approve', 'Incoming', 'Payment', 'History', 'Retur'],
+					button_on_index : ['Add Data'],
 
 					request_master_data : true,
 					data : 
@@ -1239,27 +1331,41 @@ export default
 			var result = '';
 			if(type == 'index' || type == 'store')
 			{
-				result = '/api/' + table;
+				result = '/api/' + this.to_snack_case(table);
 			}
 			else if(type == 'edit')
 			{
-				result = '/api/' + table + '/' + id + '/edit';
+				result = '/api/' + this.to_snack_case(table) + '/' + id + '/edit';
 			}
 			else if(type == 'detail')
 			{
 				
-				result = '/api/' + table + '/' + id + '/' + tableDetail;
+				result = '/api/' + this.to_snack_case(table) + '/' + id + '/' + this.to_snack_case(tableDetail);
 			}
 			else if(type == 'update' || type == 'delete')
 			{
-				result = '/api/' + table + '/' + id;
+				result = '/api/' + this.to_snack_case(table) + '/' + id;
 			}
 			else if(type == 'create')
 			{
-				result = '/api/' + table + '/create';
+				result = '/api/' + this.to_snack_case(table) + '/create';
 			}
 			return result;
 			
+		},
+		to_snack_case(str)
+		{
+			var result = str;
+			for(var i = 0;i<result.length;i++)
+			{
+				if(result[i] == '_')
+				{
+					var temp_chr = result[i + 1];
+					temp_chr = temp_chr.toUpperCase();
+					result = result.substr(0,i) + temp_chr + result.substr(i + 2);
+				}
+			}
+			return result;
 		},
 		generate_input(table)
 		{
