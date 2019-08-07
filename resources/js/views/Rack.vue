@@ -72,7 +72,9 @@
            :prop_search_data='search_data'
            :prop_filter_by_user_format='info_table.data.filter_by_user'
            :prop_filter_by_user_ref='filter_by_user_ref'
+           :prop_button_on_index='info_table.button_on_index'
 
+           v-on:button_index_clicked='button_index_clicked'
            v-on:search_change='search_data=$event'
            v-on:filter_by_user_change='fill_filter_by_user_value'
            v-on:add_clicked='opendialog_createedit(-1)'
@@ -162,6 +164,13 @@ export default {
         }
     },
     methods: {
+        button_index_clicked(index)
+        {
+            if(index == 0)
+            {
+                this.opendialog_createedit(-1);
+            }
+        },
         action_change(id,idx_action, data)
         {
             if(idx_action == 0)

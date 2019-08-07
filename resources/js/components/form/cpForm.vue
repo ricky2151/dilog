@@ -423,7 +423,7 @@
 			//for element
 			close_dialog()
 			{
-				console.log('masuk cloes dialog');
+				
 				this.clear_input();
 				this.id_edit = -1;
             	this.dialog_form = false;
@@ -569,6 +569,38 @@
 
 	            //this.$refs.formCreateEdit.reset();
 
+	        },
+	        clear_input_before_edit()
+	        {
+	        	if(this.preview)
+	            {
+					for (var key in this.preview) {
+					    // skip loop if the property is from prototype
+					    if (!this.preview.hasOwnProperty(key)) continue;
+					    //clear preview
+					    this.preview[key] = '';
+					}
+	            	
+	            }
+
+
+	            for (var key in this.input_before_edit)
+	            {
+	                if(this.input_before_edit[key])
+	                {
+	                    if(Array.isArray(this.input_before_edit[key]))
+	                    {
+	                        this.input_before_edit[key] = [];     
+	                    }
+	                    else
+	                    {
+	                        this.input_before_edit[key] = "";
+	                    }
+	                    
+	                    
+	                }
+	                    
+	            }
 	        },
 
 	        get_master_data()
@@ -728,7 +760,8 @@
 
 	        fill_select_master_data(r)
 	        {
-
+	        	console.log('masuk ke fill_select_master_data');
+	        	console.log(r);
 	        	var self = this;
 	        	var temp_r;
 
@@ -840,6 +873,10 @@
 	        {
 	            const formData = new FormData();
 
+	            if(this.prop_dataInfo.rule_update == 'send_all')
+	            {
+	            	this.clear_input_before_edit();
+	            }
 	            //prepare form_single (sudah menghandle saat edit maupun store)
 	            for(var i = 0;i<this.prop_dataInfo.form_single.length;i++)
 	        	{
@@ -952,10 +989,11 @@
 				                			{
 				                				formData.append(nameTable + '[' + counteridx + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key]);
 				                			}
-				                			formData.append(nameTable + '[' + counteridx + '][type]','1'); //artinya data ini sedang di add (bukan edit ataupun delete)
+				                			
 				                			
 				                		}
 				                	})
+				                	formData.append(nameTable + '[' + counteridx + '][type]','1'); //artinya data ini sedang di add (bukan edit ataupun delete)
 				                	counteridx++;
 	        					}
 	        					else
@@ -992,11 +1030,12 @@
 					                			{
 					                				formData.append(nameTable + '[' + counteridx + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key]);
 					                			}
-					                			formData.append(nameTable + '[' + counteridx + '][type]','0'); //artinya data ini sedang di diedit 
+					                			
 					                			formData.append(nameTable + '[' + counteridx + '][id]',temp.id); 
 					                			
 					                		}
 					                	})
+					                	formData.append(nameTable + '[' + counteridx + '][type]','0'); //artinya data ini sedang di diedit 
 					                	counteridx++;
 			                        }
 	        					}

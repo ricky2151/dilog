@@ -1,3 +1,10 @@
+.bg-login
+{
+	background-image: url('https://static.vecteezy.com/system/resources/previews/000/101/237/non_2x/free-abstract-background-11-vector.jpg');
+	background-size: cover;
+	height: 100%;
+	padding-top: 150px;
+}
 .padding30{
 	padding:30px;
 }
@@ -52,6 +59,11 @@
 .datatable td, .datatable th
 {
 	border: 1px solid #ddd !important;
+}
+
+.datatable tr:nth-child(even)
+{
+	background-color: #ededff;
 }
 
 .datatable th

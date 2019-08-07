@@ -4,7 +4,7 @@
 
 
 
-	<div>
+	<div style='padding-right: 10px'>
 		<v-layout row class='bgwhite'>
             <v-flex xs8>
                 <div class='marginleft30 margintop10'>

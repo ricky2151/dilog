@@ -1,6 +1,5 @@
 <template>
     <div class='bgwhite'>
-
         <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs'>
             <v-breadcrumbs-item
                 slot="item"
@@ -13,8 +12,11 @@
                 {{ item.text }}
             </v-breadcrumbs-item>
         </v-breadcrumbs>
+    
 
-        <template v-if='open_state == "Unit"'>
+    
+        <template v-if='open_state == "PODirect"'>
+
             <!-- LIST POPUP DETAIL -->
             <cp-detail 
              
@@ -34,6 +36,7 @@
             
 
             <!-- POPUP CREATE EDIT -->
+
             <cp-form 
 
             :prop_countStep='info_table.count_step' 
@@ -47,7 +50,7 @@
             
             :prop_input='generate_input(info_table.plural_name)'
             
-            :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.singular_name, "create") : null'
+            :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.plural_name, "create") : null'
             
 
             v-on:done='refresh_table()'
@@ -55,17 +58,25 @@
 
             ></cp-form>
 
+
             <!-- ================================ -->
 
+            
 
 
             <!-- HEADER DATATABLE -->
+
            <cp-header
            :prop_icon='info_table.icon'
            :prop_title='info_table.title'
            :prop_search_data='search_data'
+           :prop_filter_by_user_format='info_table.data.filter_by_user'
+           :prop_filter_by_user_ref='filter_by_user_ref'
+           :prop_button_on_index='info_table.button_on_index'
 
+           v-on:button_index_clicked='button_index_clicked'
            v-on:search_change='search_data=$event'
+           v-on:filter_by_user_change='fill_filter_by_user_value'
            v-on:add_clicked='opendialog_createedit(-1)'
            >
            </cp-header>
@@ -75,7 +86,7 @@
 
             
             <!-- DATATABLE -->
-            
+
             <cp-datatable 
             v-if='info_table.data'
 
@@ -86,31 +97,52 @@
             :prop_plural_name='info_table.plural_name'
             :prop_url_index='generate_url(info_table.table_name, "index")'
             :prop_filter='info_table.data.filter'
+            :prop_get_unique_value='info_table.data.filter_by_user.column'
+            :prop_filter_by_user_value='filter_by_user_value'
 
+            v-on:response_unique_value='fill_filter_by_user_ref'
             v-on:action_clicked='action_change'
             ref="cpDatatable"
 
             ></cp-datatable>
 
-            <!-- ================================ -->
         </template>
+
+        <template v-if="open_state=='cpGoodsRack'">
+            <cp-goods-rack  
+            :prop_list_filter='list_state["Rack"]'
+            :prop_format_additional_data='info_table.data.child_data.goods_rack.format_additional_data'
+            :prop_additional_data='selected_data ? selected_data : ""'
+            ></cp-goods-rack>
+        </template>
+
+        <!-- ================================ -->
     </div>
+    
 </template>
 
 <script>
 import mxCrudBasic from '../mixin/mxCrudBasic';
+import cpGoodsRack from './../components/child_crud/cpGoodsRack.vue'
 
 export default {
+    components : {
+        cpGoodsRack
+    },
     data () {
         return {
             info_table:{},
             name_table:'purchase_orders',
             search_data: null,
 
+            filter_by_user_value : '',
+            filter_by_user_ref : [],
+
             open_state : 'PODirect',
             list_state : 
             {
                 'PODirect' : {},
+                'cpGoodsRack' : {},
             },
             
             breadcrumbs:[
@@ -122,12 +154,24 @@ export default {
                     before : null,
                 },
                 //level 2
-                
+                {
+                    text: 'Goods Rack',
+                    disabled: true,
+                    cp: 'cpGoodsRack',
+                    before : 'Rack'
+                },
             ],
         }
     },
     methods: {
-        action_change(id,idx_action)
+        button_index_clicked(index)
+        {
+            if(index == 0)
+            {
+                this.opendialog_createedit(-1);
+            }
+        },
+        action_change(id,idx_action, data)
         {
             if(idx_action == 0)
             {
@@ -135,12 +179,19 @@ export default {
             }
             else if(idx_action == 1)
             {
+                this.selected_data = data;
+                this.open_component('cpGoodsRack', 'rack_id', id);
+            }
+            else if(idx_action == 2)
+            {
                 this.delete_data(id);
             }
         },
+        
+        
 
     },
-    mounted(){   
+    mounted(){      
         this.info_table = this.database[this.name_table];
     },
     mixins:[

@@ -33,6 +33,7 @@ export default
 					title : 'Category',
 					icon : 'category',
 
+
 					singular_name : 'category',
 					plural_name : 'categories',
 					column_desc : 'name',
@@ -48,6 +49,7 @@ export default
 					request_master_data : false,
 					data : 
 					{
+						rule_update:'send_all',
 						custom_master_data : {},
 						datatable:[
 							{
@@ -122,6 +124,7 @@ export default
 					data : 
 					{
 						custom_master_data : {},
+						rule_update:'send_all',
 						datatable:[
 							{
 								column : 'name',
@@ -181,6 +184,7 @@ export default
 					data : 
 					{
 						custom_master_data : {},
+						rule_update:'send_all',
 						datatable:[
 							{
 								column : 'name',
@@ -241,6 +245,7 @@ export default
 					data : 
 					{
 						custom_master_data : {},
+						rule_update:'send_all',
 						datatable:[
 							{
 								column : 'name',
@@ -315,6 +320,7 @@ export default
 					data : 
 					{
 						custom_master_data : {},
+						rule_update:'send_all',
 						datatable:[
 							{
 								column : 'name',
@@ -381,6 +387,7 @@ export default
 					data : 
 					{
 						custom_master_data : {},
+						rule_update:'send_all',
 						datatable:[
 							{
 								column : 'name',
@@ -449,6 +456,7 @@ export default
 			                    {value:0,name:'False'},
 			                ],
 						},
+						rule_update:'some',
 						datatable:[
 							{ column : 'name' }, { column : 'code' }, { column : 'value' }, { column : 'status' }, { column : 'last_buy_pricelist' }, { column : 'avg_price' }, { column : 'stock' }, { column : '', value : ['avg_price', '*', 'stock'] },
 						],
@@ -775,6 +783,7 @@ export default
 					data : 
 					{
 						custom_master_data : {},
+						rule_update:'some',
 						datatable:[
 							{ column : 'name' }, { column : 'address' }, { column : 'telp' }, { column : 'pic' },
 						],
@@ -938,6 +947,7 @@ export default
 					{
 						custom_master_data : {
 						},
+						rule_update:'some',
 						datatable:[
 							{ column : 'name_company' }, { column : 'name_pic' }, { column : 'address' },
 						],
@@ -1066,6 +1076,7 @@ export default
 					data : 
 					{
 						custom_master_data : {},
+						rule_update:'send_all',
 						datatable:[
 							{
 								column : 'name',
@@ -1138,6 +1149,7 @@ export default
 					data : 
 					{
 						custom_master_data : {},
+						rule_update:'send_all',
 						datatable:[
 							{
 								column : 'goods_name',
@@ -1212,6 +1224,7 @@ export default
 					data : 
 					{
 						custom_master_data : {},
+						rule_update:'some',
 						datatable:[
 							{
 								column : 'name',
@@ -1270,7 +1283,7 @@ export default
 					}
 				},
 
-				//12. crud-purchase_orders
+				//13. crud-purchase_orders
 				"purchase_orders" : 
 				{
 					table_name : 'purchase_orders',
@@ -1295,33 +1308,81 @@ export default
 						custom_master_data : {},
 						datatable:[
 							{
-								column : 'name',
+								column : 'no_po',
 							},
 							{
-								column : 'warehouse_name',
+								column : 'percent_arrival',
+							},
+							{
+								column : 'total',
+							},
+							{
+								column : 'percent_payment',
+							},
+							{
+								column : 'created_at',
+							},
+							{
+								column : 'supplier_name',
+							},
+							{
+								column : 'status',
+							},
+							{
+								column : 'tax',
+							},
+							{
+								column : 'discount',
+							},
+							{
+								column : '',
+								value:['total', '+', 'tax'],
 							},
 						],
+						filter_by_user : {
+							column : 'periode_name',
+							title : 'Filter Periode',
+						},
 
 						headers: [
 								{ text: 'No', value:'no'},
-                				{ text: 'Name', value:'name'},
-                				{ text: 'Warehouse', value:'warehouse_name'},
+                				{ text: 'NO PO', value:'no_po'},
+                				{ text: '% Arrival', value:'percent_arrival'},
+                				{ text: 'Total', value:'total'},
+                				{ text: '% Payment', value:'percent_payment'},
+                				{ text: 'Created At', value:'created_at'},
+                				{ text: 'Supplier', value:'supplier_name'},
+                				{ text: 'Status', value:'status'},
+                				{ text: 'Tax', value:'tax'},
+                				{ text: 'Discount', value:'discount'},
+                				{ text: 'DPP', value:'dpp'},
                 				{ text: 'Action', value:'action',sortable:false, width:'15%'},
 						],
 
-						form_single : [['name'],['warehouse']],
+						form_single : [['supplier'],['periode'],['payment_type'],['payment_terms'],['no_po']],
 						single : 
 						{
 							'id' : {
 								label : '',
 							},
-							'name' : {
-								label : 'Name', width:12, type:'tf', validation:'max_req',
+							'supplier' : {
+								label : 'Supplier', width:12, type:'s', validation:'selectdata_req',
+								itemText:'company_name', itemValue:'id', column:'supplier_id', table_ref:'suppliers'
 								
 							},
-							'warehouse' : {
-								label : 'Warehouse', width:12, type:'s', validation:'selectdata_req',
-								itemText:'name', itemValue:'id', column:'warehouse_id', table_ref:'warehouses'
+							'periode' : {
+								label : 'Periode', width:12, type:'s', validation:'selectdata_req',
+								itemText:'name', itemValue:'id', column:'periode_id', table_ref:'periodes'
+							},
+							'payment_type' : {
+								label : 'Periode', width:12, type:'s', validation:'selectdata_req',
+								itemText:'name', itemValue:'value', column:'payment_type',table_ref:'payment_type'
+							},
+							'payment_terms' : {
+								label : 'No PO', width:9, type:'tf', validation:'numeric_req',
+							},
+							'no_po' : {
+								label : 'No PO', width:9, type:'tf', validation:'max_req',
 							},
 
 						},
@@ -1370,6 +1431,7 @@ export default
 		},
 		to_snack_case(str)
 		{
+			
 			var result = str;
 			for(var i = 0;i<result.length;i++)
 			{
@@ -1380,6 +1442,7 @@ export default
 					result = result.substr(0,i) + temp_chr + result.substr(i + 2);
 				}
 			}
+
 			return result;
 		},
 		generate_input(table)

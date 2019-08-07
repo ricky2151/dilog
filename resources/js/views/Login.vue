@@ -45,13 +45,25 @@
     			axios.post('/api/auth/login',{
     				email:this.in_email,
     				password:this.in_password
-    			}).then(r => this.saveToken(r));
+    			}).then(r => this.saveToken(r))
+                .catch(function (error)
+                {
+                    if(error.response.status == 422)
+                    {
+                        swal('Login Failed', 'Wrong username / password', 'error');
+                    }
+                    else
+                    {
+                        swal('Unkown Error', error.response.data , 'error');
+                    }
+                });
     		},
 
     		saveToken(r){
     			localStorage.setItem('token', r.data.access_token)
                 localStorage.setItem('user', JSON.stringify(r.data.user))
                 this.$router.replace('/');
+                
     		}
     	}
     }
