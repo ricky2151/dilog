@@ -245,15 +245,23 @@ export default
 							{
 								column : 'name',
 							},
+							{
+								column : 'nominal',
+							},
+							{
+								column : 'type_name',
+							},
 						],
 						
 						headers: [
 								{ text: 'No', value:'no'},
                 				{ text: 'Name', value:'name'},
+                				{ text: 'Nominal', value:'nominal'},
+                				{ text: 'Type', value:'type_name'},
                 				{ text: 'Action', value:'action',sortable:false, width:'15%'},
 						],
 
-						form_single : [['name']],
+						form_single : [['name'],['nominal'],['type']],
 						single : 
 						{
 							'id' : {
@@ -261,6 +269,13 @@ export default
 							},
 							'name' : {
 								label : 'Name', width:12, type:'tf', validation:'max_req',
+							},
+							'nominal' : {
+								label : 'Nominal', width:12, type:'tf', validation:'numeric_req',
+							},
+							'type' : {
+								label : 'Type', width:12, type:'s', validation:'selectdata_req',
+								itemText:'name', itemValue:'id', column:'type_id', table_ref:'types'
 							},
 
 						},
@@ -482,7 +497,7 @@ export default
 							},
 							'avg_price_status' : { 
 								label : 'Average Price Status', width:12, type:'s', 
-								itemText:'name', itemValue:'value', column:'avg_price_status'
+								itemText:'name', itemValue:'value', column:'avg_price_status',table_ref:'avg_price_status'
 							},
 							'avg_price' : { 
 								label : 'Average Price', width:6, type:'tf', validation:'numeric',
@@ -593,7 +608,7 @@ export default
 									},
 									'free' : { 
 										label : 'Free', width:12, type:'s',
-										itemText:'name', itemValue:'value', column:'free', table_ref:'free'
+										itemText:'name', itemValue:'value', column:'free', table_ref:'free', custom_table_ref:true
 									},
 									
 								},

@@ -22,7 +22,7 @@
             v-for='(data_detail,key,index) in info_table.get_data_detail'
 
             :prop_title='"Detail " + data_detail.title' 
-            :prop_response_attribute='info_table.table_name'
+            :prop_response_attribute='data_detail.table_name'
             :prop_headers='data_detail.headers'
             :prop_columns='data_detail.single'
             :ref='"cpDetail"+ removeSpace(data_detail.title)'

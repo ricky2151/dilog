@@ -1,13 +1,31 @@
 <template>
+
+	
+
+
+
 	<div>
 		<v-layout row class='bgwhite'>
             <v-flex xs8>
                 <div class='marginleft30 margintop10'>
                     <v-icon class='icontitledatatable'>{{prop_icon}}</v-icon>
                     <h2 class='titledatatable'>{{prop_title}} Data</h2>
-                    
+                    <v-btn v-if='!prop_filter_by_user_format' v-for='(button_name, index) in prop_button_on_index' :key='index' v-on:click='$emit("button_index_clicked", index)' color="primary" dark >
+		                {{button_name}}
+		            </v-btn>
                 </div>
                 
+            </v-flex>
+            <v-flex xs12 class="text-xs-right" v-if='!prop_filter_by_user_format'>
+                <v-text-field
+                    class='d-inline-block searchdatatable'
+                    v-model='search_data'
+                    append-icon="search"
+                    label="Search"
+                    single-line
+                    hide-details
+                ></v-text-field>
+
             </v-flex>
         </v-layout>
 
@@ -36,7 +54,7 @@
 				>
 				</v-select>
         	</v-flex>
-            <v-flex xs12 class="text-xs-right">
+            <v-flex xs12 class="text-xs-right" v-if='prop_filter_by_user_format'>
                 <v-text-field
                     class='d-inline-block searchdatatable'
                     v-model='search_data'
@@ -49,18 +67,15 @@
             </v-flex>
         </v-layout>
         <v-layout justify-end>
-        	
-        	<v-btn v-for='(button_name, index) in prop_button_on_index' :key='index' v-on:click='$emit("button_index_clicked", index)' color="primary" dark >
+        	<v-btn v-if='prop_filter_by_user_format' v-for='(button_name, index) in prop_button_on_index' :key='index' v-on:click='$emit("button_index_clicked", index)' color="primary" dark >
                 {{button_name}}
             </v-btn>
-        	
-            
         </v-layout>
     </div>
 </template>
 <script>
 	export default {
-		props : ['prop_icon', 'prop_title', 'prop_search_data', 'prop_button_on_index','prop_information', 'prop_format_information', 'prop_filter_by_user_format', 'prop_filter_by_user_ref'],
+		props : ['prop_icon', 'prop_title', 'prop_type_header', 'prop_search_data', 'prop_button_on_index','prop_information', 'prop_format_information', 'prop_filter_by_user_format', 'prop_filter_by_user_ref'],
 		data () {
 			return {
 				search_data :null,

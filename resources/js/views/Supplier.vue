@@ -65,13 +65,13 @@
             <!-- ================================ -->
 
             <!-- HEADER DATATABLE -->
-           <cp-header
+            <cp-header
            :prop_icon='info_table.icon'
            :prop_title='info_table.title'
            :prop_search_data='search_data'
-
+           :prop_button_on_index='info_table.button_on_index'
+           v-on:button_index_clicked='button_index_clicked'
            v-on:search_change='search_data=$event'
-           v-on:add_clicked='opendialog_createedit(-1)'
            >
            </cp-header>
 
@@ -136,6 +136,13 @@ export default {
     },
     
     methods: {
+        button_index_clicked(index)
+        {
+            if(index == 0)
+            {
+                this.opendialog_createedit(-1);
+            }
+        },
         action_change(id_datatable,idx_action)
         {
             

@@ -2,12 +2,12 @@
 	<div v-if='prop_dataInfo && finish_loading'>
 
 
-		<v-dialog v-model='dialog_form' :width='prop_widthForm'>
+		<v-dialog v-model='dialog_form' :width='prop_widthForm' >
 			<v-form v-model='valid' ref='form'>
 
 				<v-card>
 					<v-toolbar dark color="menu">
-						<v-btn icon dark v-on:click='close_dialog()'>
+						<v-btn icon dark v-on:click='close_dialog'>
 							<v-icon>close</v-icon>
 						</v-btn>
 						<v-toolbar-title v-html='id_edit == -1 ? "Add " + prop_title : "Edit " + prop_title'></v-toolbar-title>
@@ -423,6 +423,8 @@
 			//for element
 			close_dialog()
 			{
+				console.log('masuk cloes dialog');
+				this.clear_input();
 				this.id_edit = -1;
             	this.dialog_form = false;
 			},
@@ -638,7 +640,8 @@
 	        {
 
 	        	var temp_r = r.data.items[this.prop_singularName];
-
+	        	console.log('cek cogs');
+	        	console.log(this.prop_singularName);
 	        	for(var i = 0;i<this.prop_dataInfo.form_single.length;i++)
 	        	{
 	        		for(var j =0;j<this.prop_dataInfo.form_single[i].length;j++)
@@ -652,8 +655,8 @@
 				    	}
 				    	else
 				    	{
-				    		
-				    		this.input[nameColumn] = temp_r[nameColumn];
+
+							this.input[nameColumn] = temp_r[nameColumn];
 				    	}
 	        		}
 	        	}
@@ -664,12 +667,57 @@
 				
 				for(var i = 0;i<this.prop_dataInfo.form_multiple.length;i++)
 				{
-					var temp_name_table = this.prop_dataInfo.form_multiple[i];
-
-					//bersihkan created_at, updated_at, deleted_at, dan kolom fk
-					
+					var temp_name_table = this.prop_dataInfo.form_multiple[i];					
 					
 					this.input[temp_name_table] = temp_r[temp_name_table];
+
+
+					//cek jika di tabel ini terdapat kolom yang merupakan custom master data, maka setting format inputnya
+		    		var self = this;
+		    		var true_value = ''; //nilai yang seharusnya
+		    		if(this.prop_dataInfo.multiple[temp_name_table].type == 'table')
+		    		{
+			    		Object.keys(this.prop_dataInfo.multiple[temp_name_table].single).map(function(key, index)
+			    		{
+			    			var temp_obj = self.prop_dataInfo.multiple[temp_name_table].single[key];
+			    			if(temp_obj.custom_table_ref)
+			    			{
+			    				var temp_custom_master_data = self.prop_dataInfo.custom_master_data[key];
+			    				for(var j = 0;j<self.input[temp_name_table].length;j++)
+			    				{
+				    				for(var k = 0;k<temp_custom_master_data.length;k++)
+				    				{
+				    					if(self.input[temp_name_table][j][key] == temp_custom_master_data[k].value)
+				    					{
+				    						true_value = temp_custom_master_data[k];
+				    						self.input[temp_name_table][j][key] = true_value;
+				    						break;
+				    					}
+				    				}
+
+			    				}
+
+			    			}
+			    		});
+
+		    		}
+		    		//cek jika di tabel ini, jika tabel ini menggunakan type chips, maka hilangkan pembungkusnya
+		    		else if(this.prop_dataInfo.multiple[temp_name_table].type == 'chips')
+		    		{
+		    			for(var j = 0;j<this.input[temp_name_table].length;j++)
+		    			{
+		    				var temp_obj = this.input[temp_name_table][j];
+		    				Object.keys(temp_obj).map(function(key, index)
+		    				{
+		    					self.input[temp_name_table][j] = temp_obj[key];
+		    				});
+		    			}
+
+
+
+		    		
+		    		}
+		    		
 				}
 
 	            
@@ -700,6 +748,7 @@
 				//cek custom master data
 				Object.keys(this.prop_dataInfo.custom_master_data).map(function(key, index) {
 					var obj = self.prop_dataInfo.custom_master_data[key];
+					
 				    self.ref_input[key] = obj;
 				});
 
@@ -803,8 +852,20 @@
 				    	{
 				    		this.header_api['Content-type'] = 'multipart/form-data';
 				    		var temp_fileVariable = objColumn.fileVariable;
-				    		if((this.input[temp_fileVariable] != this.input_before_edit[temp_fileVariable]) || this.id_edit == -1)
-				    			formData.append(nameColumn, this.input[temp_fileVariable]);
+				    		var is_image_deleted = '0';
+				    		if(this.input[temp_fileVariable])
+				    		{
+					    		if((this.input[temp_fileVariable] != this.input_before_edit[temp_fileVariable]) || this.id_edit == -1)
+					    		{
+					    			formData.append(nameColumn, this.input[temp_fileVariable]);
+					    		}
+					    		is_image_deleted = '0';
+				    		}
+				    		else
+				    		{
+				    			is_image_deleted = '1';
+				    		}
+				    		formData.append('is_image_deleted', is_image_deleted);
 				    	}
 				    	else if(objColumn.type == 's')
 				    	{
@@ -1228,6 +1289,14 @@
 		mounted(){
 
 			
+		},
+		watch : 
+		{
+			dialog_form : function(val)
+			{
+				if(!val)
+					this.clear_input();
+			}
 		},
 		created()
 		{

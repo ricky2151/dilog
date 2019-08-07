@@ -93,6 +93,8 @@
                     }
                 ).then((r) => {
                     this.data = r.data.items[this.prop_response_attribute];
+                    console.log('sampe get_data');
+                    console.log(this.prop_response_attribute);
                 });
 
             }
