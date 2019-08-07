@@ -59,7 +59,7 @@ class Goods extends Model
             if($pricelist['type'] == 1) {
                 $this->pricelists()->create($pricelist);
             }
-            else if($material['type'] == 0) {
+            else if($pricelist['type'] == 0) {
                 $this->pricelists()->find($pricelist['id'])->update($pricelist);
             } else {
                 $this->pricelists()->find($pricelist['id'])->delete();

@@ -118,11 +118,11 @@ class WarehouseService
                 $oldRack = $this->rack->find($rack['id']);
                 if($oldRack['warehouse_id'] == $data['warehouse_id']){
                     $newRack = $warehouse->racks()->create(collect($oldRack)->except(['warehouse_id'])->toArray());
-                    if($rack['is_with_goods']){
-                        $goods = collect($oldRack->goodsRack)->map(function ($data) {
+                    if($rack['is_with_goods'] == 1){
+                        $goods = collect($oldRack->goodsRacks)->map(function ($data) {
                             return ['stock'=>$data['stock'],'goods_id'=>$data['goods_id']];
                         })->toArray();
-                        $newRack->goodsRack()->createMany($goods);
+                        $newRack->goodsRacks()->createMany($goods);
                     } 
                 }
             }

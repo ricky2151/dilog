@@ -93,7 +93,7 @@ class CogsController extends Controller
         $this->cogsService->handleModelNotFound($id);
         $this->cogsService->handleGetAllDataForCogsCreation();
 
-        return formatResponse(false,([["cogs"=>$this->cogs->getDataAndRelation($id), "master_data"=>$this->cogs->getMasterData()]]));
+        return formatResponse(false,(["cogs"=>$this->cogs->getDataAndRelation($id), "master_data"=>$this->cogs->getMasterData()]));
 
     }
 
