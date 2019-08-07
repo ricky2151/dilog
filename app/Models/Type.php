@@ -16,7 +16,7 @@ class Type extends Model
 
     public function goods()
     {
-        return $this->hasManyThrough('App\Models\Goods', 'App\Models\Goods');
+        return $this->hasManyThrough('App\Models\Goods', 'App\Models\Cogs');
     }
 
     public function cogs(){

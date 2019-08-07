@@ -15,36 +15,29 @@ use App\Models\Source;
 
 class GoodsRackService
 {
-    public function checkRelationship($goodsRackId,$data){
-        foreach($data as $id){
-            try{
-                $priceSelling = PriceSelling::findOrFail($id);
-            }catch(ModelNotFoundException $e){
-                throw new CustomModelNotFoundException("price_selling"); 
-            }
-            if($priceSelling->goods_rack_id != $goodsRackId){
-                throw new ModelDontHaveRelation(json_encode([0=>"Price Selling",1=>"Goods Rack"])); 
-            }
-        }
+    private $goodsRack, $goods, $rack;
+
+    public function __construct(GoodsRack $goodsRack, Goods $goods, Rack $rack)
+    {
+        $this->goodsRack = $goodsRack;
+        $this->goods = $goods;
+        $this->rack = $rack;
     }
     
     public function handleGetAllDataForGoodsCreation(){
-        if(Goods::all()->count() === 0){
+        if($this->goods->all()->count() === 0){
             throw new CustomModelNotFoundException("good"); 
         } 
-        elseif(Rack::all()->count() === 0){
+        elseif($this->rack->all()->count() === 0){
             throw new CustomModelNotFoundException("rack"); 
         } 
-        elseif(CategoryPriceSelling::all()->count() === 0){
-            throw new CustomModelNotFoundException("category_price_selling"); 
-        } 
-        elseif(Source::all()->count() === 0){
-            throw new CustomModelNotFoundException("source"); 
-        } 
+        // elseif(Source::all()->count() === 0){
+        //     throw new CustomModelNotFoundException("source"); 
+        // } 
     }
 
     public function handleEmptyModel(){
-        if(GoodsRack::all()->count() === 0){
+        if($this->goodsRack->all()->count() === 0){
             throw new CustomModelNotFoundException("goods_rack"); 
         } 
 
@@ -58,7 +51,7 @@ class GoodsRackService
 
     public function handleModelNotFound($id){
         try{
-            $user = GoodsRack::findOrFail($id);
+            $goodsRack = $this->goodsRack->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

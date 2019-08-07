@@ -38,10 +38,6 @@ class Cogs extends Model
         }
     }
 
-    public static function allDataCreate(){
-        return ['type' => Type::all(['id','name'])];
-    }
-
     public function type(){
         return $this->belongsTo('App\Models\Type');
     }
@@ -52,5 +48,18 @@ class Cogs extends Model
 
     public function cogsComponents(){
         return $this->hasMany('App\Models\CogsComponent');
+    }
+
+    public function getDataAndRelation($id){
+        $data = $this->with('type:id,name')->where('id',$id)->first();
+        $data = Arr::except($data, ['type_id','created_at','updated_at','deleted_at']);
+
+        return $data;
+    }
+
+    public function getMasterData(){
+        return [
+            'types' => Type::all(['id','name'])
+        ];
     }
 }

@@ -29,7 +29,7 @@ class AttributeService
 
     public function handleModelNotFound($id){
         try{
-            $user = $this->attribute->findOrFail($id);
+            $attribute = $this->attribute->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

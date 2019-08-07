@@ -29,19 +29,14 @@ class CogsController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function index()
-    {
-        $this->cogsService->handleEmptyModel();
-
-        $CollectionCogs = $this->cogs->index();
-        
-        return formatResponse(false,(["cogs"=>$CollectionCogs]));
+    {   
+        return formatResponse(false,(["cogs"=>$this->cogs->index()]));
     }
 
     public function create()
     {
-        $this->cogsService->handleGetAllDataForGoodsCreation();
-        $data = $this->cogs->allDataCreate();
-        return formatResponse(false,($data));
+        $this->cogsService->handleGetAllDataForCogsCreation();
+        return formatResponse(false,($this->cogs->getMasterData()));
     }
 
 
@@ -96,15 +91,9 @@ class CogsController extends Controller
     {
         $this->cogsService->handleInvalidParameter($id);
         $this->cogsService->handleModelNotFound($id);
-        $this->cogsService->handleGetAllDataForGoodsCreation();
+        $this->cogsService->handleGetAllDataForCogsCreation();
 
-        $data = collect($this->cogs->allDataCreate());
-        $cogs = collect($this->cogs->find($id));
-
-        // $concatenated = $cogs->union($data)->union($this->showFormatData($id));
-        $concatenated = $cogs->union($data);
-
-        return formatResponse(false,(["cogs"=>$concatenated]));
+        return formatResponse(false,([["cogs"=>$this->cogs->getDataAndRelation($id), "master_data"=>$this->cogs->getMasterData()]]));
 
     }
 

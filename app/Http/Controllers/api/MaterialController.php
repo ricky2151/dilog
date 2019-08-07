@@ -27,8 +27,7 @@ class MaterialController extends Controller
     {
         $this->materialService->handleEmptyModel();
 
-        $materials = $this->material->latest()->get();
-        return formatResponse(false,(["materials"=>$materials]));
+        return formatResponse(false,(["materials"=>$this->material->latest()->get()]));
     }
 
     /**
@@ -56,8 +55,21 @@ class MaterialController extends Controller
         $this->materialService->handleInvalidParameter($id);
         $this->materialService->handleModelNotFound($id);
 
-        $material = $this->material->find($id);
-        return formatResponse(false,(["material"=>$material]));
+        return formatResponse(false,(["material"=>$this->material->find($id)]));
+    }
+
+    /**
+     * Show the form for editing the specified material.
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id)
+    {
+        $this->materialService->handleInvalidParameter($id);
+        $this->materialService->handleModelNotFound($id);
+
+        return formatResponse(false,(["material"=>$this->material->getDataAndRelation($id), "master_data"=>[]]));
     }
 
     /**
@@ -88,6 +100,6 @@ class MaterialController extends Controller
         $this->materialService->handleModelNotFound($id);
 
         $this->material->find($id)->delete();
-        return formatResponse(false,(["material"=>["cogs deleted successfully"]]));
+        return formatResponse(false,(["material"=>["material deleted successfully"]]));
     }
 }

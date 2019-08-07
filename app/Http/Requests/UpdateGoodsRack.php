@@ -26,9 +26,9 @@ class UpdateGoodsRack extends FormRequest
     public function rules()
     {
         return [
-            'goods_id' => 'filled|integer|exists:goods,id',
-            'rack_id' => 'filled|integer|exists:racks,id',
-            'stock' => 'filled|integer|min:0',
+            'goods_id' => 'required|integer|exists:goods,id',
+            'rack_id' => 'required|integer|exists:racks,id',
+            'stock' => 'required|integer|min:0',
             
             // 'batch.*.stock' => 'required|integer|min:0',
             // 'batch.*.batch_number' => 'required|string',

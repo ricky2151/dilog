@@ -91,7 +91,7 @@ class GoodsService
 
     public function handleModelNotFound($id){
         try{
-            $user = Goods::findOrFail($id);
+            $goods = Goods::findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

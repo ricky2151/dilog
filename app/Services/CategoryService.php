@@ -30,7 +30,7 @@ class CategoryService
 
     public function handleModelNotFound($id){
         try{
-            $user = $this->category->findOrFail($id);
+            $category = $this->category->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

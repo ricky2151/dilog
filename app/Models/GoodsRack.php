@@ -11,8 +11,29 @@ class GoodsRack extends Model
         'goods_id', 'rack_id','stock'
     ];
 
-    public static function allDataCreate(){
+    public function getMasterData(){
         return ['goods' => Goods::all(['id','name']),'racks' => Rack::all(['id','name'])];
+    }
+
+    public function getDataAndRelation($id){
+        $data = $this->with('goods:id,name','rack:id,name')->where('id',$id)->first();
+        $data = Arr::except($data, 
+            ['goods_id',
+            'rack_id',
+            'created_at',
+            'updated_at',
+        ]);
+
+        return $data;
+    }
+
+    public function index(){
+        return $this->latest()->get()->map(function ($goodsRack) {
+            $goodsRack = Arr::add($goodsRack, 'goods_name', $goodsRack['goods']['name']);
+            $goodsRack = Arr::add($goodsRack, 'rack_name', $goodsRack['rack']['name']);
+
+            return Arr::except($goodsRack, ['goods','rack']);
+        });
     }
     
     protected $table = 'goods_rack';

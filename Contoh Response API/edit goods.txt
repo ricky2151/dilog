@@ -63,31 +63,28 @@
             "price_sellings": [
                 {
                     "id": 5,
-		    "warehouse" : 
-		    {
-			"id" : "1",
-			"name" : "warehouse1"
-		    },
                     "stock_cut_off": 1,
-		    "category_price_selling" : 
-		    {
-			"id" : "1",
-			"name" : "category21"
-		    },
                     "price": 13,
                     "free": 0,
-                },
+	   "warehouse" : {
+	          "id" : "1",
+                           "name" : "warehouse1"
+	    },
+	   "category_price_selling" : {
+	           "id" : "1",
+	           "name" : "category21"
+	    }
+                }
             ],
             "pricelists": [
                 {
                     "id": 11,
-		    "supplier" : 
-		    {
-			"id" : "1",
-			"name_company" : "supplier1"
-		    },
                     "price": 12,
-                },
+                    "supplier" :  {
+                              "id" : "1",
+                              "name_company" : "supplier1"
+	    }
+                }
             ],
             "materials": [
 		{

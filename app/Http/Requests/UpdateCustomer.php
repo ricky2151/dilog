@@ -26,9 +26,9 @@ class UpdateCustomer extends FormRequest
     public function rules()
     {
         return [
-            "name" => "filled|string",
-            "no_hp" => "filled|string",
-            "address" => "filled|string"
+            "name" => "required|string",
+            "no_hp" => "required|string",
+            "address" => "required|string"
         ];
     }
 

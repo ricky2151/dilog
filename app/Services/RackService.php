@@ -12,10 +12,19 @@ use App\Models\Goods;
 
 class RackService
 {
+    private $rack, $warehouse, $goodsRack;
+
+    public function __construct(Rack $rack, Warehouse $warehouse, GoodsRack $goodsRack)
+    {
+        $this->rack = $rack;
+        $this->warehouse = $warehouse;
+        $this->goodsRack = $goodsRack;
+    }
+
     public function checkRelationship($rackId,$data){
         foreach($data as $id){
             try{
-                $goodsRack = GoodsRack::findOrFail($id);
+                $goodsRack = $this->goodsRack->findOrFail($id);
             }catch(ModelNotFoundException $e){
                 throw new CustomModelNotFoundException("Goods Rack"); 
             }
@@ -26,13 +35,13 @@ class RackService
     }
 
     public function handleGetAllDataForGoodsCreation(){
-        if(Warehouse::all()->count() === 0){
+        if($this->warehouse->all()->count() === 0){
             throw new CustomModelNotFoundException("warehouse"); 
         }
     }
 
     public function handleEmptyModel(){
-        if(Rack::all()->count() === 0){
+        if($this->rack->all()->count() === 0){
             throw new CustomModelNotFoundException("rack"); 
         } 
 
@@ -46,7 +55,7 @@ class RackService
 
     public function handleModelNotFound($id){
         try{
-            $user = Rack::findOrFail($id);
+            $rack = $this->rack->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

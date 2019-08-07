@@ -25,8 +25,7 @@ class CustomerController extends Controller
      */
     public function index()
     {
-        $customers = $this->customer->latest()->get();
-        return formatResponse(false,(["customers"=>$customers]));
+        return formatResponse(false,(["customers"=>$this->customer->latest()->get()]));
     }
 
     /**
@@ -56,6 +55,21 @@ class CustomerController extends Controller
 
         $customer = $this->customer->find($id);
         return formatResponse(false,(["customer"=>$customer]));
+    }
+
+    /**
+     * Show the form for editing the specified customer.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        $this->customerService->handleInvalidParameter($id);
+        $this->customerService->handleModelNotFound($id);
+
+        return formatResponse(false,(["customer"=>$this->customer->find($id,['id','name','no_hp','address']), "master_data"=>[]]));
+
     }
 
     /**
