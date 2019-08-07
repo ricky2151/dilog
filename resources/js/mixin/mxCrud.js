@@ -13,10 +13,62 @@ export default {
         cpDatatable,
         cpHeader
     },
+    data () {
+        return {
+            selected_data : null,
+        }
+    },
 	methods:{
+        
+        fill_filter_by_user_ref(arr)
+        {
+            this.filter_by_user_ref = arr;
+        },
+        fill_filter_by_user_value(val)
+        {
+            this.filter_by_user_value = val;
+        },
+
         debugLog(item) {
             console.log('ini debugLog');
             console.log(item);
+        },
+        open_component(name_component, filter,value)
+        {
+            if(filter)
+            {
+                this.list_state[name_component][filter] = value;
+            }
+            this.open_state = name_component;
+
+            //setting breadcrumbs
+            //disable semua breadcrumbs
+            for(var i = 0;i<this.breadcrumbs.length;i++)
+            {
+                this.breadcrumbs[i].disabled = true;
+            }
+            for(var i = 0;i<this.breadcrumbs.length;i++)
+            {
+                if(this.breadcrumbs[i].cp == name_component)
+                {
+                    var temp_breadcrumb = this.breadcrumbs[i];
+                    this.breadcrumbs[i].disabled = false;
+                    while(temp_breadcrumb.before)
+                    {
+                        for(var j = 0;j<this.breadcrumbs.length;j++)
+                        {
+                            if(this.breadcrumbs[j].cp == temp_breadcrumb.before)
+                            {
+                                temp_breadcrumb = this.breadcrumbs[j];
+                                this.breadcrumbs[j].disabled = false;
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+
         },
 		findDataById(id)
 		{
