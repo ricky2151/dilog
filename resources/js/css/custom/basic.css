@@ -112,3 +112,24 @@
 {
 	margin-right: 25px !important;
 }
+
+.breadcrumbs
+{
+	padding-left: 30px !important;
+	padding-bottom: 0px !important;
+	margin-top: 10px !important;	
+}
+.breadcrumbs a
+{
+	font-size: 15px !important;
+}
+
+
+
+
+
+
+.breadcrumbs_hidden, .breadcrumbs_hidden + .v-breadcrumbs__divider
+{
+	display: none !important;
+}
