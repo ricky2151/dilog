@@ -646,7 +646,7 @@ export default
 									},
 									
 								},
-								send_type : '1'
+								send_type : '2'
 							},
 							"materials":
 							{

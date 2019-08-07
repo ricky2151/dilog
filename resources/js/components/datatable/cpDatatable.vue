@@ -11,6 +11,8 @@
 	        	
 			<template v-slot:items="props">
 		    	<template v-if='
+		    		(prop_filter_by_user_value == "All")
+		    		||
     				(prop_filter_by_user_value && prop_get_unique_value && props.item[prop_get_unique_value] == prop_filter_by_user_value) 
     				||
     				(!prop_filter_by_user_value) '
@@ -84,11 +86,8 @@
 				{
 					result[i] = this.data_table[i][this.prop_get_unique_value];
 				}
-				console.log('filter_by_user 1');
-				console.log(result);
 				result = result.filter((v, i, a) => a.indexOf(v) === i); 
-				console.log('filter_by_user 2');
-				console.log(result);
+				result.splice(0,0,"All");
 				this.$emit('response_unique_value', result);
 			},
 			get_data() {

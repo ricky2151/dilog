@@ -852,20 +852,20 @@
 				    	{
 				    		this.header_api['Content-type'] = 'multipart/form-data';
 				    		var temp_fileVariable = objColumn.fileVariable;
-				    		var is_image_deleted = '0';
+				    		var is_image_delete = '0';
 				    		if(this.input[temp_fileVariable])
 				    		{
 					    		if((this.input[temp_fileVariable] != this.input_before_edit[temp_fileVariable]) || this.id_edit == -1)
 					    		{
 					    			formData.append(nameColumn, this.input[temp_fileVariable]);
 					    		}
-					    		is_image_deleted = '0';
+					    		is_image_delete = '0';
 				    		}
 				    		else
 				    		{
-				    			is_image_deleted = '1';
+				    			is_image_delete = '1';
 				    		}
-				    		formData.append('is_image_deleted', is_image_deleted);
+				    		formData.append('is_image_delete', is_image_delete);
 				    	}
 				    	else if(objColumn.type == 's')
 				    	{
