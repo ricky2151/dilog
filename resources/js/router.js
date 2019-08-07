@@ -20,6 +20,10 @@ import Cogs from './views/Cogs'
 import Rack from './views/Rack'
 import Supplier from './views/Supplier'
 import Customer from './views/Customer'
+import PODirect from './views/PODirect'
+
+import PurchaseOrder from './views/PurchaseOrder'
+
 import Coba from './views/Coba'
 
 import Login from './views/Login'
@@ -55,6 +59,10 @@ const routes = [
             { path: '/rack', component: Rack},
             { path: '/supplier', component: Supplier},
             { path: '/customer', component: Customer},
+            { path: '/podirect', component: PODirect},
+
+            { path: '/purchaseorder', component: PurchaseOrder},
+
             { path: '/logout', component: Logout, },
 
             { path: '/coba', component: Coba, },
