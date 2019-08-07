@@ -50,6 +50,8 @@
        :prop_icon='info_table.icon'
        :prop_title='info_table.title'
        :prop_search_data='search_data'
+       :prop_information='prop_additional_data ? prop_additional_data : ""'
+       :prop_format_information='prop_format_additional_data ? prop_format_additional_data : ""'
 
        v-on:search_change='search_data=$event'
        v-on:add_clicked='opendialog_createedit(-1)'
@@ -83,10 +85,10 @@
 </template>
 
 <script>
-import mxCrudBasic from '../mixin/mxCrudBasic';
+import mxCrudBasic from '../../mixin/mxCrudBasic';
 
 export default {
-    props: ['prop_list_filter'],
+    props: ['prop_list_filter', 'prop_format_additional_data', 'prop_additional_data'],
     data () {
         return {
             info_table:{},
