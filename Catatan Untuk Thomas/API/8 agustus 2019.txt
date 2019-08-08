@@ -3,6 +3,12 @@
 
 2. api create warehouse, tolong dikasi contoh data rack yang is_have_goodsnya true
         ===>FIXED, sudah diperbaiki thomas
+
 3. kolom2 PR apa aja ?
+        ===> Lihat draw.io
+
 4. waktu aku klik gambar pensil di popupnya stockopname, apakah memungkinkan backend mengembalikan data 
+        ===> kasih aja id stockopnamenya, liat api
+
 5. format periode pada stockopname : YYYY-mm-dd atau YYYY-dd-mm ?
+        ===> YYYY-mm-dd
