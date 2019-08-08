@@ -1,2 +1,5 @@
 1. api store goods, material nya belum masuk padahal udah dikirim. Harusnya tomas nangkep requestnya "materials" bukan "material_goods"
+        ===> FIXED, sudah diperbaiki thomas
+
 2. api create warehouse, tolong dikasi contoh data rack yang is_have_goodsnya true
+        ===>FIXED, sudah diperbaiki thomas
