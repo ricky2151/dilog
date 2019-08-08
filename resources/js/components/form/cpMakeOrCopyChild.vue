@@ -143,7 +143,7 @@
                 //request data
                 let r_response_mocc = await this.request_select_child_data();
                 
-                this.mocc_data = r_response_mocc.data[this.prop_dataInfo.parent.table_name];
+                this.mocc_data = r_response_mocc.data.items[this.prop_dataInfo.parent.table_name];
 
                 //taruh di select master data
                 //kan mocc_data semua data parent yang didalmanya ada child nya, maka dari itu childnya harus dibuang dulu.

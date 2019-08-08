@@ -35,33 +35,8 @@
 
             <!-- VERY CUSTOM POPUP DETAIL -->
             <!-- POPUP STOCK OPNAME -->
-            <v-dialog v-model="dialog_stockopname" width=750>
-                <v-card>
-                    <v-toolbar dark color="menu">
-                        <v-btn icon dark v-on:click="closedialog_stockopname()">
-                            <v-icon>close</v-icon>
-                        </v-btn>
-                        <v-toolbar-title>Dialog Stock Opname</v-toolbar-title>
-
-                    </v-toolbar>
-                    <div style='padding:30px'>
-
-                        <v-text-field :rules='this.$list_validation.max_req' v-model='input.name' label=name counter=191></v-text-field>
-
-                        <v-text-field :rules='this.$list_validation.max_req' disabled v-model='input.user' label="User" counter=191></v-text-field>
-
-                        <v-text-field :rules='this.$list_validation.max_req' disabled v-model='input.warehouse' label="Warehouse" counter=191></v-text-field>
-
-                        <v-text-field :rules='this.$list_validation.max_req' disabled v-model='input.notes' label="Notes" counter=191></v-text-field>
-
-                        <v-btn color='primary'>Add</v-btn>
-
-                        <div class='container'>
-                            <cp-stock-opname :prop_id_stockopname='temp'></cp-stock-opname>
-                        </div>
-                    </div>
-                </v-card>
-            </v-dialog>
+            
+                            
             <!-- ================================ -->
             
             
@@ -163,6 +138,11 @@
             ></cp-datatable>
 
             <!-- ================================ -->
+
+
+            <!-- STOCK OPNAME -->
+            <cp-stock-opname ref='cpStockOpname' :prop_data_form='form_stockopname'></cp-stock-opname>
+            <!-- ========================= -->
         </template>
     </div>
 </template>
@@ -204,7 +184,7 @@ export default {
             finish_mounted:false,
             input : [],
             temp : null,
-            dialog_stockopname:false,
+            form_stockopname:[],
             
         }
     },
@@ -248,10 +228,15 @@ export default {
             }
             
         },
-        opendialog_stockopname(id_edit_popup_stockopname)
+        opendialog_stockopname(id)
         {
-            this.dialog_stockopname = true;
-            //
+            //isi form_stockopname dulu
+            var obj = this.findDataById(id);
+            this.form_stockopname.warehouse = obj.name;
+            this.form_stockopname.user = JSON.parse(localStorage.getItem('user')).name;
+            this.form_stockopname.warehouse_id = id;
+            this.$refs['cpStockOpname'].opendialog_stockopname();
+
         },
         closedialog_stockopname()
         {

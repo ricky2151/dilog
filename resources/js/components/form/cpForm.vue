@@ -925,10 +925,6 @@
 	        		var nameTable = this.prop_dataInfo.form_multiple[i];
 	        		var objTable = this.prop_dataInfo.multiple[nameTable];
 
-	        		console.log('sedang ditest : ');
-	        		console.log(nameTable);
-	        		console.log(objTable);
-	        		console.log('=====');
 	        		if(objTable.send_type =='1') //langsung
 	        		{
 	        			if(objTable.type == 'chips')
