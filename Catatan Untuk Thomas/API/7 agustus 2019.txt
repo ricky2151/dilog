@@ -1,18 +1,26 @@
 Catatan untuk thomas : 
-1. api index unit error
+1. api index unit error 
 	url : http://localhost:8000/api/units?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTU2NTE1NTIwMiwibmJmIjoxNTY1MTU1MjAyLCJqdGkiOiJncnhNUzAxMFdJeE5KSURIIiwic3ViIjozLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.Pcz4CT5xhznJKUSoVUjlsup7sio2_Od6SImtUniBI7U
-2. api index type error
+	==> FIXED, Gitkraken Ricky belum didiscard
+2. api index type error 
 	url : http://localhost:8000/api/types?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC9sb2NhbGhvc3Q6ODAwMFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTU2NTE1NTIwMiwibmJmIjoxNTY1MTU1MjAyLCJqdGkiOiJncnhNUzAxMFdJeE5KSURIIiwic3ViIjozLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.Pcz4CT5xhznJKUSoVUjlsup7sio2_Od6SImtUniBI7U
+	==> FIXED, Gitkraken Ricky belum didiscard
 3. api store goods, material nya belum masuk padahal udah dikirim
-4. api edit cogs, responsenya kebungkus array. Harusnya :
+	==> BELUM FIXED, dimasukan lagi ke notepad 8 agustus
+4. api edit cogs, responsenya kebungkus array. Harusnya : 
 	items.cogs.
 	tapi responsenya
 	items[0].cogs
+	==> FIXED oleh tomas
 5. api edit category price selling. Aku cuman edit discountnya tok, tapi pas aku ngepost ke backend, malah error : 
 	{"error":true,"message":{"name":["The name field is required."]}}
 	padahal kan yang aku kirim itu data yang berubah aja. Kalo name nya gak berubah gak aku kirim
+	==> FIXED, ricky lupa
 6. api create supplier gak muncul apa2
+	==> FIXED, ricky salah post
 7. api edit customer kasusnya sama seperti nomor 5 (api edit category price selling)
+	==> FIXED, ricky lupa
 8. api edit goods ada error : 
 	{"error":true,"message":{"Goods":["Transaction error on model Goods"]}}
 	(aku cuman ganti data pricelist tok)
+	==> FIXED, tiba2 bisa sendiri

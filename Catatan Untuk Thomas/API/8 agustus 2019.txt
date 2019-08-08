@@ -1,0 +1,2 @@
+1. api store goods, material nya belum masuk padahal udah dikirim. Harusnya tomas nangkep requestnya "materials" bukan "material_goods"
+2. api create warehouse, tolong dikasi contoh data rack yang is_have_goodsnya true
