@@ -818,11 +818,11 @@ export default
 								label : 'Email', width:12, type:'tf', validation:'max_req',
 							},
 							'lat' : { 
-								label : 'Latitude', width:12,  type:'tf_gm', validation:'max_req',
+								label : 'Latitude', width:12,  type:'tf_gm',
 								disabled : true, gm : 'lat'
 							},
 							'lng' : { 
-								label : 'Longitde', width:12,  type:'tf_gm', validation:'max_req',
+								label : 'Longitde', width:12,  type:'tf_gm',
 								disabled : true, gm : 'lng'
 							},
 						},
@@ -845,7 +845,7 @@ export default
 							'cpMakeOrCopyChild' : 
 							{
 								title : 'Racks',
-								url : 'api/dummyresponse/selectrack',
+								url : 'api/warehouses/create',
 								parent : 
 								{
 									title : "Warehouse",
