@@ -55,8 +55,10 @@ class SpbmController extends Controller
     {
         $validated = $request->validated();
         $validated['arrival_date'] = now();
-        $validated['spbm_details'] = $this->spbmService->cleanDataSpbmDetail($validated['spbm_details']);
-        
+        $validated['spbm_details'] = $this->spbmService->cleanDataSpbmDetail($validated['spbm_details'], $validated['purchase_order_id']);
+
+        return $validated;
+
         DB::beginTransaction();
         try {
             $spbm = $this->spbm->create($validated);

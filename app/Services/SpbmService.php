@@ -5,14 +5,16 @@ use App\Exceptions\InvalidParameterException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\ModelNotFoundException as CustomModelNotFoundException;
 use App\Models\Spbm;
+use App\Models\PurchaseOrder;
 
 class SpbmService
 {
-    private $spbm;
+    private $spbm, $purchaseOrder;
 
-    public function __construct(Spbm $spbm)
+    public function __construct(Spbm $spbm, PurchaseOrder $purchaseOrder)
     {
         $this->spbm = $spbm;
+        $this->purchaseOrder = $purchaseOrder;
     }
 
     public function handleEmptyModel(){
@@ -30,10 +32,11 @@ class SpbmService
     /**
      * Remove Data detail spbm when have quantity 0
      */
-    public function cleanDataSpbmDetail($data){
+    public function cleanDataSpbmDetail($data, $purchaseOrderId){
+        $goodsId = collect($this->purchaseOrder->find($purchaseOrderId)->purchaseOrderDetails)->groupBy('goods_id')->keys();
         $data = collect($data)->filter(function ($item) {
             return $item['qty'] > 0;
-        });
+        })->whereIn('goods_id',$goodsId)->values();
 
         return $data;
     }

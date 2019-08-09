@@ -36,8 +36,6 @@ class Spbm extends Model
             })];
         });
 
-        // return [$purchaseOrder->getHistoryArrivedGood()];
-
         return [
             'percent_goods'=>$purchaseOrder->getPoPersenComplete(), 
             'purchase_order'=>$purchaseOrder->only('id','no_po','po_type_name'),
