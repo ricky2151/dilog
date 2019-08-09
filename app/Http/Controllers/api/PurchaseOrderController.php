@@ -96,6 +96,17 @@ class PurchaseOrderController extends Controller
     }
 
     /**
+     * Change status purchase order from new to submit.
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function spbm($id)
+    {
+
+    }
+
+    /**
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\PurchaseOrder  $purchaseOrder

@@ -47,6 +47,8 @@ class DatabaseSeeder extends Seeder
             PurchaseRequestDetailsTableSeeder::class,
             PurchaseOrdersTableSeeder::class,
             PurchaseOrderDetailsTableSeeder::class,
+            SpbmsTableSeeder::class,
+            SpbmDetailsTableSeeder::class
         ]);
     }
 }

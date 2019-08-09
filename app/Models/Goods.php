@@ -67,6 +67,18 @@ class Goods extends Model
         }
     }
 
+    public function getHaveArrived($purchaseOrderId){
+        return $this->spbmDetails->sum('qty');
+    }
+
+    public function spbmDetails(){
+        return $this->hasMany('App\Models\spbmDetail');
+    }
+
+    public function purchaseOrderDetails(){
+        return $this->hasMany('App\Models\PurchaseOrderDetail');
+    }
+
     public function goodsRack(){
         return $this->hasMany('App\Models\GoodsRack');
     }

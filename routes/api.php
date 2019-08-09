@@ -101,7 +101,10 @@ Route::group([
     //PurchaseOrderDetail
     // Route::get('/purchaseOrders/{purchaseOrderId}/purchaseOrderDetails/create','PurchaseOrderDetailController@create');
 
-    // 
+    //PurchaseOrderDetail
     Route::resource('purchaseOrderDetails', 'PurchaseOrderDetailController');
+
+    //Spbm
+    Route::resource('spbms', 'SpbmController');
 
 });

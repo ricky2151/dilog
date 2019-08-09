@@ -26,8 +26,83 @@ class PurchaseOrder extends Model
         return $this->hasMany('App\Models\PurchaseOrderDetail');
     }
 
+    public function getNameTypePo(){
+        switch($this->type){
+            case 1 : return "langsung";
+            case 2 : return "MR";
+            case 3 : return "Minstock";
+        }
+    }
+
+    public function getHistoryArrivedGood(){
+        return $this->spbms->map(function($item){
+            return collect($item->spbmDetails)->map(function($data) use($item){
+                $data['delivery_order_no'] = $item['delivery_order_no'];
+                return [
+                    "id" => $data['id'],
+                    "delivery_order_no" => $data["delivery_order_no"],
+                    "goods_id" => $data["goods"]["id"],
+                    "goods_name" => $data["goods"]["name"],
+                    "have_arrived" => $data['qty'],
+                    "warehouse_id" => $item["warehouse"]["id"],
+                    "warehouse_name" => $item["warehouse"]["name"],
+                    "rack_id" => $data["rack"]["id"],
+                    "rack_name" => $data["rack"]["name"],
+                    "created_at" => $data["created_at"],
+                ]; 
+            });
+        })->Flatten(1)->sortByDesc('created_at')->values();
+    }
+
+    public function getGoodsWithOrderQuantityAndHaveArrived(){
+        return $this->purchaseOrderDetails->groupBy('goods_id')->map(function($item, $key){
+            $goods =  Goods::find($key);
+            return ["goods_id"=>$key,"goods_name" => $goods['name'], 'order_quantity' => $item->sum('qty'), 'have_arrived'=>$goods->getHaveArrived($this->id),];
+        })->values();
+    }
+
+    public function getTotalGoodsOrderQuantity(){
+        return $this->purchaseOrderDetails->groupBy('goods_id')->map(function($item){
+            return $item->sum('qty');
+        })->flatten()->sum();
+    }
+
+    public function getTotalGoodsHaveArrived(){
+        return $this->spbms->map(function($item){
+            return $item->spbmDetails;
+        })->flatten(1)->groupBy('goods_id')->map(function($item){
+            return $item->sum('qty');
+        })->flatten()->sum();
+    }
+
+    public function getPoPersenComplete(){
+        return round($this->getTotalGoodsHaveArrived() /$this->getTotalGoodsOrderQuantity() * 100);
+    }
+
+    public function setPersenComplete(){
+        $this->update(['is_completed'=>$this->getPoPersenComplete()]);
+    }
+
+    public function getGoodOrderQuantity(){
+        return $this->purchaseOrderDetails->groupBy('goods_id')->map(function($item){
+            return $item->sum('qty');
+        });
+    }
+
+    public function getGoodHaveArrivedQuantity(){
+        return $this->spbms->map(function($item){
+            return $item->spbmDetails;
+        })->flatten(1)->groupBy('goods_id')->map(function($item){
+            return $item->sum('qty');
+        });
+    }
+
     public function supplier(){
         return $this->belongsTo('App\Models\Supplier');
+    }
+
+    public function spbms(){
+        return $this->hasMany('App\Models\Spbm');
     }
 
     public function approve(){
