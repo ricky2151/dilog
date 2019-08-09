@@ -56,7 +56,7 @@ class Warehouse extends Model
             else if($rack['type'] == 0) {
                 $this->racks()->find($rack['id'])->update($rack);
             } else {
-                $this->racks()->find($rack['id'])->goodsRack()->delete();
+                $this->racks()->find($rack['id'])->goodsRacks()->delete();
                 $this->racks()->find($rack['id'])->delete();
 
             }
@@ -65,8 +65,8 @@ class Warehouse extends Model
 
     public function getRackWithHaveGoods(){
         $racks = $this->racks->map(function ($item) {
-            $item = Arr::add($item, 'is_have_goods',collect($item->goodsRack)->isNotEmpty());
-            return  Arr::except($item,['goodsRack']);
+            $item = Arr::add($item, 'is_have_goods',collect($item->goodsRacks)->isNotEmpty());
+            return  Arr::except($item,['goodsRacks']);
         });
 
         return $racks;

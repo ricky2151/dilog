@@ -106,11 +106,11 @@ class GoodsController extends Controller
             $path = $this->goodsService->handleUploadImage($request->file("thumbnail"),$this->path,$name);
             $data["thumbnail"] = $path;
 
-            $attribute_goods = collect(Arr::pull($data,'attribute_goods'))->unique(function ($item) {
+            $attributeGoods = collect(Arr::pull($data,'attribute_goods'))->unique(function ($item) {
                 return $item['attribute_id'].$item['value'];
             });
 
-            $category_goods = collect(Arr::pull($data,'category_goods'))->unique(function ($item) {
+            $categoryGoods = collect(Arr::pull($data,'category_goods'))->unique(function ($item) {
                 return $item['category_id'];
             });
 
@@ -120,14 +120,14 @@ class GoodsController extends Controller
                 return $item['warehouse_id'];
             })->toArray();
             
-            $material_goods = collect(Arr::pull($data,'material_goods'))->unique(function ($item) {
+            $materials = collect(Arr::pull($data,'materials'))->unique(function ($item) {
                 return $item['name'];
             })->toArray();
 
             $goods = $this->user->goods()->create($data);
-            $goods->attributes()->attach($attribute_goods);
-            $goods->categories()->attach($category_goods);
-            $goods->materials()->createMany($material_goods);
+            $goods->attributes()->attach($attributeGoods);
+            $goods->categories()->attach($categoryGoods);
+            $goods->materials()->createMany($materials);
             $goods->priceSellings()->createMany($priceSellings);
             $goods->pricelists()->createMany($pricelists);
 
@@ -191,11 +191,11 @@ class GoodsController extends Controller
             is_null($path) ? $path = "" : $data["thumbnail"]=$this->path."/".$path;
             $data["user_id"] = $this->user["id"];
             
-            $attribute_goods = collect(Arr::pull($data,'attribute_goods'))->unique(function ($item) {
+            $attributeGoods = collect(Arr::pull($data,'attribute_goods'))->unique(function ($item) {
                 return $item['attribute_id'].$item['value'];
             });
 
-            $category_goods = collect(Arr::pull($data,'category_goods'))->unique(function ($item) {
+            $categoryGoods = collect(Arr::pull($data,'category_goods'))->unique(function ($item) {
                 return $item['category_id'];
             });
 
@@ -205,17 +205,17 @@ class GoodsController extends Controller
                 return $item['warehouse_id'];
             })->toArray();
             
-            $material_goods = collect(Arr::pull($data,'material_goods'))->unique(function ($item) {
+            $materials = collect(Arr::pull($data,'materials'))->unique(function ($item) {
                 return $item['name'];
             })->toArray();
 
             // return $material_goods;
             
             $goods->update($data);
-            $goods->attributes()->sync($attribute_goods);
-            $goods->categories()->sync($category_goods);
+            $goods->attributes()->sync($attributeGoods);
+            $goods->categories()->sync($categoryGoods);
             is_null($priceSellings) ? "" : $goods->updatePriceSellings($priceSellings);
-            is_null($material_goods) ? "" : $goods->updateMaterials($material_goods);
+            is_null($materials) ? "" : $goods->updateMaterials($materials);
             is_null($pricelists) ? "" : $goods->updatePricelists($pricelists);
 
             $this->goodsService->handleUpdateImage($request->file("thumbnail"),$oldThumnail, $path, $this->path,$data["is_image_delete"]);
@@ -223,6 +223,7 @@ class GoodsController extends Controller
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollback();
+            return $e;
             throw new DatabaseTransactionErrorException("Goods");
         }
 
