@@ -145,3 +145,16 @@
 {
 	display: none !important;
 }
+
+.cardStockOpname
+{
+	display: table-cell;
+	padding: 20px;
+
+}
+#containerCardStockOpname
+{
+	width: 680px !important;
+	margin-left: 15px !important;
+	overflow-x: scroll;
+}
