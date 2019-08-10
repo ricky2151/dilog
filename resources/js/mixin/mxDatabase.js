@@ -1375,11 +1375,11 @@ export default
 								itemText:'name', itemValue:'id', column:'periode_id', table_ref:'periodes'
 							},
 							'payment_type' : {
-								label : 'Periode', width:12, type:'s', validation:'selectdata_req',
+								label : 'Payment Type', width:12, type:'s', validation:'selectdata_req',
 								itemText:'name', itemValue:'value', column:'payment_type',table_ref:'payment_type'
 							},
 							'payment_terms' : {
-								label : 'No PO', width:9, type:'tf', validation:'numeric_req',
+								label : 'Payment Terms', width:9, type:'tf', validation:'numeric_req',
 							},
 							'no_po' : {
 								label : 'No PO', width:9, type:'tf', validation:'max_req',
