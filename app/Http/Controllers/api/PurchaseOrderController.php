@@ -95,6 +95,28 @@ class PurchaseOrderController extends Controller
         return formatResponse(false,(["purchase_order"=>["PO has been submitted"]]));
     }
 
+
+    /**
+     * get list of payment from specific purchase order
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getPayments($id){
+        $this->purchaseOrderService->handleInvalidParameter($id);
+        $this->purchaseOrderService->handleModelNotFound($id);
+        $purchaseOrder = $this->purchaseOrder->find($id);
+        return formatResponse(false,([
+            "purchase_order"=>[
+                'id'=> $purchaseOrder['id'],
+                'po_no'=> $purchaseOrder['no_po'],
+                'po_type_name'=> $purchaseOrder->getNameTypePo(),
+                'total' => $purchaseOrder['total']
+            ],
+            "payments"=>$purchaseOrder->payments->sortByDesc('created_at')->values()
+        ]));
+    }
+
     /**
      * Change status purchase order from new to submit.
      *
