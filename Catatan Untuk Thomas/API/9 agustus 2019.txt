@@ -1,3 +1,7 @@
 1. api create PO Direct, response nya gak perlu dibungkus pakai array "purchase_order", langsung "supplier", "periode". Supaya sama seperti api create yang lainnya (cth api create goods)
 
 2. api index PO Direct, masih belum ada kolom 'supplier_name', 'tax', dan 'diskon'
+
+3. api index detail PO, urlnya apa ? 
+
+4. aku minta postmanmu yang terbaru
