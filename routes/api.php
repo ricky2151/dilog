@@ -97,6 +97,7 @@ Route::group([
     Route::resource('purchaseOrders', 'PurchaseOrderController');
     Route::patch('/purchaseOrders/{id}/approve','PurchaseOrderController@approve');
     Route::patch('/purchaseOrders/{id}/submit','PurchaseOrderController@submit');
+    Route::get('/purchaseOrders/{id}/payments','PurchaseOrderController@getPayments');
 
     //PurchaseOrderDetail
     // Route::get('/purchaseOrders/{purchaseOrderId}/purchaseOrderDetails/create','PurchaseOrderDetailController@create');
@@ -106,5 +107,9 @@ Route::group([
 
     //Spbm
     Route::resource('spbms', 'SpbmController');
+
+    //Payment
+    Route::resource('payments', 'PaymentController');
+    Route::patch('/payments/{id}/approve','PaymentController@approve');
 
 });

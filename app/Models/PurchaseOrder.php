@@ -105,6 +105,11 @@ class PurchaseOrder extends Model
         return $this->hasMany('App\Models\Spbm');
     }
 
+    public function payments(){
+        return $this->hasMany('App\Models\Payment');
+    }
+
+
     public function approve(){
         $this->status = 3;
         $this->approved_by_user_id = auth('api')->user()->id;

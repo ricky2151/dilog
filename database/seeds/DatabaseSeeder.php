@@ -48,7 +48,8 @@ class DatabaseSeeder extends Seeder
             PurchaseOrdersTableSeeder::class,
             PurchaseOrderDetailsTableSeeder::class,
             SpbmsTableSeeder::class,
-            SpbmDetailsTableSeeder::class
+            SpbmDetailsTableSeeder::class,
+            PaymentsDetailsTable::class
         ]);
     }
 }
