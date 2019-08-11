@@ -16,6 +16,7 @@ class CreatePurchaseOrdersTable extends Migration
         Schema::create('purchase_orders', function (Blueprint $table) {
             $table->increments('id');
             $table->string('no_po')->nullable();
+            $table->integer('created_by_user_id')->unsigned();
             $table->integer('supplier_id')->unsigned();
             $table->date('finish_date')->nullable();
             $table->date('paid_date')->nullable();

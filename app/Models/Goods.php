@@ -68,7 +68,20 @@ class Goods extends Model
     }
 
     public function getHaveArrived($purchaseOrderId){
-        return $this->spbmDetails->sum('qty');
+        return $this->spbmDetails->map(function($item) use($purchaseOrderId){
+            if($item->spbm['purchase_order_id'] == $purchaseOrderId)
+                return $item;
+        })->sum('qty');
+    }
+
+    public function warehouseWithRack(){
+        return $this->goodsRack->map(function($item){
+            return $item->rack;
+        })->groupBy('warehouse_id')->map(function($item, $key){
+            $warehouse = Warehouse::find($key);
+            return Arr::add(collect($warehouse),'racks',$item);
+            return $item->rack;
+        })->values();
     }
 
     public function spbmDetails(){

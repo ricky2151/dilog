@@ -40,7 +40,7 @@ class PurchaseOrderDetailController extends Controller
     {
         $purchaseOrderId = $request->validated()['purchase_order_id'];
         $data = $this->purchaseOrderDetailService->hanldeCreateForm($purchaseOrderId);
-        return formatResponse(false,(["purchase_order_detail"=>$data]));
+        return formatResponse(false,($data));
     }
 
     /**
@@ -77,7 +77,7 @@ class PurchaseOrderDetailController extends Controller
     public function edit($id)
     {
         $data = $this->purchaseOrderDetailService->hanldeEditForm($id);
-        return formatResponse(false,(["purchase_order_detail"=>$data]));
+        return formatResponse(false,($data));
     }
 
     /**

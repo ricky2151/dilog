@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\ModelNotFoundException as CustomModelNotFoundException;
 use App\Models\PurchaseOrderDetail;
 use App\Services\PurchaseOrderService;
+use App\Models\Supplier;
+use App\Models\Pricelist;
 use App\Models\PurchaseOrder;
 use App\Models\Goods;
-use App\Models\Pricelist;
 use Illuminate\Support\Arr;
 use App\Exceptions\DatabaseTransactionErrorException;
 use App\Exceptions\InvalidChangeStatusPoException;
@@ -16,8 +17,18 @@ use Illuminate\Support\Facades\DB;
 
 class PurchaseOrderDetailService
 {
+    private $purchaseOrderDetail, $supplier, $purchaseOrder, $pricelist;
+
+    public function __construct(PurchaseOrderDetail $purchaseOrderDetail, Supplier $supplier, PurchaseOrder $purchaseOrder, Pricelist $pricelist)
+    {
+        $this->purchaseOrderDetail = $purchaseOrderDetail;
+        $this->supplier = $supplier;
+        $this->purchaseOrder = $purchaseOrder;
+        $this->pricelist = $pricelist;
+    }
+
     public function handleEmptyModel(){
-        if(PurchaseOrderDetail::all()->count() === 0){
+        if($this->purchaseOrderDetail->all()->count() === 0){
             throw new CustomModelNotFoundException("purchase_order_detail"); 
         } 
 
@@ -31,7 +42,7 @@ class PurchaseOrderDetailService
 
     public function handleModelNotFound($id){
         try{
-            $user = PurchaseOrderDetail::findOrFail($id);
+            $purchaseOrderDetail = $this->purchaseOrderDetail->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {
@@ -40,14 +51,18 @@ class PurchaseOrderDetailService
     }
 
     public function hanldeCreateForm($purchaseOrderId){
-        $purchaseOrderService = new PurchaseOrderService;
+        $purchaseOrderService = new PurchaseOrderService($this->supplier, $this->purchaseOrder);
         $purchaseOrderService->handleInvalidParameter($purchaseOrderId);
         $purchaseOrderService->handleModelNotFound($purchaseOrderId);
+
+        $data['purchase_order_id'] = $purchaseOrderId;
+        $this->isCanCreateUpdateDelete($data, 'create');
+
         return $this->getGoodsWithPricelist($purchaseOrderId);
     }
 
     public function getGoodsWithPricelist($purchaseOrderId){
-        $supplier = PurchaseOrder::find($purchaseOrderId)->supplier;
+        $supplier = $this->purchaseOrder->find($purchaseOrderId)->supplier;
         if(!is_null($supplier)){
             $data = $supplier->goodsWithPricelists();
             return ["goods"=>$data];
@@ -60,9 +75,15 @@ class PurchaseOrderDetailService
     public function hanldeEditForm($id){
         $this->handleInvalidParameter($id);
         $this->handleModelNotFound($id);
-        $data = collect(PurchaseOrderDetail::find($id));
-        $data = $data->union($this->getGoodsWithPricelist($data['id']));
-        return $data;
+        
+        $data = $this->purchaseOrderDetail->with(['pricelist:id,price','goods:id,name','purchaseOrder:id,no_po'])->where('id', $id)->first();
+        $data = collect($data)->only(['id','purchase_order','pricelist','goods','qty','subtotal','tax','discount_percent','discount_rupiah']);
+
+        
+        $item['purchase_order_id'] = $data['purchase_order']['id'];
+        $this->isCanCreateUpdateDelete($item, 'edit');
+
+        return ["purchase_order_detail"=>$data, "master_data"=> $this->getGoodsWithPricelist($data['purchase_order']['id'])];
     }
 
     public function hanldeStore($data){
@@ -71,8 +92,8 @@ class PurchaseOrderDetailService
 
         DB::beginTransaction();
         try {
-            PurchaseOrderDetail::create($data);
-            $purchaseOrder = PurchaseOrder::find($data['purchase_order_id']);
+            $this->purchaseOrderDetail->create($data);
+            $purchaseOrder = $this->purchaseOrder->find($data['purchase_order_id']);
             $purchaseOrder->setTotal();
         
             DB::commit();
@@ -86,7 +107,7 @@ class PurchaseOrderDetailService
         $this->handleInvalidParameter($id);
         $this->handleModelNotFound($id);
 
-        $purchaseOrderDetail = PurchaseOrderDetail::find($id);
+        $purchaseOrderDetail = $this->purchaseOrderDetail->find($id);
         $purchaseOrder = $purchaseOrderDetail->purchaseOrder;
         $data['purchase_order_id'] = $purchaseOrder['id'];
 
@@ -110,7 +131,7 @@ class PurchaseOrderDetailService
         $this->handleInvalidParameter($id);
         $this->handleModelNotFound($id);
 
-        $purchaseOrderDetail = PurchaseOrderDetail::find($id);
+        $purchaseOrderDetail = $this->purchaseOrderDetail->find($id);
         $purchaseOrder = $purchaseOrderDetail->purchaseOrder;
         $this->isCanCreateUpdateDelete($purchaseOrderDetail, 'delete');
 
@@ -150,25 +171,25 @@ class PurchaseOrderDetailService
     }
 
     public function isCanCreateUpdateDelete($data, $condition){
-        if(!PurchaseOrder::find($data['purchase_order_id'])->isCanEdit()){
+        if(!$this->purchaseOrder->find($data['purchase_order_id'])->isCanEdit()){
             throw new InvalidChangeStatusPoException("$condition not new");
         }
     }
 
     public function isGoodsExist($data){
-        if(!PurchaseOrder::find($data['purchase_order_id'])->isGoodsExist($data['goods_id'])){
+        if(!$this->purchaseOrder->find($data['purchase_order_id'])->isGoodsExist($data['goods_id'])){
             throw new CustomModelNotFoundException("goods"); 
         }
     }
 
     public function isPricelistExist($data){
-        if(!PurchaseOrder::find($data['purchase_order_id'])->isPricelistExist($data['pricelist_id'], $data['goods_id'])){
+        if(!$this->purchaseOrder->find($data['purchase_order_id'])->isPricelistExist($data['pricelist_id'], $data['goods_id'])){
             throw new CustomModelNotFoundException("pricelist"); 
         }
     }
 
     public function handleDiscount($data){
-        $subtotal = Pricelist::find($data['pricelist_id'])['price'] * ($data['qty']);
+        $subtotal = $this->pricelist->find($data['pricelist_id'])['price'] * ($data['qty']);
         if($data['discount_choose']==1){
             $data['discount_rupiah'] = $subtotal *  $data['discount_percent']/100;
         }

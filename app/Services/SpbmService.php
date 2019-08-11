@@ -17,6 +17,18 @@ class SpbmService
         $this->purchaseOrder = $purchaseOrder;
     }
 
+    public function isValidOpenSpbm($id){
+        if(!($this->purchaseOrder->find($id)->status == 3 || $this->purchaseOrder->find($id)->status == 4)){
+            throw new InvalidParameterException(json_encode(["spbm"=>["can't open because po status is not approve/completed"]]));
+        }
+    }
+
+    public function isValidStoreSpbm($id){
+        if(!($this->purchaseOrder->find($id)->status == 3)){
+            throw new InvalidParameterException(json_encode(["spbm"=>["can't store because po status is not approve"]]));
+        }
+    }
+
     public function handleEmptyModel(){
         if($this->spbm->all()->count() === 0){
             throw new CustomModelNotFoundException("spbm"); 

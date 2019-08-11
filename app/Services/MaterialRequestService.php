@@ -23,8 +23,36 @@ class MaterialRequestService
         $this->user = auth('api')->user();
     }
 
+    public function handleIndex(){
+        if($this->user->division->id == 1){
+            return $this->financeDivisionIndex();
+        }
+        else{
+            return $this->otherDivisionIndex();
+        }
+    }
+
+    public function financeDivisionIndex(){
+        return collect($this->materialRequest->with(array('user'=>function($query){
+            $query->select('id','name');
+        },'division'=>function($query){
+            $query->select('id','name');
+        }))->get())->map(function($item){
+            return ['id'=>$item['id'], 
+                'code'=>$item['code'], 
+                'user_name'=>$item['user']['name'], 
+                'division_name'=>$item['division']['name'],
+                'status' => $item['status'] == 0 ? "not respon" : "respon"
+            ];
+        });
+    }
+
+    public function otherDivisionIndex(){
+        return $this->materialRequest->getMaterialRequestInActivePeriode();
+    }
+
     public function createForm(){
-        $goods = $this->goods->index();
+        $goods = $this->goods->select('id','name','avg_price','thumbnail')->get();
         $periode = $this->periode->getPeriodeActive();
 
         return ["goods"=>$goods,'periode' => $periode];

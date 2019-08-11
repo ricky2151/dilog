@@ -26,11 +26,28 @@ class PurchaseOrder extends Model
         return $this->hasMany('App\Models\PurchaseOrderDetail');
     }
 
+    public function periode(){
+        return $this->belongsTo('App\Models\Periode');
+    }
+
+    public function createdByUser(){
+        return $this->belongsTo('App\Models\User','created_by_user_id','id');
+    }
+
     public function getNameTypePo(){
         switch($this->type){
             case 1 : return "langsung";
             case 2 : return "MR";
             case 3 : return "Minstock";
+        }
+    }
+
+    public function getNameStatusPo(){
+        switch($this->status){
+            case 1 : return "New";
+            case 2 : return "Submit";
+            case 3 : return "Approve";
+            case 4 : return "Finish";
         }
     }
 
@@ -57,7 +74,13 @@ class PurchaseOrder extends Model
     public function getGoodsWithOrderQuantityAndHaveArrived(){
         return $this->purchaseOrderDetails->groupBy('goods_id')->map(function($item, $key){
             $goods =  Goods::find($key);
-            return ["goods_id"=>$key,"goods_name" => $goods['name'], 'order_quantity' => $item->sum('qty'), 'have_arrived'=>$goods->getHaveArrived($this->id),];
+            return [
+                "goods_id"=>$key,
+                "goods_name" => $goods['name'], 
+                'order_quantity' => $item->sum('qty'), 
+                'have_arrived'=>$goods->getHaveArrived($this->id),
+                // 'warehouses'=> $goods->warehouseWithRack()
+            ];
         })->values();
     }
 
@@ -76,11 +99,19 @@ class PurchaseOrder extends Model
     }
 
     public function getPoPersenComplete(){
-        return round($this->getTotalGoodsHaveArrived() /$this->getTotalGoodsOrderQuantity() * 100);
+        if($this->getTotalGoodsOrderQuantity() == 0){
+
+        }
+        else{
+            return round($this->getTotalGoodsHaveArrived() /$this->getTotalGoodsOrderQuantity() * 100);
+        }
     }
 
     public function setPersenComplete(){
         $this->update(['is_completed'=>$this->getPoPersenComplete()]);
+        if($this->getPoPersenComplete() >= 100){
+            $this->setComplete();
+        }
     }
 
     public function getGoodOrderQuantity(){
@@ -107,6 +138,11 @@ class PurchaseOrder extends Model
 
     public function payments(){
         return $this->hasMany('App\Models\Payment');
+    }
+
+    public function setComplete(){
+        $this->status = 4;
+        $this->save();
     }
 
 
@@ -153,8 +189,58 @@ class PurchaseOrder extends Model
     public function getTotal(){
         return $purchaseOrderDetails = $this->purchaseOrderDetails->sum(function ($item) {
             $newSubTotal = ($item['subtotal']-$item['discount_rupiah']);
-            return $newSubTotal - $newSubTotal*($item['tax']/100);
+            return $newSubTotal;
         });
+    }
+
+    public function getTax(){
+        return $purchaseOrderDetails = $this->purchaseOrderDetails->sum(function ($item) {
+            $newSubTotal = ($item['subtotal']-$item['discount_rupiah']);
+            return $newSubTotal*($item['tax']/100);
+        });
+    }
+
+    public function getTotalPayment(){
+        return $purchaseOrderDetails = $this->payments->sum(function ($item) {
+            return $item['paid_off'];
+        });
+    }
+
+    public function getTotalPaymentPercent(){
+        if($this->getTotalBeforeDiskon() == 0){
+            return 0;
+        }
+    }
+
+    public function getDiskonPersen(){
+        if($this->getTotalBeforeDiskon() == 0){
+            return 0;
+        }
+        return (($this->getTotalBeforeDiskon()-$this->getTotal())/$this->getTotalBeforeDiskon()*100);
+    }
+
+    public function getTotalBeforeDiskon(){
+        return $purchaseOrderDetails = $this->purchaseOrderDetails->sum(function ($item) {
+            return $item['subtotal'];
+        });
+    }
+
+    public function getMasterData(){
+        return ["suppliers" => Supplier::latest()->get(), 'periode_active'=>Periode::getPeriodeActive()];
+    }
+
+    public function getDataAndRelation($id){
+        $data = $this->with('supplier:id,name_company','periode:id,name')->where('id',$id)->first();
+        return $data->only(
+            'id',
+            'supplier',
+            'periode',
+            'payment_type',
+            'payment_terms',
+            'no_po'
+        );
+        return $data;
+
     }
 
     

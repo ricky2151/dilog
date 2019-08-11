@@ -49,6 +49,7 @@ class PaymentController extends Controller
     public function store(StorePayment $request)
     {
         $validated = $request->validated();
+        $this->paymentService->handleStore($validated['purchase_order_id']);
         $validated['payment_date'] = now();
         $this->payment->create($validated);
 
@@ -77,6 +78,8 @@ class PaymentController extends Controller
     {
         $this->paymentService->handleInvalidParameter($id);
         $this->paymentService->handleModelNotFound($id);
+        $this->paymentService->handleUpdate($id);
+
         $payment = $this->payment->find($id)->getMasterData();
 
         return formatResponse(false,(["payment"=>$payment]));

@@ -36,7 +36,9 @@ class MaterialRequestController extends Controller
      */
     public function index()
     {
-        return formatResponse(false,(["material_request"=>$this->materialRequest->getMaterialRequestInActivePeriode()]));
+        $data = $this->materialRequestService->handleIndex();
+        return $data;
+        // return formatResponse(false,(["material_request"=>$this->materialRequest->getMaterialRequestInActivePeriode(), 'user'=>['name'=>$this->user->name, 'division'=> $this->user->division->name]]));
     }
 
     /**

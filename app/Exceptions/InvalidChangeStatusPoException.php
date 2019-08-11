@@ -13,7 +13,10 @@ class InvalidChangeStatusPoException extends Exception
         return response()->json([
             "error" => true,
             "message" => [
-                "Can't $action PO because status is $condition"]
+                "purchase order"=>[
+                    "Can't $action PO because status is $condition"
+                ]
+            ]
         ]);
     }
 }

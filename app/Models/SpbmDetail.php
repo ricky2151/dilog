@@ -11,7 +11,7 @@ class SpbmDetail extends Model
     ];
 
     public function spbm(){
-        return $this->belongsTo('App\Models\PurchaseOrder');
+        return $this->belongsTo('App\Models\Spbm');
     }
 
     public function goods(){

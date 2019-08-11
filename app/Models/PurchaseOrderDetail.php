@@ -17,6 +17,14 @@ class PurchaseOrderDetail extends Model
         return $this->belongsTo('App\Models\PurchaseOrder');
     }
 
+    public function pricelist(){
+        return $this->belongsTo('App\Models\Pricelist');
+    }
+
+    public function goods(){
+        return $this->belongsTo('App\Models\Goods');
+    }
+
     public function setEdited(){
         $this->is_edited = true;
         $this->save();

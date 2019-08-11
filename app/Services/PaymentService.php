@@ -5,14 +5,16 @@ use App\Exceptions\InvalidParameterException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Exceptions\ModelNotFoundException as CustomModelNotFoundException;
 use App\Models\Payment;
+use App\Models\PurchaseOrder;
 
 class PaymentService
 {
-    private $payment;
+    private $payment, $purchaseOrder;
 
-    public function __construct(Payment $payment)
+    public function __construct(Payment $payment, PurchaseOrder $purchaseOrder)
     {
         $this->payment = $payment;
+        $this->purchaseOrder = $purchaseOrder;
     }
 
     public function handleEmptyModel(){
@@ -35,6 +37,13 @@ class PaymentService
         }
         else{
             $payment->approve();
+        }
+    }
+    
+    public function handleStore($purchaseOrderId){
+        $purchaseOrder = $this->purchaseOrder->find($purchaseOrderId);
+        if(!($purchaseOrder->status == 3 || $purchaseOrder->status == 4)){
+            throw new InvalidParameterException(json_encode(["payment"=>["payment cannot be stored because the status PO not approve/complete"]]));
         }
     }
 

@@ -16,6 +16,7 @@ class PurchaseOrdersTableSeeder extends Seeder
         PurchaseOrder::create([
             'supplier_id' => 1,
             'no_po' => "PO-1",
+            'created_by_user_id' => 1,
             'finish_date' => date("Y-m-d", mt_rand(1, time())),
             'paid_date' => date("Y-m-d", mt_rand(1, time())),
             'fine' => 1000,
@@ -33,6 +34,7 @@ class PurchaseOrdersTableSeeder extends Seeder
         PurchaseOrder::create([
             'supplier_id' => 2,
             'no_po' => "PO-2",
+            'created_by_user_id' => 2,
             'finish_date' => date("Y-m-d", mt_rand(1, time())),
             'paid_date' => date("Y-m-d", mt_rand(1, time())),
             'fine' => 2000,
@@ -50,6 +52,7 @@ class PurchaseOrdersTableSeeder extends Seeder
         PurchaseOrder::create([
             'supplier_id' => 3,
             'no_po' => "PO-3",
+            'created_by_user_id' => 3,
             'finish_date' => date("Y-m-d", mt_rand(1, time())),
             'paid_date' => date("Y-m-d", mt_rand(1, time())),
             'fine' => 3000,
@@ -67,6 +70,7 @@ class PurchaseOrdersTableSeeder extends Seeder
         PurchaseOrder::create([
             'supplier_id' => 4,
             'no_po' => "PO-4",
+            'created_by_user_id' => 4,
             'finish_date' => date("Y-m-d", mt_rand(1, time())),
             'paid_date' => date("Y-m-d", mt_rand(1, time())),
             'fine' => 4000,

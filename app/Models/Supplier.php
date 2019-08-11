@@ -59,7 +59,10 @@ class Supplier extends Model
 
     public function goodsWithPricelists(){
         $data = $this->pricelists->groupBy('goods_id')->map(function ($item, $key) {
-            return Arr::add(Goods::find($key),'pricelist',$item);
+            $data = collect(Goods::find($key,['id','uuid','name']));
+            $data = Arr::add($data,'pricelists',$item);
+            return $data;
+
         })->sortKeys();
 
         return $data->values();

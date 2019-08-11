@@ -14,10 +14,34 @@ use App\Models\Periode;
 
 class PurchaseOrderService
 {
+    private $supplier, $purchaseOrder, $user;
+
+    public function __construct(Supplier $supplier, PurchaseOrder $purchaseOrder)
+    {
+        $this->supplier = $supplier;
+        $this->purchaseOrder = $purchaseOrder;
+        $this->user = auth('api')->user();
+    }
+
     public function handleEmptyModel(){
-        if(PurchaseOrder::all()->count() === 0){
+        if($this->purchaseOrder->all()->count() === 0){
             throw new CustomModelNotFoundException("purchase_order"); 
         } 
+    }
+
+    public function isValidOpenPayment($id){
+        if(!($this->purchaseOrder->find($id)->status == 3 || $this->purchaseOrder->find($id)->status == 4)){
+            throw new InvalidParameterException(json_encode(["purchase_order"=>["can't open payment because status is not approve/complete"]]));
+        } 
+    }
+
+    public function handleUpdate($id, $data){
+        $purchaseOrder = $this->purchaseOrder->find($id);
+        if(!is_null($purchaseOrder->purchaseOrderDetails)){
+            if($data['supplier_id'] != $purchaseOrder['supplier_id']){
+                throw new InvalidParameterException(json_encode(["purchase_order"=>["can't update supplier because PO detail have been created"]]));
+            }
+        }
     }
 
     public function handleInvalidParameter($id){
@@ -27,31 +51,38 @@ class PurchaseOrderService
     }
 
     public function hanldeCreateForm(){
-        if(Supplier::all()->count() === 0){
+        if($this->supplier->all()->count() === 0){
             throw new CustomModelNotFoundException("supplier"); 
         } 
         else{
-            return ["suppliers" => Supplier::latest()->get(), 'periode'=>Periode::getPeriodeActive(), 'no_po'=> PurchaseOrder::getNewCode()];
+            return $this->purchaseOrder->getMasterData();
         }
     }
 
-    public function handleShow($id){
+    public function handleShowDetail($id){
         $this->handleInvalidParameter($id);
         $this->handleModelNotFound($id);
-        $purchaseOrder = PurchaseOrder::find($id);
-        $purchaseOrde = Arr::add($purchaseOrder, 'purchase_order_details', $purchaseOrder->purchaseOrderDetails);
-        return $purchaseOrder;
+
+        $purchaseOrder = $this->purchaseOrder->find($id,['id','no_po','type','total','created_by_user_id']);
+        $purchaseOrder = Arr::add($purchaseOrder, 'created_by_user_name', $purchaseOrder->createdByUser->name);
+        $purchaseOrder = Arr::add($purchaseOrder, 'type_name', $purchaseOrder->getNameTypePo());
+        $purchaseOrder = Arr::add($purchaseOrder, 'purchase_order_details', $purchaseOrder->purchaseOrderDetails);
+
+        return collect($purchaseOrder)->except(['created_by_user']);
 
     }
 
     public function handleApprove($id){
-        $purchaseOrder = PurchaseOrder::find($id);
+        $purchaseOrder = $this->purchaseOrder->find($id);
         $this->checkStatusPo($purchaseOrder,2);
         $purchaseOrder->approve();
     }
 
     public function handleSubmit($id){
-        $purchaseOrder = PurchaseOrder::find($id);
+        $purchaseOrder = $this->purchaseOrder->find($id);
+        if(is_null($purchaseOrder->purchaseOrderDetails)){
+            throw new InvalidParameterException(json_encode(["purchase_order"=>["can't submit because PO detail is null"]]));
+        }
         $this->checkStatusPo($purchaseOrder,1);
         $purchaseOrder->submit();
     }
@@ -69,12 +100,9 @@ class PurchaseOrderService
 
     public function handleStore($data){
         $data = Arr::Add($data, 'periode_id',Periode::getPeriodeActive()['id']);
-        $data = Arr::Add($data, 'no_po',PurchaseOrder::getNewCode());
         $data = $this->handlePaymentType($data);
         $data = $this->handleType($data);
-
-        // return $data;
-        PurchaseOrder::create($data);
+        $this->user->purchaseOrdersCreated()->create($data);
     }
 
     public function handleType($data){
@@ -101,7 +129,7 @@ class PurchaseOrderService
 
     public function handleModelNotFound($id){
         try{
-            $user = PurchaseOrder::findOrFail($id);
+            $purchaseOrder = $this->purchaseOrder->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {
