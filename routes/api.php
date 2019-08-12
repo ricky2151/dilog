@@ -98,7 +98,7 @@ Route::group([
     Route::patch('/purchaseOrders/{id}/approve','PurchaseOrderController@approve');
     Route::patch('/purchaseOrders/{id}/submit','PurchaseOrderController@submit');
     Route::get('/purchaseOrders/{id}/payments','PurchaseOrderController@getPayments');
-    Route::get('/purchaseOrders/{id}/purchaseOrderDetail','PurchaseOrderController@purchaseOrderDetail');
+    Route::get('/purchaseOrders/{id}/purchaseOrderDetails','PurchaseOrderController@purchaseOrderDetail');
 
     //PurchaseOrderDetail
     // Route::get('/purchaseOrders/{purchaseOrderId}/purchaseOrderDetails/create','PurchaseOrderDetailController@create');
