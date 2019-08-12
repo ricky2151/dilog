@@ -112,21 +112,7 @@
         	{
         		
         		var temp_r = r.data.items[this.prop_plural_name];
-        		if(this.prop_filter)
-        		{
-        			Object.keys(this.prop_filter).map(function(key, index) {
-        				var temp_column_filter = key;
-						var temp_value_filter = this.prop_filter[key];
-	        			for(var i = 0;i<temp_r.length;i++)
-			            {
-			                if(temp_r[i][temp_column_filter] == temp_value_filter)
-			                {
-			                    this.data_table.push(temp_r[i]);
-			                }
-			            }
-					});
-        			
-        		}
+        		
         		// else if(this.prop_filter_by_user_value && this.prop_get_unique_value)
         		// {
         		// 	console.log('harusnya masuk sini');
@@ -139,10 +125,9 @@
 		        //         }
 		        //     }
         		// }
-        		else
-        		{
-		            this.data_table = temp_r;
-        		}
+        		
+		        this.data_table = temp_r;
+        		
 	        },
 
 			calculate_custom_value(data, value)

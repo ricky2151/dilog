@@ -32,6 +32,10 @@
 
 <script>
     export default {
+        mounted()
+        {
+           
+        },
     	data()
     	{
     		return {

@@ -15,7 +15,7 @@
 
 					<v-stepper v-model='stepNow' vertical>
 							<!-- FORM SINGLE -->
-							{{input}}
+							
 						<v-stepper-step :complete='stepNow > 1' step="1" :editable='id_edit == -1 ? prop_editableAdd : prop_editableEdit'>
 							<h3>{{prop_title}} Data</h3>
 						</v-stepper-step>
@@ -41,16 +41,23 @@
 									:xs11='objColumn.width == 11'
 									:xs12='objColumn.width == 12'
 									>
-										<v-text-field
-										v-if='objColumn.type=="tf"'
-										:rules='$list_validation[objColumn.validation]'
-										:label='objColumn.label'
-										v-model='input[column]'
-										:disabled='objColumn.disabled'
+									<template v-if='objColumn.type=="tf"'><!--  -->
 
-										class="pa-2"
-										>
-										</v-text-field>
+										<template v-if='(!objColumn.vif) || (input[conditional_input[column][0]] && input[conditional_input[column][0]][conditional_input[column][1]] == 1)'>
+											
+											<v-text-field
+											:rules='$list_validation[objColumn.validation]'
+											:label='objColumn.label'
+											v-model='input[column]'
+											:disabled='objColumn.disabled'
+
+											class="pa-2"
+											>
+											</v-text-field>
+											
+										</template>
+									</template>
+									
 
 										<template v-if='objColumn.type=="tf_gm"'>
 											<template v-if='objColumn.gm=="lat"'>
@@ -385,6 +392,7 @@
 				temp_input : {},
 				ref_input : [],
 				preview : [],
+				conditional_input:[],
 				finish_loading:false,
 				url_edit : null,
 				url_store : null,
@@ -435,6 +443,7 @@
 		        
 		        this.input = this.prop_input;
 		        this.preview = this.prop_preview;
+		        this.conditional_input = this.prop_dataInfo.conditional_input;
 		        this.set_watcher_custom_value();
 		        this.temp_input = this.prop_tempInput;
 		        this.set_custom_single();
@@ -760,8 +769,7 @@
 
 	        fill_select_master_data(r)
 	        {
-	        	console.log('masuk ke fill_select_master_data');
-	        	console.log(r);
+	        	
 	        	var self = this;
 	        	var temp_r;
 
@@ -784,6 +792,9 @@
 					
 				    self.ref_input[key] = obj;
 				});
+
+				console.log('isi dari ref_input');
+				console.log(self.ref_input);
 
 	        },
 
@@ -1147,11 +1158,24 @@
 				
 				for(var i = 1;i<value.length;i+=2)
 				{
+					if(dataType == 'int')
+					{
+						var isnum = /^\d+$/.test(data[value[i + 1]]);
+						var second_number;
+						if(isnum)
+						{
+							second_number = data[value[i + 1]];
+						}
+						else
+						{
+							second_number = parseInt(value[i + 1]);
+						}
+					}
 					if(value[i] == '+')
 					{
 						if(dataType == 'int')
 						{
-							result += parseInt(data[value[i + 1]]);
+							result += second_number;
 						}
 						else
 						{
@@ -1162,7 +1186,7 @@
 					{
 						if(dataType == 'int')
 						{
-							result -= parseInt(data[value[i + 1]]);
+							result -= second_number;
 						}
 						else
 						{
@@ -1173,7 +1197,7 @@
 					{
 						if(dataType == 'int')
 						{
-							result *= parseInt(data[value[i + 1]]);
+							result *= second_number;
 						}
 						else
 						{
@@ -1184,7 +1208,7 @@
 					{
 						if(dataType == 'int')
 						{
-							result /= parseInt(data[value[i + 1]]);
+							result /= second_number;
 						}
 						else
 						{
@@ -1246,23 +1270,22 @@
 					//cek single (sementara ini tidak ada custom value yang melekat di single)
 					// if(this.prop_dataInfo.form_single)
 					// {
-					// 	for(var i = 0;i<this.prop_dataInfo.form_.length;i++)
+					// 	for(var i = 0;i<this.prop_dataInfo.form_single.length;i++)
 					// 	{
-					// 		var temp = this.prop_dataInfo.form_multiple[i];
-					// 		if(!this.prop_dataInfo.multiple[temp].single) continue;
-					// 		Object.keys(this.prop_dataInfo.multiple[temp].single).map(function(key, index) {
-					// 			var obj = self.prop_dataInfo.multiple[temp].single[key];
-					// 		    if(obj.value) //jika valuenya custom
+					// 		var temp = this.prop_dataInfo.form_single[i];
+					// 		if(!this.prop_dataInfo.single[temp]) continue;
+					// 		var obj = this.prop_dataInfo.single[temp];
+					// 		if(obj.value)
+					// 		{
+					// 			var formula = obj.value;
+					// 			for(var j = 0;j<formula.length;j+=2)
 					// 			{
-					// 				var formula = obj.value;
-					// 				for(var i = 0;i<formula.length;i+=2)
-					// 				{
-					// 					self.$watch('input.' + formula[i], function(newValue, oldValue) {
-					// 			            self.input[key] = self.calculate_custom_value(self.input,formula, 'int');
-					// 			        });
-					// 				}
+					// 				self.$watch('input.' + formula[j], function(newValue, oldValue) {
+					// 		            self.input[temp] = self.calculate_custom_value(self.input,formula, 'int');
+					// 		        });
 					// 			}
-					// 		});
+					// 		}
+							
 
 					// 	}
 						
@@ -1281,10 +1304,10 @@
 							    if(obj.value) //jika valuenya custom
 								{
 									var formula = obj.value;
-									for(var i = 0;i<formula.length;i+=2)
+									for(var j = 0;j<formula.length;j+=2)
 									{
 										var temp2 = JSON.parse(JSON.stringify(temp));
-										self.$watch('input.' + formula[i], function(newValue, oldValue) {
+										self.$watch('input.' + formula[j], function(newValue, oldValue) {
 											
 								            self.temp_input[temp2][key] = self.calculate_custom_value(self.input,formula, 'int');
 								        });
