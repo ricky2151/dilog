@@ -3,3 +3,12 @@
 
 2. api index PO Direct, response mu harusnya "discount_percent" bukan "diskon_percent"
 
+3. api Detail PO (api/purchaseOrders/5/purchaseOrderDetail), harusnya formatnya : 
+items : 
+{
+	purchase_order_detail : 
+	{
+	}
+}
+
+
