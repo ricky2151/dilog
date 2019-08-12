@@ -1,0 +1,5 @@
+1. api index PO Direct, created_at mu dikasi format kayak gini : 
+"created_at" => $item['created_at']->format('Y-m-d'),
+
+2. api index PO Direct, response mu harusnya "discount_percent" bukan "diskon_percent"
+
