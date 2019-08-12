@@ -56,7 +56,6 @@
 
        v-on:button_index_clicked='button_index_clicked'
        v-on:search_change='search_data=$event'
-       
        >
        </cp-header>
 
@@ -74,7 +73,7 @@
         :prop_infoDatatable='info_table.data.datatable'
         :prop_action_items='info_table.actions'
         :prop_plural_name='info_table.plural_name'
-        :prop_url_index='prop_list_filter? generate_url("racks", "detail",get_property_from_list_filter(prop_list_filter).idparent, get_property_from_list_filter(prop_list_filter).table) :  generate_url(info_table.table_name, "index")'
+        :prop_url_index='prop_list_filter? generate_url("purchase_orders", "detail",get_property_from_list_filter(prop_list_filter).idparent, get_property_from_list_filter(prop_list_filter).table) :  generate_url(info_table.table_name, "index")'
         :prop_filter='prop_list_filter'
 
         v-on:action_clicked='action_change'
@@ -94,29 +93,46 @@ export default {
     data () {
         return {
             info_table:{},
-            name_table:'goods_rack',
+            name_table:'purchase_order_details',
             search_data: null,
         }
     },
     methods: {
         button_index_clicked(index)
         {
-            if(index == 0)
+            if(this.prop_additional_data.status != "New")
             {
-                this.opendialog_createedit(-1);
+
+            }
+            else
+            {
+                if(index == 0)
+                {
+                    this.opendialog_createedit(-1);
+                }
+
             }
         },
         action_change(id,idx_action)
         {
-            if(idx_action == 0)
+            if(this.prop_additional_data.status != "New")
             {
-                this.opendialog_createedit(id);
+                
             }
-            else if(idx_action == 1)
+            else
             {
-                this.delete_data(id);
+                if(idx_action == 0)
+                {
+                    this.opendialog_createedit(id);
+                }
+                else if(idx_action == 1)
+                {
+                    this.delete_data(id);
+                }
+                
             }
         },
+
         // showTable(r,id_goods_for_table)
         // {
         //     //process r agar dari id menjadi nama
@@ -143,9 +159,15 @@ export default {
     computed: {
     },
     mounted(){      
-        console.log('cek prop_filter');
-        console.log(this.prop_list_filter);
-        this.info_table = this.database[this.name_table];
+        this.info_table = JSON.parse(JSON.stringify(this.database[this.name_table])); //harusnya semau begini
+        //conditional khusus component ini
+        //jika status != new, maka tidak bisa submit/add/edit/delete
+        if(this.prop_additional_data.status != "New")
+        {
+            this.info_table.actions = ['Revision'];
+            this.info_table.button_on_index = ["Incoming", "Print"];
+        }
+        
     },
     mixins:[
         mxCrudBasic

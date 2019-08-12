@@ -19,7 +19,20 @@ export default {
         }
     },
 	methods:{
-        
+        get_property_from_list_filter(obj)
+        {
+            var result = [];
+            var temp_table = "";
+            var temp_idparent = "";
+            Object.keys(obj).map(function(key,index)
+            {
+                temp_table = key;
+                temp_idparent = obj[key];
+            })
+            result["table"] = temp_table;
+            result["idparent"] = temp_idparent;
+            return result;
+        },
         fill_filter_by_user_ref(arr)
         {
             this.filter_by_user_ref = arr;
@@ -176,6 +189,7 @@ export default {
     },
     mounted()
     {
+        
         this.$refs['cpForm'].get_master_data();
     },
 	mixins:[

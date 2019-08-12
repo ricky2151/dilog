@@ -1129,12 +1129,12 @@ export default
 				//11. crud-goods_rack
 				"goods_rack" : 
 				{
-					table_name : 'goods_rack',
+					table_name : 'goods_racks',
 					title : 'Goods Rack',
 					icon : 'assignment_returned',
 
 					singular_name : 'goods_rack',
-					plural_name : 'goods_rack',
+					plural_name : 'goods_racks',
 					column_desc : 'stock', //untuk fk
 
 					widthForm : '750',
@@ -1305,19 +1305,25 @@ export default
 					request_master_data : true,
 					data : 
 					{
-						custom_master_data : {},
+						custom_master_data : {
+							'payment_type':[
+			                    {value:1,name:'Tempo'},
+			                    {value:2,name:'Tunai'},
+			                ],
+						},
+						rule_update:'some',
 						datatable:[
 							{
 								column : 'no_po',
 							},
 							{
-								column : 'percent_arrival',
+								column : 'arrival_percent',
 							},
 							{
 								column : 'total',
 							},
 							{
-								column : 'percent_payment',
+								column : 'payment_percent',
 							},
 							{
 								column : 'created_at',
@@ -1332,7 +1338,7 @@ export default
 								column : 'tax',
 							},
 							{
-								column : 'discount',
+								column : 'discount_percent',
 							},
 							{
 								column : '',
@@ -1347,17 +1353,32 @@ export default
 						headers: [
 								{ text: 'No', value:'no'},
                 				{ text: 'NO PO', value:'no_po'},
-                				{ text: '% Arrival', value:'percent_arrival'},
+                				{ text: '% Arrival', value:'is_completed'},
                 				{ text: 'Total', value:'total'},
                 				{ text: '% Payment', value:'percent_payment'},
                 				{ text: 'Created At', value:'created_at'},
                 				{ text: 'Supplier', value:'supplier_name'},
                 				{ text: 'Status', value:'status'},
                 				{ text: 'Tax', value:'tax'},
-                				{ text: 'Discount', value:'discount'},
+                				{ text: '% Discount', value:'discount'},
                 				{ text: 'DPP', value:'dpp'},
                 				{ text: 'Action', value:'action',sortable:false, width:'15%'},
 						],
+
+						child_data : 
+						{
+							'purchase_order_details' : 
+							{
+								format_additional_data : 
+								{
+									'NO_PO' : 'no_po',
+									'Type' : 'type',
+									'Total' : 'total',
+									'Created_By' : 'created_by',
+									'Status' : 'status'
+								}
+							}
+						},
 
 						form_single : [['supplier'],['periode'],['payment_type'],['payment_terms'],['no_po']],
 						single : 
@@ -1379,10 +1400,11 @@ export default
 								itemText:'name', itemValue:'value', column:'payment_type',table_ref:'payment_type'
 							},
 							'payment_terms' : {
-								label : 'Payment Terms', width:9, type:'tf', validation:'numeric_req',
+								label : 'Payment Terms', width:12, type:'tf', validation:'numeric_req',
+								vif:true,
 							},
 							'no_po' : {
-								label : 'No PO', width:9, type:'tf', validation:'max_req',
+								label : 'No PO', width:12, type:'tf', validation:'max_req',
 							},
 
 						},
@@ -1391,6 +1413,111 @@ export default
 						multiple:{},
 						form_custom_component:[],
 						custom_component:{},
+						conditional_input:{
+							"payment_terms" : ['payment_type','value','1'],
+						}
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+				//14. crud-purchase_order_details
+				"purchase_order_details" : 
+				{
+					table_name : 'purchase_order_details',
+					title : 'Purchase Order Detail',
+					icon : 'add_shopping_cart',
+
+					singular_name : 'purchase_order_detail',
+					plural_name : 'purchase_order_details',
+					column_desc : 'qty', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Revision', 'Delete'],
+					button_on_index : ['Add Data', 'Submit', 'Incoming', 'Print'],
+
+					request_master_data : true,
+					data : 
+					{
+						custom_master_data : {
+							
+						},
+						rule_update:'some',
+						datatable:[
+							{
+								column : 'goods_name',
+							},
+							{
+								column : 'qty',
+							},
+							{
+								column : 'discount_percent',
+							},
+							{
+								column : 'discount_rupiah',
+							},
+							{
+								column : 'subtotal',
+							},
+						],
+						filter_by_user : {
+							
+						},
+
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Goods', value:'goods_name'},
+                				{ text: 'Quantity', value:'qty'},
+                				{ text: 'Discount Percent', value:'discount_percent'},
+                				{ text: 'Discount Rupiah', value:'discount_rupiah'},
+                				{ text: 'Subtotal', value:'subtotal'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+
+						form_single : [['goods'],['pricelist'],['qty'],['tax'],['discount_percent'],['discount_rupiah']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'goods' : {
+								label : 'Goods', width:12, type:'s', validation:'selectdata_req',
+								itemText:'goods_name', itemValue:'id', column:'goods_id', table_ref:'goods'
+								
+							},
+							'pricelist' : {
+								label : 'Pricelists', width:12, type:'s', validation:'selectdata_req',
+								itemText:'price', itemValue:'id', column:'pricelist_id', table_ref:'pricelists'
+							},
+							'qty' : {
+								label : 'Quantity', width:12, type:'tf', validation:'numeric_req',
+							},
+							'tax' : {
+								label : 'Tax', width:12, type:'tf', validation:'numeric_req',
+							},
+							'discount_percent' : {
+								label : 'Discount Percent', width:12, type:'tf', validation:'numeric_req',
+							},
+							'discount_rupiah' : {
+								label : 'Discount Rupiah', width:12, type:'tf', validation:'numeric_req',
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+						conditional_input:{
+							"payment_terms" : ['payment_type','value','1'],
+						}
 					},
 					get_data_detail : 
 					{
@@ -1403,7 +1530,7 @@ export default
 	methods:{
 		generate_url(table,type,id,tableDetail)
 		{
-
+			
 			var result = '';
 			if(type == 'index' || type == 'store')
 			{

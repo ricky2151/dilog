@@ -108,12 +108,12 @@
 
         </template>
 
-        <template v-if="open_state=='cpGoodsRack'">
-            <cp-goods-rack  
-            :prop_list_filter='list_state["Rack"]'
-            :prop_format_additional_data='info_table.data.child_data.goods_rack.format_additional_data'
+        <template v-if="open_state=='cpPurchaseOrderDetails'">
+            <cp-purchase-order-details
+            :prop_list_filter='list_state["cpPurchaseOrderDetails"]'
+            :prop_format_additional_data='info_table.data.child_data.purchase_order_details.format_additional_data'
             :prop_additional_data='selected_data ? selected_data : ""'
-            ></cp-goods-rack>
+            ></cp-purchase-order-details>
         </template>
 
         <!-- ================================ -->
@@ -123,11 +123,11 @@
 
 <script>
 import mxCrudBasic from '../mixin/mxCrudBasic';
-import cpGoodsRack from './../components/child_crud/cpGoodsRack.vue'
+import cpPurchaseOrderDetails from './../components/child_crud/cpPurchaseOrderDetails.vue'
 
 export default {
     components : {
-        cpGoodsRack
+        cpPurchaseOrderDetails
     },
     data () {
         return {
@@ -142,7 +142,7 @@ export default {
             list_state : 
             {
                 'PODirect' : {},
-                'cpGoodsRack' : {},
+                'cpPurchaseOrderDetails' : {},
             },
             
             breadcrumbs:[
@@ -155,10 +155,10 @@ export default {
                 },
                 //level 2
                 {
-                    text: 'Goods Rack',
+                    text: 'Detail PO',
                     disabled: true,
-                    cp: 'cpGoodsRack',
-                    before : 'Rack'
+                    cp: 'cpPurchaseOrderDetails',
+                    before : 'PODirect'
                 },
             ],
         }
@@ -175,16 +175,24 @@ export default {
         {
             if(idx_action == 0)
             {
-                this.opendialog_createedit(id);
+                 this.selected_data = data;
+                 this.open_component('cpPurchaseOrderDetails', 'purchase_order_detail', id);
             }
             else if(idx_action == 1)
             {
-                this.selected_data = data;
-                this.open_component('cpGoodsRack', 'rack_id', id);
+               //incoming
             }
             else if(idx_action == 2)
             {
-                this.delete_data(id);
+                //payment
+            }
+            else if(idx_action == 3)
+            {
+                //history
+            }
+            else if(idx_action == 4)
+            {
+                //retur
             }
         },
         

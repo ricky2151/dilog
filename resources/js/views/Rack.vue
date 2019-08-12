@@ -77,7 +77,6 @@
            v-on:button_index_clicked='button_index_clicked'
            v-on:search_change='search_data=$event'
            v-on:filter_by_user_change='fill_filter_by_user_value'
-           v-on:add_clicked='opendialog_createedit(-1)'
            >
            </cp-header>
 
@@ -110,7 +109,7 @@
 
         <template v-if="open_state=='cpGoodsRack'">
             <cp-goods-rack  
-            :prop_list_filter='list_state["Rack"]'
+            :prop_list_filter='list_state["cpGoodsRack"]'
             :prop_format_additional_data='info_table.data.child_data.goods_rack.format_additional_data'
             :prop_additional_data='selected_data ? selected_data : ""'
             ></cp-goods-rack>
@@ -180,7 +179,7 @@ export default {
             else if(idx_action == 1)
             {
                 this.selected_data = data;
-                this.open_component('cpGoodsRack', 'rack_id', id);
+                this.open_component('cpGoodsRack', 'goods_rack', id);
             }
             else if(idx_action == 2)
             {
