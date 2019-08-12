@@ -86,6 +86,8 @@ Route::group([
 
     //MaterialRequest
     Route::resource('materialRequests', 'MaterialRequestController');
+    Route::get('/materialRequests/{id}/materialRequestDetails','MaterialRequestController@materialRequestDetails');
+    Route::patch('/materialRequests/{id}/approve','MaterialRequestController@approve');
 
     //Customer
     Route::resource('customers', 'CustomerController');

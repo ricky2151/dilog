@@ -24,7 +24,7 @@ class MaterialRequestService
     }
 
     public function handleIndex(){
-        if($this->user->division->id == 1){
+        if($this->user->division_id == 1){
             return $this->financeDivisionIndex();
         }
         else{
@@ -33,7 +33,7 @@ class MaterialRequestService
     }
 
     public function financeDivisionIndex(){
-        return collect($this->materialRequest->with(array('user'=>function($query){
+        $data = collect($this->materialRequest->with(array('user'=>function($query){
             $query->select('id','name');
         },'division'=>function($query){
             $query->select('id','name');
@@ -42,12 +42,25 @@ class MaterialRequestService
                 'code'=>$item['code'], 
                 'user_name'=>$item['user']['name'], 
                 'division_name'=>$item['division']['name'],
-                'status' => $item['status'] == 0 ? "not respon" : "respon"
+                'status' => $item['status'] == 0 ? "new" : "approved",
+                'created_at' => $item['created_at']->format('Y-m-d'),
+                'periode_id' => $item['periode_id'],
             ];
-        });
+        })->sortByDesc('created_at')->values();
+
+        return formatResponse(false,(["material_request"=>$data,"periode_active"=>$this->periode->getPeriodeActive(),'periodes'=>$this->periode->latest()->get()]));
     }
 
     public function otherDivisionIndex(){
+        // return $this->user->makeVisible('id')->toArray();
+        return formatResponse(false,([
+            "user_info"=>[
+                'user_name'=>$this->user->name,
+                'user_email'=> $this->user->email,
+                'total_mr' => $this->user->materialRequests->count()
+            ],
+            "material_requests" => $this->user->materialRequests->where('periode_id',1)->values()
+        ]));
         return $this->materialRequest->getMaterialRequestInActivePeriode();
     }
 
@@ -64,6 +77,15 @@ class MaterialRequestService
         }
     }
 
+    public function handleApprove($id){
+        $materialRequest = $this->materialRequest->find($id);
+        if($this->user->division_id != 1)
+            throw new InvalidParameterException(json_encode(["material_request"=>["user is not permitted to approve material request"]]));
+        if($materialRequest['status'] == 1)
+            throw new InvalidParameterException(json_encode(["material_request"=>["can't change status to approve because the status is approve"]]));
+        $materialRequest->approve();    
+    }
+
     public function editForm($id){
         $goods = $this->goods->index();
         $periode = $this->periode->getPeriodeActive();
@@ -74,7 +96,7 @@ class MaterialRequestService
     }
 
     public function handleEmptyModel(){
-        if(MaterialRequest::all()->count() === 0){
+        if($this->materialRequest->all()->count() === 0){
             throw new CustomModelNotFoundException("material_request"); 
         } 
 
@@ -89,7 +111,7 @@ class MaterialRequestService
 
     public function handleModelNotFound($id){
         try{
-            $user = MaterialRequest::findOrFail($id);
+            $materialRequest = $this->materialRequest->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {
