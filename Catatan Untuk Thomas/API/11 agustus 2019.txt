@@ -1,1 +1,2 @@
 1. api goodsrack urlnya diganti dari "goodsRacks" ke "goodsRack", soalnya kan nama tabel aslinya goods_rack. (aku coba2 tinggal ganti di api.php nya)
+====> Fixed tidak bisa di ganti memang standardnya plural
