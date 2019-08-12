@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Division;
 use App\Models\Periode;
 use App\Models\Goods;
+use Illuminate\Support\Arr;
 
 class MaterialRequestService
 {
@@ -57,9 +58,13 @@ class MaterialRequestService
             "user_info"=>[
                 'user_name'=>$this->user->name,
                 'user_email'=> $this->user->email,
-                'total_mr' => $this->user->materialRequests->count()
+                'total_mr' => $this->user->getTotalMrRp(),
+                'count_mr' => $this->user->materialRequests->count()
             ],
-            "material_requests" => $this->user->materialRequests->where('periode_id',1)->values()
+            "material_requests" => $this->user->materialRequests->where('periode_id',$this->periode->getPeriodeActive()['id'])->map(function($item){
+                $item = collect(Arr::add($item,'total', $item->getTotal()));
+                return Arr::except($item,['material_request_details']);
+            })
         ]));
         return $this->materialRequest->getMaterialRequestInActivePeriode();
     }

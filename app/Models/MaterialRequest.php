@@ -28,8 +28,8 @@ class MaterialRequest extends Model
         return auth('api')->user()->division->materialRequest->where('periode_id',Periode::getPeriodeActive()['id'])->flatten(1);
     }
 
-    public function getTotalGoods(){
-        
+    public function getTotal(){
+        return $this->materialRequestDetails->sum('total');
     }
 
     public function approve(){

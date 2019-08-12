@@ -29,6 +29,7 @@ class StoreMaterialRequest extends FormRequest
             "material_request_details.*.goods_id" => "required|integer|exists:goods,id",
             "material_request_details.*.qty" => "required|integer|min:1",
             "material_request_details.*.notes" => "required|string",
+            "material_request_details.*.total" => "required|numeric|min:1",
         ];
     }
 
