@@ -86,6 +86,8 @@ Route::group([
 
     //MaterialRequest
     Route::resource('materialRequests', 'MaterialRequestController');
+    Route::get('/materialRequests/{id}/materialRequestDetails','MaterialRequestController@materialRequestDetails');
+    Route::patch('/materialRequests/{id}/approve','MaterialRequestController@approve');
 
     //Customer
     Route::resource('customers', 'CustomerController');
@@ -98,7 +100,7 @@ Route::group([
     Route::patch('/purchaseOrders/{id}/approve','PurchaseOrderController@approve');
     Route::patch('/purchaseOrders/{id}/submit','PurchaseOrderController@submit');
     Route::get('/purchaseOrders/{id}/payments','PurchaseOrderController@getPayments');
-    Route::get('/purchaseOrders/{id}/purchaseOrderDetail','PurchaseOrderController@purchaseOrderDetail');
+    Route::get('/purchaseOrders/{id}/purchaseOrderDetails','PurchaseOrderController@purchaseOrderDetail');
 
     //PurchaseOrderDetail
     // Route::get('/purchaseOrders/{purchaseOrderId}/purchaseOrderDetails/create','PurchaseOrderDetailController@create');

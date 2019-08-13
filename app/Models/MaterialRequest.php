@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MaterialRequest extends Model
 {
-    //Status is condition this Material Request where value 1 = responded, 0 = not yet responded
+    //Status is condition this Material Request where value 1 = approved, 0 = new
     protected $fillable = [
         'code', 'division_id','request_by_user_id','status','periode_id'
     ];
@@ -26,6 +26,14 @@ class MaterialRequest extends Model
 
     public static function getMaterialRequestInActivePeriode(){
         return auth('api')->user()->division->materialRequest->where('periode_id',Periode::getPeriodeActive()['id'])->flatten(1);
+    }
+
+    public function getTotal(){
+        return $this->materialRequestDetails->sum('total');
+    }
+
+    public function approve(){
+        $this->update(['status'=>1]);
     }
 
     public function period(){
