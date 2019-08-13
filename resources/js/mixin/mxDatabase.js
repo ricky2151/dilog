@@ -21,7 +21,7 @@ export default
 	//1. langsung kirim hasil akhir
 	//2. kirim hasil akhir dengan penjelasan apa yang diinsert, apa yang diupdate, dan apa yang didelete
 
-	data () {
+	data() {
 		return{
 			database : 
 			{
@@ -1127,7 +1127,7 @@ export default
 				},
 
 				//11. crud-goods_rack
-				"goods_rack" : 
+				"goods_racks" : 
 				{
 					table_name : 'goods_racks',
 					title : 'Goods Rack',
@@ -1244,16 +1244,7 @@ export default
                 				{ text: 'Warehouse', value:'warehouse_name'},
                 				{ text: 'Action', value:'action',sortable:false, width:'15%'},
 						],
-						child_data : 
-						{
-							'goods_rack' : 
-							{
-								format_additional_data : 
-								{
-									'name' : 'name',
-								}
-							}
-						},
+						
 
 						form_single : [['name'],['warehouse']],
 						single : 
@@ -1365,20 +1356,7 @@ export default
                 				{ text: 'Action', value:'action',sortable:false, width:'15%'},
 						],
 
-						child_data : 
-						{
-							'purchase_order_details' : 
-							{
-								format_additional_data : 
-								{
-									'NO_PO' : 'no_po',
-									'Type' : 'type',
-									'Total' : 'total',
-									'Created_By' : 'created_by',
-									'Status' : 'status'
-								}
-							}
-						},
+						
 
 						form_single : [['supplier'],['periode'],['payment_type'],['payment_terms'],['no_po']],
 						single : 
@@ -1441,6 +1419,15 @@ export default
 
 					actions:['Edit', 'Revision', 'Delete'],
 					button_on_index : ['Add Data', 'Submit', 'Incoming', 'Print'],
+
+					format_additional_data : 
+					{
+						'NO_PO' : 'no_po',
+						'Type' : 'type',
+						'Total' : 'total',
+						'Created_By' : 'created_by',
+						'Status' : 'status'
+					},
 
 					request_master_data : true,
 					data : 

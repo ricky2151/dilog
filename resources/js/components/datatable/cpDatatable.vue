@@ -67,6 +67,7 @@
 			'prop_filter',
 			'prop_get_unique_value',
 			'prop_filter_by_user_value',
+			'prop_get_additional_data',
 		],
 		data () {
 			return {
@@ -106,12 +107,26 @@
 	            	{
 	            		this.data_table[i].no = this.data_table.length - i;
 	            	}
+
+	            	//jika ada additional data, emit data tersebut lalu dikirimkan ke cpheader
+	            	if(this.prop_get_additional_data)
+	            	{
+	            		this.$emit('show_additional_data', r.data.items[this.prop_filter['table_parent']]);
+	            	}
 	            })
 	        },
 	        showTable(r)
         	{
-        		
-        		var temp_r = r.data.items[this.prop_plural_name];
+        		var temp_r;
+        		//jika adaadditional_data, maka format r nya agak beda
+        		if(this.prop_get_additional_data)
+        		{
+        			temp_r = r.data.items[this.prop_filter['table_parent']][this.prop_plural_name];
+        		}
+        		else
+    			{
+    				temp_r = r.data.items[this.prop_plural_name];
+    			}
         		
         		// else if(this.prop_filter_by_user_value && this.prop_get_unique_value)
         		// {

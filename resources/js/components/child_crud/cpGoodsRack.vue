@@ -94,7 +94,7 @@ export default {
     data () {
         return {
             info_table:{},
-            name_table:'goods_rack',
+            name_table:'goods_racks',
             search_data: null,
         }
     },

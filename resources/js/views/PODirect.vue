@@ -111,10 +111,11 @@
         <template v-if="open_state=='cpPurchaseOrderDetails'">
             <cp-purchase-order-details
             :prop_list_filter='list_state["cpPurchaseOrderDetails"]'
-            :prop_format_additional_data='info_table.data.child_data.purchase_order_details.format_additional_data'
-            :prop_additional_data='selected_data ? selected_data : ""'
             ></cp-purchase-order-details>
         </template>
+
+        <cp-incoming-po ref='cpIncomingPo' v-on:done='done_submit_incoming'>
+        </cp-incoming-po>
 
         <!-- ================================ -->
     </div>
@@ -124,10 +125,12 @@
 <script>
 import mxCrudBasic from '../mixin/mxCrudBasic';
 import cpPurchaseOrderDetails from './../components/child_crud/cpPurchaseOrderDetails.vue'
+import cpIncomingPo from './../components/child_crud/cpIncomingPo.vue'
 
 export default {
     components : {
-        cpPurchaseOrderDetails
+        cpPurchaseOrderDetails,
+        cpIncomingPo
     },
     data () {
         return {
@@ -164,6 +167,10 @@ export default {
         }
     },
     methods: {
+        done_submit_incoming()
+        {
+            swal("Good job!", "Data Saved !", "success");
+        },
         button_index_clicked(index)
         {
             if(index == 0)
@@ -173,26 +180,29 @@ export default {
         },
         action_change(id,idx_action, data)
         {
+            this.selected_data = data;
             if(idx_action == 0)
             {
-                 this.selected_data = data;
-                 this.open_component('cpPurchaseOrderDetails', 'purchase_order_detail', id);
+                 this.open_component('cpPurchaseOrderDetails', 'purchase_order', id);
             }
             else if(idx_action == 1)
             {
-               //incoming
+                 
             }
             else if(idx_action == 2)
             {
-                //payment
+                this.$refs['cpIncomingPo'].id_po = id;
+                this.$refs['cpIncomingPo'].open_dialog();
             }
             else if(idx_action == 3)
             {
-                //history
+                //payment
+                
             }
             else if(idx_action == 4)
             {
-                //retur
+                //history
+                
             }
         },
         

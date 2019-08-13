@@ -46,11 +46,19 @@ export default {
             console.log('ini debugLog');
             console.log(item);
         },
-        open_component(name_component, filter,value)
+        fill_additional_data(item)
         {
-            if(filter)
+            this.additional_data = item;
+            if (typeof me.after_fill_additional_data === "function") { 
+                this.after_fill_additional_data();
+            }
+        },
+        open_component(name_component, table_parent,id_selected)
+        {
+            if(table_parent)
             {
-                this.list_state[name_component][filter] = value;
+                this.list_state[name_component]['table_parent'] = table_parent;
+                this.list_state[name_component]['id_selected'] = id_selected;
             }
             this.open_state = name_component;
 

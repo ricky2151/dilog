@@ -50,9 +50,9 @@
        :prop_icon='info_table.icon'
        :prop_title='info_table.title'
        :prop_search_data='search_data'
-       :prop_information='prop_additional_data ? prop_additional_data : ""'
-       :prop_format_information='prop_format_additional_data ? prop_format_additional_data : ""'
        :prop_button_on_index='info_table.button_on_index'
+       :prop_information='additional_data ? additional_data : ""'
+       :prop_format_information='info_table.format_additional_data ? info_table.format_additional_data : ""'
 
        v-on:button_index_clicked='button_index_clicked'
        v-on:search_change='search_data=$event'
@@ -73,9 +73,11 @@
         :prop_infoDatatable='info_table.data.datatable'
         :prop_action_items='info_table.actions'
         :prop_plural_name='info_table.plural_name'
-        :prop_url_index='prop_list_filter? generate_url("purchase_orders", "detail",get_property_from_list_filter(prop_list_filter).idparent, get_property_from_list_filter(prop_list_filter).table) :  generate_url(info_table.table_name, "index")'
+        :prop_url_index='prop_list_filter? generate_url("purchase_orders", "detail",prop_list_filter["id_selected"], info_table.plural_name) :  generate_url(info_table.table_name, "index")'
         :prop_filter='prop_list_filter'
+        prop_get_additional_data='true'
 
+        v-on:show_additional_data='fill_additional_data'
         v-on:action_clicked='action_change'
         ref="cpDatatable"
 
@@ -89,18 +91,19 @@
 import mxCrudBasic from '../../mixin/mxCrudBasic';
 
 export default {
-    props: ['prop_list_filter', 'prop_format_additional_data', 'prop_additional_data'],
+    props: ['prop_list_filter'],
     data () {
         return {
             info_table:{},
             name_table:'purchase_order_details',
             search_data: null,
+            additional_data:null,
         }
     },
     methods: {
         button_index_clicked(index)
         {
-            if(this.prop_additional_data.status != "New")
+            if(this.additional_data.status != "New")
             {
 
             }
@@ -115,7 +118,7 @@ export default {
         },
         action_change(id,idx_action)
         {
-            if(this.prop_additional_data.status != "New")
+            if(this.additional_data.status != "New")
             {
                 
             }
@@ -133,40 +136,24 @@ export default {
             }
         },
 
-        // showTable(r,id_goods_for_table)
-        // {
-        //     //process r agar dari id menjadi nama
-        //     if(id_goods_for_table != "all")
-        //     {
-
-        //         for(var i = 0;i<r.data.items.goods_rack.length;i++)
-        //         {
-        //             if(r.data.items.goods_rack[i].id == id_goods_for_table)
-        //             {
-        //                 this.data_table.push(r.data.items.goods_rack[i]);
-        //             }
-        //         }
-        //     }
-        //     else
-        //     {
-        //         this.data_table = r.data.items.goods_rack;
-                
-        //     }
-
-        // },
+        after_fill_additional_data()
+        {
+            if(this.additional_data.status != "New")
+            {
+                //conditional khusus component ini
+                //jika status != new, maka tidak bisa submit/add/edit/delete
+                this.info_table.actions = ['Revision'];
+                this.info_table.button_on_index = ["Incoming", "Print"];
+            }
+        }
 
     },
     computed: {
     },
     mounted(){      
         this.info_table = JSON.parse(JSON.stringify(this.database[this.name_table])); //harusnya semau begini
-        //conditional khusus component ini
-        //jika status != new, maka tidak bisa submit/add/edit/delete
-        if(this.prop_additional_data.status != "New")
-        {
-            this.info_table.actions = ['Revision'];
-            this.info_table.button_on_index = ["Incoming", "Print"];
-        }
+        
+        
         
     },
     mixins:[
