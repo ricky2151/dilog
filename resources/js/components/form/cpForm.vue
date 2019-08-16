@@ -213,7 +213,8 @@
 											:xs11='objColumn.width == 11'
 											:xs12='objColumn.width == 12'
 											>
-											
+
+											{{testlog(temp_input)}}
 												<v-text-field
 												v-if='objColumn.type=="tf" && temp_input[table_name]'
 												:rules='$list_validation[objColumn.validation]'
@@ -320,28 +321,31 @@
 
 	                    <!-- FORM CUSTOM COMPONENT -->
                         <template v-for='(component_name, idx) in prop_dataInfo.form_custom_component' >
-                        	<v-stepper-step :complete='stepNow > (idx + 2)' :step="idx + 2"  :editable='id_edit == -1 ? prop_editableAdd : prop_editableEdit'>
-								<h3>{{prop_dataInfo.custom_component[component_name].title}} Data  </h3>
-							</v-stepper-step>
-							<v-stepper-content :step='idx + 2'>
-								
-
-									<!-- TIPE CHIPS -->
-									<div v-if='component_name == "cpMakeOrCopyChild" '>
-										<cp-make-or-copy-child
-										:prop_id_edit='id_edit'
-										:prop_dataInfo='prop_dataInfo.custom_component[component_name]'
-										:prop_urlMOCC='prop_dataInfo.custom_component[component_name].url'
-										:prop_headerChild='prop_dataInfo.custom_component[component_name].child.header'
-										>
-										</cp-make-or-copy-child>
-				                        
-									</div>
-
+                        	<template v-if='component_name != "cpMakeOrCopyChild" || (component_name == "cpMakeOrCopyChild" && id_edit == -1)'> <!-- ditampilkan jika -->
+		                    	<v-stepper-step :complete='stepNow > (idx + 2)' :step="idx + 2"  :editable='id_edit == -1 ? prop_editableAdd : prop_editableEdit'>
+									<h3>{{prop_dataInfo.custom_component[component_name].title}} Data  </h3>
+								</v-stepper-step>
+								<v-stepper-content :step='idx + 2'>
 									
-	                            	<v-btn color='primary' v-if='stepNow < prop_countStep' v-on:click='next_step()'>Continue</v-btn>
-				                	<v-btn color='gray' v-if='stepNow > 1' v-on:click='prev_step()'>Back</v-btn>
-                            </v-stepper-content>
+
+										<!-- TIPE CHIPS -->
+										<div v-if='component_name == "cpMakeOrCopyChild" '>
+											<cp-make-or-copy-child
+											:prop_id_edit='id_edit'
+											:prop_dataInfo='prop_dataInfo.custom_component[component_name]'
+											:prop_urlMOCC='prop_dataInfo.custom_component[component_name].url'
+											:prop_headerChild='prop_dataInfo.custom_component[component_name].child.header'
+											ref='cpMakeOrCopyChild'
+											>
+											</cp-make-or-copy-child>
+					                        
+										</div>
+
+										
+		                            	<v-btn color='primary' v-if='stepNow < prop_countStep' v-on:click='next_step()'>Continue</v-btn>
+					                	<v-btn color='gray' v-if='stepNow > 1' v-on:click='prev_step()'>Back</v-btn>
+		                        </v-stepper-content>
+		                    </template>
                         </template>
 	                    <!-- ============================ -->
 
@@ -423,7 +427,11 @@
 		methods:
 		{
 			
-
+			testlog(obj)
+			{
+				console.log('ini testlog');
+				console.log(obj);
+			},
 			//for other component
 			
 
@@ -438,15 +446,60 @@
 			},
 			async open_dialog(id)
 			{
+				
 
 				//startup
+				this.input = this.prop_input;
+				
+				var temp_temp_input = {};
+				if(this.prop_tempInput)
+				{
+					temp_temp_input = JSON.parse(JSON.stringify(this.prop_tempInput));
+				}
+
+				
+				
+
+
+				//khusus mocc
+		        if(this.prop_dataInfo.custom_component['cpMakeOrCopyChild'])
+		        {
+		        	var temp_name_table_child_mocc = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].child.table_name;
+
+		        	//1. generate input
+		        	this.input[temp_name_table_child_mocc] = [];
+
+
+		        	//2. generate temp_data
+		        	var temp_result = {};
+					Object.keys(this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].editing[temp_name_table_child_mocc].single).map(function(key, index) {
+						temp_result[key] = null;
+					});
+					temp_result['idx_edit'] = -1;
+					temp_temp_input[temp_name_table_child_mocc] = temp_result;
+
+					//3. masukan property editing mocc dari mxdatabase ke prop_datainfo, SEOLAH-OLAH itu adalah multiplenya (padahal hanya berlaku pada saat edit)
+					this.prop_dataInfo.form_multiple = [];
+					this.prop_dataInfo.form_multiple.push(temp_name_table_child_mocc);
+					this.prop_dataInfo.multiple = {};
+					this.prop_dataInfo.multiple[temp_name_table_child_mocc] = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].editing[temp_name_table_child_mocc];
+		        }
+
+		        this.temp_input = temp_temp_input;
 		        
-		        this.input = this.prop_input;
+
+
+		        
 		        this.preview = this.prop_preview;
 		        this.conditional_input = this.prop_dataInfo.conditional_input;
 		        this.set_watcher_custom_value();
-		        this.temp_input = this.prop_tempInput;
+		        
 		        this.set_custom_single();
+
+
+		        
+
+
 		        //untuk master data : 
 		        //jika sedang add data, maka dia harus request ke /create
 	        	//tapi jika sedang edit, tidak perlu request ke /create, karena waktu request /edit sudah ada
@@ -477,7 +530,7 @@
 		        }
 
 		        
-		        
+		        this.stepNow = 1;
 		        this.finish_loading = true;
 		        this.dialog_form = true;
 		        
@@ -650,6 +703,7 @@
 	        {
 	        	
 	        	try{
+
 		            var response = axios.get(this.url_edit, {
 		                params:{
 		                    token: localStorage.getItem('token')
@@ -679,10 +733,7 @@
 	        },
 	        convert_data_input(r) //pengisian data response api ke this.input
 	        {
-
 	        	var temp_r = r.data.items[this.prop_singularName];
-	        	console.log('cek cogs');
-	        	console.log(this.prop_singularName);
 	        	for(var i = 0;i<this.prop_dataInfo.form_single.length;i++)
 	        	{
 	        		for(var j =0;j<this.prop_dataInfo.form_single[i].length;j++)
@@ -761,6 +812,13 @@
 		    		
 				}
 
+				//isi data mocc
+				if(this.$refs.hasOwnProperty('cpMakeOrCopyChild'))
+				{
+					var data_cpmocc = this.$refs['cpMakeOrCopyChild'][0];
+					//data_cpmocc.
+				}
+
 	            
 
 
@@ -793,8 +851,6 @@
 				    self.ref_input[key] = obj;
 				});
 
-				console.log('isi dari ref_input');
-				console.log(self.ref_input);
 
 	        },
 
@@ -816,8 +872,11 @@
 
 
 	        tableShowData(idx, table_name){ 
+
                 this.temp_input[table_name] = JSON.parse(JSON.stringify(this.input[table_name][idx]));
                 this.temp_input[table_name].idx_edit = idx;
+                
+                
             },
             tableClearTempInput(table_name){
                 for (var key in this.temp_input[table_name])
@@ -837,6 +896,7 @@
             tableSave(table_name){ //bisa edit / add
 
             	
+                
                 
                 var idx_edit = JSON.parse(JSON.stringify(this.temp_input[table_name].idx_edit));
                 if(idx_edit == -1)
@@ -867,6 +927,7 @@
 
                 }
                this.tableClearTempInput(table_name);
+
             },
             tableCanceledit(table_name){
                 this.tableClearTempInput(table_name);
@@ -1083,7 +1144,44 @@
 
 	        	//prepare form_custom_component
 	        	//1. cpMakeOrCopyChild
-	        		
+	        	if(this.$refs['cpMakeOrCopyChild'])
+	        	{
+	        		var data_cpmocc = this.$refs['cpMakeOrCopyChild'][0];
+	        		console.log('cek data_cpmocc');
+	        		console.log(data_cpmocc);
+	        		var table_name_child = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].child.table_name;
+	        		var table_name_grandchild = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].grandchild.table_name;
+	        		if(data_cpmocc.interaction.create.method == 0) //langsung
+	        		{
+	        			formData.append('store_type', '2');
+	        			for(var i = 0;i<data_cpmocc.input.new.length;i++)
+	        			{
+	        				formData.append(table_name_child + '[' + i + '][name]', data_cpmocc.input.new[i]);
+	        			}
+	        		}
+	        		else //menggunakan copy
+	        		{
+	        			formData.append('store_type', '1');
+	        			var idxcopychild = -1;
+	        			for(var i = 0;i<data_cpmocc.interaction.create.selected_parent[table_name_child].length;i++)
+	        			{
+	        				var tempobj_child = data_cpmocc.interaction.create.selected_parent[table_name_child][i];
+	        				if(tempobj_child.copy_child)
+	        				{
+	        					idxcopychild += 1;
+	        					formData.append('copy_' + table_name_child + '[' + idxcopychild + '][id]', tempobj_child.id);
+	        					if(tempobj_child.copy_grand_child)
+	        					{
+	        						formData.append('copy_' + table_name_child + '[' + idxcopychild + '][is_with_' + table_name_grandchild + ']', 1);
+	        					}
+	        					else
+	        					{
+	        						formData.append('copy_' + table_name_child + '[' + idxcopychild + '][is_with_' + table_name_grandchild + ']', 0);	
+	        					}
+	        				}
+	        			}
+	        		}
+	        	}
 	        		
 	        	
 
@@ -1346,7 +1444,7 @@
 		},
 		mounted(){
 
-			
+
 		},
 		watch : 
 		{

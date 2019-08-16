@@ -24,7 +24,7 @@
             v-for='(data_detail,key,index) in info_table.get_data_detail'
 
             :prop_title='"Detail " + data_detail.title' 
-            :prop_response_attribute='info_table.key'
+            :prop_response_attribute='data_detail.table_name'
             :prop_headers='data_detail.headers'
             :prop_columns='data_detail.single'
             :ref='"cpDetail"+ removeSpace(data_detail.title)'
@@ -53,7 +53,7 @@
             :prop_tempInput='generate_temp_input(info_table.plural_name)'
             :prop_input='generate_input(info_table.plural_name)'
             :prop_preview='generate_preview(info_table.plural_name)'
-            :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.singular_name, "create") : null'
+            :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.plural_name, "create") : null'
 
 
             v-on:done='refresh_table()'

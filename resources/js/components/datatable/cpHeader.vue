@@ -51,6 +51,8 @@
 				@change='filter_by_user_change'
 
 				:items='prop_filter_by_user_ref'
+				:item-text='prop_filter_by_user_format.itemText'
+				:item-value='prop_filter_by_user_format.itemValue'
 				
 
 				>

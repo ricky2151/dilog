@@ -33,7 +33,7 @@
         
         :prop_input='generate_input(info_table.plural_name)'
         
-        :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.singular_name, "create") : null'
+        :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.plural_name, "create") : null'
         
 
         v-on:done='refresh_table()'

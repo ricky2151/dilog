@@ -97,10 +97,10 @@
             :prop_plural_name='info_table.plural_name'
             :prop_url_index='generate_url(info_table.table_name, "index")'
             :prop_filter='info_table.data.filter'
-            :prop_get_unique_value='info_table.data.filter_by_user.column'
+            :prop_format_filter_by_user='info_table.data.filter_by_user'
             :prop_filter_by_user_value='filter_by_user_value'
 
-            v-on:response_unique_value='fill_filter_by_user_ref'
+            v-on:response_filter_by_user_ref='fill_filter_by_user_ref'
             v-on:action_clicked='action_change'
             ref="cpDatatable"
 

@@ -241,7 +241,7 @@ export default
 					actions:['Edit', 'Delete'],
 					button_on_index : ['Add Data'],
 
-					request_master_data : false,
+					request_master_data : true,
 					data : 
 					{
 						custom_master_data : {},
@@ -739,19 +739,26 @@ export default
                 				{ text: 'Free', value:'free'},
 							]
 						},
-						// "pricelists": //belum jadi
-						// {
-						// 	table_name : 'pricelists',
-						// 	title : 'Pricelists',
-						// 	single : ['id', 'supplier_id', 'goods_id', 'price'],
-						// 	read : [''],
-						// 	headers: [
-						// 		{ text: 'No', value:'no'},
-      //           				{ text: 'Supplier'},
-      //           				{ text: 'Goods'},
-      //           				{ text: 'Price'},
-						// 	]
-						// },
+
+						"pricelists": 
+						{
+							table_name : 'pricelists',
+							title : 'Pricelists',
+							single : 
+							{
+								'id' : {show : false},
+								'supplier' : {show : true},
+								'price' : {show : true},
+							},
+							headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Supplier', value:'supplier'},
+                				{ text: 'Price', value:'price'},
+                				
+							]
+						},
+
+
 
 					}
 
@@ -815,7 +822,7 @@ export default
 								label : 'PIC', width:12, type:'tf', validation:'max_req',
 							},
 							'email' : { 
-								label : 'Email', width:12, type:'tf', validation:'max_req',
+								label : 'Email', width:12, type:'tf', validation:'email_req',
 							},
 							'lat' : { 
 								label : 'Latitude', width:12,  type:'tf_gm',
@@ -859,12 +866,46 @@ export default
 									table_name : 'racks',
 									column_show : 'name',
 									flag_grandchild : 'is_have_goods',
-									header : [{text:'Rack', value:'rack'},{text:'Action', value:'action'}],
+									header : [{text:'Rack', value:'rack',width:'50%'},{text:'Action', value:'action',width:'50%'}],
 								},
 								grandchild : 
 								{
 									title : "Goods",
+									table_name : 'goods',
 									
+								},
+								editing : 
+								{
+									"racks":
+									{
+										title : 'Racks',
+										type : 'table',
+
+										singular_name : 'rack',
+										plural_name : 'racks',
+
+										datatable : [{column : ['name']}],
+										headers: 
+										[
+											{ text: 'No', value:'no'},
+			                				{ text: 'Name', value:'material'},
+			                				{ text: 'Action', align:'left',sortable:false, width:'15%'},
+										],
+
+										form_single:[['name']],
+										single : 
+										{
+											'id' : { 
+												label : '', 
+											},
+											'name' : { 
+												label : 'Name', width:12, type:'tf', column:'name'
+											},
+											
+											
+										},
+										send_type : '2'
+									}
 								}
 
 							}
@@ -1337,7 +1378,10 @@ export default
 							},
 						],
 						filter_by_user : {
-							column : 'periode_name',
+							column_in_table : 'periode',
+							response_attribute : 'periodes',
+							itemText : "name",
+							itemValue : 'id',
 							title : 'Filter Periode',
 						},
 
@@ -1425,7 +1469,7 @@ export default
 						'NO_PO' : 'no_po',
 						'Type' : 'type',
 						'Total' : 'total',
-						'Created_By' : 'created_by',
+						'Created_By' : 'created_by_user_name',
 						'Status' : 'status'
 					},
 
@@ -1564,6 +1608,7 @@ export default
 			if(table)
 			{
 				var result = {};
+				
 				if(this.database[table].data.single)
 				{
 					
@@ -1595,7 +1640,7 @@ export default
 					}
 				}
 				
-				
+
 				return result;
 
 

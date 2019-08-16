@@ -86,14 +86,14 @@
             :prop_editableEdit='info_table.editable_edit'
             :prop_editableAdd='info_table.editable_add'
             :prop_title='info_table.title'
-            :prop_dataInfo='info_table.data'
+            :prop_dataInfo='JSON.parse(JSON.stringify(info_table.data))'
             :prop_tableName='name_table'
             :prop_widthForm='info_table.widthForm'
             :prop_singularName='info_table.singular_name'
-            :prop_tempInput='generate_temp_input(info_table.plural_name)'
+            
             :prop_input='generate_input(info_table.plural_name)'
             :prop_preview='generate_preview(info_table.plural_name)'
-            :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.singular_name, "create") : null'
+            :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.plural_name, "create") : null'
             :prop_urlMOCC='info_table.data.custom_component.cpMakeOrCopyChild.url'
             
 

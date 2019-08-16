@@ -49,7 +49,7 @@ export default {
         fill_additional_data(item)
         {
             this.additional_data = item;
-            if (typeof me.after_fill_additional_data === "function") { 
+            if (typeof this.after_fill_additional_data === "function") { 
                 this.after_fill_additional_data();
             }
         },

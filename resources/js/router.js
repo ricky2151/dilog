@@ -1,33 +1,33 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Unauthenticated from './views/Unauthenticated'
-import Authenticated from './views/Authenticated'
+import Unauthenticated from './views/Unauthenticated.vue'
+import Authenticated from './views/Authenticated.vue'
 
-import Home from './views/Home'
-import Warehouse from './views/Warehouse'
+import Home from './views/Home.vue'
+import Warehouse from './views/Warehouse.vue'
 //import Goods from './views/Goods'
-import Type from './views/Type'
-import Categorypriceselling from './views/Categorypriceselling'
-import Category from './views/Category'
-import Attribute from './views/Attribute'
-import Unit from './views/Unit'
-import Source from './views/Source'
-import Goods from './views/Goods'
-import Goodscreate from './views/Goodscreate'
-import GoodsRack from './views/GoodsRack'
-import Cogs from './views/Cogs'
-import Rack from './views/Rack'
-import Supplier from './views/Supplier'
-import Customer from './views/Customer'
-import PODirect from './views/PODirect'
+import Type from './views/Type.vue'
+import Categorypriceselling from './views/Categorypriceselling.vue'
+import Category from './views/Category.vue'
+import Attribute from './views/Attribute.vue'
+import Unit from './views/Unit.vue'
+import Source from './views/Source.vue'
+import Goods from './views/Goods.vue'
+import Goodscreate from './views/Goodscreate.vue'
+import GoodsRack from './views/GoodsRack.vue'
+import Cogs from './views/Cogs.vue'
+import Rack from './views/Rack.vue'
+import Supplier from './views/Supplier.vue'
+import Customer from './views/Customer.vue'
+import PODirect from './views/PODirect.vue'
 
-import PurchaseOrder from './views/PurchaseOrder'
+import PurchaseOrder from './views/PurchaseOrder.vue'
 
-import Coba from './views/Coba'
+import Coba from './views/Coba.vue'
 
-import Login from './views/Login'
-import Logout from './views/Logout'
+import Login from './views/Login.vue'
+import Logout from './views/Logout.vue'
 
 
 Vue.use(VueRouter)
@@ -63,12 +63,12 @@ const routes = [
 
             { path: '/purchaseorder', component: PurchaseOrder},
 
-            { path: '/logout', component: Logout, },
+            { path: '/logout', component: Logout },
 
-            { path: '/coba', component: Coba, },
+            { path: '/coba', component: Coba }
         ],
         meta: { requiresAuth: true }
-    },
+    }
 
 
 ]
@@ -104,3 +104,4 @@ router.beforeEach(async (to, from, next) => {
 })
 
 export default router;
+

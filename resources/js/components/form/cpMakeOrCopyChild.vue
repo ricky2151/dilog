@@ -3,10 +3,10 @@
 		<v-select v-if='prop_id_edit == -1' v-model='interaction.create.method' :items="static_select" item-text='name' item-value='id' label="Select Method"></v-select>
 
         <!-- CREATE NEW CHILD -->
-        {{input}}
+        
         <v-combobox
             v-show='interaction.create.method == 0 || prop_id_edit != -1'
-            v-model='interaction.create.created_child'
+            v-model='input.new'
             :label='"Type " + prop_dataInfo.child.title'
             chips
             clearable
@@ -34,6 +34,7 @@
             <v-select v-model='interaction.create.selected_parent' :items='mocc_data' item-text='name' return-object :label='"Select" + prop_dataInfo.parent.title'>
             </v-select>
             <b>Select {{ prop_dataInfo.child.title }}</b>
+            
             <v-data-table
                 v-if='interaction.create.selected_parent'
                 :headers="prop_headerChild"
@@ -42,12 +43,12 @@
                 <template v-slot:items="props">
                     <td> 
                         
-                        <v-checkbox v-model='interaction.create.selected_parent[prop_dataInfo.child.table_name][props.index]["copy_child"]' :label='props.item[prop_dataInfo.child.column_show]' class=''></v-checkbox>
+                        <v-checkbox v-model='interaction.create.selected_parent[prop_dataInfo.child.table_name][props.item.no]["copy_child"]' :label='props.item[prop_dataInfo.child.column_show]' class='colorblack'></v-checkbox>
                         
                     </td>
                     <td> 
                         
-                        <v-checkbox v-model='interaction.create.selected_parent[prop_dataInfo.child.table_name][props.index]["copy_grand_child"]' v-if='props.item[prop_dataInfo.child.flag_grandchild] == true' :label='"Copy" + prop_dataInfo.grandchild.title' class=''></v-checkbox>
+                        <v-checkbox v-model='interaction.create.selected_parent[prop_dataInfo.child.table_name][props.item.no]["copy_grand_child"]' v-if='props.item[prop_dataInfo.child.flag_grandchild] == true && interaction.create.selected_parent[prop_dataInfo.child.table_name][props.item.no]["copy_child"] == true' :label='"Copy " + prop_dataInfo.grandchild.title' class='colorblack'></v-checkbox>
                         
                     </td>
                 </template>
@@ -57,6 +58,11 @@
     </div>
 </template>
 <script>
+    //catatan 
+    //input dibagi menjadi 2 yaitu : 
+    //new rack dan copy rack
+    //new rack berada di interaction.create.selected_parent
+    //sedangkan copy rack berada di input.new
 	export default {
 		props : [
 		'prop_id_edit',
@@ -75,7 +81,6 @@
 					{
 						method : null,
 						selected_parent : null, //untuk method kedua (yaitu pilih parent, lalu pilih childnya)
-                        created_child : null, //untuk method pertama (yaitu langsung buat child langsung di combobox)
 					},
 				},
 
@@ -91,7 +96,7 @@
 				input : 
 				{
                     new : [],
-                    copy : {},
+                    
 				},
                 mocc_data : [],
 				
@@ -105,7 +110,7 @@
 		{
 			removeChip(item){
                 
-                this.interaction.create.created_child.splice(this.interaction.create.created_child.indexOf(item.item), 1);
+                this.input.new.splice(this.input.new.indexOf(item.item), 1);
                 //this.interaction.create.created_child = [...this.interaction.create.created_child];
             },
 
@@ -144,6 +149,15 @@
                 let r_response_mocc = await this.request_select_child_data();
                 
                 this.mocc_data = r_response_mocc.data.items[this.prop_dataInfo.parent.table_name];
+                //pemberian no pada setiap rack di setiap warehouse dimulai dari 0 (KASUS KHUSUS)
+                for(var i = 0;i<this.mocc_data.length;i++)
+                {
+                    for(var j = 0;j<this.mocc_data[i].racks.length;j++)
+                    {
+                        this.mocc_data[i].racks[j].no = j;
+                    }
+                }
+                
 
                 //taruh di select master data
                 //kan mocc_data semua data parent yang didalmanya ada child nya, maka dari itu childnya harus dibuang dulu.

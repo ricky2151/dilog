@@ -19,7 +19,10 @@
                                 </v-card-text>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
-                                    <v-btn type="submit" color="primary" v-on:click="req_login" >Login</v-btn>
+                                    <v-btn id='buttonsubmit' type="submit" color="primary" v-on:click="req_login" ref='buttonLogin'>Login</v-btn>
+                                    <div v-if='button_clicked'>
+                                        <h1>Halo</h1>
+                                    </div>
                                 </v-card-actions>
                             </v-card>
                         </v-form>
@@ -39,33 +42,37 @@
     	data()
     	{
     		return {
+                coba : 'coba',
 	            in_password:'',
 	            in_email:'',
+                button_clicked : false,
         	}
     	},
     	methods:
     	{
-    		req_login(){
-    			axios.post('/api/auth/login',{
-    				email:this.in_email,
-    				password:this.in_password
-    			}).then(r => this.saveToken(r))
-                .catch(function (error)
+    		async req_login(){
+
+                try{
+        			let r = await axios.post('/api/auth/login',{
+        				email:this.in_email,
+        				password:this.in_password
+        			});
+
+                }
+                catch(e)
                 {
-                    if(error.response.status == 422)
-                    {
-                        swal('Login Failed', 'Wrong username / password', 'error');
-                    }
-                    else
-                    {
-                        swal('Unkown Error', error.response.data , 'error');
-                    }
-                });
+                }
+                this.button_clicked = true;
+                this.saveToken(r);
     		},
 
     		saveToken(r){
+                this.button_clicked = true;
+                this.$nextTick(() => {
+                });
     			localStorage.setItem('token', r.data.access_token)
                 localStorage.setItem('user', JSON.stringify(r.data.user))
+                
                 this.$router.replace('/');
                 
     		}

@@ -11,9 +11,9 @@
 	        	
 			<template v-slot:items="props">
 		    	<template v-if='
-		    		(prop_filter_by_user_value == "All")
+		    		(prop_filter_by_user_value == 0)
 		    		||
-    				(prop_filter_by_user_value && prop_get_unique_value && props.item[prop_get_unique_value] == prop_filter_by_user_value) 
+    				(prop_filter_by_user_value && prop_format_filter_by_user.column_in_table && props.item[prop_format_filter_by_user.column_in_table] == prop_filter_by_user_value) 
     				||
     				(!prop_filter_by_user_value) '
     			>
@@ -65,7 +65,7 @@
 			'prop_plural_name',
 			'prop_url_index',
 			'prop_filter',
-			'prop_get_unique_value',
+			'prop_format_filter_by_user',
 			'prop_filter_by_user_value',
 			'prop_get_additional_data',
 		],
@@ -80,16 +80,12 @@
 		},
 		methods: {
 
-			send_unique_value()
+			send_filter_by_user_ref(r)
 			{
-				var result = [];
-				for(var i = 0;i<this.data_table.length;i++)
-				{
-					result[i] = this.data_table[i][this.prop_get_unique_value];
-				}
-				result = result.filter((v, i, a) => a.indexOf(v) === i); 
-				result.splice(0,0,"All");
-				this.$emit('response_unique_value', result);
+				var result = r.data.items[this.prop_format_filter_by_user.response_attribute];
+				result.splice(0,0,{"id" : 0, 'name' : 'All'});
+				
+				this.$emit('response_filter_by_user_ref', result);
 			},
 			get_data() {
 
@@ -99,9 +95,9 @@
 	                }
 	            },this.header_api).then((r) => {
 	            	this.showTable(r);
-	            	if(this.prop_get_unique_value)
+	            	if(this.prop_format_filter_by_user)
 	            	{
-	            		this.send_unique_value();
+	            		this.send_filter_by_user_ref(r);
 	            	}
 	            	for(var i = 0;i<this.data_table.length;i++)
 	            	{
@@ -128,13 +124,13 @@
     				temp_r = r.data.items[this.prop_plural_name];
     			}
         		
-        		// else if(this.prop_filter_by_user_value && this.prop_get_unique_value)
+        		// else if(this.prop_filter_by_user_value && this.prop_format_filter_by_user.column_in_table)
         		// {
         		// 	console.log('harusnya masuk sini');
         		// 	for(var i = 0;i<temp_r.length;i++)
 		        //     {
 		        //     	console.log(i);
-		        //         if(temp_r[i][this.prop_get_unique_value] == this.prop_filter_by_user_value)
+		        //         if(temp_r[i][this.prop_format_filter_by_user.column_in_table] == this.prop_filter_by_user_value)
 		        //         {
 		        //             this.data_table.push(temp_r[i]);
 		        //         }

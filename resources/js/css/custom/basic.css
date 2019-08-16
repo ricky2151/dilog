@@ -46,7 +46,21 @@
 }
 
 
+.colorblack .accent--text
+{
+	color: #0060ff !important;
+}
 
+.colorblack label
+{
+	color: black !important;
+}
+
+.colorblack .v-input__slot
+{
+	margin-top:10px !important;
+	margin-bottom: 0px !important;
+}
 
 
 .datatable
