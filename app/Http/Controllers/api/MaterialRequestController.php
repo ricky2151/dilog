@@ -70,7 +70,7 @@ class MaterialRequestController extends Controller
             $data = Arr::add($data, 'periode_id', $this->periode->getPeriodeActive()['id']);
             
             $materialRequest = $this->user->materialRequests()->create($data);
-            $materialRequest->update(['code'=>"MR-".$materialRequest['id']]);
+            $materialRequest->update(['no_mr'=>"MR-".$materialRequest['id']]);
             $materialRequest->materialRequestDetails()->createMany($materialRequestDetails);
 
             // return $materialRequest;

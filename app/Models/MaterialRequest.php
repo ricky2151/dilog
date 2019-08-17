@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class MaterialRequest extends Model
 {
-    //Status is condition this Material Request where value 1 = approved, 0 = new
+    //Status is condition this Material Request where value 2 = diproses ,1 = approved, 0 = new
     protected $fillable = [
         'code', 'division_id','request_by_user_id','status','periode_id'
     ];
@@ -21,6 +21,18 @@ class MaterialRequest extends Model
             } else {
                 $this->materialRequestDetails()->find($materialRequestDetail['id'])->delete();
             }
+        }
+    }
+
+    public function getMrApprove(){
+        return $this->where('status',1)->orderBy('updated_at','desc')->get();
+    }
+
+    public function getStatusName(){
+        switch($this->status){
+            case 0: return "New";
+            case 1: return "Approve";
+            case 2: return "Process";
         }
     }
 

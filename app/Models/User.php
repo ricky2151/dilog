@@ -104,4 +104,8 @@ class User extends Authenticatable implements JWTSubject
     public function purchaseOrdersCreated(){
         return $this->hasMany('App\Models\PurchaseOrder','created_by_user_id');
     }
+
+    public function purchaseRequests(){
+        return $this->hasMany('App\Models\PurchaseRequest','created_by_user_id');
+    }
 }

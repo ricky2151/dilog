@@ -43,7 +43,7 @@ class MaterialRequestService
                 'code'=>$item['code'], 
                 'user_name'=>$item['user']['name'], 
                 'division_name'=>$item['division']['name'],
-                'status' => $item['status'] == 0 ? "new" : "approved",
+                'status' => $item->getStatusName(),
                 'created_at' => $item['created_at']->format('Y-m-d'),
                 'periode_id' => $item['periode_id'],
             ];
@@ -62,9 +62,10 @@ class MaterialRequestService
                 'count_mr' => $this->user->materialRequests->count()
             ],
             "material_requests" => $this->user->materialRequests->where('periode_id',$this->periode->getPeriodeActive()['id'])->map(function($item){
+                $item['status'] = $item->getStatusName();
                 $item = collect(Arr::add($item,'total', $item->getTotal()));
                 return Arr::except($item,['material_request_details']);
-            })
+            })->values()
         ]));
         return $this->materialRequest->getMaterialRequestInActivePeriode();
     }
@@ -86,8 +87,8 @@ class MaterialRequestService
         $materialRequest = $this->materialRequest->find($id);
         if($this->user->division_id != 1)
             throw new InvalidParameterException(json_encode(["material_request"=>["user is not permitted to approve material request"]]));
-        if($materialRequest['status'] == 1)
-            throw new InvalidParameterException(json_encode(["material_request"=>["can't change status to approve because the status is approve"]]));
+        if($materialRequest['status'] != 0)
+            throw new InvalidParameterException(json_encode(["material_request"=>["can't change status to approve because the status is not new"]]));
         $materialRequest->approve();    
     }
 

@@ -16,7 +16,7 @@ class CreatePurchaseRequestsTable extends Migration
         Schema::create('purchase_requests', function (Blueprint $table) {
             $table->increments('id');
             $table->string('code');
-            $table->boolean('status');
+            $table->boolean('status')->default(0);
             $table->integer('created_by_user_id')->unsigned();
             $table->timestamps();
         });

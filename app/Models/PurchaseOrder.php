@@ -14,7 +14,7 @@ class PurchaseOrder extends Model
      * is_completed = untuk berapa persen jumlah PO yang sudah datang (ex : barang datang/pesanan total * 100%. Contoh 20/100 = 20%)
      */
     protected $fillable = [
-        'supplier_id', 'finish_date', 'paid_date', 'fine', 'payment_type', 'type', 'payment_terms', 'periode_id', 'approved_by_user_id', 'status', 'total', 'po_no', 'is_completed', 'purchase_request_id','no_po'
+        'supplier_id', 'finish_date', 'paid_date', 'fine', 'payment_type', 'type', 'payment_terms', 'periode_id', 'approved_by_user_id', 'status', 'total', 'po_no', 'is_completed', 'purchase_request_id','no_po','created_by_user_id'
     ];
 
     public static function getNewCode(){

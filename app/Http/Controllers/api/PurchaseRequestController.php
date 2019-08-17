@@ -2,26 +2,33 @@
 
 namespace App\Http\Controllers\api;
 
-use App\Http\Requests\CreatePurchaseRequest;
+use App\Http\Requests\StorePurchaseRequest;
+use App\Http\Requests\StorePurchaseRequestDetail;
+use App\Http\Requests\StorePurchaseRequestToPurchaseOrder;
 use App\Services\PurchaseRequestService;
 use App\Models\PurchaseRequest;
+use App\Models\MaterialRequest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Exceptions\DatabaseTransactionErrorException;
+use Illuminate\Support\Facades\DB;
 
 class PurchaseRequestController extends Controller
 {
-    private $purchaseRequestService, $purchaseRequest;
+    private $purchaseRequestService, $purchaseRequest, $materialRequest, $user;
 
-    public function __construct(PurchaseRequestService $purchaseRequestService, PurchaseRequest $purchaseRequest)
+    public function __construct(PurchaseRequestService $purchaseRequestService, PurchaseRequest $purchaseRequest, MaterialRequest $materialRequest)
     {
         $this->purchaseRequestService = $purchaseRequestService;
         $this->purchaseRequest = $purchaseRequest;
+        $this->materialRequest = $materialRequest;
+        $this->user = auth('api')->user();
     }
 
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function index()
     {
@@ -32,24 +39,129 @@ class PurchaseRequestController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @param  \Illuminate\Http\CreatePurchaseRequest  $request
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function create(CreatePurchaseRequest $request)
+    public function create()
     {
-        $materialRequests = $request->material_requests;
-        return $this->purchaseRequestService->handleCreateForm($materialRequests);
+        return $this->purchaseRequestService->handleCreateForm();
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\StorePurchaseRequest  $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Request $request)
+    public function store(StorePurchaseRequest $request)
     {
-        //
+        $validated = $request->validated();
+        $this->purchaseRequestService->handleStore($validated);
+        $data = $this->purchaseRequestService->getRekapFromMateril($validated['material_requests']);
+        DB::beginTransaction();
+        try {
+            $rekaps = $data->map(function($item){
+                return [
+                    'goods_id' => $item['goods_id'],
+                    'total_required_by_mr' => $item['total_required_by_mr']
+                ];
+            })->toArray();
+
+            $purchaseRequest = $this->user->purchaseRequests()->create(["code"=>""]);
+            $purchaseRequest->update(["code"=>"PR-".$purchaseRequest['id']]);
+            $purchaseRequest->rekaps()->createMany($rekaps);
+            
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollback();
+            return $e;
+            throw new DatabaseTransactionErrorException("purchase_request");
+        }
+        return formatResponse(false,(["rekaps"=>$data]));
+    }
+
+    /**
+     * Store a newly created purchase request detail on specific purchase request in storage.
+     *
+     * @param  \Illuminate\Http\StorePurchaseRequest  $request
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storePurchaseRequestDetails(StorePurchaseRequestDetail $request, $id)
+    {
+        $this->purchaseRequestService->handleInvalidParameter($id);
+        $this->purchaseRequestService->handleModelNotFound($id);
+        $validated = $request->validated();
+        $this->purchaseRequestService->storePurchaseRequestDetails($validated);
+
+        DB::beginTransaction();
+        try {
+            $purchaseRequestDetails = collect($validated)->values()->flatten(1)->toArray();
+            $purchaseRequest = $this->purchaseRequest->find($id);
+            $purchaseRequestDetails = $purchaseRequest->purchaseRequestDetails()->createMany($purchaseRequestDetails);
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollback();
+            throw new DatabaseTransactionErrorException("purchase_request");
+        }
+
+        return formatResponse(false,(["rekap_purchase_orders"=>$purchaseRequest->getRekapsToPo()]));
+    }
+
+    /**
+     * Display list Purchase Request Details who have not yet become PO of the specified purchase request.
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function purchaseRequestDetailsToPurchaseOrder($id){
+        $this->purchaseRequestService->handleInvalidParameter($id);
+        $this->purchaseRequestService->handleModelNotFound($id);
+        $purchaseRequest = $this->purchaseRequest->find($id);
+
+        return formatResponse(false,(["rekap_purchase_orders"=>$purchaseRequest->getRekapsToPo()]));
+    }
+
+    /**
+     * Display list Purchase Request Details of the specified purchase request.
+     *
+     * @param  \Illuminate\Http\StorePurchaseRequestToPurchaseOrder  $request
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function storeToPurchaseOrders(StorePurchaseRequestToPurchaseOrder $request, $id){
+        $this->purchaseRequestService->handleInvalidParameter($id);
+        $this->purchaseRequestService->handleModelNotFound($id);
+        
+        $this->purchaseRequestService->handleStoreToPo($request->validated()['supplier_id'], $id);
+        return formatResponse(false,(["purchase_request"=> "successfully make po from pr"]));
+    }
+
+    /**
+     * Display list Purchase Request Details of the specified purchase request.
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function purchaseRequestDetails($id){
+        $this->purchaseRequestService->handleInvalidParameter($id);
+        $this->purchaseRequestService->handleModelNotFound($id);
+        $purchaseRequest = $this->purchaseRequest->find($id);
+
+        return formatResponse(false,(["purchase_request_details"=>$purchaseRequest->getDataPurchaseRequestDetails()]));
+    }
+
+    /**
+     * Display list rekaps of the specified purchase request.
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function rekaps($id){
+        $this->purchaseRequestService->handleInvalidParameter($id);
+        $this->purchaseRequestService->handleModelNotFound($id);
+        $data = $this->purchaseRequestService->getRekapsFromPr($id);
+        return formatResponse(false,(["rekaps"=>$data]));
     }
 
     /**
