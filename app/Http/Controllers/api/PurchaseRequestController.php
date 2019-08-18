@@ -8,6 +8,7 @@ use App\Http\Requests\StorePurchaseRequestToPurchaseOrder;
 use App\Services\PurchaseRequestService;
 use App\Models\PurchaseRequest;
 use App\Models\MaterialRequest;
+use App\Models\Periode;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Exceptions\DatabaseTransactionErrorException;
@@ -15,13 +16,14 @@ use Illuminate\Support\Facades\DB;
 
 class PurchaseRequestController extends Controller
 {
-    private $purchaseRequestService, $purchaseRequest, $materialRequest, $user;
+    private $purchaseRequestService, $purchaseRequest, $materialRequest, $user, $periode;
 
-    public function __construct(PurchaseRequestService $purchaseRequestService, PurchaseRequest $purchaseRequest, MaterialRequest $materialRequest)
+    public function __construct(PurchaseRequestService $purchaseRequestService, PurchaseRequest $purchaseRequest, MaterialRequest $materialRequest, Periode $periode)
     {
         $this->purchaseRequestService = $purchaseRequestService;
         $this->purchaseRequest = $purchaseRequest;
         $this->materialRequest = $materialRequest;
+        $this->periode = $periode;
         $this->user = auth('api')->user();
     }
 
@@ -32,8 +34,15 @@ class PurchaseRequestController extends Controller
      */
     public function index()
     {
-        $purchaseRequests = $this->purchaseRequest->latest()->get();
-        return formatResponse(false,(["purchase_requests"=>$purchaseRequests]));
+        $purchaseRequests = $this->purchaseRequest->latest()->get()->map(function($item){
+            $item['status_name'] = $item->prGetStatusName();
+            return $item;
+        });
+        return formatResponse(false,([
+            "purchase_requests"=>$purchaseRequests, 
+            'periode_active'=> $this->periode->getPeriodeActive(),
+            'periodes'=> $this->periode->all()
+        ]));
     }
 
     /**

@@ -8,7 +8,7 @@ class MaterialRequest extends Model
 {
     //Status is condition this Material Request where value 2 = diproses ,1 = approved, 0 = new
     protected $fillable = [
-        'code', 'division_id','request_by_user_id','status','periode_id'
+        'no_mr', 'division_id','request_by_user_id','status','periode_id','approved_by_user_id'
     ];
 
     public function updateDetailMaterialRequest($materialRequestDetails){
@@ -46,6 +46,7 @@ class MaterialRequest extends Model
 
     public function approve(){
         $this->update(['status'=>1]);
+        $this->update(['approved_by_user_id'=>auth('api')->user()->id]);
     }
 
     public function period(){
@@ -62,5 +63,9 @@ class MaterialRequest extends Model
 
     public function user(){
         return $this->belongsTo('App\Models\User','request_by_user_id','id');
+    }
+
+    public function userApprove(){
+        return $this->belongsTo('App\Models\User','approved_by_user_id','id');
     }
 }

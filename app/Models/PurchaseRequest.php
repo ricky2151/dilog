@@ -5,7 +5,7 @@ use Illuminate\Support\Arr;
 
 use Illuminate\Database\Eloquent\Model;
 
-//status : 1 for new, 2 for submit
+//status : 0 for new, 1 for complete
 
 class PurchaseRequest extends Model
 {
@@ -33,6 +33,22 @@ class PurchaseRequest extends Model
         return $this->purchaseRequestDetails->where('is_created_as_po',1);
     }
 
+    public function setComplete(){
+        if($this->rekaps->sum('total_required_by_mr')!=0){
+            if($this->purchaseRequestDetailsBePo()->sum('qty')/$this->rekaps->sum('total_required_by_mr') >= 1){
+                $this->status = 1;
+                $this->save();
+            }
+        }
+    }
+
+    public function prGetStatusName(){
+        switch($this->status){
+            case 0: return "new";
+            case 1: return "complete";
+        }
+    }
+
 
     public function getDataPurchaseRequestDetails(){
         return $this->purchaseRequestDetails->map(function($item){
@@ -58,6 +74,7 @@ class PurchaseRequest extends Model
             return [
                 'supplier_id' => $supplier['id'],
                 'supplier_name' => $supplier['name_company'],
+                'total' => $item->sum(function($item){return $item['price']*$item['qty'];}),
                 'purchase_request_details' => $item->map(function($item){
                     return[
                         'id'=> $item['id'],

@@ -63,8 +63,9 @@ class MaterialRequestService
             ],
             "material_requests" => $this->user->materialRequests->where('periode_id',$this->periode->getPeriodeActive()['id'])->map(function($item){
                 $item['status'] = $item->getStatusName();
+                $item['approved_by_user_name'] = $item->userApprove['name'];
                 $item = collect(Arr::add($item,'total', $item->getTotal()));
-                return Arr::except($item,['material_request_details']);
+                return Arr::except($item,['material_request_details','user_approve']);
             })->values()
         ]));
         return $this->materialRequest->getMaterialRequestInActivePeriode();
@@ -74,7 +75,7 @@ class MaterialRequestService
         $goods = $this->goods->select('id','name','avg_price','thumbnail')->get();
         $periode = $this->periode->getPeriodeActive();
 
-        return ["goods"=>$goods,'periode' => $periode];
+        return ["goods"=>$goods,'periode_active' => $periode, 'periodes'=>$this->periode->all()];
     }
 
     public function checkDivision($division){
