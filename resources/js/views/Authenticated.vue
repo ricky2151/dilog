@@ -325,7 +325,7 @@ export default {
                     {
                         subicon:"next_week",
                         subtitle:"Material Request",
-                        subaction: "/MaterialRequest"
+                        subaction: "/materialrequest"
                     },
                     {
                         subicon:"beenhere",

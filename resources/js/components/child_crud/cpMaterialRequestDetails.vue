@@ -1,23 +1,6 @@
 <template>
     <div class='bgwhite'>
 
-        <!-- LIST POPUP DETAIL -->
-        <cp-detail 
-         
-        v-if='notNullObject(info_table.get_data_detail)'
-        v-for='(data_detail,key,index) in info_table.get_data_detail'
-
-        :prop_title='"Detail " + data_detail.title' 
-        :prop_response_attribute='info_table.table_name'
-        :prop_headers='data_detail.headers'
-        :prop_columns='data_detail.single'
-        :ref='"cpDetail"+ removeSpace(data_detail.title)'
-        :key='key'
-
-        ></cp-detail>
-        <!----------------------->
-
-        
 
         <!-- POPUP CREATE EDIT -->
         <cp-form 
@@ -73,7 +56,7 @@
         :prop_infoDatatable='info_table.data.datatable'
         :prop_action_items='info_table.actions'
         :prop_plural_name='info_table.plural_name'
-        :prop_url_index='prop_list_filter? generate_url("purchase_orders", "detail",prop_list_filter["id_selected"], info_table.plural_name) :  generate_url(info_table.table_name, "index")'
+        :prop_url_index='prop_list_filter? generate_url("material_request_details", "detail",prop_list_filter["id_selected"], info_table.plural_name) :  generate_url(info_table.table_name, "index")'
         :prop_filter='prop_list_filter'
         prop_get_additional_data='true'
 
@@ -95,7 +78,7 @@ export default {
     data () {
         return {
             info_table:{},
-            name_table:'purchase_order_details',
+            name_table:'material_request_details',
             search_data: null,
             additional_data:null,
         }
@@ -103,50 +86,30 @@ export default {
     methods: {
         button_index_clicked(index)
         {
-            if(this.additional_data.status != "New")
+            
+            if(index == 0)
             {
-
+                this.opendialog_createedit(-1);
             }
-            else
-            {
-                if(index == 0)
-                {
-                    this.opendialog_createedit(-1);
-                }
 
-            }
+            
         },
         action_change(id,idx_action)
         {
-            if(this.additional_data.status != "New")
+           
+            if(idx_action == 0)
             {
-                
+                this.opendialog_createedit(id);
             }
-            else
+            else if(idx_action == 1)
             {
-                if(idx_action == 0)
-                {
-                    this.opendialog_createedit(id);
-                }
-                else if(idx_action == 1)
-                {
-                    this.delete_data(id);
-                }
-                
+                this.delete_data(id);
             }
+                
+            
         },
 
-        after_fill_additional_data()
-        {
-            if(this.additional_data.status != "New")
-            {
-                //conditional khusus component ini
-                //jika status != new, maka tidak bisa submit/add/edit/delete
-                console.log(this.additional_data);
-                this.info_table.actions = ['Revision'];
-                this.info_table.button_on_index = ["Incoming", "Print"];
-            }
-        }
+
 
     },
     computed: {

@@ -15,7 +15,7 @@
     
 
     
-        <template v-if='open_state == "Rack"'>
+        <template v-if='open_state == "MaterialRequest"'>
 
             <!-- LIST POPUP DETAIL -->
             <cp-detail 
@@ -35,31 +35,7 @@
 
             
 
-            <!-- POPUP CREATE EDIT -->
-
-            <cp-form 
-
-            :prop_countStep='info_table.count_step' 
-            :prop_editableEdit='info_table.editable_edit'
-            :prop_editableAdd='info_table.editable_add'
-            :prop_title='info_table.title'
-            :prop_dataInfo='info_table.data'
-            :prop_tableName='name_table'
-            :prop_widthForm='info_table.widthForm'
-            :prop_singularName='info_table.singular_name'
             
-            :prop_input='generate_input(info_table.plural_name)'
-            
-            :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.plural_name, "create") : null'
-            
-
-            v-on:done='refresh_table()'
-            ref="cpForm"
-
-            ></cp-form>
-
-
-            <!-- ================================ -->
 
             
 
@@ -70,12 +46,17 @@
            :prop_icon='info_table.icon'
            :prop_title='info_table.title'
            :prop_search_data='search_data'
-           
+           :prop_filter_by_user_format='info_table.data.filter_by_user'
+           :prop_filter_by_user_ref='filter_by_user_ref'
            :prop_button_on_index='info_table.button_on_index'
+           :prop_button_for_checklist='info_table.button_for_checklist'
 
+           v-on:submit_checklist='submit_checklist'
            v-on:button_index_clicked='button_index_clicked'
            v-on:search_change='search_data=$event'
-          
+           v-on:filter_by_user_change='fill_filter_by_user_value'
+           v-on:add_clicked='opendialog_createedit(-1)'
+           ref='cpHeader'
            >
            </cp-header>
 
@@ -95,10 +76,11 @@
             :prop_plural_name='info_table.plural_name'
             :prop_url_index='generate_url(info_table.table_name, "index")'
             :prop_filter='info_table.data.filter'
-            :prop_get_unique_value='info_table.data.filter_by_user.column'
+            :prop_format_filter_by_user='info_table.data.filter_by_user'
             :prop_filter_by_user_value='filter_by_user_value'
+            :prop_custom_response_attribute='info_table.custom_response_attribute'
 
-            v-on:response_unique_value='fill_filter_by_user_ref'
+            v-on:response_filter_by_user_ref='fill_filter_by_user_ref'
             v-on:action_clicked='action_change'
             ref="cpDatatable"
 
@@ -106,11 +88,19 @@
 
         </template>
 
-        <template v-if="open_state=='cpGoodsRack'">
-            <cp-goods-rack  
-            :prop_list_filter='list_state["cpGoodsRack"]'
-            ></cp-goods-rack>
+        <template v-if="open_state=='cpPurchaseRequest'">
+            <cp-purchase-request
+            :prop_list_filter='list_state["cpPurchaseRequest"]'
+            ></cp-purchase-request>
         </template>
+
+        <template v-if="open_state=='cpAddMaterialRequest'">
+            <cp-add-material-request
+            :prop_list_filter='list_state["cpAddMaterialRequest"]'
+            ></cp-add-material-request>
+        </template>
+
+        
 
         <!-- ================================ -->
     </div>
@@ -119,68 +109,103 @@
 
 <script>
 import mxCrudBasic from '../mixin/mxCrudBasic';
-import cpGoodsRack from './../components/child_crud/cpGoodsRack.vue'
+import cpPurchaseRequest from './../components/child_crud/cpPurchaseRequest.vue'
+import cpAddMaterialRequest from './../components/child_crud/cpAddMaterialRequest.vue'
 
 export default {
     components : {
-        cpGoodsRack
+        cpPurchaseRequest,
+        cpAddMaterialRequest,
     },
     data () {
         return {
             info_table:{},
-            name_table:'racks',
+            name_table:'material_requests',
             search_data: null,
 
             filter_by_user_value : '',
             filter_by_user_ref : [],
 
-            open_state : 'Rack',
+            open_state : 'MaterialRequest',
             list_state : 
             {
-                'Rack' : {},
-                'cpGoodsRack' : {},
+                'MaterialRequest' : {},
+                'cpPurchaseRequest' : {},
+                'cpAddMaterialRequest' : {},
             },
             
             breadcrumbs:[
                 //level 1
                 {
-                    text: 'Racks',
+                    text: 'Material Request',
                     disabled: false,
-                    cp : 'Rack',
+                    cp : 'MaterialRequest',
                     before : null,
                 },
                 //level 2
                 {
-                    text: 'Goods Rack',
+                    text: 'List Purchase Request',
                     disabled: true,
-                    cp: 'cpGoodsRack',
-                    before : 'Rack'
+                    cp: 'cpPurchaseRequest',
+                    before : 'MaterialRequest'
+                },
+                {
+                    text: 'Add Material Request',
+                    disabled: true,
+                    cp: 'cpAddMaterialRequest',
+                    before : 'MaterialRequest'
                 },
             ],
         }
     },
     methods: {
+        submit_checklist()
+        {
+            console.log('oke');
+            //post mark complete
+            //ambil nilai dari cpdatatable yang di checklist
+            //===
+            this.$refs['cpHeader'].set_check_listing(false);
+            this.$refs['cpDatatable'].set_check_listing(false);
+        },
         button_index_clicked(index)
         {
             if(index == 0)
             {
-                this.opendialog_createedit(-1);
+                this.open_component('cpAddMaterialRequest');
+            }
+            else if(index  == 1)
+            {
+                //start checklisting
+                this.$refs['cpHeader'].set_check_listing(true);
+                this.$refs['cpDatatable'].convert_to_checklist(true);
             }
         },
         action_change(id,idx_action, data)
         {
+            this.selected_data = data;
             if(idx_action == 0)
             {
-                this.opendialog_createedit(id);
+                 //this.open_component('cpPurchaseOrderDetails', 'purchase_order', id);
             }
             else if(idx_action == 1)
             {
-                this.selected_data = data;
-                this.open_component('cpGoodsRack', 'goods_rack', id);
+                 
             }
             else if(idx_action == 2)
             {
-                this.delete_data(id);
+                // this.$refs['cpIncomingPo'].id_po = id;
+                // this.$refs['cpIncomingPo'].open_dialog();
+            }
+            else if(idx_action == 3)
+            {
+                //payment
+                
+            }
+            else if(idx_action == 4)
+            {
+                //history
+                
             }
         },
         
@@ -192,6 +217,7 @@ export default {
     },
     mixins:[
         mxCrudBasic
+
     ],
 }
 </script>

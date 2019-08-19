@@ -23,8 +23,7 @@ import Customer from './views/Customer.vue'
 import PODirect from './views/PODirect.vue'
 
 import PurchaseOrder from './views/PurchaseOrder.vue'
-
-import Coba from './views/Coba.vue'
+import MaterialRequest from './views/MaterialRequest.vue'
 
 import Login from './views/Login.vue'
 import Logout from './views/Logout.vue'
@@ -65,7 +64,7 @@ const routes = [
 
             { path: '/logout', component: Logout },
 
-            { path: '/coba', component: Coba }
+            { path: '/materialrequest', component: MaterialRequest }
         ],
         meta: { requiresAuth: true }
     }

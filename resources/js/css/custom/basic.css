@@ -129,6 +129,13 @@
 	height: 30px !important;
 }
 
+.datatable_checklist .v-input__control
+{
+	margin: auto !important;
+	vertical-align: middle !important; 
+	height: 20px !important;
+	margin-top: 9px !important;
+}
 .floatright
 {
 	float:right !important;

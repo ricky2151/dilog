@@ -71,18 +71,25 @@
             </v-flex>
         </v-layout>
         <v-layout justify-end>
-        	<v-btn  v-if='prop_button_on_index.length > 1' v-for='(button_name, index) in prop_button_on_index' :key='index' v-on:click='$emit("button_index_clicked", index)' color="primary" dark >
-                {{button_name}}
+        	<v-btn  v-if='prop_button_on_index.length > 1 && !check_listing' v-for='(button_name, index) in prop_button_on_index' :key='index' v-on:click='$emit("button_index_clicked", index)' color="primary" dark >
+        		<template v-if='(!check_listing || (check_listing && button_name == prop_button_for_checklist))'>
+                	{{button_name}}
+            	</template>
+
             </v-btn>
+            <v-btn  v-if='check_listing' v-on:click='$emit("submit_checklist")' color="primary" dark >
+                	Submit Checklist
+            	</v-btn>
         </v-layout>
     </div>
 </template>
 <script>
 	export default {
-		props : ['prop_icon', 'prop_title', 'prop_type_header', 'prop_search_data', 'prop_button_on_index','prop_information', 'prop_format_information', 'prop_filter_by_user_format', 'prop_filter_by_user_ref'],
+		props : ['prop_icon', 'prop_title', 'prop_type_header', 'prop_search_data', 'prop_button_on_index','prop_information', 'prop_format_information', 'prop_filter_by_user_format', 'prop_filter_by_user_ref', 'prop_button_for_checklist'],
 		data () {
 			return {
 				search_data :null,
+				check_listing : false,
 			}
 		},
 		watch:{
@@ -93,6 +100,10 @@
 		},
 		methods:
 		{
+			set_check_listing(val)
+			{
+				this.check_listing = val;
+			},
 			filter_by_user_change(val)
 			{
 				this.$emit('filter_by_user_change', val);

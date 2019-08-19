@@ -1176,6 +1176,7 @@ export default
 
 					singular_name : 'goods_rack',
 					plural_name : 'goods_racks',
+					custom_response_attribute : 'goods_rack',
 					column_desc : 'stock', //untuk fk
 
 					widthForm : '750',
@@ -1265,7 +1266,7 @@ export default
 					data : 
 					{
 						custom_master_data : {},
-						rule_update:'some',
+						rule_update:'send_all',
 						datatable:[
 							{
 								column : 'name',
@@ -1461,6 +1462,8 @@ export default
 					editable_add:true,
 					count_step:1,
 
+					additional_param_index : 'purchase_order_id',
+
 					actions:['Edit', 'Revision', 'Delete'],
 					button_on_index : ['Add Data', 'Submit', 'Incoming', 'Print'],
 
@@ -1549,6 +1552,259 @@ export default
 						conditional_input:{
 							"payment_terms" : ['payment_type','value','1'],
 						}
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+				//15. crud-material_requests
+				"material_requests" : 
+				{
+					table_name : 'material_requests',
+					title : 'Material Request',
+					icon : 'next_week',
+
+					singular_name : 'material_request',
+					plural_name : 'material_requests',
+					custom_response_attribute : 'material_request',
+					column_desc : 'code', //untuk fk
+
+					// widthForm : '750',
+					// editable_edit:true,
+					// editable_add:true,
+					// count_step:1,
+
+					actions:['Detail', 'Approve'],
+					button_on_index : ['Add Data', 'Mark Complete', 'List PR', 'Create PO'],
+					button_for_checklist : ['Mark Complete'],
+
+					request_master_data : false,
+					data : 
+					{
+						
+						rule_update:'some',
+						datatable:[
+							{
+								column : 'code',
+							},
+							{
+								column : 'division_name',
+							},
+							{
+								column : 'created_at',
+							},
+							{
+								column : 'status',
+							},
+							
+						],
+						filter_by_user : {
+							column_in_table : 'periode',
+							response_attribute : 'periodes',
+							itemText : "name",
+							itemValue : 'id',
+							title : 'Filter Periode',
+						},
+
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Code', value:'code'},
+                				{ text: 'Division', value:'division_name'},
+                				{ text: 'Created At', value:'created_at'},
+                				{ text: 'Status', value:'status'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						// form_single : [['supplier'],['periode'],['payment_type'],['payment_terms'],['no_po']],
+						// single : 
+						// {
+						// 	'id' : {
+						// 		label : '',
+						// 	},
+						// 	'supplier' : {
+						// 		label : 'Supplier', width:12, type:'s', validation:'selectdata_req',
+						// 		itemText:'company_name', itemValue:'id', column:'supplier_id', table_ref:'suppliers'
+								
+						// 	},
+						// 	'periode' : {
+						// 		label : 'Periode', width:12, type:'s', validation:'selectdata_req',
+						// 		itemText:'name', itemValue:'id', column:'periode_id', table_ref:'periodes'
+						// 	},
+						// 	'payment_type' : {
+						// 		label : 'Payment Type', width:12, type:'s', validation:'selectdata_req',
+						// 		itemText:'name', itemValue:'value', column:'payment_type',table_ref:'payment_type'
+						// 	},
+						// 	'payment_terms' : {
+						// 		label : 'Payment Terms', width:12, type:'tf', validation:'numeric_req',
+						// 		vif:true,
+						// 	},
+						// 	'no_po' : {
+						// 		label : 'No PO', width:12, type:'tf', validation:'max_req',
+						// 	},
+
+						// },
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+						// conditional_input:{
+						// 	"payment_terms" : ['payment_type','value','1'],
+						// }
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+				//16. crud-material_request_details
+				"material_request_details" : 
+				{
+					table_name : 'material_request_details',
+					title : 'Material Request Detail',
+					icon : 'add_shopping_cart',
+
+					singular_name : 'material_request_detail',
+					plural_name : 'material_request_details',
+					column_desc : 'notes', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					additional_param_index : 'material_request_id',
+
+					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
+
+					format_additional_data : 
+					{
+						'Code' : 'code',
+					},
+
+					request_master_data : true,
+					data : 
+					{
+						custom_master_data : {
+							
+						},
+						rule_update:'some',
+						datatable:[
+							{
+								column : 'goods_name',
+							},
+							{
+								column : 'qty',
+							},
+						],
+						filter_by_user : {
+							
+						},
+
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Goods', value:'goods_name'},
+                				{ text: 'Quantity', value:'qty'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+
+						form_single : [['goods'],['qty']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'goods' : {
+								label : 'Goods', width:12, type:'s', validation:'selectdata_req',
+								itemText:'goods_name', itemValue:'id', column:'goods_id', table_ref:'goods'
+							},
+							'qty' : {
+								label : 'Quantity', width:12, type:'tf', validation:'numeric_req',
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+				//17. crud-purchase_requests
+				"purchase_requests" : 
+				{
+					table_name : 'purchase_requests',
+					title : 'Purchase Request',
+					icon : 'add_shopping_cart',
+
+					singular_name : 'purchase_request',
+					plural_name : 'purchase_requests',
+					column_desc : 'code', //untuk fk
+
+					
+
+
+					actions:['Edit', 'Make PO', 'Delete'],
+					button_on_index : ['Add Data'],
+
+					
+
+					
+					data : 
+					{
+						custom_master_data : {
+							
+						},
+						
+						datatable:[
+							{
+								column : 'code',
+							},
+							{
+								column : 'created_by_user_name',
+							},
+							{
+								column : 'created_at',
+							},
+							{
+								column : 'status',
+							},
+						],
+						filter_by_user : {
+							column_in_table : 'periode',
+							response_attribute : 'periodes',
+							itemText : "name",
+							itemValue : 'id',
+							title : 'Filter Periode',
+						},
+
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Code', value:'code'},
+                				{ text: 'Created By', value:'created_by'},
+                				{ text: 'Created At', value:'created_at'},
+                				{ text: 'Status', value:'status'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+
+						
+						
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
 					},
 					get_data_detail : 
 					{

@@ -1,5 +1,6 @@
 <template>
 	<div v-if='data_table'>
+
 		<v-data-table
             disable-initial-sort
             :headers="prop_header"
@@ -17,6 +18,14 @@
     				||
     				(!prop_filter_by_user_value) '
     			>
+
+					<v-checkbox
+					class='datatable_checklist'
+					v-if='checklisting'
+		            v-model="data_table[props.index]['checked']"
+		            color="primary"
+			            
+			         ></v-checkbox>
 			        <td>{{ props.item.no }}</td>
 			        <td v-for='(obj,index) in prop_infoDatatable'>
 						{{ obj.column?props.item[obj.column]:calculate_custom_value(props.item,obj.value) }}
@@ -68,9 +77,11 @@
 			'prop_format_filter_by_user',
 			'prop_filter_by_user_value',
 			'prop_get_additional_data',
+			'prop_custom_response_attribute',
 		],
 		data () {
 			return {
+				checklisting : false,
 				data_table:[],
 				header_api:{
 	                'Accept': 'application/json',
@@ -79,12 +90,23 @@
 			}
 		},
 		methods: {
-
+			convert_to_checklist(val)
+			{
+				if(val == true)
+				{
+					this.checklisting = true;
+					this.prop_header.splice(0,0,{ text: '',  width:'3%', value:'checklist'});
+				}
+				else if(val == false)
+				{
+					this.checklisting = false;
+					this.prop_header.splice(0,1);
+				}
+			},
 			send_filter_by_user_ref(r)
 			{
 				var result = r.data.items[this.prop_format_filter_by_user.response_attribute];
 				result.splice(0,0,{"id" : 0, 'name' : 'All'});
-				
 				this.$emit('response_filter_by_user_ref', result);
 			},
 			get_data() {
@@ -94,6 +116,8 @@
 	                    token: localStorage.getItem('token')
 	                }
 	            },this.header_api).then((r) => {
+	            	
+
 	            	this.showTable(r);
 	            	if(this.prop_format_filter_by_user)
 	            	{
@@ -114,14 +138,24 @@
 	        showTable(r)
         	{
         		var temp_r;
+        		var response_attribute;
+        		if(this.prop_custom_response_attribute)
+        		{
+        			response_attribute = this.prop_custom_response_attribute;
+        		}
+        		else
+
+        		{
+        			response_attribute = this.prop_plural_name;
+        		}
         		//jika adaadditional_data, maka format r nya agak beda
         		if(this.prop_get_additional_data)
         		{
-        			temp_r = r.data.items[this.prop_filter['table_parent']][this.prop_plural_name];
+        			temp_r = r.data.items[this.prop_filter['table_parent']][response_attribute];
         		}
         		else
     			{
-    				temp_r = r.data.items[this.prop_plural_name];
+    				temp_r = r.data.items[response_attribute];
     			}
         		
         		// else if(this.prop_filter_by_user_value && this.prop_format_filter_by_user.column_in_table)
@@ -136,7 +170,8 @@
 		        //         }
 		        //     }
         		// }
-        		
+        		console.log('cek showtable');
+        		console.log(this.prop_custom_response_attribute);
 		        this.data_table = temp_r;
         		
 	        },

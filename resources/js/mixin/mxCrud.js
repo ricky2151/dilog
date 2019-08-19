@@ -35,6 +35,8 @@ export default {
         },
         fill_filter_by_user_ref(arr)
         {
+            // console.log('sampe fill filter by user ref');
+            // console.log(arr);
             this.filter_by_user_ref = arr;
         },
         fill_filter_by_user_value(val)
@@ -50,6 +52,7 @@ export default {
         {
             this.additional_data = item;
             if (typeof this.after_fill_additional_data === "function") { 
+                console.log('masuk sini woi');
                 this.after_fill_additional_data();
             }
         },
@@ -197,8 +200,19 @@ export default {
     },
     mounted()
     {
+        if(this.info_table.additional_param_index)
+        {
+            this.$refs['cpForm'].get_master_data(this.prop_list_filter.id_selected,this.info_table.additional_param_index);
+        }
+        else
+        {
+            if(this.info_table.request_master_data)
+            {
+                this.$refs['cpForm'].get_master_data();    
+
+            }
+        }
         
-        this.$refs['cpForm'].get_master_data();
     },
 	mixins:[
 		mxStringProcessing,

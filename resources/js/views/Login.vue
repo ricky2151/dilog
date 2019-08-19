@@ -20,9 +20,7 @@
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
                                     <v-btn id='buttonsubmit' type="submit" color="primary" v-on:click="req_login" ref='buttonLogin'>Login</v-btn>
-                                    <div v-if='button_clicked'>
-                                        <h1>Halo</h1>
-                                    </div>
+                                    
                                 </v-card-actions>
                             </v-card>
                         </v-form>
@@ -42,34 +40,26 @@
     	data()
     	{
     		return {
-                coba : 'coba',
 	            in_password:'',
 	            in_email:'',
-                button_clicked : false,
         	}
     	},
     	methods:
     	{
     		async req_login(){
 
-                try{
-        			let r = await axios.post('/api/auth/login',{
-        				email:this.in_email,
-        				password:this.in_password
-        			});
+                
+			let r = await axios.post('/api/auth/login',{
+				email:this.in_email,
+				password:this.in_password
+			});
 
-                }
-                catch(e)
-                {
-                }
-                this.button_clicked = true;
+               
                 this.saveToken(r);
     		},
 
     		saveToken(r){
-                this.button_clicked = true;
-                this.$nextTick(() => {
-                });
+                
     			localStorage.setItem('token', r.data.access_token)
                 localStorage.setItem('user', JSON.stringify(r.data.user))
                 

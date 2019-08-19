@@ -156,7 +156,7 @@
 								<h3>{{prop_dataInfo.multiple[table_name].title}} Data  </h3>
 							</v-stepper-step>
 							<v-stepper-content :step='idx + 2'>
-								{{ref_input}}
+								
 
 									<!-- TIPE CHIPS -->
 									<div v-if=' prop_dataInfo.multiple[table_name].type == "chips" '>
@@ -460,9 +460,8 @@
 				
 				
 
-
 				//khusus mocc
-		        if(this.prop_dataInfo.custom_component['cpMakeOrCopyChild'])
+		        if(this.prop_dataInfo.custom_component['cpMakeOrCopyChild'] && id > -1)
 		        {
 		        	var temp_name_table_child_mocc = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].child.table_name;
 
@@ -477,6 +476,7 @@
 					});
 					temp_result['idx_edit'] = -1;
 					temp_temp_input[temp_name_table_child_mocc] = temp_result;
+					
 
 					//3. masukan property editing mocc dari mxdatabase ke prop_datainfo, SEOLAH-OLAH itu adalah multiplenya (padahal hanya berlaku pada saat edit)
 					this.prop_dataInfo.form_multiple = [];
@@ -487,11 +487,13 @@
 
 		        this.temp_input = temp_temp_input;
 		        
-
+		        
 
 		        
 		        this.preview = this.prop_preview;
 		        this.conditional_input = this.prop_dataInfo.conditional_input;
+
+		        
 		        this.set_watcher_custom_value();
 		        
 		        this.set_custom_single();
@@ -665,17 +667,25 @@
 	            }
 	        },
 
-	        get_master_data()
+	        get_master_data(idparent,fktoparent)
 	        {
-
+	        	console.log('cek get_master_data');
+	        	console.log(idparent);
+	        	console.log(fktoparent);
 	            if(this.prop_urlGetMasterData != null)
 	            {
+	            	var params = {
+	            		params : {
+	            			token : localStorage.getItem('token')
+	            		}
+	            	};
+	            	if(idparent)
+	            	{
+	            		params['params'][fktoparent] = idparent;
+	            	}
 	            	
-	                axios.get(this.prop_urlGetMasterData, {
-	                    params:{
-	                        token: localStorage.getItem('token')
-	                    }
-	                },{
+	            	
+	                axios.get(this.prop_urlGetMasterData, params,{
 	                    headers: {
 	                        'Accept': 'application/json',
 	                        'Content-type': 'application/json'
@@ -883,6 +893,7 @@
                 {
                     if(this.temp_input[table_name][key] && key != 'idx_edit') //jika ada tidak kosong dan bukan custom value
                     {
+
                     	if(!this.prop_dataInfo.multiple[table_name].single[key].hasOwnProperty("value"))
                     	{
 	                        this.temp_input[table_name][key] = null;
@@ -1162,6 +1173,7 @@
 	        		else //menggunakan copy
 	        		{
 	        			formData.append('store_type', '1');
+	        			formData.append('warehouse_id', data_cpmocc.interaction.create.selected_parent.id);
 	        			var idxcopychild = -1;
 	        			for(var i = 0;i<data_cpmocc.interaction.create.selected_parent[table_name_child].length;i++)
 	        			{

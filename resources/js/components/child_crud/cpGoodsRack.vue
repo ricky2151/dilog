@@ -76,6 +76,7 @@
         :prop_plural_name='info_table.plural_name'
         :prop_url_index='prop_list_filter? generate_url("racks", "detail",get_property_from_list_filter(prop_list_filter).idparent, get_property_from_list_filter(prop_list_filter).table) :  generate_url(info_table.table_name, "index")'
         :prop_filter='prop_list_filter'
+        :prop_custom_response_attribute='info_table.custom_response_attribute'
 
         v-on:action_clicked='action_change'
         ref="cpDatatable"
