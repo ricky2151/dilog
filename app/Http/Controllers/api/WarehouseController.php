@@ -296,7 +296,9 @@ class WarehouseController extends Controller
         $warehouse = $this->warehouse->find($id);
         $warehouse = collect($warehouse);
         
-        $concatenated = $warehouse->union(["racks"=>$this->warehouse->find($id)->racks]);
+        $concatenated = $warehouse->union(["racks"=>$this->warehouse->find($id)->racks->map(function($item){
+            return $item->only(['id','name']);
+        })]);
 
         return formatResponse(false,(["warehouse"=>$concatenated]));
     }

@@ -63,10 +63,15 @@ class PurchaseOrderService
         $this->handleInvalidParameter($id);
         $this->handleModelNotFound($id);
 
-        $purchaseOrder = $this->purchaseOrder->find($id,['id','no_po','type','total','created_by_user_id']);
+        $purchaseOrder = $this->purchaseOrder->find($id,['id','no_po','type','total','created_by_user_id','status']);
+        $purchaseOrder = Arr::add($purchaseOrder, 'status_name', $purchaseOrder->getNameStatusPo());
         $purchaseOrder = Arr::add($purchaseOrder, 'created_by_user_name', $purchaseOrder->createdByUser->name);
         $purchaseOrder = Arr::add($purchaseOrder, 'type_name', $purchaseOrder->getNameTypePo());
         $purchaseOrder = Arr::add($purchaseOrder, 'purchase_order_details', $purchaseOrder->purchaseOrderDetails);
+        $purchaseOrder->purchase_order_details = $purchaseOrder->purchase_order_details->map(function($item){
+            $item['goods_name'] = Goods::find($item['goods_id'])['name'];
+            return $item;
+        });
 
         return collect($purchaseOrder)->except(['created_by_user']);
 

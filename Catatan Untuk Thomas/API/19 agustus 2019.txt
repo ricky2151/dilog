@@ -1,8 +1,15 @@
 1. di api api/warehouses/{id}/edit, dibagian response warehouse.racks, cukup isinya : id,name (tidak perlu warehouse_id, created_at,updated_at,deleted_at)
+FIX by Thomas
 
 2. Ada error saat delete goods
 {"error":true,"message":{"Goods":["Transaction error on model Goods"]}}
+FIX by Thomas
 
 3. di api index purchsaeoderdetails dikasi goods_name dibagian array purchase_order_details
+FIX by Thomas
+
 4. di api index purchsaeoderdetails dikasi status dibagian array purchase_order. Status nya "new" atau "approved" atau yang lainnya.
+FIX by Thomas
+
 5. di api index material request dibagian array material_request, "periode_id" diganti jadi "periode" biar sama kaya api indexnya purchase order
+FIX by Thomas
