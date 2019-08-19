@@ -49,6 +49,10 @@ class MaterialRequest extends Model
         $this->update(['approved_by_user_id'=>auth('api')->user()->id]);
     }
 
+    public function setProcess(){
+        $this->update(['status'=>2]);
+    }
+
     public function period(){
         return $this->belongsTo('App\Models\Period');
     }
