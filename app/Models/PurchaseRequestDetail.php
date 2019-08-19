@@ -11,7 +11,24 @@ class PurchaseRequestDetail extends Model
         'purchase_request_id', 'goods_id','qty', 'notes', 'pricelist_id', 'price', 'supplier_id', 'is_created_as_po'
     ];
 
+    public function setCreatedPo(){
+        $this->is_created_as_po = 1;
+        $this->save();
+    }
+
     public function purchaseRequest(){
         return $this->belongsTo('App\Models\PurchaseRequest');
+    }
+
+    public function goods(){
+        return $this->belongsTo('App\Models\Goods');
+    }
+
+    public function supplier(){
+        return $this->belongsTo('App\Models\Supplier');
+    }
+
+    public function pricelist(){
+        return $this->belongsTo('App\Models\Pricelist');
     }
 }

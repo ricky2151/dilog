@@ -94,6 +94,11 @@ Route::group([
 
     //PurchaseRequest
     Route::resource('purchaseRequests', 'PurchaseRequestController');
+    Route::get('purchaseRequests/{id}/rekaps', 'PurchaseRequestController@rekaps');
+    Route::post('purchaseRequests/{id}/purchaseRequestDetails', 'PurchaseRequestController@storePurchaseRequestDetails');
+    Route::get('purchaseRequests/{id}/purchaseRequestDetailsToPurchaseOrder', 'PurchaseRequestController@purchaseRequestDetailsToPurchaseOrder');
+    Route::get('purchaseRequests/{id}/purchaseRequestDetails', 'PurchaseRequestController@purchaseRequestDetails');
+    Route::post('purchaseRequests/{id}/purchaseOrders', 'PurchaseRequestController@storeToPurchaseOrders');
 
     //PurchaseOrder
     Route::resource('purchaseOrders', 'PurchaseOrderController');

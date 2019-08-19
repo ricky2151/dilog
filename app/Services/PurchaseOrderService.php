@@ -37,7 +37,7 @@ class PurchaseOrderService
 
     public function handleUpdate($id, $data){
         $purchaseOrder = $this->purchaseOrder->find($id);
-        if(!is_null($purchaseOrder->purchaseOrderDetails)){
+        if(!$purchaseOrder->purchaseOrderDetails->isEmpty()){
             if($data['supplier_id'] != $purchaseOrder['supplier_id']){
                 throw new InvalidParameterException(json_encode(["purchase_order"=>["can't update supplier because PO detail have been created"]]));
             }
@@ -80,7 +80,7 @@ class PurchaseOrderService
 
     public function handleSubmit($id){
         $purchaseOrder = $this->purchaseOrder->find($id);
-        if(is_null($purchaseOrder->purchaseOrderDetails)){
+        if($purchaseOrder->purchaseOrderDetails->isEmpty()){
             throw new InvalidParameterException(json_encode(["purchase_order"=>["can't submit because PO detail is null"]]));
         }
         $this->checkStatusPo($purchaseOrder,1);

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreatePurchaseRequestsTable extends Migration
+class CreateRekapsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreatePurchaseRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::create('purchase_requests', function (Blueprint $table) {
+        Schema::create('rekaps', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('code');
-            $table->boolean('status')->default(0);// 0 for new, 1 for complete
-            $table->integer('created_by_user_id')->unsigned();
+            $table->integer('purchase_request_id')->unsigned();
+            $table->integer('goods_id')->unsigned();
+            $table->integer('total_required_by_mr')->unsigned();
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreatePurchaseRequestsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('purchase_request_details');
+        Schema::dropIfExists('rekaps');
     }
 }

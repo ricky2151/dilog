@@ -58,7 +58,10 @@ class PurchaseOrderDetailService
         $data['purchase_order_id'] = $purchaseOrderId;
         $this->isCanCreateUpdateDelete($data, 'create');
 
-        return $this->getGoodsWithPricelist($purchaseOrderId);
+        return $purchaseOrder = collect(["purchase_order"=>[
+            'id'=>$purchaseOrderId,
+            "no_po"=>$this->purchaseOrder->find($purchaseOrderId)['no_po']
+        ]])->union($this->getGoodsWithPricelist($purchaseOrderId))->toArray();
     }
 
     public function getGoodsWithPricelist($purchaseOrderId){

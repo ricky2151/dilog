@@ -18,11 +18,11 @@ class CreatePurchaseRequestDetailsTable extends Migration
             $table->integer('purchase_request_id')->unsigned();
             $table->integer('goods_id')->unsigned();
             $table->integer('qty')->unsigned();
-            $table->string('notes');
+            $table->string('notes')->nullable();
             $table->integer('pricelist_id')->unsigned();
             $table->integer('supplier_id')->unsigned();
             $table->integer('price')->unsigned();
-            $table->boolean('is_created_as_po');
+            $table->boolean('is_created_as_po')->default(0);
             $table->timestamps();
         });
     }

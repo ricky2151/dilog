@@ -70,10 +70,8 @@ class MaterialRequestController extends Controller
             $data = Arr::add($data, 'periode_id', $this->periode->getPeriodeActive()['id']);
             
             $materialRequest = $this->user->materialRequests()->create($data);
-            $materialRequest->update(['code'=>"MR-".$materialRequest['id']]);
+            $materialRequest->update(["no_mr"=>"MR-".$materialRequest['id']]);
             $materialRequest->materialRequestDetails()->createMany($materialRequestDetails);
-
-            // return $materialRequest;
 
             DB::commit();
         } catch (\Throwable $e) {
@@ -140,7 +138,7 @@ class MaterialRequestController extends Controller
         $this->materialRequestService->handleInvalidParameter($id);
         $this->materialRequestService->handleModelNotFound($id);
 
-        return formatResponse(false,(["material_request"=>$this->materialRequestService->editForm($id)]));
+        // return formatResponse(false,(["material_request"=>$this->materialRequestService->editForm($id)]));
     }
 
     /**

@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class MaterialRequest extends Model
 {
-    //Status is condition this Material Request where value 1 = approved, 0 = new
+    //Status is condition this Material Request where value 2 = diproses ,1 = approved, 0 = new
     protected $fillable = [
-        'code', 'division_id','request_by_user_id','status','periode_id'
+        'no_mr', 'division_id','request_by_user_id','status','periode_id','approved_by_user_id'
     ];
 
     public function updateDetailMaterialRequest($materialRequestDetails){
@@ -24,6 +24,18 @@ class MaterialRequest extends Model
         }
     }
 
+    public function getMrApprove(){
+        return $this->where('status',1)->orderBy('updated_at','desc')->get();
+    }
+
+    public function getStatusName(){
+        switch($this->status){
+            case 0: return "New";
+            case 1: return "Approve";
+            case 2: return "Process";
+        }
+    }
+
     public static function getMaterialRequestInActivePeriode(){
         return auth('api')->user()->division->materialRequest->where('periode_id',Periode::getPeriodeActive()['id'])->flatten(1);
     }
@@ -34,6 +46,7 @@ class MaterialRequest extends Model
 
     public function approve(){
         $this->update(['status'=>1]);
+        $this->update(['approved_by_user_id'=>auth('api')->user()->id]);
     }
 
     public function period(){
@@ -50,5 +63,9 @@ class MaterialRequest extends Model
 
     public function user(){
         return $this->belongsTo('App\Models\User','request_by_user_id','id');
+    }
+
+    public function userApprove(){
+        return $this->belongsTo('App\Models\User','approved_by_user_id','id');
     }
 }

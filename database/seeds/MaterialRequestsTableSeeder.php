@@ -15,7 +15,7 @@ class MaterialRequestsTableSeeder extends Seeder
         for ($i=1; $i < 100; $i++) {
             $random = rand(1,4);
             MaterialRequest::create([
-                "code" => "Material Request " . $i,
+                "no_mr" => "MR-" . $i,
                 "division_id" => $random,
                 "request_by_user_id" => $random,
                 "periode_id"=> rand(1,4)

@@ -52,6 +52,7 @@ class PaymentController extends Controller
         $this->paymentService->handleStore($validated['purchase_order_id']);
         $validated['payment_date'] = now();
         $this->payment->create($validated);
+        $this->purchaseOrder->find($validated['purchase_order_id'])->setPaidDate();
 
         
         return formatResponse(false,(["payment"=>["payment successfully created"]]));
