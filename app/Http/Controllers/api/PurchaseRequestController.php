@@ -66,8 +66,15 @@ class PurchaseRequestController extends Controller
         $validated = $request->validated();
         $this->purchaseRequestService->handleStore($validated);
         $data = $this->purchaseRequestService->getRekapFromMateril($validated['material_requests']);
+        $mr = $validated['material_requests'];
         DB::beginTransaction();
         try {
+            collect($mr)->map(function($item){
+                $item = $this->materialRequest->find($item)[0];
+                $this->purchaseRequestService->setMrProcess($item);
+                $item->setProcess();
+            });
+
             $rekaps = $data->map(function($item){
                 return [
                     'goods_id' => $item['goods_id'],
@@ -82,7 +89,7 @@ class PurchaseRequestController extends Controller
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollback();
-            return $e;
+            // return $e;
             throw new DatabaseTransactionErrorException("purchase_request");
         }
         return formatResponse(false,(["rekaps"=>$data]));

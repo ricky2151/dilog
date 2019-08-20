@@ -117,6 +117,12 @@ class PurchaseRequestService
         }
     }
 
+    public function setMrProcess($data){
+        if($data['status']!=1){
+            throw new InvalidParameterException(json_encode(["purchase_request"=>["MR status not approve"]]));
+        }
+    }
+
     public function handleCreateForm(){
         $data = ["material_requests" => $materialRequests = $this->materialRequest->getMrApprove()->map(function($item){
             return[
