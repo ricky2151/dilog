@@ -84,7 +84,7 @@ class PurchaseRequestController extends Controller
                 ];
             })->toArray();
 
-            $purchaseRequest = $this->user->purchaseRequests()->create(["code"=>""]);
+            $purchaseRequest = $this->user->purchaseRequests()->create(["code"=>"","periode_id"=>$this->periode->getPeriodeActive()['id']]);
             $purchaseRequest->update(["code"=>"PR-".$purchaseRequest['id']]);
             $purchaseRequest->rekaps()->createMany($rekaps);
             
