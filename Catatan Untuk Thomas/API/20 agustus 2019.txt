@@ -7,4 +7,6 @@ sebaiknya api untuk menampilkan profile dan api untuk index datatable mr dipisah
 
 3. api index pr dikasi periode sama seperti index mr & index po
 
-4. 
+4. api create pr tolong dikasi contoh list mr nya. Terus harusnya pas aku panggil create, aku kirim periode_id nya. periode_id nya sesuai dengan yang di select user di halaman index / datatable awalnya.
+
+5. api store pr error
