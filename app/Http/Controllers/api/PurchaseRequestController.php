@@ -36,7 +36,9 @@ class PurchaseRequestController extends Controller
     {
         $purchaseRequests = $this->purchaseRequest->latest()->get()->map(function($item){
             $item['status_name'] = $item->prGetStatusName();
-            return $item;
+            $item['created_by_user_name'] = $item['user']['name'];
+            $item['periode'] = $item['periode_id'];
+            return collect($item)->except('user','periode_id');
         });
         return formatResponse(false,([
             "purchase_requests"=>$purchaseRequests, 

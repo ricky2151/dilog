@@ -40,6 +40,16 @@ class MaterialRequestController extends Controller
     }
 
     /**
+     * Display a listing of the Material Request per division.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function homeProfile()
+    {
+        return $this->materialRequestService->handleHomeProfile();
+    }
+
+    /**
      * Show the form for creating a new Material Request.
      *
      * @return \Illuminate\Http\JsonResponse
@@ -122,7 +132,12 @@ class MaterialRequestController extends Controller
         $this->materialRequestService->handleInvalidParameter($id);
         $this->materialRequestService->handleModelNotFound($id);
 
-        return formatResponse(false,(["material_request_details"=>$this->materialRequest->find($id)->materialRequestDetails]));
+        return formatResponse(false,([
+            "material_request_details"=>$this->materialRequest->find($id)->materialRequestDetails->map(function($item){
+                $item['goods_name'] = $item['goods']['name'];
+                return collect($item)->except('goods');
+            })
+        ]));
     }
 
 
@@ -138,7 +153,7 @@ class MaterialRequestController extends Controller
         $this->materialRequestService->handleInvalidParameter($id);
         $this->materialRequestService->handleModelNotFound($id);
 
-        // return formatResponse(false,(["material_request"=>$this->materialRequestService->editForm($id)]));
+        return formatResponse(false,($this->materialRequestService->editForm($id)));
     }
 
     /**

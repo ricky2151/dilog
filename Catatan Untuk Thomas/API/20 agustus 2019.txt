@@ -2,11 +2,16 @@
 semua finance bisa akses halaman MR (index,add mr, profile, dll)
 non finance hanya bisa mengakses add mr dan profile saja
 sebaiknya api untuk menampilkan profile dan api untuk index datatable mr dipisah saja tom
+FIXED by thomas
 
 2. api index pr dikasi created_by_user_name
+FIXED by thomas
 
 3. api index pr dikasi periode sama seperti index mr & index po
+FIXED by Thomas
 
 4. api create pr tolong dikasi contoh list mr nya. Terus harusnya pas aku panggil create, aku kirim periode_id nya. periode_id nya sesuai dengan yang di select user di halaman index / datatable awalnya.
+?
 
 5. api store pr error
+?

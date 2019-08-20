@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 class PurchaseRequest extends Model
 {
     protected $fillable = [
-        'code', 'status','created_by_user_id'
+        'code', 'status','created_by_user_id','periode_id'
     ];
 
     public function purchaseRequestDetails(){
@@ -23,6 +23,10 @@ class PurchaseRequest extends Model
 
     public function rekaps(){
         return $this->hasMany('App\Models\Rekap');
+    }
+
+    public function user(){
+        return $this->belongsTo('App\Models\User','created_by_user_id','id');
     }
 
     public function purchaseRequestDetailsNotYetBePo(){

@@ -17,9 +17,10 @@ class PurchaseRequestsTableSeeder extends Seeder
 
         for ($i=0; $i < 4; $i++) {
             PurchaseRequest::create([
-                'code' => "PR" . $i,
+                'code' => "PR" . ($i+1),
                 'status' => rand(0,1),
-                'created_by_user_id' => rand(1,4)
+                'created_by_user_id' => rand(1,4),
+                'periode_id' => ($i+1)
             ]);
         }
     }

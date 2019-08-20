@@ -29,7 +29,7 @@ class MaterialRequestService
             return $this->financeDivisionIndex();
         }
         else{
-            return $this->otherDivisionIndex();
+            throw new InvalidParameterException(json_encode(["material_request"=>["user is not permitted to open index material request"]]));
         }
     }
 
@@ -52,8 +52,7 @@ class MaterialRequestService
         return formatResponse(false,(["material_request"=>$data,"periode_active"=>$this->periode->getPeriodeActive(),'periodes'=>$this->periode->latest()->get()]));
     }
 
-    public function otherDivisionIndex(){
-        // return $this->user->makeVisible('id')->toArray();
+    public function handleHomeProfile(){
         return formatResponse(false,([
             "user_info"=>[
                 'user_name'=>$this->user->name,

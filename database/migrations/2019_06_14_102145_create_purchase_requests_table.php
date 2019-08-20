@@ -18,6 +18,7 @@ class CreatePurchaseRequestsTable extends Migration
             $table->string('code');
             $table->boolean('status')->default(0);// 0 for new, 1 for complete
             $table->integer('created_by_user_id')->unsigned();
+            $table->integer('periode_id')->unsigned();
             $table->timestamps();
         });
     }
