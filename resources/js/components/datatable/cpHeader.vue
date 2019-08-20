@@ -79,7 +79,10 @@
             </v-btn>
             <v-btn  v-if='check_listing' v-on:click='$emit("submit_checklist")' color="primary" dark >
                 	Submit Checklist
-            	</v-btn>
+            </v-btn>
+            <v-btn  v-if='check_listing' v-on:click='$emit("cancel_checklist")' color="primary" dark >
+                	Cancel
+            </v-btn>
         </v-layout>
     </div>
 </template>

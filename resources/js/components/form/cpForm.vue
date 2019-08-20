@@ -117,6 +117,23 @@
 										class="pa-2"
 										>
 										</v-select>
+										
+										<v-autocomplete
+										v-if='objColumn.type=="s2"'
+										:rules='$list_validation[objColumn.validation]'
+										:label='objColumn.label'
+										v-model='input[column]'
+										:disabled='objColumn.disabled'
+
+										:items='ref_input[objColumn.table_ref]'
+										:item-text='objColumn.itemText'
+										return-object
+
+										class="pa-2"
+
+								        
+								        >
+								        </v-autocomplete>
 
 										
 										<template v-if='objColumn.type=="img"' :set='tempObjColumn = objColumn'>
@@ -246,6 +263,19 @@
 												:disabled='objColumn.disabled'
 												>
 												</v-select>
+
+												<v-autocomplete
+												v-if='objColumn.type=="s2" && temp_input[table_name]'
+												:label='objColumn.label'
+												v-model='temp_input[table_name][column]'
+												:items='ref_input[objColumn.table_ref]'
+												:item-text='objColumn.itemText'
+												return-object
+												:disabled='objColumn.disabled'
+
+										        
+										        >
+										        </v-autocomplete>
 
 												<!-- SEMENTARA INI BELUM ADA CHILD FORM YANG MENGGUNAKAN GAMBAR -->
 												<!-- <v-text-field
@@ -461,29 +491,33 @@
 				
 
 				//khusus mocc
-		        if(this.prop_dataInfo.custom_component['cpMakeOrCopyChild'] && id > -1)
-		        {
-		        	var temp_name_table_child_mocc = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].child.table_name;
+				if(this.prop_dataInfo.custom_component)
+				{
+			        if(this.prop_dataInfo.custom_component['cpMakeOrCopyChild'] && id > -1)
+			        {
+			        	var temp_name_table_child_mocc = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].child.table_name;
 
-		        	//1. generate input
-		        	this.input[temp_name_table_child_mocc] = [];
+			        	//1. generate input
+			        	this.input[temp_name_table_child_mocc] = [];
 
 
-		        	//2. generate temp_data
-		        	var temp_result = {};
-					Object.keys(this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].editing[temp_name_table_child_mocc].single).map(function(key, index) {
-						temp_result[key] = null;
-					});
-					temp_result['idx_edit'] = -1;
-					temp_temp_input[temp_name_table_child_mocc] = temp_result;
-					
+			        	//2. generate temp_data
+			        	var temp_result = {};
+						Object.keys(this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].editing[temp_name_table_child_mocc].single).map(function(key, index) {
+							temp_result[key] = null;
+						});
+						temp_result['idx_edit'] = -1;
+						temp_temp_input[temp_name_table_child_mocc] = temp_result;
+						
 
-					//3. masukan property editing mocc dari mxdatabase ke prop_datainfo, SEOLAH-OLAH itu adalah multiplenya (padahal hanya berlaku pada saat edit)
-					this.prop_dataInfo.form_multiple = [];
-					this.prop_dataInfo.form_multiple.push(temp_name_table_child_mocc);
-					this.prop_dataInfo.multiple = {};
-					this.prop_dataInfo.multiple[temp_name_table_child_mocc] = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].editing[temp_name_table_child_mocc];
-		        }
+						//3. masukan property editing mocc dari mxdatabase ke prop_datainfo, SEOLAH-OLAH itu adalah multiplenya (padahal hanya berlaku pada saat edit)
+						this.prop_dataInfo.form_multiple = [];
+						this.prop_dataInfo.form_multiple.push(temp_name_table_child_mocc);
+						this.prop_dataInfo.multiple = {};
+						this.prop_dataInfo.multiple[temp_name_table_child_mocc] = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].editing[temp_name_table_child_mocc];
+			        }
+
+				}
 
 		        this.temp_input = temp_temp_input;
 		        
@@ -987,7 +1021,7 @@
 				    		}
 				    		formData.append('is_image_delete', is_image_delete);
 				    	}
-				    	else if(objColumn.type == 's')
+				    	else if(objColumn.type == 's' || objColumn.type == 's2')
 				    	{
 				    		if(!this.same_object(this.input[nameColumn],this.input_before_edit[nameColumn]) || this.id_edit == -1)
 				    			formData.append(objColumn.column, this.input[nameColumn][objColumn.itemValue]);
@@ -1029,7 +1063,7 @@
 			                		var objColumnChildTable = objTable.single[key];
 			                		if(objColumnChildTable.column) //cek jika dia benar akan dikirim ke server
 			                		{
-			                			if(objColumnChildTable.type == 's') //cek jika dia merupakan select, maka kita ambil value dari attribute 'itemValue'
+			                			if(objColumnChildTable.type == 's' || objColumnChildTable.type == 's2') //cek jika dia merupakan select, maka kita ambil value dari attribute 'itemValue'
 			                			{
 				                			formData.append(nameTable + '[' + j + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key][objColumnChildTable.itemValue]);		
 			                			}
@@ -1060,7 +1094,7 @@
 				                		var objColumnChildTable = objTable.single[key];
 				                		if(objColumnChildTable.column) //cek jika dia benar akan dikirim ke server
 				                		{
-				                			if(objColumnChildTable.type == 's') //cek jika dia merupakan select, maka kita ambil value dari attribute 'itemValue'
+				                			if(objColumnChildTable.type == 's' || objColumnChildTable.type == 's2') //cek jika dia merupakan select, maka kita ambil value dari attribute 'itemValue'
 				                			{
 					                			formData.append(nameTable + '[' + counteridx + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key][objColumnChildTable.itemValue]);		
 				                			}
@@ -1101,7 +1135,7 @@
 					                		var objColumnChildTable = objTable.single[key];
 					                		if(objColumnChildTable.column) //cek jika dia benar akan dikirim ke server
 					                		{
-					                			if(objColumnChildTable.type == 's') //cek jika dia merupakan select, maka kita ambil value dari attribute 'itemValue'
+					                			if(objColumnChildTable.type == 's' || objColumnChildTable.type == 's2') //cek jika dia merupakan select, maka kita ambil value dari attribute 'itemValue'
 					                			{
 						                			formData.append(nameTable + '[' + counteridx + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key][objColumnChildTable.itemValue]);		
 					                			}

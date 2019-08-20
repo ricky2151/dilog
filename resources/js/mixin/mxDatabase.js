@@ -1068,7 +1068,7 @@ export default
 										label : '', 
 									},
 									'goods' : { 
-										label : 'Goods', width:12, type:'s',
+										label : 'Goods', width:12, type:'s2',
 										itemText:'name', itemValue:'id', column:'goods_id', table_ref:'goods'
 
 									},
@@ -1219,7 +1219,7 @@ export default
 								label : '',
 							},
 							'goods' : {
-								label : 'Goods', width:12, type:'s', validation:'selectdata_req', 
+								label : 'Goods', width:12, type:'s2', validation:'selectdata_req', 
 								itemText:'name', itemValue:'id', column:'goods_id', table_ref:'goods'
 							},
 							'rack' : {
@@ -1522,7 +1522,7 @@ export default
 								label : '',
 							},
 							'goods' : {
-								label : 'Goods', width:12, type:'s', validation:'selectdata_req',
+								label : 'Goods', width:12, type:'s2', validation:'selectdata_req',
 								itemText:'goods_name', itemValue:'id', column:'goods_id', table_ref:'goods'
 								
 							},
@@ -1720,7 +1720,7 @@ export default
 								label : '',
 							},
 							'goods' : {
-								label : 'Goods', width:12, type:'s', validation:'selectdata_req',
+								label : 'Goods', width:12, type:'s2', validation:'selectdata_req',
 								itemText:'goods_name', itemValue:'id', column:'goods_id', table_ref:'goods'
 							},
 							'qty' : {
@@ -1777,7 +1777,7 @@ export default
 								column : 'created_at',
 							},
 							{
-								column : 'status',
+								column : 'status_name',
 							},
 						],
 						filter_by_user : {
@@ -1791,9 +1791,9 @@ export default
 						headers: [
 								{ text: 'No', value:'no'},
                 				{ text: 'Code', value:'code'},
-                				{ text: 'Created By', value:'created_by'},
+                				{ text: 'Created By', value:'created_by_user_name'},
                 				{ text: 'Created At', value:'created_at'},
-                				{ text: 'Status', value:'status'},
+                				{ text: 'Status', value:'status_name'},
                 				{ text: 'Action', value:'action',sortable:false, width:'15%'},
 						],
 

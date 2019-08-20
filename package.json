@@ -3,27 +3,26 @@
     "scripts": {
         "dev": "npm run development",
         "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
-        "watch": "npm run development -- --watch",
+        "watch": "node_modules/.bin/webpack --watch --watch-poll --config=node_modules/laravel-mix/setup/webpack.config.js",
         "watch-poll": "npm run watch -- --watch-poll",
         "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
-        "prod": "npm run production",
-        "test": "jest"
+        "prod": "npm run production"
     },
     "devDependencies": {
         "@babel/preset-env": "^7.5.5",
         "@vue/test-utils": "^1.0.0-beta.29",
         "axios": "^0.18.1",
-        "babel-jest": "^24.8.0",
+        "babel-jest": "^24.9.0",
         "bootstrap": "^4.0.0",
         "cross-env": "^5.1",
-        "jest": "^24.8.0",
+        "jest": "^24.9.0",
         "jest-transform-stub": "^2.0.0",
         "jquery": "^3.4.1",
         "laravel-mix": "^4.1.2",
         "lodash": "^4.17.15",
         "popper.js": "^1.12",
         "resolve-url-loader": "^2.3.1",
-        "sass": "^1.22.9",
+        "sass": "^1.22.10",
         "sass-loader": "^7.2.0",
         "vue": "^2.5.17",
         "vue-jest": "^3.0.4",
@@ -39,20 +38,5 @@
         "vue-swal": "^1.0.0",
         "vue2-google-maps": "^0.10.7",
         "vuetify": "^1.5.17"
-    },
-    "babel": {
-        "presets": [
-            "@babel/preset-env"
-        ]
-    },
-    "jest": {
-        "transformIgnorePatterns": [
-            "<rootDir>/node_modules/(?!(babel-jest|jest-vue-preprocessor|vuetify|Login)/)"
-        ],
-        "transform": {
-            "^.+\\.vue$": "<rootDir>/node_modules/vue-jest",
-            ".+\\.(css|styl|less|sass|scss|png|jpg|ttf|woff|woff2)$": "jest-transform-stub",
-            "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
-        }
     }
 }

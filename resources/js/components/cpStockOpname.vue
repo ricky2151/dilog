@@ -232,6 +232,7 @@ export default {
         		console.log('error try catch : ' + error);
         	}
 		},
+		
 		save_detailstockOP(id)
 		{
 			const formData = new FormData();

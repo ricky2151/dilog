@@ -1,0 +1,10 @@
+1. aturan akses halaman :
+semua finance bisa akses halaman MR (index,add mr, profile, dll)
+non finance hanya bisa mengakses add mr dan profile saja
+sebaiknya api untuk menampilkan profile dan api untuk index datatable mr dipisah saja tom
+
+2. api index pr dikasi created_by_user_name
+
+3. api index pr dikasi periode sama seperti index mr & index po
+
+4. 

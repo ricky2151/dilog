@@ -42,6 +42,7 @@
             <!-- POPUP CREATE EDIT -->
             <cp-form 
 
+
             :prop_countStep='info_table.count_step' 
             :prop_editableEdit='info_table.editable_edit'
             :prop_editableAdd='info_table.editable_add'
@@ -102,6 +103,7 @@
 
 <script>
 import mxCrudChildForm from '../mixin/mxCrudChildForm';
+
 
 
 export default {

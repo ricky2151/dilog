@@ -1,6 +1,6 @@
 <template>
-    <div class='bgwhite'>
-        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs'>
+    <div class='bgwhite' style="height: 100%">
+        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs' v-if="open_state!='cpAddMaterialRequest'">
             <v-breadcrumbs-item
                 slot="item"
                 slot-scope="{ item }"
@@ -52,6 +52,7 @@
            :prop_button_for_checklist='info_table.button_for_checklist'
 
            v-on:submit_checklist='submit_checklist'
+           v-on:cancel_checklist='cancel_checklist'
            v-on:button_index_clicked='button_index_clicked'
            v-on:search_change='search_data=$event'
            v-on:filter_by_user_change='fill_filter_by_user_value'
@@ -97,6 +98,7 @@
         <template v-if="open_state=='cpAddMaterialRequest'">
             <cp-add-material-request
             :prop_list_filter='list_state["cpAddMaterialRequest"]'
+            v-on:back='open_component("MaterialRequest")'
             ></cp-add-material-request>
         </template>
 
@@ -111,6 +113,7 @@
 import mxCrudBasic from '../mixin/mxCrudBasic';
 import cpPurchaseRequest from './../components/child_crud/cpPurchaseRequest.vue'
 import cpAddMaterialRequest from './../components/child_crud/cpAddMaterialRequest.vue'
+
 
 export default {
     components : {
@@ -166,7 +169,16 @@ export default {
             //ambil nilai dari cpdatatable yang di checklist
             //===
             this.$refs['cpHeader'].set_check_listing(false);
-            this.$refs['cpDatatable'].set_check_listing(false);
+            this.$refs['cpDatatable'].convert_to_checklist(false);
+        },
+        cancel_checklist()
+        {
+            console.log('oke');
+            //post mark complete
+            //ambil nilai dari cpdatatable yang di checklist
+            //===
+            this.$refs['cpHeader'].set_check_listing(false);
+            this.$refs['cpDatatable'].convert_to_checklist(false);
         },
         button_index_clicked(index)
         {

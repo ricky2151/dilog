@@ -117,6 +117,29 @@
 	color: white !important;
 }
 
+.addmr_row
+{
+	height:-moz-fit-content;
+  	height:-webkit-fit-content;
+  	height:fit-content;
+	padding:20px !important;
+
+}
+.addmr_row div
+{
+	height:-moz-fit-content;
+  	height:-webkit-fit-content;
+  	height:fit-content;
+}
+.addmr_row .addmr_column
+{
+
+}
+.btnplusminus
+{
+	min-width: 10px !important;
+
+}
 .btnadddata
 {
 	width: 120px !important;
@@ -128,7 +151,25 @@
 {
 	height: 30px !important;
 }
-
+.addmr_goods b
+{
+	color:#484848 !important;
+}
+.addmr_summary .button-action
+{
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+}
+.addmr_summary
+{
+	background-color: #f2eeff !important;
+	padding: 30px !important;
+}
+.mr_div_container
+{
+	background-color: white;
+}
 .datatable_checklist .v-input__control
 {
 	margin: auto !important;

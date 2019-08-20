@@ -28,7 +28,14 @@
 
 	                </v-toolbar>
 	                <div style='padding:30px'>
-	                    <v-btn @click='submit_recap'>Recap</v-btn>
+	                	<v-layout row>
+		                	<v-flex xs10>
+		                		<h2>Select Material Request :</h2>
+		                	</v-flex>
+		                	<v-flex xs2>
+		                    	<v-btn color='blue'  dark @click='submit_recap'>Recap</v-btn>
+		                	</v-flex>
+	                	</v-layout>
 	                   
 	                    <v-data-table
 	                    disable-initial-sort
@@ -43,9 +50,9 @@
 				            color="primary"
 					         ></v-checkbox>
 	                        <td>{{ props.index + 1 }}</td>
-	                        <td>{{ props.code }}</td>
-	                        <td>{{ props.division_name }}</td>
-	                        <td>{{ props.created_at }}</td>
+	                        <td>{{ props.item.code }}</td>
+	                        <td>{{ props.item.division_name }}</td>
+	                        <td>{{ props.item.created_at }}</td>
 	                    </template>
 	                    </v-data-table>
 	                </div>
@@ -178,7 +185,8 @@ export default {
     methods: {
     	submit_recap()
     	{
-
+    		//api
+    		
     	},
     	close_dialog_add_pr()
         {
@@ -189,21 +197,84 @@ export default {
             
             
             this.dialog_add_pr = true;
-            this.get_data();
+            this.get_data_mr();
         },
          //for data
         get_data_mr()
         {
-            axios.get(
-                '',
-                {
-                    params : {
-                        token: localStorage.getItem('token')
-                    }
-                }
-            ).then((r) => {
-                this.data_mr = r.data.items[''];
-            });
+        	this.data_mr = 
+        	[
+        		{
+        			no : '1',
+        			code : 'X123',
+        			division_name : 'divisi rahasia',
+        			created_at : '12/12/2019 08:00:09'
+        		},
+        		{
+        			no : '2',
+        			code : 'X124',
+        			division_name : 'divisi rahasia',
+        			created_at : '12/12/2019 08:12:09'
+        		},
+        		{
+        			no : '3',
+        			code : 'X125',
+        			division_name : 'divisi rahasia',
+        			created_at : '12/12/2019 08:13:09'
+        		},
+        		{
+        			no : '4',
+        			code : 'X126',
+        			division_name : 'divisi rahasia',
+        			created_at : '12/12/2019 08:14:09'
+        		},
+        		{
+        			no : '5',
+        			code : 'X127',
+        			division_name : 'divisi rahasia',
+        			created_at : '12/12/2019 08:15:09'
+        		},
+        		{
+        			no : '6',
+        			code : 'X123',
+        			division_name : 'divisi rahasia',
+        			created_at : '12/12/2019 08:00:09'
+        		},
+        		{
+        			no : '7',
+        			code : 'X124',
+        			division_name : 'divisi rahasia',
+        			created_at : '12/12/2019 08:12:09'
+        		},
+        		{
+        			no : '8',
+        			code : 'X125',
+        			division_name : 'divisi rahasia',
+        			created_at : '12/12/2019 08:13:09'
+        		},
+        		{
+        			no : '9',
+        			code : 'X126',
+        			division_name : 'divisi rahasia',
+        			created_at : '12/12/2019 08:14:09'
+        		},
+        		{
+        			no : '10',
+        			code : 'X127',
+        			division_name : 'divisi rahasia',
+        			created_at : '12/12/2019 08:15:09'
+        		},
+        	];
+            // axios.get(
+            //     '',
+            //     {
+            //         params : {
+            //             token: localStorage.getItem('token')
+            //         }
+            //     }
+            // ).then((r) => {
+            //     this.data_mr = r.data.items[''];
+            // });
 
         },
 
@@ -211,7 +282,7 @@ export default {
         {
             if(index == 0)
             {
-                this.opendialog_createedit(-1);
+                this.open_dialog_add_pr(-1);
             }
         },
         action_change(id,idx_action, data)

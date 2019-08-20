@@ -24,6 +24,7 @@ import PODirect from './views/PODirect.vue'
 
 import PurchaseOrder from './views/PurchaseOrder.vue'
 import MaterialRequest from './views/MaterialRequest.vue'
+import PurchaseRequest from './views/PurchaseRequest.vue'
 
 import Login from './views/Login.vue'
 import Logout from './views/Logout.vue'
@@ -64,7 +65,9 @@ const routes = [
 
             { path: '/logout', component: Logout },
 
-            { path: '/materialrequest', component: MaterialRequest }
+            { path: '/materialrequest', component: MaterialRequest },
+
+            { path: '/purchaserequest', component: PurchaseRequest }
         ],
         meta: { requiresAuth: true }
     }
