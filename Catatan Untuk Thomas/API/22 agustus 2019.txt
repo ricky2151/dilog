@@ -1,0 +1,34 @@
+1. api/warehouses/{id}/goodsRacks error : undefined variable : racks
+2. purchaseorder.php dibagian fungsi getmasterdata, dikasi return master data periode tom
+
+ubah jadi kayk gini
+public function getMasterData(){
+        return ["suppliers" => Supplier::latest()->get(), 'periode_active'=>Periode::getPeriodeActive(), 'periodes' => Periode::latest()->get()];
+    }
+
+3. api store purchase order detail ada kesalahan perhitungan. 
+aku input data seperti ini : 
+price : 123
+qty : 100
+tax : 10
+discount_percent : 50
+discount_choose : 1
+
+harusnya subtotalnya adalah 123 * 100 * ((10 + 100) / 100) * ((100 - 50) / 100)
+= 123 * 100 * (1,1 * 0,5)
+= 12300 * 0,55
+= 6765
+
+tapi subtotal yang dikembalikan dari backend adalah 12300.
+
+Terus kalau aku input pake discount_percent, hasil discount_rupiahnya salah tom. aku input data seperti ini : 
+price : 123
+qty : 100
+tax : 10
+discount_percent : 75
+discount_choose : 1
+
+harusnya discount rupiah = 123 * 100 * (10 + 100) / 100) * ((75) / 100)
+= 10147
+
+tapi discount rupiah yang dikembalikan dari backend adalah 9225
