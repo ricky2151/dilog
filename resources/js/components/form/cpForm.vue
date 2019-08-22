@@ -516,6 +516,23 @@
 						this.prop_dataInfo.multiple = {};
 						this.prop_dataInfo.multiple[temp_name_table_child_mocc] = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].editing[temp_name_table_child_mocc];
 			        }
+			        else if(this.prop_dataInfo.custom_component['cpMakeOrCopyChild'] && id == -1)
+			        {
+			        	var temp_name_table_child_mocc = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].child.table_name;
+			        	if(this.prop_dataInfo.multiple[temp_name_table_child_mocc])
+			        	{
+			        		delete this.prop_datainfo.multiple[temp_name_table_child_mocc];
+			        	}
+			        	for(var i = 0;i<this.prop_datainfo.form_multiple.length;i++)
+			        	{
+			        		if(this.prop_datainfo.form_multiple[i] == temp_name_table_child_mocc)
+			        		{
+			        			delete this.prop_datainfo.form_multiple[i];
+			        			break;
+			        		}
+			        	}
+			        	
+			        }
 
 				}
 
@@ -972,6 +989,8 @@
 
                 }
                this.tableClearTempInput(table_name);
+               console.log('cek tablesave');
+               console.log(this.input);
 
             },
             tableCanceledit(table_name){
@@ -1023,6 +1042,9 @@
 				    	}
 				    	else if(objColumn.type == 's' || objColumn.type == 's2')
 				    	{
+				    		console.log('kok error');
+				    		console.log(this.input);
+				    		console.log(nameColumn);
 				    		if(!this.same_object(this.input[nameColumn],this.input_before_edit[nameColumn]) || this.id_edit == -1)
 				    			formData.append(objColumn.column, this.input[nameColumn][objColumn.itemValue]);
 				    	}
@@ -1189,7 +1211,7 @@
 
 	        	//prepare form_custom_component
 	        	//1. cpMakeOrCopyChild
-	        	if(this.$refs['cpMakeOrCopyChild'])
+	        	if(this.$refs['cpMakeOrCopyChild'] && this.id_edit == -1)
 	        	{
 	        		var data_cpmocc = this.$refs['cpMakeOrCopyChild'][0];
 	        		console.log('cek data_cpmocc');
@@ -1290,6 +1312,8 @@
 			{
 				//data adalah row dari database
 				//value adalah ['price', '*', 'qty']
+				console.log('cek calculate_custom_value');
+				console.log(value);
 				var result;
 				if(dataType == 'int')
 				{
@@ -1308,7 +1332,7 @@
 						var second_number;
 						if(isnum)
 						{
-							second_number = data[value[i + 1]];
+							second_number = parseInt(data[value[i + 1]]);
 						}
 						else
 						{

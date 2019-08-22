@@ -195,6 +195,7 @@ export default {
             if(index == 0)
             {
                 this.opendialog_createedit(-1);
+                this.$refs['cpForm'].prop_dataInfo = JSON.parse(JSON.stringify(this.info_table.data))
             }
         },
         action_change(id_datatable,idx_action)
@@ -205,6 +206,7 @@ export default {
             // console.log(this.action_selected == 'Rack');
             if(idx_action == 0)
             {
+
                 this.opendialog_createedit(id_datatable);
             }
             else if(idx_action == 1)

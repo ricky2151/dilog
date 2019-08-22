@@ -437,7 +437,7 @@ export default
 
 					widthForm : 'fullscreen',
 					editable_edit : true,
-					editable_add : true,
+					editable_add : false,
 					count_step : 6,
 
 					actions:['Edit', 'Rack', 'SP', 'Stock Card', 'Supplier', 'COGS', 'Delete'],
@@ -931,10 +931,11 @@ export default
                 				{ text: 'Stock', value:'stock'},
 							]
 						},
-						"price_sellings":
+
+						"goods":
 						{
-							table_name : 'price_sellings',
-							title : 'Price Sellings',
+							table_name : 'goods',
+							title : 'Goods',
 							single : 
 							{
 								'id' : {show : false},
@@ -1465,7 +1466,7 @@ export default
 					additional_param_index : 'purchase_order_id',
 
 					actions:['Edit', 'Revision', 'Delete'],
-					button_on_index : ['Add Data', 'Submit', 'Incoming', 'Print'],
+					button_on_index : ['Add Data', 'Submit', 'Print'],
 
 					format_additional_data : 
 					{

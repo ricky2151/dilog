@@ -46,12 +46,12 @@
 	                    <template v-slot:items="props">
 	                    	<v-checkbox
 							class='datatable_checklist'
-				            v-model="data_mr[props.index]['checked']"
+				            v-model="props.item['checked']"
 				            color="primary"
 					         ></v-checkbox>
 	                        <td>{{ props.index + 1 }}</td>
-	                        <td>{{ props.item.code }}</td>
-	                        <td>{{ props.item.division_name }}</td>
+	                        <td>{{ props.item.no_mr }}</td>
+	                        <td>{{ props.item.division }}</td>
 	                        <td>{{ props.item.created_at }}</td>
 	                    </template>
 	                    </v-data-table>
@@ -106,12 +106,18 @@
         <template v-if="open_state=='cpPurchaseRequestEdit'">
             <cp-purchase-request-edit
             :prop_list_filter='list_state["cpPurchaseRequestEdit"]'
+            :prop_data='data_edit'
+            ref='cpPurchaseRequestEdit'
+            v-on:cancel='cancel_po_edit'
+            v-on:done='done_po_edit'
             ></cp-purchase-request-edit>
         </template>
 
         <template v-if="open_state=='cpMakePo'">
             <cp-make-po
             :prop_list_filter='list_state["cpMakePo"]'
+            ref='cpMakePo'
+            v-on:cancel='cancel_make_po'
             ></cp-make-po>
         </template>
         
@@ -141,11 +147,12 @@ export default {
             header_add_pr : [
             	{ text: '', value:'checklist'},
             	{ text: 'No', value:'no'},
-            	{ text: 'Code MR', value:'code'},
-            	{ text: 'Division', value:'division_name'},
+            	{ text: 'No MR', value:'no_mr'},
+            	{ text: 'Division', value:'division'},
             	{ text: 'Created At', value:'created_at'},
             ],
             data_mr : [],
+            data_edit : [],
 
             filter_by_user_value : '',
             filter_by_user_ref : [],
@@ -183,98 +190,117 @@ export default {
         }
     },
     methods: {
+    	cancel_make_po()
+    	{
+    		this.open_component('cpPurchaseRequest');
+    	},
+    	done_po_edit(r,id)
+    	{
+    		this.open_component('cpMakePo');
+
+    		this.$nextTick(() => {
+            	this.$refs['cpMakePo'].id = id;
+                this.$refs['cpMakePo'].fill_data(r.data.items);
+		  	})
+
+
+    		
+    	},
+    	cancel_po_edit()
+    	{
+    		this.open_component('cpPurchaseRequest');
+    	},
+    	prepare_data_submit_recap()
+    	{
+    		const formData = new FormData();
+    		var idxformdata = 0;
+    		for(var i =0;i<this.data_mr.length;i++)
+    		{
+    			if(this.data_mr[i].checked)
+    			{
+    				formData.append('material_requests[' + idxformdata + '][id]', this.data_mr[i].id);
+    				idxformdata+= 1;
+    			}
+    		}
+    		return formData;
+
+    	},
     	submit_recap()
     	{
     		//api
-    		
+    		 axios.post(
+            	'api/purchaseRequests',
+            		this.prepare_data_submit_recap()
+            	 ,{
+	                headers: {
+	                    'Accept': 'application/json',
+	                    'Content-type': 'application/json'
+	                },
+	                params : 
+	                {
+	                	'token' : localStorage.getItem('token')
+	                }
+	            }).then((r)=> {
+	            var temp = r.data.items.rekaps;
+	            for(var i = 0;i<temp.length;i++)
+	            {
+	            	temp[i].no = i + 1;
+	            }
+                this.open_component('cpPurchaseRequestEdit');
+                this.$nextTick(() => {
+	                this.$refs['cpPurchaseRequestEdit'].fill_data(temp);
+	                swal("Good job!", "Recap Successfully !", "success");
+			  	})
+            });
     	},
     	close_dialog_add_pr()
         {
             this.dialog_add_pr = false;
         },
-        open_dialog_add_pr()
+        async open_dialog_add_pr()
         {
             
             
             this.dialog_add_pr = true;
-            this.get_data_mr();
+            let r = await this.get_data_mr();
+            //difilter berdasarkan periode aktif
+            var temp_r = JSON.parse(JSON.stringify(r.data.items.material_requests));
+            var result_r = [];
+            for(var i = 0;i<temp_r.length;i++)
+            {
+            	if(temp_r[i].periode_id == r.data.items.periode_active.id)
+            	{
+            		result_r.push(temp_r[i]);
+            	}
+            }
+            this.data_mr = JSON.parse(JSON.stringify(result_r));
+
         },
          //for data
         get_data_mr()
         {
-        	this.data_mr = 
-        	[
-        		{
-        			no : '1',
-        			code : 'X123',
-        			division_name : 'divisi rahasia',
-        			created_at : '12/12/2019 08:00:09'
-        		},
-        		{
-        			no : '2',
-        			code : 'X124',
-        			division_name : 'divisi rahasia',
-        			created_at : '12/12/2019 08:12:09'
-        		},
-        		{
-        			no : '3',
-        			code : 'X125',
-        			division_name : 'divisi rahasia',
-        			created_at : '12/12/2019 08:13:09'
-        		},
-        		{
-        			no : '4',
-        			code : 'X126',
-        			division_name : 'divisi rahasia',
-        			created_at : '12/12/2019 08:14:09'
-        		},
-        		{
-        			no : '5',
-        			code : 'X127',
-        			division_name : 'divisi rahasia',
-        			created_at : '12/12/2019 08:15:09'
-        		},
-        		{
-        			no : '6',
-        			code : 'X123',
-        			division_name : 'divisi rahasia',
-        			created_at : '12/12/2019 08:00:09'
-        		},
-        		{
-        			no : '7',
-        			code : 'X124',
-        			division_name : 'divisi rahasia',
-        			created_at : '12/12/2019 08:12:09'
-        		},
-        		{
-        			no : '8',
-        			code : 'X125',
-        			division_name : 'divisi rahasia',
-        			created_at : '12/12/2019 08:13:09'
-        		},
-        		{
-        			no : '9',
-        			code : 'X126',
-        			division_name : 'divisi rahasia',
-        			created_at : '12/12/2019 08:14:09'
-        		},
-        		{
-        			no : '10',
-        			code : 'X127',
-        			division_name : 'divisi rahasia',
-        			created_at : '12/12/2019 08:15:09'
-        		},
-        	];
-            // axios.get(
-            //     '',
-            //     {
-            //         params : {
-            //             token: localStorage.getItem('token')
-            //         }
-            //     }
-            // ).then((r) => {
-            //     this.data_mr = r.data.items[''];
-            // });
+        	try{
+	            var response = axios.get('api/purchaseRequests/create', {
+	                params:{
+	                    token: localStorage.getItem('token')
+	                }
+	            },{
+	                headers: {
+	                    'Accept': 'application/json',
+	                    'Content-type': 'application/json'
+	                }
+	            });
+
+	            return response
+            	
+
+        	}
+        	catch (error)
+        	{
+        		console.log('error try catch : ' + error);
+        		result_data = false;
+        	}
+        	
 
         },
 
@@ -290,11 +316,60 @@ export default {
             this.selected_data = data;
             if(idx_action == 0)
             {
-                 this.open_component('cpPurchaseRequestEdit', 'purchase_request', id);
+            	//api
+	    		 axios.get(
+	            	'api/purchaseRequests/' + id + '/rekaps',
+            		{
+            			params : 
+		                {
+		                	'token' : localStorage.getItem('token')
+		                }
+		            },
+		            {
+		                headers: {
+		                    'Accept': 'application/json',
+		                    'Content-type': 'application/json'
+		                },
+		                
+		            }).then((r)=> {
+		            var temp = r.data.items.rekaps;
+		            for(var i = 0;i<temp.length;i++)
+		            {
+		            	temp[i].no = i + 1;
+		            }
+	                this.open_component('cpPurchaseRequestEdit');
+	                this.$nextTick(() => {
+		                this.$refs['cpPurchaseRequestEdit'].fill_data(temp);
+		                
+				  	})
+	            });
+                 //this.open_component('cpPurchaseRequestEdit', 'purchase_request', id);
             }
             else if(idx_action == 1)
             {
-                 this.open_component('cpMakePo', 'purchase_request', id);
+            	//api
+	    		 axios.get(
+	            	'api/purchaseRequests/' + id + '/purchaseRequestDetailsToPurchaseOrder',
+            		{
+            			params : 
+		                {
+		                	'token' : localStorage.getItem('token')
+		                }
+		            },
+		            {
+		                headers: {
+		                    'Accept': 'application/json',
+		                    'Content-type': 'application/json'
+		                },
+		                
+		            }).then((r)=> {
+		            var temp = r.data.items;
+	                this.open_component('cpMakePo');
+	                this.$nextTick(() => {
+	                	this.$refs['cpMakePo'].id = id;
+		                this.$refs['cpMakePo'].fill_data(temp);
+				  	})
+	            });
             }
             else if(idx_action == 2)
             {
