@@ -235,7 +235,7 @@ class PurchaseOrder extends Model
     }
 
     public function getMasterData(){
-        return ["suppliers" => Supplier::latest()->get(), 'periode_active'=>Periode::getPeriodeActive()];
+        return ["suppliers" => Supplier::latest()->get(), 'periode_active'=>Periode::getPeriodeActive(), 'periodes'=>Periode::latest()->get()];
     }
 
     public function getDataAndRelation($id){

@@ -1,5 +1,9 @@
 1. api/warehouses/{id}/goodsRacks error : undefined variable : racks
+FIXED by thomas
+
 2. purchaseorder.php dibagian fungsi getmasterdata, dikasi return master data periode tom
+FIXED by thomas
+
 
 ubah jadi kayk gini
 public function getMasterData(){
@@ -7,6 +11,10 @@ public function getMasterData(){
     }
 
 3. api store purchase order detail ada kesalahan perhitungan. 
+Subtotal itu harga total dia
+nanti di index baru aku olah, karena untuk mengatasi pergantian diskon dan tax, jadi yang aku save itu totalnya
+cara dapet diskon harga tanpa tax di diskon terlebih dahulu, itu perhitungan diskon
+
 aku input data seperti ini : 
 price : 123
 qty : 100
@@ -17,6 +25,13 @@ discount_choose : 1
 harusnya subtotalnya adalah 123 * 100 * ((10 + 100) / 100) * ((100 - 50) / 100)
 = 123 * 100 * (1,1 * 0,5)
 = 12300 * 0,55
+= 6765
+
+// Salah cara hitung
+yang bener
+harusnya subtotalnya adalah 123 * 100
+= 123 * 100 
+= 12300 
 = 6765
 
 tapi subtotal yang dikembalikan dari backend adalah 12300.
@@ -30,5 +45,11 @@ discount_choose : 1
 
 harusnya discount rupiah = 123 * 100 * (10 + 100) / 100) * ((75) / 100)
 = 10147
+
+// Salah cara hitung diskon dihitung tanpa ada tax
+yang bener
+= 123 * 100 
+= 12300 * (75/100)
+= 9225
 
 tapi discount rupiah yang dikembalikan dari backend adalah 9225
