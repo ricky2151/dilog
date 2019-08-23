@@ -1675,7 +1675,26 @@ export default
 					},
 					get_data_detail : 
 					{
-						
+						"material_request_details":
+						{
+							table_name : 'material_request_details',
+							title : 'Material Request',
+							single : 
+							{
+								'id' : {show : false},
+								'goods_name' : {show : true},
+								'qty' : {show : true},
+								'total' : {show : true},
+								'status' : {show : true},
+							},
+							headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Goods', value:'goods_name'},
+                				{ text: 'Qty', value:'qty'},
+                				{ text: 'Total', value:'total'},
+                				{ text: 'Status', value:'status'},
+							]
+						},
 					}
 				},
 

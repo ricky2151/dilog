@@ -453,20 +453,21 @@
 				}
 				
 				
-				if(tax != 0)
-				{
-					if(this.use_rupiah)
-						return (Math.floor(tax * (price * qty)) - discount_rupiah);	
-					else
-						return Math.floor((tax * (price * qty)) * discount_percent);	
-				}
-				else
-				{
-					if(this.use_rupiah)
-						return Math.floor(((price * qty) - discount_rupiah));	
-					else
-						return Math.floor(((price * qty) * discount_percent));	
-				}
+				return (Math.floor(price * qty));
+				// if(tax != 0)
+				// {
+				// 	if(this.use_rupiah)
+				// 		return (Math.floor(tax * (price * qty)) - discount_rupiah);	
+				// 	else
+				// 		return Math.floor((tax * (price * qty)) * discount_percent);	
+				// }
+				// else
+				// {
+				// 	if(this.use_rupiah)
+				// 		return Math.floor(((price * qty) - discount_rupiah));	
+				// 	else
+				// 		return Math.floor(((price * qty) * discount_percent));	
+				// }
 				
 			},
 			computed_price : function() {
@@ -505,15 +506,16 @@
 				{
 					if(this.input.discount_rupiah && this.input.pricelist)
 					{
-						return Math.floor((discount_rupiah / (price * tax * qty)) * 100);
+						//return Math.floor((discount_rupiah / (price * tax * qty)) * 100);
+						return Math.floor((discount_rupiah / (price * qty)) * 100);
 					}
 				}
 				else
 				{
 					if(this.input.pricelist)
 					{
-						console.log('cek : ' + (price * tax * qty));
-						return Math.floor((price * tax * qty) * discount_percent);	
+						//return Math.floor((price * tax * qty) * discount_percent);	
+						return Math.floor(price * qty * discount_percent);
 					}
 					
 				}

@@ -1,2 +1,3 @@
 1. api index payment, tolong array paymentnya ditaruh di dalem array purchase_order
 2. waktu aku edit payment (cuma edit tanggalnya tok), datanya tetap tidak berubah setelah di edit.
+3. tom, divisi finance juga bisa bikin mr. jadi halaman profile waktu add MR harusnya divisi finance juga bisa lihat. (cek wa, waktu itu aku rekomendasikan pisahin aja api untuk lihat profil sama index mr)

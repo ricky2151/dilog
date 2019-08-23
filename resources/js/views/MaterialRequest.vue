@@ -24,7 +24,7 @@
             v-for='(data_detail,key,index) in info_table.get_data_detail'
 
             :prop_title='"Detail " + data_detail.title' 
-            :prop_response_attribute='info_table.table_name'
+            :prop_response_attribute='data_detail.table_name'
             :prop_headers='data_detail.headers'
             :prop_columns='data_detail.single'
             :ref='"cpDetail"+ removeSpace(data_detail.title)'
@@ -192,33 +192,31 @@ export default {
                 this.$refs['cpHeader'].set_check_listing(true);
                 this.$refs['cpDatatable'].convert_to_checklist(true);
             }
+            else if(index == 2)
+            {
+                //list pr
+                this.$router.replace('/PurchaseRequest');
+            }
+            else if(index == 3)
+            {
+                //create po
+            }
         },
         action_change(id,idx_action, data)
         {
             this.selected_data = data;
             if(idx_action == 0)
             {
-                 //this.open_component('cpPurchaseOrderDetails', 'purchase_order', id);
+                 //detail
+                 console.log('cek isi ref');
+                 console.log(this.$refs);
+                 this.opendialog_detail(id, 'cpDetailMaterialRequest', 'material_request_details');
             }
             else if(idx_action == 1)
             {
-                 
+                 //po
             }
-            else if(idx_action == 2)
-            {
-                // this.$refs['cpIncomingPo'].id_po = id;
-                // this.$refs['cpIncomingPo'].open_dialog();
-            }
-            else if(idx_action == 3)
-            {
-                //payment
-                
-            }
-            else if(idx_action == 4)
-            {
-                //history
-                
-            }
+            
         },
         
         

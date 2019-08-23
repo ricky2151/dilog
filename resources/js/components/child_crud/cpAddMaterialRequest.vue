@@ -388,7 +388,48 @@ import cpDetail from './../popup/cpDetail.vue'
 			},
 			submit_mr()
 			{
-
+				const formData = new FormData();
+				formData.append('token', localStorage.getItem('token'));
+				var idxformdata = 0;
+				for(var i = 0;i<this.goods.length;i++)
+				{
+					if(this.goods[i].qty > 0)
+					{
+						formData.append('material_request_details[' + idxformdata + '][goods_id]', this.goods[i].id);
+						formData.append('material_request_details[' + idxformdata + '][qty]', this.goods[i].qty);
+						formData.append('material_request_details[' + idxformdata + '][notes]', 'penting bos');
+						formData.append('material_request_details[' + idxformdata + '][total]', this.goods[i].subtotal);
+						idxformdata += 1;
+					}
+				}
+				if(idxformdata > 0) //jika formdata tidak kosong
+				{
+					axios.post(
+	                	'api/materialRequests',
+	                	formData,
+			                	{
+			                'Accept': 'application/json',
+			                'Content-type': 'application/json' //default
+			            }).then((r) => {
+	                	this.goods = [];
+	                    this.$emit('back');
+	                    swal("Good job!", "Data saved !", "success");
+	                    
+	                    
+	                    
+	                }).catch(function (error)
+	                {
+	                    
+	                    if(error.response.status == 422)
+	                    {
+	                        swal('Request Failed', 'Check your internet connection !', 'error');
+	                    }
+	                    else
+	                    {
+	                        swal('Unkown Error', error.response.data , 'error');
+	                    }
+	                });
+				}
 			},
 			submit_quantity()
 			{
