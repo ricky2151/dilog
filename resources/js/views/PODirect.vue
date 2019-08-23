@@ -51,6 +51,7 @@
             :prop_input='generate_input(info_table.plural_name)'
             
             :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.plural_name, "create") : null'
+            :prop_custom_formData='info_table.data.custom_formData'
             
 
             v-on:done='refresh_table()'
@@ -114,8 +115,17 @@
             ></cp-purchase-order-details>
         </template>
 
+        <template v-if="open_state=='cpPayment'">
+            <cp-payment
+            :prop_list_filter='list_state["cpPayment"]'
+            >
+            </cp-payment>
+        </template>
+
         <cp-incoming-po ref='cpIncomingPo' v-on:done='done_submit_incoming'>
         </cp-incoming-po>
+
+        
 
         <!-- ================================ -->
     </div>
@@ -126,11 +136,13 @@
 import mxCrudBasic from '../mixin/mxCrudBasic';
 import cpPurchaseOrderDetails from './../components/child_crud/cpPurchaseOrderDetails.vue'
 import cpIncomingPo from './../components/child_crud/cpIncomingPo.vue'
+import cpPayment from './cpPayment.vue'
 
 export default {
     components : {
         cpPurchaseOrderDetails,
-        cpIncomingPo
+        cpIncomingPo,
+        cpPayment,
     },
     data () {
         return {
@@ -146,6 +158,7 @@ export default {
             {
                 'PODirect' : {},
                 'cpPurchaseOrderDetails' : {},
+                'cpPayment' : {},
             },
             
             breadcrumbs:[
@@ -161,6 +174,12 @@ export default {
                     text: 'Detail PO',
                     disabled: true,
                     cp: 'cpPurchaseOrderDetails',
+                    before : 'PODirect'
+                },
+                {
+                    text: 'Payment',
+                    disabled: true,
+                    cp: 'cpPayment',
                     before : 'PODirect'
                 },
             ],
@@ -196,7 +215,14 @@ export default {
             }
             else if(idx_action == 3)
             {
-                //payment
+                if(data.status == 3 || data.status == 4)
+                {
+                    this.open_component('cpPayment', 'purchase_order', id);
+                }
+                else
+                {
+                    swal("Cannot Open Payment", "can't open payment because status is not approve/complete", "error");
+                }
                 
             }
             else if(idx_action == 4)

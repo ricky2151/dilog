@@ -6,7 +6,7 @@
 		      dark
 		    >
 		        <v-toolbar-items style='height: 30px'>
-		        	<v-toolbar-title><v-btn color='blue' dark depressed @click='$emit("back")'><h3>BACK</h3></v-btn></v-toolbar-title>
+		        	<v-toolbar-title v-if='this_user_is_finance'><v-btn color='blue' dark depressed @click='$emit("back")'><h3>BACK</h3></v-btn></v-toolbar-title>
 		          <v-toolbar-title><v-btn color='blue' dark depressed @click='change_tab("Home")'><h3>HOME</h3></v-btn></v-toolbar-title>
 		          <v-toolbar-title v-if='profile_enable'><v-btn color='blue' dark depressed @click='change_tab("Profile")'><h3>PROFILE</h3></v-btn></v-toolbar-title>
 		        </v-toolbar-items>
@@ -200,6 +200,7 @@ import cpDetail from './../popup/cpDetail.vue'
 
 				tab : "Home",
 				profile_enable : true,
+				this_user_is_finance : true,
 
 				profile : 
 				{
@@ -517,6 +518,10 @@ import cpDetail from './../popup/cpDetail.vue'
 		},
 		mounted()
 		{
+			if(JSON.parse(localStorage.getItem("user")).role_id != 1)
+			{
+				this.this_user_is_finance = false;
+			}
 			this.fill_master_data();
 		}
 	}

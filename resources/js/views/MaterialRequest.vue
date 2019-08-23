@@ -226,6 +226,11 @@ export default {
     },
     mounted(){      
         this.info_table = this.database[this.name_table];
+        var this_user_role = JSON.parse(localStorage.getItem('user')).role_id;
+        if(this_user_role != 1)
+        {
+            this.open_component('cpAddMaterialRequest');
+        }
     },
     mixins:[
         mxCrudBasic

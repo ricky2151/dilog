@@ -18,7 +18,7 @@
                     </v-card-title>
 
                     <v-card-actions>
-                        <v-btn style='width:100%' flat color="blue">Detail</v-btn>
+                        <v-btn @click='goto("/podirect")' style='width:100%' flat color="blue">Detail</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-flex>
@@ -39,7 +39,7 @@
                     </v-card-title>
 
                     <v-card-actions>
-                        <v-btn style='width:100%' flat color="blue">Detail</v-btn>
+                        <v-btn @click='goto("/materialrequest")' style='width:100%' flat color="blue">Detail</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-flex>
@@ -98,6 +98,11 @@ export default {
         }
     },
     methods: {
+        goto(url)
+        {
+            this.$router.replace(url);
+        }
+
     }
 }
 </script>

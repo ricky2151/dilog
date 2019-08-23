@@ -144,17 +144,20 @@
         			response_attribute = this.prop_custom_response_attribute;
         		}
         		else
-
         		{
         			response_attribute = this.prop_plural_name;
         		}
         		//jika adaadditional_data, maka format r nya agak beda
         		if(this.prop_get_additional_data)
         		{
+        			console.log('masuk1');
+        			console.log(response_attribute);
+        			console.log(this.prop_filter['table_parent']);
         			temp_r = r.data.items[this.prop_filter['table_parent']][response_attribute];
         		}
         		else
     			{
+    				console.log('masuk2')
     				temp_r = r.data.items[response_attribute];
     			}
         		
@@ -170,9 +173,9 @@
 		        //         }
 		        //     }
         		// }
-        		console.log('cek showtable');
-        		console.log(this.prop_custom_response_attribute);
 		        this.data_table = temp_r;
+		        console.log('cek showtable');
+		        console.log(r);
         		
 	        },
 

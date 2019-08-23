@@ -1,0 +1,2 @@
+1. api index payment, tolong array paymentnya ditaruh di dalem array purchase_order
+2. waktu aku edit payment (cuma edit tanggalnya tok), datanya tetap tidak berubah setelah di edit.

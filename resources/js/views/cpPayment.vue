@@ -1,39 +1,17 @@
 <template>
-    <div class='bgwhite'>
+    <div>
+        
+    
 
-        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs'>
-            <v-breadcrumbs-item
-                slot="item"
-                slot-scope="{ item }"
-                exact
-                :class="{breadcrumbs_hidden : item.disabled}"
-                @click="open_component(item.cp)"
-                >
+    
+        
 
-                {{ item.text }}
-            </v-breadcrumbs-item>
-        </v-breadcrumbs>
-
-        <template v-if='open_state == "Category"'>
-            <!-- LIST POPUP DETAIL -->
-            <cp-detail 
-             
-            v-if='notNullObject(info_table.get_data_detail)'
-            v-for='(data_detail,key,index) in info_table.get_data_detail'
-
-            :prop_title='"Detail " + data_detail.title' 
-            :prop_response_attribute='data_detail.table_name'
-            :prop_headers='data_detail.headers'
-            :prop_columns='data_detail.single'
-            :ref='"cpDetail"+ removeSpace(data_detail.title)'
-            :key='key'
-
-            ></cp-detail>
-            <!----------------------->
+            
 
             
 
             <!-- POPUP CREATE EDIT -->
+
             <cp-form 
 
             :prop_countStep='info_table.count_step' 
@@ -46,8 +24,10 @@
             :prop_singularName='info_table.singular_name'
             
             :prop_input='generate_input(info_table.plural_name)'
+            prop_send_parent_table_key='purchase_order_id'
+            :prop_send_parent_table_value='prop_list_filter["id_selected"]'
             
-            :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.plural_name, "create") : null'
+            :prop_custom_formData='info_table.data.custom_formData'
             
 
             v-on:done='refresh_table()'
@@ -55,18 +35,26 @@
 
             ></cp-form>
 
+
             <!-- ================================ -->
 
+            
 
 
             <!-- HEADER DATATABLE -->
+
            <cp-header
            :prop_icon='info_table.icon'
            :prop_title='info_table.title'
            :prop_search_data='search_data'
+           :prop_information='additional_data ? additional_data : ""'
+       :prop_format_information='info_table.format_additional_data ? info_table.format_additional_data : ""'
            :prop_button_on_index='info_table.button_on_index'
+
            v-on:button_index_clicked='button_index_clicked'
            v-on:search_change='search_data=$event'
+           
+           v-on:add_clicked='opendialog_createedit(-1)'
            >
            </cp-header>
 
@@ -75,7 +63,7 @@
 
             
             <!-- DATATABLE -->
-            
+
             <cp-datatable 
             v-if='info_table.data'
 
@@ -84,51 +72,48 @@
             :prop_infoDatatable='info_table.data.datatable'
             :prop_action_items='info_table.actions'
             :prop_plural_name='info_table.plural_name'
-            :prop_url_index='generate_url(info_table.table_name, "index")'
-            :prop_filter='info_table.data.filter'
+            :prop_url_index='prop_list_filter? generate_url("purchase_orders", "detail",prop_list_filter["id_selected"], info_table.plural_name) :  generate_url(info_table.table_name, "index")'
+            :prop_filter='prop_list_filter'
+            prop_get_additional_data='true'
 
             
 
+            v-on:show_additional_data='fill_additional_data'            
             v-on:action_clicked='action_change'
             ref="cpDatatable"
 
             ></cp-datatable>
 
-            <!-- ================================ -->
-        </template>
+        
+
+        
+
+        <!-- ================================ -->
     </div>
+    
 </template>
 
 <script>
 import mxCrudBasic from '../mixin/mxCrudBasic';
 
+
 export default {
+    props: ['prop_list_filter', 'prop_format_additional_data', 'prop_additional_data'],
     data () {
         return {
             info_table:{},
-            name_table:'categories',
+            name_table:'payments',
             search_data: null,
+            additional_data:null,
 
-            open_state : 'Category',
-            list_state : 
-            {
-                'Category' : {},
-            },
             
-            breadcrumbs:[
-                //level 1
-                {
-                    text: 'Category',
-                    disabled: false,
-                    cp : 'Category',
-                    before : null,
-                },
-                //level 2
-                
-            ],
         }
     },
     methods: {
+        done_submit_incoming()
+        {
+            swal("Good job!", "Data Saved !", "success");
+        },
         button_index_clicked(index)
         {
             if(index == 0)
@@ -136,21 +121,25 @@ export default {
                 this.opendialog_createedit(-1);
             }
         },
-        action_change(id,idx_action)
+        action_change(id,idx_action, data)
         {
+            this.selected_data = data;
             if(idx_action == 0)
             {
-                this.opendialog_createedit(id)
+                 this.opendialog_createedit(id);
             }
             else if(idx_action == 1)
             {
-                this.opendialog_detail(id, 'cpDetailGoods', 'goods');
+                 //approve
             }
             else if(idx_action == 2)
             {
+                //delete
                 this.delete_data(id);
             }
+            
         },
+        
         
 
     },

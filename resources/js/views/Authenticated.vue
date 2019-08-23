@@ -155,6 +155,7 @@
                             :key="'menu'+index"
 
                             >
+
                             <v-list-tile-action class='ltc-icon'>
                                 <v-icon class='color-text-sidebar icon-sidebar'>{{ item.icon }}</v-icon>
                             </v-list-tile-action>
@@ -395,6 +396,8 @@ export default {
     },
     mounted() {
         this.user = JSON.parse(localStorage.getItem('user'))
+        
+
     }
 }
 </script>

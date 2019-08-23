@@ -383,6 +383,7 @@ export default {
     },
     mounted(){      
         this.info_table = this.database[this.name_table];
+        this.filter_finance();
     },
     mixins:[
         mxCrudBasic

@@ -18,28 +18,9 @@
         <!----------------------->
 
         
-
-        <!-- POPUP CREATE EDIT -->
-        <cp-form 
-
-        :prop_countStep='info_table.count_step' 
-        :prop_editableEdit='info_table.editable_edit'
-        :prop_editableAdd='info_table.editable_add'
-        :prop_title='info_table.title'
-        :prop_dataInfo='info_table.data'
-        :prop_tableName='name_table'
-        :prop_widthForm='info_table.widthForm'
-        :prop_singularName='info_table.singular_name'
-        
-        :prop_input='generate_input(info_table.plural_name)'
-        
-        :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.plural_name, "create") : null'
         
 
-        v-on:done='refresh_table()'
-        ref="cpForm"
-
-        ></cp-form>
+        
 
         <!-- ================================ -->
 
@@ -83,14 +64,19 @@
 
         ></cp-datatable>
 
+        <cp-add-edit-detail-po ref='cpAddEditDetailPo' :prop_purchase_order_id='additional_data ? additional_data.id : ""' v-on:done='refresh_table()'></cp-add-edit-detail-po>
         <!-- ================================ -->
     </div>
 </template>
 
 <script>
 import mxCrudBasic from '../../mixin/mxCrudBasic';
+import cpAddEditDetailPo from './cpAddEditDetailPo.vue'
 
 export default {
+    components : {
+        cpAddEditDetailPo
+    },
     props: ['prop_list_filter'],
     data () {
         return {
@@ -101,9 +87,37 @@ export default {
         }
     },
     methods: {
+        submit_data()
+        {
+            const formData = new FormData();
+            formData.append('_method', 'patch');
+            formData.append('token', localStorage.getItem('token'));
+            axios.post(
+                'api/purchaseOrders/' + this.additional_data.id + '/submit',
+                formData,
+                    {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json' //default
+                    }
+                ).then((r) => {
+                swal("Good job!", "Data Submited !", "success");
+                this.refresh_table();
+            }).catch(function (error)
+            {
+                
+                if(error.response.status == 422)
+                {
+                    swal('Request Failed', 'Check your internet connection !', 'error');
+                }
+                else
+                {
+                    swal('Unkown Error', error.response.data , 'error');
+                }
+            });
+        },
         button_index_clicked(index)
         {
-            if(this.additional_data.status != "New")
+            if(this.additional_data.status != "1")
             {
 
             }
@@ -111,14 +125,20 @@ export default {
             {
                 if(index == 0)
                 {
-                    this.opendialog_createedit(-1);
+                    this.$refs['cpAddEditDetailPo'].open_dialog(-1);
+                    //this.opendialog_createedit(-1);
+                }
+                else if(index == 1)
+                {
+                    //submit
+                    this.submit_data();
                 }
 
             }
         },
         action_change(id,idx_action)
         {
-            if(this.additional_data.status != "New")
+            if(this.additional_data.status != "1")
             {
                 
             }
@@ -126,9 +146,14 @@ export default {
             {
                 if(idx_action == 0)
                 {
-                    this.opendialog_createedit(id);
+                    this.$refs['cpAddEditDetailPo'].open_dialog(id);
+                    //this.opendialog_createedit(id);
                 }
                 else if(idx_action == 1)
+                {
+                    
+                }
+                else if(idx_action == 2)
                 {
                     this.delete_data(id);
                 }
@@ -138,7 +163,7 @@ export default {
 
         after_fill_additional_data()
         {
-            if(this.additional_data.status != "New")
+            if(this.additional_data.status != "1")
             {
                 //conditional khusus component ini
                 //jika status != new, maka tidak bisa submit/add/edit/delete

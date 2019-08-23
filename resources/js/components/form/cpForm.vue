@@ -58,6 +58,36 @@
 										</template>
 									</template>
 									
+									<template v-if='objColumn.type=="date"'><!--  -->
+
+										<v-menu
+			                              ref="menu_date"
+			                              v-model="menu_date"
+			                              :close-on-content-click="false"
+			                              :nudge-right="40"
+			                              lazy
+			                              transition="scale-transition"
+			                              offset-y
+			                              full-width
+			                              max-width="290px"
+			                              min-width="290px"
+			                            >
+			                              <template v-slot:activator="{ on }">
+			                                <v-text-field
+			                                  v-model="input[column]"
+			                                  label="Date"
+			                                  hint="YYYY/MM/DD format"
+			                                  persistent-hint
+			                                  prepend-icon="event"
+			                                  @blur="date = input[column]"
+			                                  v-on="on"
+			                                ></v-text-field>
+			                              </template>
+			                              <v-date-picker v-model="input[column]" no-title @input="menu_date = false"></v-date-picker>
+			                            </v-menu>
+											
+										
+									</template>
 
 										<template v-if='objColumn.type=="tf_gm"'>
 											<template v-if='objColumn.gm=="lat"'>
@@ -102,21 +132,39 @@
 										>
 										</v-textarea>
 
+										<template v-if='objColumn.type == "s"'>
+											<v-select
+											v-if='!objColumn.child_of'
+											:rules='$list_validation[objColumn.validation]'
+											:label='objColumn.label'
+											v-model='input[column]'
+											:disabled='objColumn.disabled'
 
-										<v-select
-										v-if='objColumn.type=="s"'
-										:rules='$list_validation[objColumn.validation]'
-										:label='objColumn.label'
-										v-model='input[column]'
-										:disabled='objColumn.disabled'
+											:items='ref_input[objColumn.table_ref]'
+											:item-text='objColumn.itemText'
+											return-object
 
-										:items='ref_input[objColumn.table_ref]'
-										:item-text='objColumn.itemText'
-										return-object
+											class="pa-2"
+											>
+											</v-select>
 
-										class="pa-2"
-										>
-										</v-select>
+											<v-select
+											v-if='objColumn.child_of && input[objColumn.child_of]'
+											:rules='$list_validation[objColumn.validation]'
+											:label='objColumn.label'
+											v-model='input[column]'
+											:disabled='objColumn.disabled'
+
+											:items='input[objColumn.child_of][objColumn.table_ref]'
+											:item-text='objColumn.itemText'
+											return-object
+
+											class="pa-2"
+											>
+											</v-select>
+
+											
+										</template>
 										
 										<v-autocomplete
 										v-if='objColumn.type=="s2"'
@@ -407,9 +455,14 @@
 		'prop_singularName',
 		'prop_tempInput',
 		'prop_input',
+		'prop_custom_formData',
 		'prop_preview',
 		'prop_urlGetMasterData',
-		'prop_urlMOCC'
+		'prop_urlMOCC',
+		'prop_additional_param_create_key',
+		'prop_additional_param_create_value',
+		'prop_send_parent_table_key',
+		'prop_send_parent_table_value',
 
 		],
 		data() {
@@ -419,6 +472,7 @@
 				valid:null,
 				stepNow:null,
 				id_edit:-1,
+				menu_date:null,
 
 				//for data
 				input : [],
@@ -577,7 +631,15 @@
 		        	this.id_edit = -1;
 		        	if(this.prop_urlGetMasterData != null)
 		        	{
-			        	this.get_master_data();
+		        		if(this.prop_additional_param_create_key)
+		        		{
+		        			this.get_master_data(this.prop_additional_param_create_value, this.prop_additional_param_create_key)
+		        		}
+		        		else
+		        		{
+			        		this.get_master_data();
+
+		        		}
 		        	}
 		        	
 		        }
@@ -720,9 +782,7 @@
 
 	        get_master_data(idparent,fktoparent)
 	        {
-	        	console.log('cek get_master_data');
-	        	console.log(idparent);
-	        	console.log(fktoparent);
+
 	            if(this.prop_urlGetMasterData != null)
 	            {
 	            	var params = {
@@ -902,6 +962,8 @@
 	        	}
 
 	            for(var index in temp_r) { 
+	            	console.log('cek index');
+	            	console.log(index);
 				   this.ref_input[index] = temp_r[index];
 				}
 				
@@ -912,6 +974,8 @@
 				    self.ref_input[key] = obj;
 				});
 
+				console.log('cek ref_inptu');
+				console.log(this.ref_input);
 
 	        },
 
@@ -1013,6 +1077,37 @@
 	            {
 	            	this.clear_input_before_edit();
 	            }
+
+
+
+	            //custom formData
+	            if(this.prop_custom_formData)
+	            {
+
+	            	for(var i = 0 ;i<this.prop_custom_formData.length;i++)
+	            	{
+		            	if(this.prop_custom_formData[i].when_id_edit == 'all')
+		            	{
+		            		formData.append(this.prop_custom_formData[i].key, this.prop_custom_formData[i].value);
+		            	}
+		            	else if(this.prop_custom_formData[i].when_id_edit == this.id_edit)
+		            	{
+		            		formData.append(this.prop_custom_formData[i].key, this.prop_custom_formData[i].value);
+		            	}
+
+	            	}
+	            }
+
+	            //send parent table
+	            if(this.prop_send_parent_table_key)
+	            {
+
+	            	formData.append(this.prop_send_parent_table_key, this.prop_send_parent_table_value);
+	            }
+
+	            //
+
+
 	            //prepare form_single (sudah menghandle saat edit maupun store)
 	            for(var i = 0;i<this.prop_dataInfo.form_single.length;i++)
 	        	{

@@ -922,12 +922,14 @@ export default
 							single : 
 							{
 								'id' : {show : false},
-								'rack' : {show : true},
+								'goods_name' : {show : true},
+								'rack_name' : {show : true},
 								'stock' : {show : true},
 							},
 							headers: [
 								{ text: 'No', value:'no'},
-                				{ text: 'Racks', value:'rack'},
+                				{ text: 'Goods', value:'goods_name'},
+                				{ text: 'Racks', value:'rack_name'},
                 				{ text: 'Stock', value:'stock'},
 							]
 						},
@@ -1402,7 +1404,13 @@ export default
                 				{ text: 'Action', value:'action',sortable:false, width:'15%'},
 						],
 
-						
+						custom_formData : [
+							{
+								key : 'type',
+								value : '1',
+								when_id_edit : 'all',
+							}
+						],
 
 						form_single : [['supplier'],['periode'],['payment_type'],['payment_terms'],['no_po']],
 						single : 
@@ -1412,7 +1420,7 @@ export default
 							},
 							'supplier' : {
 								label : 'Supplier', width:12, type:'s', validation:'selectdata_req',
-								itemText:'company_name', itemValue:'id', column:'supplier_id', table_ref:'suppliers'
+								itemText:'name_company', itemValue:'id', column:'supplier_id', table_ref:'suppliers'
 								
 							},
 							'periode' : {
@@ -1464,6 +1472,7 @@ export default
 					count_step:1,
 
 					additional_param_index : 'purchase_order_id',
+					additional_param_create : 'purchase_order_id',
 
 					actions:['Edit', 'Revision', 'Delete'],
 					button_on_index : ['Add Data', 'Submit', 'Print'],
@@ -1474,10 +1483,10 @@ export default
 						'Type' : 'type',
 						'Total' : 'total',
 						'Created_By' : 'created_by_user_name',
-						'Status' : 'status'
+						'Status' : 'status_name'
 					},
 
-					request_master_data : true,
+					request_master_data : false,
 					data : 
 					{
 						custom_master_data : {
@@ -1515,6 +1524,14 @@ export default
                 				{ text: 'Action', value:'action',sortable:false, width:'15%'},
 						],
 
+						custom_formData : [
+							{
+								key : 'discount_choose',
+								value : '2',
+								when_id_edit : 'all',
+							}
+						],
+
 
 						form_single : [['goods'],['pricelist'],['qty'],['tax'],['discount_percent'],['discount_rupiah']],
 						single : 
@@ -1524,12 +1541,12 @@ export default
 							},
 							'goods' : {
 								label : 'Goods', width:12, type:'s2', validation:'selectdata_req',
-								itemText:'goods_name', itemValue:'id', column:'goods_id', table_ref:'goods'
+								itemText:'name', itemValue:'id', column:'goods_id', table_ref:'goods'
 								
 							},
 							'pricelist' : {
 								label : 'Pricelists', width:12, type:'s', validation:'selectdata_req',
-								itemText:'price', itemValue:'id', column:'pricelist_id', table_ref:'pricelists'
+								itemText:'price', itemValue:'id', column:'pricelist_id', table_ref:'pricelists', child_of:'goods'
 							},
 							'qty' : {
 								label : 'Quantity', width:12, type:'tf', validation:'numeric_req',
@@ -1539,6 +1556,7 @@ export default
 							},
 							'discount_percent' : {
 								label : 'Discount Percent', width:12, type:'tf', validation:'numeric_req',
+
 							},
 							'discount_rupiah' : {
 								label : 'Discount Rupiah', width:12, type:'tf', validation:'numeric_req',
@@ -1812,13 +1830,101 @@ export default
 						
 					}
 				},
+
+				//18. crud-payment
+				"payments" : 
+				{
+					table_name : 'payments',
+					title : 'Payment',
+					icon : 'money',
+
+					singular_name : 'payment',
+					plural_name : 'payments',
+					column_desc : 'payment_date', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					additional_param_index : 'purchase_order_id',
+					additional_param_store : 'purchase_order_id',
+
+					actions:['Edit', 'Approve', 'Delete'],
+					button_on_index : ['Add Data'],
+
+					format_additional_data : 
+					{
+						'NO_PO' : 'po_no',
+						'Type' : 'po_type_name',
+						'Total' : 'total',
+						
+					},
+
+					request_master_data : false,
+					data : 
+					{
+						
+						rule_update:'send_all',
+						datatable:[
+							{
+								column : 'payment_date',
+							},
+							{
+								column : 'paid_off',
+							},
+						],
+						
+
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Payment Date', value:'payment_date'},
+                				{ text: 'Paid Off', value:'paid_off'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						
+
+						form_single : [['payment_date'],['paid_off']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'payment_date' : {
+								label : 'Payment Date', width:12, type:'date',
+								
+							},
+							'paid_off' : {
+								label : 'Paid Off', width:12, type:'tf', validation:'numeric_req',
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+						conditional_input:{
+							
+						}
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
 			}
 		}
 	},
 	methods:{
 		generate_url(table,type,id,tableDetail)
 		{
-			
+			console.log('masuk generate_url')	;
+			console.log(table);
+			console.log(type);
+			console.log(id);
+			console.log(tableDetail);
 			var result = '';
 			if(type == 'index' || type == 'store')
 			{
@@ -1841,7 +1947,10 @@ export default
 			{
 				result = '/api/' + this.to_snack_case(table) + '/create';
 			}
+			console.log('return result');
+			console.log(result);
 			return result;
+
 			
 		},
 		to_snack_case(str)
