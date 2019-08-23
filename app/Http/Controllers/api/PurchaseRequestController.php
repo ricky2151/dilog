@@ -94,7 +94,7 @@ class PurchaseRequestController extends Controller
             // return $e;
             throw new DatabaseTransactionErrorException("purchase_request");
         }
-        return formatResponse(false,(["rekaps"=>$data]));
+        return formatResponse(false,(["purchase_request"=> $purchaseRequest,"rekaps"=>$data]));
     }
 
     /**

@@ -230,7 +230,7 @@ class WarehouseController extends Controller
 
         $goodsRacks = $this->warehouse->find($id)->getGoodsRack();
 
-        return formatResponse(false,(["goods_racks"=>$racks]));
+        return formatResponse(false,(["goods_racks"=>$goodsRacks]));
     }
 
     /**

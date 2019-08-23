@@ -130,7 +130,7 @@ class WarehouseService
         else{
             $racks = Arr::pull($data,'racks');
             $warehouse = $this->warehouse->create($data);
-            $warehouse->racks()->createMany($racks);
+            if(!is_null($racks)) $warehouse->racks()->createMany($racks);
         }
  
     }
