@@ -14,7 +14,6 @@
 						<h3>Detail PO</h3>
 					</v-stepper-step>
 					<v-stepper-content step="1">
-						{{ref_input}}
 						<v-layout row>
 							<v-flex xs12>
 								<v-select

@@ -98,7 +98,8 @@
         <template v-if="open_state=='cpAddMaterialRequest'">
             <cp-add-material-request
             :prop_list_filter='list_state["cpAddMaterialRequest"]'
-            v-on:back='open_component("MaterialRequest")'
+            v-on:back='add_mr_done'
+            ref='cpAddMaterialRequest'
             ></cp-add-material-request>
         </template>
 
@@ -162,6 +163,18 @@ export default {
         }
     },
     methods: {
+        add_mr_done()
+        {
+            var this_user_role = JSON.parse(localStorage.getItem('user')).role_id;
+            if(this_user_role != 1)
+            {
+                this.$refs['cpAddMaterialRequest'].fill_master_data();
+            }
+            else
+            {
+                this.open_component('MaterialRequest');
+            }
+        },
         submit_checklist()
         {
             console.log('oke');
