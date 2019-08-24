@@ -30,8 +30,16 @@ class PaymentService
         }
     }
 
+    public function statusApprovePo($purchaseOrder){
+        if($purchaseOrder['status']!=3){
+            throw new InvalidParameterException(json_encode(["payment"=>["payment cannot be update/read/create because the status of PO not approved"]]));
+        }
+    } 
+
     public function handleApprove($id){
         $payment = $this->payment->find($id);
+        $purchaseOrder = $payment->purchaseOrder;
+        $this->statusApprovePo($purchaseOrder);
         if($payment->status == 1){
             throw new InvalidParameterException(json_encode(["payment"=>["payment cannot be approved because the previous status has been approved"]]));
         }
@@ -42,6 +50,7 @@ class PaymentService
     
     public function handleStore($purchaseOrderId){
         $purchaseOrder = $this->purchaseOrder->find($purchaseOrderId);
+        $this->statusApprovePo($purchaseOrder);
         if(!($purchaseOrder->status == 3 || $purchaseOrder->status == 4)){
             throw new InvalidParameterException(json_encode(["payment"=>["payment cannot be stored because the status PO not approve/complete"]]));
         }
@@ -49,6 +58,8 @@ class PaymentService
 
     public function handleUpdate($id){
         $payment = $this->payment->find($id);
+        $purchaseOrder = $payment->purchaseOrder;
+        $this->statusApprovePo($purchaseOrder);
         if($payment->status == 1){
             throw new InvalidParameterException(json_encode(["payment"=>["payment cannot be update because the status has been approved"]]));
         }
@@ -56,6 +67,8 @@ class PaymentService
 
     public function handleDelete($id){
         $payment = $this->payment->find($id);
+        $purchaseOrder = $payment->purchaseOrder;
+        $this->statusApprovePo($purchaseOrder);
         if($payment->status == 1){
             throw new InvalidParameterException(json_encode(["payment"=>["payment cannot be delete because the status has been approved"]]));
         }
