@@ -146,9 +146,9 @@ class PurchaseOrderController extends Controller
                 'id'=> $purchaseOrder['id'],
                 'po_no'=> $purchaseOrder['no_po'],
                 'po_type_name'=> $purchaseOrder->getNameTypePo(),
-                'total' => $purchaseOrder['total']
-            ],
-            "payments"=>$purchaseOrder->payments->sortByDesc('created_at')->values()
+                'total' => $purchaseOrder['total'],
+                "payments"=>$purchaseOrder->payments->sortByDesc('created_at')->values()
+            ]
         ]));
     }
 
