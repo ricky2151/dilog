@@ -165,8 +165,10 @@ export default {
     methods: {
         add_mr_done()
         {
-            var this_user_role = JSON.parse(localStorage.getItem('user')).role_id;
-            if(this_user_role != 1)
+
+            var this_user_division = JSON.parse(localStorage.getItem('user')).division_id;
+
+            if(this_user_division != 1)
             {
                 this.$refs['cpAddMaterialRequest'].fill_master_data();
             }
@@ -233,8 +235,8 @@ export default {
     },
     mounted(){      
         this.info_table = this.database[this.name_table];
-        var this_user_role = JSON.parse(localStorage.getItem('user')).role_id;
-        if(this_user_role != 1)
+        var this_user_division = JSON.parse(localStorage.getItem('user')).division_id;
+        if(this_user_division != 1)
         {
             this.open_component('cpAddMaterialRequest');
         }

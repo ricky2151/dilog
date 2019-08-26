@@ -422,7 +422,8 @@ import cpDetail from './../popup/cpDetail.vue'
 			                'Accept': 'application/json',
 			                'Content-type': 'application/json' //default
 			            }).then((r) => {
-	                	this.goods = [];
+	                	this.clear_input();
+	                	//this.total = 0;
 	                    this.$emit('back');
 	                    swal("Good job!", "Data saved !", "success");
 	                    
@@ -441,6 +442,7 @@ import cpDetail from './../popup/cpDetail.vue'
 	                    }
 	                });
 				}
+
 			},
 			submit_quantity()
 			{
@@ -593,7 +595,7 @@ import cpDetail from './../popup/cpDetail.vue'
 		},
 		mounted()
 		{
-			if(JSON.parse(localStorage.getItem("user")).role_id != 1)
+			if(JSON.parse(localStorage.getItem("user")).division_id != 1)
 			{
 				this.this_user_is_finance = false;
 			}

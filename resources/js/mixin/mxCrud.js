@@ -21,7 +21,7 @@ export default {
 	methods:{
         filter_finance()
         {
-            if(JSON.parse(localStorage.getItem('user')).role_id != 1)
+            if(JSON.parse(localStorage.getItem('user')).division_id != 1)
             {
                 this.$router.replace('/');
                 swal("You Cannot Open This Page", "Please Login with finance division to see this page", "error");
