@@ -357,8 +357,7 @@
 
 					//isi master data dulu
 					//isi refinput
-					console.log('cek master data');
-					console.log(JSON.parse(JSON.stringify(r)));
+					
 					this.ref_input.goods = JSON.parse(JSON.stringify(r.master_data.goods));
 
 

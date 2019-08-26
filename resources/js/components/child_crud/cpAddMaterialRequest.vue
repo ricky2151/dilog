@@ -96,7 +96,7 @@
 					<div><h1 style="font-size:40px">Summary</h1></div><br><br><br>
 					<div v-for='(objgoods,index) in goods' :key='index'>
 						<template v-if='objgoods.qty > 0'>
-							<div><h3>{{index + 1}}. {{objgoods.name}}</h3></div>
+							<div><h3>{{objgoods.name}}</h3></div>
 							<div>
 								<h3 style='display: inline-block;'>{{objgoods.qty}} x {{objgoods.avg_price}} = Rp. {{objgoods.subtotal}}</h3>
 								<v-btn class='button-action' color="rgb(255, 0, 0, 0.0)" fab depressed small @click='change_dialog_qty_goods(1,index)'><v-icon small>edit</v-icon></v-btn>
@@ -378,6 +378,16 @@ import cpDetail from './../popup/cpDetail.vue'
 			{
 				this.tab = val;
 			},
+			clear_input()
+			{
+				this.goods = [];
+				this.page =  1;
+				this.total = 0;
+				this.periode = [];
+				this.dialog_edit_qty_goods = false;
+				this.idx_edit_qty_goods = -1;
+				this.input_quantity = 0;
+			},
 			convert_to_idx_goods(idxrow,idxcolumn,page)
 			{
 				return (((idxcolumn + ((idxrow - 1) * this.static_data.column_row.length))  + (6* (page - 1))) - 1);
@@ -459,8 +469,7 @@ import cpDetail from './../popup/cpDetail.vue'
 			
 			change_qty_goods(idx,val,endval)
 			{
-				console.log('masuk change_qty_goods');
-				console.log(idx);
+				
 				if(endval == null)
 				{
 					this.goods[idx].qty += val;	

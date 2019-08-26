@@ -1939,11 +1939,6 @@ export default
 	methods:{
 		generate_url(table,type,id,tableDetail)
 		{
-			console.log('masuk generate_url')	;
-			console.log(table);
-			console.log(type);
-			console.log(id);
-			console.log(tableDetail);
 			var result = '';
 			if(type == 'index' || type == 'store')
 			{
@@ -1966,8 +1961,6 @@ export default
 			{
 				result = '/api/' + this.to_snack_case(table) + '/create';
 			}
-			console.log('return result');
-			console.log(result);
 			return result;
 
 			

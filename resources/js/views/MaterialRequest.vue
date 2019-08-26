@@ -177,7 +177,6 @@ export default {
         },
         submit_checklist()
         {
-            console.log('oke');
             //post mark complete
             //ambil nilai dari cpdatatable yang di checklist
             //===
@@ -186,7 +185,6 @@ export default {
         },
         cancel_checklist()
         {
-            console.log('oke');
             //post mark complete
             //ambil nilai dari cpdatatable yang di checklist
             //===
@@ -221,8 +219,6 @@ export default {
             if(idx_action == 0)
             {
                  //detail
-                 console.log('cek isi ref');
-                 console.log(this.$refs);
                  this.opendialog_detail(id, 'cpDetailMaterialRequest', 'material_request_details');
             }
             else if(idx_action == 1)

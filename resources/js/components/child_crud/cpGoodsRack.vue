@@ -144,8 +144,7 @@ export default {
     computed: {
     },
     mounted(){      
-        console.log('cek prop_filter');
-        console.log(this.prop_list_filter);
+        
         this.info_table = this.database[this.name_table];
     },
     mixins:[

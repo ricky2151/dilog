@@ -240,7 +240,7 @@
                 		this.input.goods[i].rack = null;
                 	}
                 	this.dialog = false;
-                	swal('Incoming Cannot Submited', 'This PO does not approved or this PO is finished !', 'error');
+                	swal('Incoming Cannot Submited', 'Cant open because PO status is not approve/complete', 'error');
                 	
                 });
 			},
@@ -278,7 +278,7 @@
                 })
                 .catch(error => {
 
-                	swal('Incoming Is Not Avaiable', 'This PO does not have incoming', 'error');
+                	swal('Incoming Is Not Avaiable', "Can't open because PO status is not approve/complete", 'error');
                 	
                 });
 

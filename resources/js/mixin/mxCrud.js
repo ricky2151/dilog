@@ -53,14 +53,11 @@ export default {
         },
 
         debugLog(item) {
-            console.log('ini debugLog');
-            console.log(item);
         },
         fill_additional_data(item)
         {
             this.additional_data = item;
             if (typeof this.after_fill_additional_data === "function") { 
-                console.log('masuk sini woi');
                 this.after_fill_additional_data();
             }
         },
