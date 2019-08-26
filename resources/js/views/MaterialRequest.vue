@@ -98,7 +98,8 @@
         <template v-if="open_state=='cpAddMaterialRequest'">
             <cp-add-material-request
             :prop_list_filter='list_state["cpAddMaterialRequest"]'
-            v-on:back='open_component("MaterialRequest")'
+            v-on:back='add_mr_done'
+            ref='cpAddMaterialRequest'
             ></cp-add-material-request>
         </template>
 
@@ -162,9 +163,22 @@ export default {
         }
     },
     methods: {
+        add_mr_done()
+        {
+
+            var this_user_division = JSON.parse(localStorage.getItem('user')).division_id;
+
+            if(this_user_division != 1)
+            {
+                this.$refs['cpAddMaterialRequest'].fill_master_data();
+            }
+            else
+            {
+                this.open_component('MaterialRequest');
+            }
+        },
         submit_checklist()
         {
-            console.log('oke');
             //post mark complete
             //ambil nilai dari cpdatatable yang di checklist
             //===
@@ -173,7 +187,6 @@ export default {
         },
         cancel_checklist()
         {
-            console.log('oke');
             //post mark complete
             //ambil nilai dari cpdatatable yang di checklist
             //===
@@ -208,8 +221,6 @@ export default {
             if(idx_action == 0)
             {
                  //detail
-                 console.log('cek isi ref');
-                 console.log(this.$refs);
                  this.opendialog_detail(id, 'cpDetailMaterialRequest', 'material_request_details');
             }
             else if(idx_action == 1)
@@ -224,8 +235,8 @@ export default {
     },
     mounted(){      
         this.info_table = this.database[this.name_table];
-        var this_user_role = JSON.parse(localStorage.getItem('user')).role_id;
-        if(this_user_role != 1)
+        var this_user_division = JSON.parse(localStorage.getItem('user')).division_id;
+        if(this_user_division != 1)
         {
             this.open_component('cpAddMaterialRequest');
         }

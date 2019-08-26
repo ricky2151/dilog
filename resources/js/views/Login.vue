@@ -47,12 +47,19 @@
     	methods:
     	{
     		async req_login(){
+                var r;
+                try
+                {
+        			r = await axios.post('/api/auth/login',{
+        				email:this.in_email,
+        				password:this.in_password
+        			});
 
-                
-			let r = await axios.post('/api/auth/login',{
-				email:this.in_email,
-				password:this.in_password
-			});
+                }
+                catch (error)
+                {
+                    swal("Login Failed", "Email/password doesn't match. Please try again", "error");
+                }
 
                
                 this.saveToken(r);

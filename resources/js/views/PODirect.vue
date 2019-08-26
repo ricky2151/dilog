@@ -189,6 +189,7 @@ export default {
         done_submit_incoming()
         {
             swal("Good job!", "Data Saved !", "success");
+            this.refresh_table();
         },
         button_index_clicked(index)
         {
@@ -196,6 +197,34 @@ export default {
             {
                 this.opendialog_createedit(-1);
             }
+        },
+        approve_po(id)
+        {
+            const formData = new FormData();
+            formData.append('_method', 'patch');
+            formData.append('token', localStorage.getItem('token'));
+            axios.post(
+                'api/purchaseOrders/' + id + '/approve',
+                formData,
+                    {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json' //default
+                    }
+                ).then((r) => {
+                swal("Good job!", "Data Approved !", "success");
+                this.refresh_table();
+            }).catch(function (error)
+            {
+                
+                if(error.response.status == 422)
+                {
+                    swal('Request Failed', 'Check your internet connection !', 'error');
+                }
+                else
+                {
+                    swal('Unkown Error', error.response.data , 'error');
+                }
+            });
         },
         action_change(id,idx_action, data)
         {
@@ -206,7 +235,7 @@ export default {
             }
             else if(idx_action == 1)
             {
-                 
+                 this.approve_po(id);
             }
             else if(idx_action == 2)
             {
@@ -215,7 +244,7 @@ export default {
             }
             else if(idx_action == 3)
             {
-                if(data.status == 3 || data.status == 4)
+                if(data.status == 'Approve' || data.status == 'Finish')
                 {
                     this.open_component('cpPayment', 'purchase_order', id);
                 }

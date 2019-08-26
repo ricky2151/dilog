@@ -21,7 +21,7 @@ export default {
 	methods:{
         filter_finance()
         {
-            if(JSON.parse(localStorage.getItem('user')).role_id != 1)
+            if(JSON.parse(localStorage.getItem('user')).division_id != 1)
             {
                 this.$router.replace('/');
                 swal("You Cannot Open This Page", "Please Login with finance division to see this page", "error");
@@ -53,14 +53,11 @@ export default {
         },
 
         debugLog(item) {
-            console.log('ini debugLog');
-            console.log(item);
         },
         fill_additional_data(item)
         {
             this.additional_data = item;
             if (typeof this.after_fill_additional_data === "function") { 
-                console.log('masuk sini woi');
                 this.after_fill_additional_data();
             }
         },
@@ -210,15 +207,16 @@ export default {
     {
         if(this.info_table.additional_param_index)
         {
-            
-            this.$refs['cpForm'].get_master_data(this.prop_list_filter.id_selected,this.info_table.additional_param_index);
+            if(this.$refs['cpForm'])
+                this.$refs['cpForm'].get_master_data(this.prop_list_filter.id_selected,this.info_table.additional_param_index);
         }
         else
         {
             
             if(this.info_table.request_master_data)
             {
-                this.$refs['cpForm'].get_master_data();    
+                if(this.$refs['cpForm'])
+                    this.$refs['cpForm'].get_master_data();    
 
             }
         }

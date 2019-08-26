@@ -14,7 +14,6 @@
 						<h3>Detail PO</h3>
 					</v-stepper-step>
 					<v-stepper-content step="1">
-						{{ref_input}}
 						<v-layout row>
 							<v-flex xs12>
 								<v-select
@@ -358,8 +357,7 @@
 
 					//isi master data dulu
 					//isi refinput
-					console.log('cek master data');
-					console.log(JSON.parse(JSON.stringify(r)));
+					
 					this.ref_input.goods = JSON.parse(JSON.stringify(r.master_data.goods));
 
 

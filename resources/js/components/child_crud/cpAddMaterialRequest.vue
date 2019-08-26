@@ -1,5 +1,6 @@
 <template>
 	<div>
+
 		<v-layout row >
 			<v-toolbar
 		      color='blue'
@@ -95,7 +96,7 @@
 					<div><h1 style="font-size:40px">Summary</h1></div><br><br><br>
 					<div v-for='(objgoods,index) in goods' :key='index'>
 						<template v-if='objgoods.qty > 0'>
-							<div><h3>{{index + 1}}. {{objgoods.name}}</h3></div>
+							<div><h3>{{objgoods.name}}</h3></div>
 							<div>
 								<h3 style='display: inline-block;'>{{objgoods.qty}} x {{objgoods.avg_price}} = Rp. {{objgoods.subtotal}}</h3>
 								<v-btn class='button-action' color="rgb(255, 0, 0, 0.0)" fab depressed small @click='change_dialog_qty_goods(1,index)'><v-icon small>edit</v-icon></v-btn>
@@ -121,7 +122,7 @@
 		<div v-show='tab=="Profile"' class='mr_div_container'>
 			<cp-detail 
 	        prop_title='Detail Material Request' 
-	        prop_response_attribute='detail_material_request'
+	        prop_response_attribute='material_request_details'
 	        :prop_headers='profile.header_detail_mr'
 	        :prop_columns='profile.single_detail_mr'
 	        ref="cpDetailMr"
@@ -147,7 +148,7 @@
 		            >
 		            <template v-slot:items="props">
 		                <td>{{ props.index + 1 }}</td>
-		                <td>{{ props.item.code }}</td>
+		                <td>{{ props.item.no_mr }}</td>
 		                <td>{{ props.item.total }}</td>
 		                <td>{{ props.item.created_at }}</td>
 		                <td>{{ props.item.approved_by_user_name }}</td>
@@ -206,23 +207,23 @@ import cpDetail from './../popup/cpDetail.vue'
 				{
 					header_detail_mr : [
 						{ text : 'No', value:'no'},
-						{ text : 'Name', value:'name'},
-						{ text : 'Division', value:'division_name'},
-						{ text : 'Created At', value:'created_at'},
+						{ text : 'Goods', value:'goods_name'},
+						{ text : 'Qty', value:'qty'},
+						{ text : 'Total', value:'total'},
 						{ text : 'Status', value:'status'},
 					],
 					single_detail_mr : 
 					{
 						'id' : {show : false},
-						'name' : {show : true},
-						'division_name' : {show : true},
-						'created_at' : {show : true},
+						'goods_name' : {show : true},
+						'qty' : {show : true},
+						'total' : {show : true},
 						'status' : {show : true},
 					},
 
 					header_profile : [
 						{ text : 'No', value:'no'},
-						{ text : 'Code', value:'code'},
+						{ text : 'No MR', value:'no_mr'},
 						{ text : 'Total', value:'total'},
 						{ text : 'Created At', value:'created_at'},
 						{ text : 'Approved By', value:'approved_by_user_name'},
@@ -377,14 +378,24 @@ import cpDetail from './../popup/cpDetail.vue'
 			{
 				this.tab = val;
 			},
+			clear_input()
+			{
+				this.goods = [];
+				this.page =  1;
+				this.total = 0;
+				this.periode = [];
+				this.dialog_edit_qty_goods = false;
+				this.idx_edit_qty_goods = -1;
+				this.input_quantity = 0;
+			},
 			convert_to_idx_goods(idxrow,idxcolumn,page)
 			{
 				return (((idxcolumn + ((idxrow - 1) * this.static_data.column_row.length))  + (6* (page - 1))) - 1);
 			},
 			open_detail(id,ref,last_url)
 			{
-				this.$refs['cpDetailMr'].url = ''// tanya tomas
-	            this.$refs['cpDetailMr'][0].open_dialog();
+				this.$refs['cpDetailMr'].url = 'api/materialRequests/' + id + '/materialRequestDetails'
+	            this.$refs['cpDetailMr'].open_dialog();
 			},
 			submit_mr()
 			{
@@ -411,7 +422,8 @@ import cpDetail from './../popup/cpDetail.vue'
 			                'Accept': 'application/json',
 			                'Content-type': 'application/json' //default
 			            }).then((r) => {
-	                	this.goods = [];
+	                	this.clear_input();
+	                	//this.total = 0;
 	                    this.$emit('back');
 	                    swal("Good job!", "Data saved !", "success");
 	                    
@@ -430,6 +442,7 @@ import cpDetail from './../popup/cpDetail.vue'
 	                    }
 	                });
 				}
+
 			},
 			submit_quantity()
 			{
@@ -458,8 +471,7 @@ import cpDetail from './../popup/cpDetail.vue'
 			
 			change_qty_goods(idx,val,endval)
 			{
-				console.log('masuk change_qty_goods');
-				console.log(idx);
+				
 				if(endval == null)
 				{
 					this.goods[idx].qty += val;	
@@ -502,10 +514,34 @@ import cpDetail from './../popup/cpDetail.vue'
                     result_data = false;
                 }
 			},
-			get_data_index() //bisa berupa profile, bisa tidak. Jika tidak berupa profile, maka menu profile di hide, artinya itu adalah finance !
+			get_data_index() //datatable
 			{
 				try{
                     var response = axios.get('api/materialRequests', {
+                        params:{
+                            token: localStorage.getItem('token')
+                        }
+                    },{
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-type': 'application/json'
+                        }
+                    });
+
+                    return response;
+                    
+
+                }
+                catch (error)
+                {
+                    
+                    result_data = false;
+                }
+			},
+			get_data_profile()
+			{
+				try{
+                    var response = axios.get('api/materialRequests/users/profile', {
                         params:{
                             token: localStorage.getItem('token')
                         }
@@ -545,9 +581,9 @@ import cpDetail from './../popup/cpDetail.vue'
 				this.profile.name = temp_user.name;
 				this.profile.email = temp_user.email;
 
-				let r_profile = await this.get_data_index();
+				let r_profile = await this.get_data_profile();
 				r_profile = r_profile.data.items;
-				if(r_profile.user_info) //jika bukan finance (karena memunculkan array user_info)
+				if(r_profile.user_info) 
 				{
 					this.profile.mr_count = r_profile.user_info.count_mr;
 					this.profile.mr_total = r_profile.user_info.total_mr;
@@ -559,7 +595,7 @@ import cpDetail from './../popup/cpDetail.vue'
 		},
 		mounted()
 		{
-			if(JSON.parse(localStorage.getItem("user")).role_id != 1)
+			if(JSON.parse(localStorage.getItem("user")).division_id != 1)
 			{
 				this.this_user_is_finance = false;
 			}

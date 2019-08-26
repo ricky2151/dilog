@@ -167,7 +167,7 @@ export default {
             {
                 //conditional khusus component ini
                 //jika status != new, maka tidak bisa submit/add/edit/delete
-                console.log(this.additional_data);
+                
                 this.info_table.actions = ['Revision'];
                 this.info_table.button_on_index = ["Incoming", "Print"];
             }

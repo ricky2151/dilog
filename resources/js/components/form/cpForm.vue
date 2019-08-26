@@ -513,8 +513,7 @@
 			
 			testlog(obj)
 			{
-				console.log('ini testlog');
-				console.log(obj);
+				
 			},
 			//for other component
 			
@@ -663,7 +662,7 @@
 
 			testfungsi(param1)
 			{
-				console.log(param1);
+				
 			},
 			changeImage(e){
 
@@ -676,7 +675,6 @@
 	            const files = e.target.files;
 
 	            if(files[0] !== undefined) {
-	                console.log(files[0].size);
 	                if(((files[0].size / 1024) / 1024) < 2)
 	                {
 	                    
@@ -962,8 +960,6 @@
 	        	}
 
 	            for(var index in temp_r) { 
-	            	console.log('cek index');
-	            	console.log(index);
 				   this.ref_input[index] = temp_r[index];
 				}
 				
@@ -974,8 +970,6 @@
 				    self.ref_input[key] = obj;
 				});
 
-				console.log('cek ref_inptu');
-				console.log(this.ref_input);
 
 	        },
 
@@ -1053,8 +1047,6 @@
 
                 }
                this.tableClearTempInput(table_name);
-               console.log('cek tablesave');
-               console.log(this.input);
 
             },
             tableCanceledit(table_name){
@@ -1137,9 +1129,6 @@
 				    	}
 				    	else if(objColumn.type == 's' || objColumn.type == 's2')
 				    	{
-				    		console.log('kok error');
-				    		console.log(this.input);
-				    		console.log(nameColumn);
 				    		if(!this.same_object(this.input[nameColumn],this.input_before_edit[nameColumn]) || this.id_edit == -1)
 				    			formData.append(objColumn.column, this.input[nameColumn][objColumn.itemValue]);
 				    	}
@@ -1309,8 +1298,6 @@
 	        	if(this.$refs['cpMakeOrCopyChild'] && this.id_edit == -1)
 	        	{
 	        		var data_cpmocc = this.$refs['cpMakeOrCopyChild'][0];
-	        		console.log('cek data_cpmocc');
-	        		console.log(data_cpmocc);
 	        		var table_name_child = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].child.table_name;
 	        		var table_name_grandchild = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].grandchild.table_name;
 	        		if(data_cpmocc.interaction.create.method == 0) //langsung
@@ -1407,8 +1394,6 @@
 			{
 				//data adalah row dari database
 				//value adalah ['price', '*', 'qty']
-				console.log('cek calculate_custom_value');
-				console.log(value);
 				var result;
 				if(dataType == 'int')
 				{
