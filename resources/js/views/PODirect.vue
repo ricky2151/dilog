@@ -244,7 +244,7 @@ export default {
             }
             else if(idx_action == 3)
             {
-                if(data.status == 3 || data.status == 4)
+                if(data.status == 'Approve' || data.status == 'Finish')
                 {
                     this.open_component('cpPayment', 'purchase_order', id);
                 }

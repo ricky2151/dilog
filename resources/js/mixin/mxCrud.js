@@ -207,15 +207,16 @@ export default {
     {
         if(this.info_table.additional_param_index)
         {
-            
-            this.$refs['cpForm'].get_master_data(this.prop_list_filter.id_selected,this.info_table.additional_param_index);
+            if(this.$refs['cpForm'])
+                this.$refs['cpForm'].get_master_data(this.prop_list_filter.id_selected,this.info_table.additional_param_index);
         }
         else
         {
             
             if(this.info_table.request_master_data)
             {
-                this.$refs['cpForm'].get_master_data();    
+                if(this.$refs['cpForm'])
+                    this.$refs['cpForm'].get_master_data();    
 
             }
         }
