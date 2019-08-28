@@ -46,14 +46,16 @@ class UpdateGoods extends FormRequest
             
             'category_goods.*.category_id'=> "required|integer|exists:categories,id",
             
-            'material_goods.*.id' => "filled|integer|exists:materials,id",
-            'material_goods.*.total'=> "filled|integer|min:1",
-            'material_goods.*.adjust'=> "string|nullable",
-            'material_goods.*.name'=> "filled|string",
-            'material_goods.*.type'=> "required|in:1,0,-1",//1 : new, 0 : update, -1 : delete
+            'materials.*.id' => "filled|integer|exists:materials,id",
+            'materials.*.total'=> "filled|integer|min:1",
+            'materials.*.adjust'=> "string|nullable",
+            'materials.*.name'=> "filled|string",
+            'materials.*.type'=> "required|in:1,0,-1",//1 : new, 0 : update, -1 : delete
 
-            'pricelists.*.supplier_id' => "required|integer|exists:suppliers,id",
-            'pricelists.*.price' => "required|integer",
+            'pricelists.*.id' => "filled|integer|exists:pricelists,id",
+            'pricelists.*.supplier_id' => "filled|integer|exists:suppliers,id",
+            'pricelists.*.price' => "filled|integer",
+            'pricelists.*.type'=> "required|in:1,0,-1",//1 : new, 0 : update, -1 : delete
 
             'price_sellings.*.id' => "filled|integer|exists:price_sellings,id",
             'price_sellings.*.warehouse_id' => "filled|integer|exists:warehouses,id",

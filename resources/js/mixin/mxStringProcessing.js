@@ -16,6 +16,8 @@ export default{
                 {
                     if(i != 0)
                         hasil = "." + angka.charAt(i) +  hasil;
+                    else
+                            hasil = angka.charAt(i) + hasil;
                 }
                 else
                 {

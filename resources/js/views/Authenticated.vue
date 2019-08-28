@@ -155,6 +155,7 @@
                             :key="'menu'+index"
 
                             >
+
                             <v-list-tile-action class='ltc-icon'>
                                 <v-icon class='color-text-sidebar icon-sidebar'>{{ item.icon }}</v-icon>
                             </v-list-tile-action>
@@ -307,6 +308,36 @@ export default {
                     
                     ]
                 },
+                {
+                    icon: "business",
+                    title: "Purchase Order",
+                    action:'/PurchaseOrder',
+                    subroutes:[
+                    {
+                        subicon:"store",
+                        subtitle:"Purchase Order",
+                        subaction: "/purchaseorder"
+                    },
+                    {
+                        subicon:"play_arrow",
+                        subtitle:"PO Direct",
+                        subaction: "/podirect"
+                    },
+                    {
+                        subicon:"next_week",
+                        subtitle:"Material Request",
+                        subaction: "/materialrequest"
+                    },
+                    {
+                        subicon:"beenhere",
+                        subtitle:"Purchase Request",
+                        subaction: "/PurchaseRequest"
+                    },
+
+                   
+                    
+                    ]
+                },
 
                 
                
@@ -365,6 +396,8 @@ export default {
     },
     mounted() {
         this.user = JSON.parse(localStorage.getItem('user'))
+        
+
     }
 }
 </script>

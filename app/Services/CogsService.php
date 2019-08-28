@@ -11,6 +11,14 @@ use App\Models\Type;
 
 class CogsService
 {
+    private $cogs, $type;
+
+    public function __construct(Cogs $cogs, Type $type)
+    {
+        $this->cogs = $cogs;
+        $this->type = $type;
+    }
+
     public function checkRelationship($cogsId,$data){
         foreach($data as $id){
             try{
@@ -25,14 +33,14 @@ class CogsService
     }
 
     public function handleEmptyModel(){
-        if(Cogs::all()->count() === 0){
+        if($this->cogs->all()->count() === 0){
             throw new CustomModelNotFoundException("cogs"); 
         } 
 
     }
 
-    public function handleGetAllDataForGoodsCreation(){
-        if(Type::all()->count() === 0){
+    public function handleGetAllDataForCogsCreation(){
+        if($this->type->all()->count() === 0){
             throw new CustomModelNotFoundException("type"); 
         }
     }
@@ -45,7 +53,7 @@ class CogsService
 
     public function handleModelNotFound($id){
         try{
-            $user = Cogs::findOrFail($id);
+            $cogs = $this->cogs->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

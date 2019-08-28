@@ -19,7 +19,8 @@
                                 </v-card-text>
                                 <v-card-actions>
                                     <v-spacer></v-spacer>
-                                    <v-btn type="submit" color="primary" v-on:click="req_login" >Login</v-btn>
+                                    <v-btn id='buttonsubmit' type="submit" color="primary" v-on:click="req_login" ref='buttonLogin'>Login</v-btn>
+                                    
                                 </v-card-actions>
                             </v-card>
                         </v-form>
@@ -32,6 +33,10 @@
 
 <script>
     export default {
+        mounted()
+        {
+           
+        },
     	data()
     	{
     		return {
@@ -41,17 +46,32 @@
     	},
     	methods:
     	{
-    		req_login(){
-    			axios.post('/api/auth/login',{
-    				email:this.in_email,
-    				password:this.in_password
-    			}).then(r => this.saveToken(r));
+    		async req_login(){
+                var r;
+                try
+                {
+        			r = await axios.post('/api/auth/login',{
+        				email:this.in_email,
+        				password:this.in_password
+        			});
+
+                }
+                catch (error)
+                {
+                    swal("Login Failed", "Email/password doesn't match. Please try again", "error");
+                }
+
+               
+                this.saveToken(r);
     		},
 
     		saveToken(r){
+                
     			localStorage.setItem('token', r.data.access_token)
                 localStorage.setItem('user', JSON.stringify(r.data.user))
+                
                 this.$router.replace('/');
+                
     		}
     	}
     }

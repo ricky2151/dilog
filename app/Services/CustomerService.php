@@ -8,8 +8,15 @@ use App\Models\Customer;
 
 class CustomerService
 {
+    private $customer;
+
+    public function __construct(Customer $customer)
+    {
+        $this->customer = $customer;
+    }
+
     public function handleEmptyModel(){
-        if(Customer::all()->count() === 0){
+        if($this->customer->all()->count() === 0){
             throw new CustomModelNotFoundException("customer"); 
         } 
 
@@ -23,7 +30,7 @@ class CustomerService
 
     public function handleModelNotFound($id){
         try{
-            $user = Customer::findOrFail($id);
+            $customer = $this->customer->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

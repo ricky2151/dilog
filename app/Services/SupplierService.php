@@ -8,9 +8,16 @@ use App\Models\Supplier;
 
 class SupplierService
 {
+    private $supplier;
+
+    public function __construct(Supplier $supplier)
+    {
+        $this->supplier = $supplier;
+    }
+
     public function handleEmptyModel(){
-        if(Supplier::all()->count() === 0){
-            throw new CustomModelNotFoundException("source"); 
+        if($this->supplier->all()->count() === 0){
+            throw new CustomModelNotFoundException("supplier"); 
         } 
 
     }
@@ -23,7 +30,7 @@ class SupplierService
 
     public function handleModelNotFound($id){
         try{
-            $user = Supplier::findOrFail($id);
+            $supplier = $this->supplier->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

@@ -26,8 +26,8 @@ class UpdateCategoryPriceSelling extends FormRequest
     public function rules()
     {
         return [
-            'name' => "string",
-            'discount' => "integer"
+            'name' => "string|required",
+            'discount' => "integer|nullable"
         ];
     }
 

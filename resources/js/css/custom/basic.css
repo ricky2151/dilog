@@ -1,3 +1,10 @@
+.bg-login
+{
+	background-image: url('https://static.vecteezy.com/system/resources/previews/000/101/237/non_2x/free-abstract-background-11-vector.jpg');
+	background-size: cover;
+	height: 100%;
+	padding-top: 150px;
+}
 .padding30{
 	padding:30px;
 }
@@ -39,7 +46,21 @@
 }
 
 
+.colorblack .accent--text
+{
+	color: #0060ff !important;
+}
 
+.colorblack label
+{
+	color: black !important;
+}
+
+.colorblack .v-input__slot
+{
+	margin-top:10px !important;
+	margin-bottom: 0px !important;
+}
 
 
 .datatable
@@ -52,6 +73,11 @@
 .datatable td, .datatable th
 {
 	border: 1px solid #ddd !important;
+}
+
+.datatable tr:nth-child(even)
+{
+	background-color: #ededff;
 }
 
 .datatable th
@@ -91,6 +117,29 @@
 	color: white !important;
 }
 
+.addmr_row
+{
+	height:-moz-fit-content;
+  	height:-webkit-fit-content;
+  	height:fit-content;
+	padding:20px !important;
+
+}
+.addmr_row div
+{
+	height:-moz-fit-content;
+  	height:-webkit-fit-content;
+  	height:fit-content;
+}
+.addmr_row .addmr_column
+{
+
+}
+.btnplusminus
+{
+	min-width: 10px !important;
+
+}
 .btnadddata
 {
 	width: 120px !important;
@@ -101,4 +150,73 @@
 .btnaction
 {
 	height: 30px !important;
+}
+.addmr_goods b
+{
+	color:#484848 !important;
+}
+.addmr_summary .button-action
+{
+	margin-left: 0px;
+	margin-right: 0px;
+	margin-top: 0px;
+}
+.addmr_summary
+{
+	background-color: #f2eeff !important;
+	padding: 30px !important;
+}
+.mr_div_container
+{
+	background-color: white;
+}
+.datatable_checklist .v-input__control
+{
+	margin: auto !important;
+	vertical-align: middle !important; 
+	height: 20px !important;
+	margin-top: 9px !important;
+}
+.floatright
+{
+	float:right !important;
+}
+
+.marginright25
+{
+	margin-right: 25px !important;
+}
+
+.breadcrumbs
+{
+	padding-left: 30px !important;
+	padding-bottom: 0px !important;
+	margin-top: 10px !important;	
+}
+.breadcrumbs a
+{
+	font-size: 15px !important;
+}
+
+
+
+
+
+
+.breadcrumbs_hidden, .breadcrumbs_hidden + .v-breadcrumbs__divider
+{
+	display: none !important;
+}
+
+.cardStockOpname
+{
+	display: table-cell;
+	padding: 20px;
+
+}
+#containerCardStockOpname
+{
+	width: 680px !important;
+	margin-left: 15px !important;
+	overflow-x: scroll;
 }

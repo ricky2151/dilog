@@ -8,8 +8,15 @@ use App\Models\Category;
 
 class CategoryService
 {
+    private $category;
+
+    public function __construct(Category $category)
+    {
+        $this->category = $category;
+    }
+
     public function handleEmptyModel(){
-        if(Category::all()->count() === 0){
+        if($this->category->all()->count() === 0){
             throw new CustomModelNotFoundException("category"); 
         } 
 
@@ -23,7 +30,7 @@ class CategoryService
 
     public function handleModelNotFound($id){
         try{
-            $user = Category::findOrFail($id);
+            $category = $this->category->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

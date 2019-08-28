@@ -1,0 +1,20 @@
+1. api index PO Direct, created_at mu dikasi format kayak gini : 
+"created_at" => $item['created_at']->format('Y-m-d'),
+===> FIXED, by Thomas
+
+2. api index PO Direct, response mu harusnya "discount_percent" bukan "diskon_percent"
+===> FIXED, by Thomas
+
+3. api index PO belum ada created_by nya
+===> FIXED, Liat desain ga ada
+
+4. api Detail PO (api/purchaseOrders/5/purchaseOrderDetail), harusnya formatnya : 
+items : 
+{
+	purchase_order_detail : 
+	{
+	}
+}
+===> FIXED, Liat desain ga ada
+
+

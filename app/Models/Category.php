@@ -28,7 +28,7 @@ class Category extends Model
         return $this->belongsToMany('App\Models\Goods','category_goods','category_id','goods_id')->withTimestamps();
     }
 
-    public function goodsStock(){
+    public function goodsWithStock(){
         $goods = $this->goods;
 
         $goods = $goods->map(function ($item) {

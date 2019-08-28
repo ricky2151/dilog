@@ -40,14 +40,19 @@ class StoreGoods extends FormRequest
             'tax' => "integer|nullable",
             'unit_id' => "required|integer|exists:units,id",
             'cogs_id' => "required|integer|exists:cogs,id",
+
             'attribute_goods.*.value'=> "required|integer|min:1",
             'attribute_goods.*.attribute_id'=> "required|integer|exists:attributes,id",
+
             'category_goods.*.category_id'=> "required|integer|exists:categories,id",
-            'material_goods.*.total'=> "required|integer|min:1",
-            'material_goods.*.adjust'=> "string|nullable",
-            'material_goods.*.name'=> "required|string",
+
+            'materials.*.total'=> "required|integer|min:1",
+            'materials.*.adjust'=> "string|nullable",
+            'materials.*.name'=> "required|string",
+
             'pricelists.*.supplier_id' => "required|integer|exists:suppliers,id",
             'pricelists.*.price' => "required|integer",
+            
             'price_sellings.*.warehouse_id' => "required|integer|exists:warehouses,id",
             'price_sellings.*.stock_cut_off' => "required|integer|min:0",
             'price_sellings.*.category_price_selling_id' => "required|integer|exists:category_price_sellings,id",

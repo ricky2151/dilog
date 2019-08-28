@@ -8,8 +8,15 @@ use App\Models\CategoryPriceSelling;
 
 class CategoryPriceSellingService
 {
+    private $categoryPriceSelling;
+
+    public function __construct(CategoryPriceSelling $categoryPriceSelling)
+    {
+        $this->categoryPriceSelling = $categoryPriceSelling;
+    }
+
     public function handleEmptyModel(){
-        if(CategoryPriceSelling::all()->count() === 0){
+        if($this->categoryPriceSelling->all()->count() === 0){
             throw new CustomModelNotFoundException("category_price_selling"); 
         } 
 
@@ -23,7 +30,7 @@ class CategoryPriceSellingService
 
     public function handleModelNotFound($id){
         try{
-            $user = CategoryPriceSelling::findOrFail($id);
+            $categoryPriceSelling = $this->categoryPriceSelling->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

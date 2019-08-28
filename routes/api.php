@@ -70,6 +70,7 @@ Route::group([
 
     //Rack
     Route::resource('racks', 'RackController');
+    Route::get('/racks/{id}/goodsRacks','RackController@goodsRacks');
 
     //GoodsRack
     Route::resource('goodsRacks', 'GoodsRackController');
@@ -85,7 +86,44 @@ Route::group([
 
     //MaterialRequest
     Route::resource('materialRequests', 'MaterialRequestController');
+    Route::get('/materialRequests/users/profile','MaterialRequestController@homeProfile');
+    Route::get('/materialRequests/{id}/materialRequestDetails','MaterialRequestController@materialRequestDetails');
+    Route::patch('/materialRequests/{id}/approve','MaterialRequestController@approve');
 
     //Customer
     Route::resource('customers', 'CustomerController');
+
+    
+    //PurchaseRequest
+    Route::group([
+        'middleware'=> 'finance'
+    ],function(){
+        Route::resource('purchaseRequests', 'PurchaseRequestController');
+        Route::get('purchaseRequests/{id}/rekaps', 'PurchaseRequestController@rekaps');
+        Route::post('purchaseRequests/{id}/purchaseRequestDetails', 'PurchaseRequestController@storePurchaseRequestDetails');
+        Route::get('purchaseRequests/{id}/purchaseRequestDetailsToPurchaseOrder', 'PurchaseRequestController@purchaseRequestDetailsToPurchaseOrder');
+        Route::get('purchaseRequests/{id}/purchaseRequestDetails', 'PurchaseRequestController@purchaseRequestDetails');
+        Route::post('purchaseRequests/{id}/purchaseOrders', 'PurchaseRequestController@storeToPurchaseOrders');
+    });
+
+    //PurchaseOrder
+    Route::resource('purchaseOrders', 'PurchaseOrderController');
+    Route::patch('/purchaseOrders/{id}/approve','PurchaseOrderController@approve');
+    Route::patch('/purchaseOrders/{id}/submit','PurchaseOrderController@submit');
+    Route::get('/purchaseOrders/{id}/payments','PurchaseOrderController@getPayments');
+    Route::get('/purchaseOrders/{id}/purchaseOrderDetails','PurchaseOrderController@purchaseOrderDetail');
+
+    //PurchaseOrderDetail
+    // Route::get('/purchaseOrders/{purchaseOrderId}/purchaseOrderDetails/create','PurchaseOrderDetailController@create');
+
+    //PurchaseOrderDetail
+    Route::resource('purchaseOrderDetails', 'PurchaseOrderDetailController');
+
+    //Spbm
+    Route::resource('spbms', 'SpbmController');
+
+    //Payment
+    Route::resource('payments', 'PaymentController');
+    Route::patch('/payments/{id}/approve','PaymentController@approve');
+
 });

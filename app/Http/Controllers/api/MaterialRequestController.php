@@ -36,7 +36,17 @@ class MaterialRequestController extends Controller
      */
     public function index()
     {
-        return formatResponse(false,(["material_request"=>$this->user->division->materialRequest]));
+        return $this->materialRequestService->handleIndex();
+    }
+
+    /**
+     * Display a listing of the Material Request per division.
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function homeProfile()
+    {
+        return $this->materialRequestService->handleHomeProfile();
     }
 
     /**
@@ -46,7 +56,7 @@ class MaterialRequestController extends Controller
      */
     public function create()
     {
-        return formatResponse(false,(["material_request"=>$this->materialRequestService->createForm()]));
+        return formatResponse(false,($this->materialRequestService->createForm()));
     }
 
     /**
@@ -70,10 +80,8 @@ class MaterialRequestController extends Controller
             $data = Arr::add($data, 'periode_id', $this->periode->getPeriodeActive()['id']);
             
             $materialRequest = $this->user->materialRequests()->create($data);
-            $materialRequest->update(['code'=>"MR-".$materialRequest['id']]);
+            $materialRequest->update(["no_mr"=>"MR-".$materialRequest['id']]);
             $materialRequest->materialRequestDetails()->createMany($materialRequestDetails);
-
-            // return $materialRequest;
 
             DB::commit();
         } catch (\Throwable $e) {
@@ -95,8 +103,44 @@ class MaterialRequestController extends Controller
         $this->materialRequestService->handleInvalidParameter($id);
         $this->materialRequestService->handleModelNotFound($id);
 
-        return formatResponse(false,(["material_request"=>$this->materialRequest->find($id)->materialRequestDetails]));
+        return formatResponse(false,(["material_request_details"=>$this->materialRequest->find($id)->materialRequestDetails]));
     }
+
+    /**
+     * approve the specified Material Request.
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function approve($id)
+    {
+        $this->materialRequestService->handleInvalidParameter($id);
+        $this->materialRequestService->handleModelNotFound($id);
+        $this->materialRequestService->handleApprove($id);
+
+        return formatResponse(false,(["material_request_details"=>["status changed to approve"]]));
+    }
+
+    /**
+     * Display list of Material Request Details of the specified Material Request.
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function materialRequestDetails($id)
+    {
+        $this->materialRequestService->handleInvalidParameter($id);
+        $this->materialRequestService->handleModelNotFound($id);
+
+        return formatResponse(false,([
+            "material_request_details"=>$this->materialRequest->find($id)->materialRequestDetails->map(function($item){
+                $item['goods_name'] = $item['goods']['name'];
+                return collect($item)->except('goods');
+            })
+        ]));
+    }
+
+
 
     /**
      * Show the form for editing the specified Material Request.
@@ -109,7 +153,7 @@ class MaterialRequestController extends Controller
         $this->materialRequestService->handleInvalidParameter($id);
         $this->materialRequestService->handleModelNotFound($id);
 
-        return formatResponse(false,(["material_request"=>$this->materialRequestService->editForm($id)]));
+        return formatResponse(false,($this->materialRequestService->editForm($id)));
     }
 
     /**
@@ -121,25 +165,25 @@ class MaterialRequestController extends Controller
      */
     public function update(UpdateMaterialRequest $request, $id)
     {
-        $this->materialRequestService->handleInvalidParameter($id);
-        $this->materialRequestService->handleModelNotFound($id);
+        // $this->materialRequestService->handleInvalidParameter($id);
+        // $this->materialRequestService->handleModelNotFound($id);
 
-        $data = $request->validated();
+        // $data = $request->validated();
 
-        DB::beginTransaction();
-        try {
-            $materialRequestDetails = collect(Arr::pull($data,'material_request_details'))->unique(function ($item) {
-                return $item['goods_id'];
-            })->toArray();
+        // DB::beginTransaction();
+        // try {
+        //     $materialRequestDetails = collect(Arr::pull($data,'material_request_details'))->unique(function ($item) {
+        //         return $item['goods_id'];
+        //     })->toArray();
 
-            $this->materialRequest->find($id)->updateDetailMaterialRequest($materialRequestDetails);
+        //     $this->materialRequest->find($id)->updateDetailMaterialRequest($materialRequestDetails);
 
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollback();
-            throw new DatabaseTransactionErrorException("MaterialRequest");
-        }
-        return formatResponse(false,(["material_request"=>["Material Request successfully updated"]]));
+        //     DB::commit();
+        // } catch (\Throwable $e) {
+        //     DB::rollback();
+        //     throw new DatabaseTransactionErrorException("MaterialRequest");
+        // }
+        // return formatResponse(false,(["material_request"=>["Material Request successfully updated"]]));
     }
 
     /**
@@ -150,17 +194,17 @@ class MaterialRequestController extends Controller
      */
     public function destroy($id)
     {
-        DB::beginTransaction();
-        try {
-            $this->materialRequest->find($id)->materialRequestDetails()->delete();
-            $this->materialRequest->find($id)->delete();
+        // DB::beginTransaction();
+        // try {
+        //     $this->materialRequest->find($id)->materialRequestDetails()->delete();
+        //     $this->materialRequest->find($id)->delete();
 
-            DB::commit();
-        } catch (\Throwable $e) {
-            DB::rollback();
-            return $e;
-            throw new DatabaseTransactionErrorException("MaterialRequest");
-        }
-        return formatResponse(false,(["material_request"=>["Material Request deleted successfully"]]));
+        //     DB::commit();
+        // } catch (\Throwable $e) {
+        //     DB::rollback();
+        //     return $e;
+        //     throw new DatabaseTransactionErrorException("MaterialRequest");
+        // }
+        // return formatResponse(false,(["material_request"=>["Material Request deleted successfully"]]));
     }
 }
