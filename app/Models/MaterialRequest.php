@@ -32,7 +32,6 @@ class MaterialRequest extends Model
         switch($this->status){
             case 0: return "New";
             case 1: return "Approve";
-            case 2: return "Process";
         }
     }
 
@@ -50,7 +49,7 @@ class MaterialRequest extends Model
     }
 
     public function setProcess(){
-        $this->update(['status'=>2]);
+        $this->update(['status'=>1]);
     }
 
     public function period(){
