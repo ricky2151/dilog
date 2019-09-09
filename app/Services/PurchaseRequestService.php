@@ -124,7 +124,7 @@ class PurchaseRequestService
     }
 
     public function handleCreateForm(){
-        $data = ["material_requests" => $materialRequests = $this->materialRequest->getMrApprove()->map(function($item){
+        $data = ["material_requests" => $materialRequests = collect($this->materialRequest->latest()->get())->where('status','0')->values()->map(function($item){
             return[
                 'id' => $item['id'],
                 'no_mr' => $item['no_mr'],

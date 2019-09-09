@@ -73,7 +73,7 @@ class PurchaseRequestController extends Controller
         try {
             collect($mr)->map(function($item){
                 $item = $this->materialRequest->find($item)[0];
-                $this->purchaseRequestService->setMrProcess($item);
+                // $this->purchaseRequestService->setMrProcess($item);
                 $item->setProcess();
             });
 
@@ -91,7 +91,7 @@ class PurchaseRequestController extends Controller
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollback();
-            // return $e;
+            return $e;
             throw new DatabaseTransactionErrorException("purchase_request");
         }
         return formatResponse(false,(["purchase_request"=> $purchaseRequest,"rekaps"=>$data]));

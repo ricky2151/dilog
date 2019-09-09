@@ -68,7 +68,6 @@ class MaterialRequestController extends Controller
     public function store(StoreMaterialRequest $request)
     {
         $data = $request->validated();
-        $this->materialRequestService->checkDivision($this->user->division);
 
         DB::beginTransaction();
         try {
