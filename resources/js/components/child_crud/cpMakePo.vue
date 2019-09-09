@@ -18,33 +18,40 @@
 		            </v-flex>
 		        </v-layout>
 
-		        <v-data-table
-		        disable-initial-sort
-		        :headers="headers"
-		        :items="item.purchase_request_details"
-		        >
-			        <template v-slot:items="props">
-			            <td>{{ props.index + 1 }}</td>
-			            <td>{{ props.item.goods_name}}</td>
-			            <td>{{ props.item.qty}}</td>
-			            <td>{{ props.item.price}}</td>
-			            <td>{{ props.item.subtotal}}</td>
-			        </template>
-		        </v-data-table>
-
-		        <v-layout row class='bgwhite' style='margin-bottom: 20px'>
+		        <v-layout row class='bgwhite marginleft30 margintop10' style='margin-bottom: 20px' >
 		        	<v-flex xs8>
-		        		<p>Total : {{strToPrice(item.total, "Rp. ")}}</p>
+				        <v-data-table
+				        disable-initial-sort
+				        :headers="headers"
+				        :items="item.purchase_request_details"
+				        class='datatable'
+				        :rows-per-page-items='[{"text" : "All", "value" : -1}]'
+				        hide-actions
+				        >
+					        <template v-slot:items="props">
+					            <td>{{ props.index + 1 }}</td>
+					            <td>{{ props.item.goods_name}}</td>
+					            <td>{{ props.item.qty}}</td>
+					            <td>{{ props.item.price}}</td>
+					            <td>{{ props.item.subtotal}}</td>
+					        </template>
+				        </v-data-table>
+				    </v-flex>
+			    </v-layout>
+
+		        <v-layout row class='bgwhite marginleft30 margintop10' style='margin-bottom: 20px'>
+		        	<v-flex xs7>
+		        		<h3>Total : {{strToPrice(item.total, "Rp. ")}}</h3>
 		        	</v-flex>
 		            <v-flex xs4>
-		                <v-btn v-if='!item.disable' color='blue' dark @click='make_po(JSON.parse(JSON.stringify(item.supplier_id)))'>
+		                <v-btn v-if='!item.disable' color='primary' dark @click='make_po(JSON.parse(JSON.stringify(item.supplier_id)))'>
 		                	Make PO
 		                </v-btn>
 		            </v-flex>
 		        </v-layout>
 
 	        </div>
-	        <v-btn color='blue' dark @click='cancel'>Cancel</v-btn>
+	        <v-btn @click='cancel'>Cancel</v-btn>
 	    </div>
     	
         
@@ -64,11 +71,11 @@
 				data : [],
 				data_ready : false,
 				headers: [
-					{ text: 'No', value:'no',sortable:false},
-    				{ text: 'Goods', value:'goods_name',sortable:false},
-    				{ text: 'Amount Order', value:'qty',sortable:false},
-    				{ text: 'Pricelist', value:'price',sortable:false},
-    				{ text: 'Subtotal', value:'subtotal',sortable:false},
+					{ text: 'No', value:'no',sortable:false,width:'15%'},
+    				{ text: 'Goods', value:'goods_name',sortable:false,width:'15%'},
+    				{ text: 'Amount Order', value:'qty',sortable:false,width:'15%'},
+    				{ text: 'Pricelist', value:'price',sortable:false,width:'15%'},
+    				{ text: 'Subtotal', value:'subtotal',sortable:false,width:'15%'},
 				],
 			}
 		},

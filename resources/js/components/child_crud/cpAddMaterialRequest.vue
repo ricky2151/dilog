@@ -575,6 +575,7 @@ import cpDetail from './../popup/cpDetail.vue'
 					this.goods[i].thumbnail = 'storage/' + this.goods[i].thumbnail;
 				}
 				this.periode = r_goods.periodes;
+				this.periode_selected = this.periode[this.periode.length - 1];
 
 				//halaman profile
 				var temp_user = JSON.parse(localStorage.getItem('user'));

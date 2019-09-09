@@ -252,6 +252,7 @@ export default
 							},
 							{
 								column : 'nominal',
+								format : ['price']
 							},
 							{
 								column : 'type_name',
@@ -327,6 +328,7 @@ export default
 							},
 							{
 								column : 'discount',
+								format : ['percent']
 							},
 						],
 						
@@ -458,7 +460,7 @@ export default
 						},
 						rule_update:'some',
 						datatable:[
-							{ column : 'name' }, { column : 'code' }, { column : 'value' }, { column : 'status' }, { column : 'last_buy_pricelist' }, { column : 'avg_price' }, { column : 'stock' }, { column : '', value : ['avg_price', '*', 'stock'] },
+							{ column : 'name' }, { column : 'code' }, { column : 'value' }, { column : 'status' }, { column : 'last_buy_pricelist', format:['price'] }, { column : 'avg_price', format : ['price'] }, { column : 'stock' }, { format : ['price'], column : '', value : ['avg_price', '*', 'stock'] },
 						],
 						
 						headers: [
@@ -798,7 +800,7 @@ export default
 						headers: [
 			                { text: 'No', value: 'no'},
 			                { text: 'Name', value: 'name'},
-			                { text: 'Address', value: 'address', align:'right' },
+			                { text: 'Address', value: 'address' },
 			                { text: 'Telephone', value: 'telp', align:'right' },
 			                { text: 'PIC', value: 'pic', align:'right' },
 			                { text: 'Action', align:'left',width:'15%',sortable:false},
@@ -1357,9 +1359,11 @@ export default
 							},
 							{
 								column : 'total',
+								format : ['price'],
 							},
 							{
 								column : 'payment_percent',
+								format : ['percent'],
 							},
 							{
 								column : 'created_at',
@@ -1372,12 +1376,16 @@ export default
 							},
 							{
 								column : 'tax',
+								format : ['percent']
+
 							},
 							{
 								column : 'discount_percent',
+								format : ['percent']
 							},
 							{
 								column : '',
+								format:['price'],
 								value:['total', '+', 'tax'],
 							},
 						],
@@ -1390,17 +1398,17 @@ export default
 						},
 
 						headers: [
-								{ text: 'No', value:'no'},
-                				{ text: 'NO PO', value:'no_po'},
-                				{ text: '% Arrival', value:'is_completed'},
-                				{ text: 'Total', value:'total'},
-                				{ text: '% Payment', value:'percent_payment'},
-                				{ text: 'Created At', value:'created_at'},
-                				{ text: 'Supplier', value:'supplier_name'},
-                				{ text: 'Status', value:'status'},
-                				{ text: 'Tax', value:'tax'},
-                				{ text: '% Discount', value:'discount'},
-                				{ text: 'DPP', value:'dpp'},
+								{ text: 'No', value:'no' , width:'5%'},
+                				{ text: 'NO PO', value:'no_po', width:'5%'},
+                				{ text: '% Arrival', value:'is_completed', width:'5%'},
+                				{ text: 'Total', value:'total', width:'5%'},
+                				{ text: '% Payment', value:'percent_payment', width:'5%'},
+                				{ text: 'Created At', value:'created_at', width:'5%'},
+                				{ text: 'Supplier', value:'supplier_name', width:'5%'},
+                				{ text: 'Status', value:'status', width:'5%'},
+                				{ text: 'Tax', value:'tax', width:'5%'},
+                				{ text: '% Discount', value:'discount', width:'5%'},
+                				{ text: 'DPP', value:'dpp', width:'20%'},
                 				{ text: 'Action', value:'action',sortable:false, width:'15%'},
 						],
 
@@ -1595,7 +1603,7 @@ export default
 					// editable_add:true,
 					// count_step:1,
 
-					actions:['Detail', 'Approve'],
+					actions:['Detail'],
 					button_on_index : ['Add Data', 'Mark Complete', 'List PR', 'Create PO'],
 					button_for_checklist : ['Mark Complete'],
 

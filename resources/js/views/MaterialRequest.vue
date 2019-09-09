@@ -103,6 +103,16 @@
             ></cp-add-material-request>
         </template>
 
+         <template v-if="open_state=='cpPurchaseRequestEdit'">
+            <cp-purchase-request-edit
+            :prop_list_filter='list_state["cpPurchaseRequestEdit"]'
+            :prop_data='data_edit'
+            ref='cpPurchaseRequestEdit'
+            v-on:cancel='cancel_po_edit'
+            v-on:done='done_po_edit'
+            ></cp-purchase-request-edit>
+        </template>
+
         
 
         <!-- ================================ -->
@@ -136,6 +146,7 @@ export default {
                 'MaterialRequest' : {},
                 'cpPurchaseRequest' : {},
                 'cpAddMaterialRequest' : {},
+                'cpPurchaseRequestEdit' : {},
             },
             
             breadcrumbs:[
@@ -159,10 +170,39 @@ export default {
                     cp: 'cpAddMaterialRequest',
                     before : 'MaterialRequest'
                 },
+                {
+                    text: 'Purchase Request Edit',
+                    disabled: true,
+                    cp: 'cpPurchaseRequestEdit',
+                    before : 'MaterialRequest'
+                },
             ],
         }
     },
     methods: {
+
+        prepare_data_submit_recap()
+        {
+            const formData = new FormData();
+            var idxformdata = 0;
+            for(var i =0;i<this.data_mr.length;i++)
+            {
+                if(this.data_mr[i].checked)
+                {
+                    formData.append('material_requests[' + idxformdata + '][id]', this.data_mr[i].id);
+                    idxformdata+= 1;
+                }
+            }
+            return formData;
+
+        },
+        submit_recap()
+        {
+            //api
+             
+        },
+
+
         add_mr_done()
         {
 
@@ -179,11 +219,46 @@ export default {
         },
         submit_checklist()
         {
-            //post mark complete
-            //ambil nilai dari cpdatatable yang di checklist
-            //===
-            this.$refs['cpHeader'].set_check_listing(false);
-            this.$refs['cpDatatable'].convert_to_checklist(false);
+            
+            var filtered = this.$refs['cpDatatable'].get_checklisted();
+            console.log('cek filtered');
+            console.log(filtered);
+            const formData = new FormData();
+            for(var i = 0;i<filtered.length;i++)
+            {
+                formData.append('material_requests[' + i + '][id]', filtered[i].id);
+            }
+
+            axios.post(
+                'api/purchaseRequests',
+                    formData
+                 ,{
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json'
+                    },
+                    params : 
+                    {
+                        'token' : localStorage.getItem('token')
+                    }
+                }).then((r)=> {
+                var temp = r.data.items.rekaps;
+                for(var i = 0;i<temp.length;i++)
+                {
+                    temp[i].no = i + 1;
+                }
+                this.open_component('cpPurchaseRequestEdit');
+                this.$nextTick(() => {
+                    this.$refs['cpPurchaseRequestEdit'].fill_data(temp);
+                    this.$refs['cpDatatable'].clear_checklisted();
+                    this.$refs['cpHeader'].set_check_listing(false);
+                    this.$refs['cpDatatable'].convert_to_checklist(false);
+                    swal("Good job!", "Recap Successfully !", "success");
+                })
+            });
+            
+
+            
         },
         cancel_checklist()
         {
