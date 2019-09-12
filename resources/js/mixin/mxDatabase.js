@@ -727,9 +727,9 @@ export default
 								'category_price_selling_id' : {show : false},
 								'warehouse_id' : {show : false},
 								'warehouse_name' : {show : true},
-								'stock_cut_off' : {show : true},
+								'stock_cut_off' : {show : true, format : ['price']},
 								'category_price_selling_name' : {show : true},
-								'price' : {show : true},
+								'price' : {show : true, format : ['price']},
 								'free' : {show : true},
 							},
 							headers: [
@@ -1337,7 +1337,7 @@ export default
 					editable_add:true,
 					count_step:1,
 
-					actions:['Detail', 'Approve', 'Incoming', 'Payment'],
+					actions:['Detail', 'Approve', 'SPBM', 'Payment'],
 					button_on_index : ['Add Data'],
 
 					request_master_data : true,

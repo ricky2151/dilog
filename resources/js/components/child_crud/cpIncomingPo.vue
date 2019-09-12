@@ -6,7 +6,7 @@
 					<v-btn icon dark v-on:click='close_dialog()'>
 						<v-icon>close</v-icon>
 					</v-btn>
-					<v-toolbar-title>Incoming PO</v-toolbar-title>
+					<v-toolbar-title>SPBM</v-toolbar-title>
 				</v-toolbar>
 				<div>
 
@@ -240,7 +240,7 @@
                 		this.input.goods[i].rack = null;
                 	}
                 	this.dialog = false;
-                	swal('Incoming Cannot Submited', 'Cant open because PO status is not approve/complete', 'error');
+                	swal('SPBM Cannot Submited', 'Cant open because PO status is not approve/complete', 'error');
                 	
                 });
 			},
@@ -278,7 +278,7 @@
                 })
                 .catch(error => {
 
-                	swal('Incoming Is Not Avaiable', "Can't open because PO status is not approve/complete", 'error');
+                	swal('SPBM Is Not Avaiable', "Can't open because PO status is not approve/complete", 'error');
                 	
                 });
 

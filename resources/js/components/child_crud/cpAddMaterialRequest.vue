@@ -57,7 +57,7 @@
 				</v-flex>
 				<v-flex xs4>
 					<div class='addmr_column'>
-						<v-btn>Request Custom Goods</v-btn>
+						
 					</div>
 				</v-flex>
 			</v-layout>

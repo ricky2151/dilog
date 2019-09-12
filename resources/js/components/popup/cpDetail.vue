@@ -29,7 +29,11 @@
                     >
                     <template v-slot:items="props">
                         <td>{{ props.index + 1 }}</td>
-                        <td v-for='(obj,column_name) in prop_columns' v-if='obj.show'>{{props.item[column_name]}}</td>
+                        <td v-for='(obj,column_name) in prop_columns' v-if='obj.show'>
+                            {{obj.format?
+                                    format_data(props.item[column_name],obj.format) : 
+                                props.item[column_name]}}
+                        </td>
                     </template>
                     </v-data-table>
                 </div>
@@ -79,7 +83,61 @@
                 this.get_data();
             },
             
-
+            strToPrice(angka,prefix)
+            {
+                //100000
+                //9.000
+                //11212
+                //11.212
+                angka = angka.toString();
+                var hasil = "";
+                var counter = 0;
+                for(var i = angka.length - 1;i>= 0;i--)
+                {
+                    counter++;
+                    if(counter % 3 == 0)
+                    {
+                        if(i != 0)
+                            hasil = "." + angka.charAt(i) +  hasil;
+                        else
+                                hasil = angka.charAt(i) + hasil;
+                    }
+                    else
+                    {
+                        hasil = angka.charAt(i) + hasil;
+                    }
+                }
+                return prefix + hasil;
+            },
+            format_data(value,types)
+            {
+                var result = value;
+                result = Math.ceil(result);
+                for(var i = 0;i<types.length;i++)
+                {
+                    var type = types[i];
+                    if(type == 'price')
+                    {
+                        result = this.strToPrice(result,"Rp. ");
+                    }
+                    else if(type == 'percent')
+                    {
+                        result = result + "%";
+                    }
+                    else if(type == 'approveornot')
+                    {
+                        if(result == 0)
+                        {
+                            result = 'New';
+                        }
+                        else
+                        {
+                            result = 'Approved';
+                        }
+                    }
+                }
+                return result;
+            },
 
             //for data
             get_data()
