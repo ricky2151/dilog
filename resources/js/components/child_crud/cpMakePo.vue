@@ -8,7 +8,7 @@
             </v-flex>
         </v-layout>
         <div v-if='data_ready'>
-	        <div v-for='item in data.rekap_purchase_orders'>
+	        <div v-for='(item,index) in data.rekap_purchase_orders'>
 
 	        	<v-layout row class='bgwhite' style='margin-bottom: 20px'>
 		            <v-flex xs8>
@@ -19,7 +19,7 @@
 		        </v-layout>
 
 		        <v-layout row class='bgwhite marginleft30 margintop10' style='margin-bottom: 20px' >
-		        	<v-flex xs8>
+		        	<v-flex xs11>
 				        <v-data-table
 				        disable-initial-sort
 				        :headers="headers"
@@ -32,26 +32,27 @@
 					            <td>{{ props.index + 1 }}</td>
 					            <td>{{ props.item.goods_name}}</td>
 					            <td>{{ props.item.qty}}</td>
-					            <td>{{ props.item.price}}</td>
-					            <td>{{ props.item.subtotal}}</td>
+					            <td>{{ format_data(props.item.price, ["price"])}}</td>
+					            <td>{{ format_data(props.item.subtotal, ["price"])}}</td>
 					        </template>
 				        </v-data-table>
 				    </v-flex>
 			    </v-layout>
 
 		        <v-layout row class='bgwhite marginleft30 margintop10' style='margin-bottom: 20px'>
-		        	<v-flex xs7>
+		        	<v-flex xs12 class='marginleft30'>
 		        		<h3>Total : {{strToPrice(item.total, "Rp. ")}}</h3>
 		        	</v-flex>
 		            <v-flex xs4>
-		                <v-btn v-if='!item.disable' color='primary' dark @click='make_po(JSON.parse(JSON.stringify(item.supplier_id)))'>
+		                <v-btn style='margin-left: 90px' v-if='data.rekap_purchase_orders[index].disable == false' color='primary' dark @click='make_po(JSON.parse(JSON.stringify(item.supplier_id)))'>
 		                	Make PO
+		                	
 		                </v-btn>
 		            </v-flex>
 		        </v-layout>
 
 	        </div>
-	        <v-btn @click='cancel'>Cancel</v-btn>
+	        <v-btn @click='cancel'>Close</v-btn>
 	    </div>
     	
         
@@ -71,20 +72,67 @@
 				data : [],
 				data_ready : false,
 				headers: [
-					{ text: 'No', value:'no',sortable:false,width:'15%'},
-    				{ text: 'Goods', value:'goods_name',sortable:false,width:'15%'},
+					{ text: 'No', value:'no',sortable:false,width:'10%'},
+    				{ text: 'Goods', value:'goods_name',sortable:false,width:'35%'},
     				{ text: 'Amount Order', value:'qty',sortable:false,width:'15%'},
-    				{ text: 'Pricelist', value:'price',sortable:false,width:'15%'},
-    				{ text: 'Subtotal', value:'subtotal',sortable:false,width:'15%'},
+    				{ text: 'Pricelist', value:'price',sortable:false,width:'20%'},
+    				{ text: 'Subtotal', value:'subtotal',sortable:false,width:'20%'},
 				],
 			}
 		},
 		methods: 
 		{
+			strToPrice(angka,prefix)
+	        {
+	            //100000
+	            //9.000
+	            //11212
+	            //11.212
+	            angka = angka.toString();
+	            var hasil = "";
+	            var counter = 0;
+	            for(var i = angka.length - 1;i>= 0;i--)
+	            {
+	                counter++;
+	                if(counter % 3 == 0)
+	                {
+	                    if(i != 0)
+	                        hasil = "." + angka.charAt(i) +  hasil;
+	                    else
+	                            hasil = angka.charAt(i) + hasil;
+	                }
+	                else
+	                {
+	                    hasil = angka.charAt(i) + hasil;
+	                }
+	            }
+	            return prefix + hasil;
+	        },
+			format_data(value,types)
+			{
+				
+				var result = value;
+				result = Math.ceil(result);
+				for(var i = 0;i<types.length;i++)
+				{
+					var type = types[i];
+					if(type == 'price')
+					{
+						result = this.strToPrice(result,"Rp. ");
+					}
+					else if(type == 'percent')
+					{
+						result = result + "%";
+					}
+				}
+
+				return result;
+			},
 			cancel()
 			{
 				localStorage.removeItem('temp_pr_recap_' + this.id);
-				this.$emit('cancel');
+				this.$router.replace('/PurchaseRequest');
+				//this.$emit('cancel');
 			},
 			make_po(supplier_id)
 			{
@@ -103,11 +151,16 @@
 		                	'token' : localStorage.getItem('token')
 		                }
 		            }).then((r)=> {
-		            	for(var i = 0;i<this.data.length;i++)
+		            	for(var i = 0;i<this.data.rekap_purchase_orders.length;i++)
 		            	{
-		            		if(this.data[i].supplier_id == supplier_id)
+		            		if(this.data.rekap_purchase_orders[i].supplier_id == supplier_id)
 		            		{
-		            			this.data[i].disable = true;
+		            			swal("Good job!", "Data saved !", "success");
+		            			Vue.set(this.data.rekap_purchase_orders[i], 'disable', true)
+		            			this.data_ready = false;
+		            			this.data_ready = true;
+
+		            			
 		            			break;
 		            		}
 		            	}
@@ -145,7 +198,10 @@
 			{
 				this.data = JSON.parse(JSON.stringify(data_from_server));
 
-				
+				for(var i = 0;i<this.data.rekap_purchase_orders.length;i++)
+				{
+					this.data.rekap_purchase_orders[i].disable = false;
+				}
 
 				this.data_ready = true;
 			}

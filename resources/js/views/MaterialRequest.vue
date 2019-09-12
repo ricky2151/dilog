@@ -113,6 +113,13 @@
             ></cp-purchase-request-edit>
         </template>
 
+        <template v-if="open_state=='cpMakePo'">
+            <cp-make-po
+            :prop_list_filter='list_state["cpMakePo"]'
+            ref='cpMakePo'
+            v-on:cancel='cancel_make_po'
+            ></cp-make-po>
+        </template>
         
 
         <!-- ================================ -->
@@ -124,16 +131,21 @@
 import mxCrudBasic from '../mixin/mxCrudBasic';
 import cpPurchaseRequest from './../components/child_crud/cpPurchaseRequest.vue'
 import cpAddMaterialRequest from './../components/child_crud/cpAddMaterialRequest.vue'
+import cpPurchaseRequestEdit from './../components/child_crud/cpPurchaseRequestEdit.vue'
+import cpMakePo from './../components/child_crud/cpMakePo.vue'
 
 
 export default {
     components : {
         cpPurchaseRequest,
         cpAddMaterialRequest,
+        cpPurchaseRequestEdit,
+        cpMakePo
     },
     data () {
         return {
             info_table:{},
+            data_edit : [],
             name_table:'material_requests',
             search_data: null,
 
@@ -180,7 +192,26 @@ export default {
         }
     },
     methods: {
+        cancel_make_po()
+        {
+            this.open_component('cpPurchaseRequest');
+        },
+        done_po_edit(r,id)
+        {
+            this.open_component('cpMakePo');
 
+            this.$nextTick(() => {
+                this.$refs['cpMakePo'].id = id;
+                this.$refs['cpMakePo'].fill_data(r.data.items);
+            })
+
+
+            
+        },
+        cancel_po_edit()
+        {
+            this.open_component('cpPurchaseRequest');
+        },
         prepare_data_submit_recap()
         {
             const formData = new FormData();
@@ -196,11 +227,7 @@ export default {
             return formData;
 
         },
-        submit_recap()
-        {
-            //api
-             
-        },
+       
 
 
         add_mr_done()
@@ -248,11 +275,12 @@ export default {
                     temp[i].no = i + 1;
                 }
                 this.open_component('cpPurchaseRequestEdit');
+                this.$refs['cpDatatable'].clear_checklisted();
+                this.$refs['cpHeader'].set_check_listing(false);
+                this.$refs['cpDatatable'].convert_to_checklist(false);
                 this.$nextTick(() => {
                     this.$refs['cpPurchaseRequestEdit'].fill_data(temp);
-                    this.$refs['cpDatatable'].clear_checklisted();
-                    this.$refs['cpHeader'].set_check_listing(false);
-                    this.$refs['cpDatatable'].convert_to_checklist(false);
+                    this.$refs['cpPurchaseRequestEdit'].data.id = r.data.items.purchase_request.id;
                     swal("Good job!", "Recap Successfully !", "success");
                 })
             });

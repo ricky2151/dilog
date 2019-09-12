@@ -3,7 +3,7 @@
 
 
 		<v-dialog v-model='dialog_form' :width='prop_widthForm' >
-			<v-form v-model='valid' ref='form'  onSubmit="return false;">
+			<v-form v-model='valid' ref='form' onSubmit="return false;">
 
 				<v-card>
 					<v-toolbar dark color="menu">

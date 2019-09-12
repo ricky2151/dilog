@@ -217,16 +217,17 @@ export default {
             }
             else if(idx_action == 2)
             {
-                this.opendialog_detail(id_datatable, 'cpDetailGoods', 'goods');
+                //this.opendialog_detail(id_datatable, 'cpDetailGoods', 'goods');
+                this.opendialog_stockopname(id_datatable);
             }
             else if(idx_action == 3)
             {
-                //stock opname
-                this.opendialog_stockopname(id_datatable);
+                
+                this.delete_data(id_datatable);
             }
             else if(idx_action == 4)
             {
-                this.delete_data(id_datatable);
+                
             }
             
         },

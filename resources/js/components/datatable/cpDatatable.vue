@@ -41,7 +41,7 @@
 							calculate_custom_value(props.item,obj.value) 
 						}}
 			    	</td>
-			        <td>
+			        <td v-show='prop_action_items.length > 0'>
 			            <div class="text-xs-left">
 			                <v-menu offset-y>
 			                  <template v-slot:activator="{ on }">
@@ -90,6 +90,10 @@
 			'prop_get_additional_data',
 			'prop_custom_response_attribute',
 		],
+		watch : 
+		{
+
+		},
 		data () {
 			return {
 				checklisting : false,
@@ -161,6 +165,17 @@
 					{
 						result = result + "%";
 					}
+					else if(type == 'approveornot')
+					{
+						if(result == 0)
+						{
+							result = 'New';
+						}
+						else
+						{
+							result = 'Approved';
+						}
+					}
 				}
 				return result;
 			},
@@ -207,6 +222,8 @@
 	            	{
 	            		this.$emit('show_additional_data', r.data.items[this.prop_filter['table_parent']]);
 	            	}
+
+
 	            })
 	        },
 	        showTable(r)

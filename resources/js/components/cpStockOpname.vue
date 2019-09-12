@@ -2,10 +2,10 @@
 	<div>
 
 		<!-- POPUP DETAIL STOCKOPNAME -->
-        <v-dialog v-model="dialog_detailstockopname" width=900>
+        <v-dialog v-model="dialog_detailstockopname" width=900 persistent>
             <v-card >
                 <v-toolbar dark color="menu">
-                    <v-btn icon dark v-on:click="closedialog_detailstockopname()">
+                    <v-btn icon dark v-on:click="save_detailstockOP()">
                         <v-icon>close</v-icon>
                     </v-btn>
                     <v-toolbar-title>Detail Stock Opname</v-toolbar-title>
@@ -33,7 +33,7 @@
                     </template>
                     </v-data-table>
 
-                    <v-btn color='primary' @click=''>Save</v-btn>
+                    <v-btn color='primary' @click='save_detailstockOP'>Save</v-btn>
                 </div>
             </v-card>
         </v-dialog>
@@ -90,11 +90,13 @@
 
                     <div class='container' v-if='data_stockopname.length > 0' id='containerCardStockOpname' style='width: 600px;'>
                     	
-                    		<div v-for='(data, index) in data_stockopname' @click='opendialog_detailstockopname()' :key='index' class='cardStockOpname' >
-								<v-card   >
+                    		<div v-for='(data, index) in data_stockopname'  :key='index' class='cardStockOpname' >
+                    			
+								<v-card>
 							        <v-img
 							          src="https://vemafats.com/wp-content/uploads/2018/02/Screenshot_59.png"
 							          height="200px"
+							          @click='opendialog_detailstockopname(data.id)'
 							        >
 							        </v-img>
 
@@ -109,8 +111,8 @@
 							        <v-card-actions style='width: 260px;'>
 										<v-btn flat style='min-width: 0px !important;'><v-icon>print</v-icon></v-btn>
 										<v-btn v-if='data.approve == "New"' @click='submit_to_waiting(data.id)' flat style='min-width: 0px !important;'><v-icon>check</v-icon></v-btn>
-										<v-btn v-if='data.approve == "New"' flat style='min-width: 0px !important;'><v-icon>edit</v-icon></v-btn>
-										<v-btn v-if='data.approve == "New"' flat style='min-width: 0px !important;'><v-icon>delete</v-icon></v-btn>
+										<v-btn v-if='data.approve == "New"' @click='opendialog_detailstockopname(data.id)' flat style='min-width: 0px !important;'><v-icon>edit</v-icon></v-btn>
+										<v-btn v-if='data.approve == "New"' @click='delete_stockOP(data.id)'flat style='min-width: 0px !important;'><v-icon>delete</v-icon></v-btn>
 									</v-card-actions>
 								</v-card>
 							</div>
@@ -136,6 +138,7 @@ export default {
 
 			dialog_stockopname:null,
 			dialog_detailstockopname:null,
+			id_edit : -1,
 
 			first_time_create_detailstockOP:false,
 			warehouse_id : null,
@@ -175,7 +178,25 @@ export default {
 	computed: {
 	},
 	methods:{
-		
+		delete_stockOP(id)
+		{
+			axios.delete(
+				'api/warehouses/stockOpnames/' + id, 
+				{
+                params:{
+                    token: localStorage.getItem('token')
+                }
+            },{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            })
+            .then((r) => {
+            	this.load_stockOP();
+            })
+			//api/warehouses/stockOpnames/2
+		},
 		opendialog_stockopname()
 		{
 			this.warehouse_id = this.prop_data_form.warehouse_id;
@@ -189,9 +210,53 @@ export default {
 		{
 			this.dialog_stockopname = false;
 		},
-		opendialog_detailstockopname()
+		async opendialog_detailstockopname(id)
 		{
+			let r = await this.get_edit_detailstockOP(id);
+			this.id_edit = id;
+			r = r.data.items.detail_stock_opnames;
+			this.data_detailstockopname = [];
+			for(var i =0;i<r.length;i++)
+			{
+				this.data_detailstockopname[i] = [];
+				this.data_detailstockopname[i]['goods_id'] = r[i].goods_id;
+				this.data_detailstockopname[i]['goods_name'] = r[i].goods_name;
+				this.data_detailstockopname[i]['current_stock'] = r[i].current_stock;
+				this.data_detailstockopname[i]['new_stock'] = r[i].new_stock;
+				this.data_detailstockopname[i]['notes'] = r[i].notes;
+
+				for(var j = 0;j<this.data_detailstockopname.length;j++)
+            	{
+            		this.data_detailstockopname[j].no = this.data_detailstockopname.length - j;
+            	}
+
+			}
+			//aturannya kalau ngerequest create detailstockop, harus munculin popup detail stockOP
+			this.first_time_create_detailstockOP = false;
 			this.dialog_detailstockopname = true;
+
+
+			
+		},
+		get_edit_detailstockOP(id)
+		{
+			try{
+				var response = axios.get('api/warehouses/stockOpnames/' + id + '/stockOpnamesDetails/edit', {
+	                params:{
+	                    token: localStorage.getItem('token')
+	                }
+	            },{
+	                headers: {
+	                    'Accept': 'application/json',
+	                    'Content-type': 'application/json'
+	                }
+	            });
+	            return response;
+			}
+			catch (error)
+        	{
+        		console.log('error try catch : ' + error);
+        	}
 		},
 		async closedialog_detailstockopname()
 		{
@@ -204,7 +269,7 @@ export default {
 					this.data_detailstockopname[i].new_stock = 0;
 					this.data_detailstockopname[i].notes = '';
 				}
-				let r = await this.save_detailstockOP();
+				
 
 				this.first_time_create_detailstockOP = false;
 			}
@@ -233,7 +298,7 @@ export default {
         	}
 		},
 		
-		save_detailstockOP(id)
+		save_detailstockOP()
 		{
 			const formData = new FormData();
 
@@ -245,11 +310,12 @@ export default {
 				formData.append('detail_stock_opname[' + idxformdata + '][notes]', this.data_detailstockopname[i].notes);
 				idxformdata+= 1;
 			}
-			formData.append("_method", "patch");
+			
 			var id_stockop = null;
-			if(id > - 1)
+			if(this.id_edit > - 1)
 			{
-				id_stockop = id;
+				id_stockop = this.id_edit;
+				formData.append("_method", "patch");
 			}
 			else
 			{
@@ -269,7 +335,9 @@ export default {
 	                    'Content-type': 'application/json'
 	                }
 	            });
+	            this.closedialog_detailstockopname();
 	            this.data_detailstockopname = [];
+	            this.id_edit = -1;
 	            return response;
 			}
 			catch (error)
@@ -366,7 +434,7 @@ export default {
 				this.data_detailstockopname[i]['goods_name'] = r[i].goods_name;
 				this.data_detailstockopname[i]['current_stock'] = r[i].current_stock;
 				this.data_detailstockopname[i]['new_stock'] = 0;
-				this.data_detailstockopname[i]['notes'] = 0;
+				this.data_detailstockopname[i]['notes'] = '-';
 
 				for(var j = 0;j<this.data_detailstockopname.length;j++)
             	{
@@ -374,20 +442,18 @@ export default {
             	}
 
 			}
+
+		},
+		
+		async add_stockOP()
+		{
+			let save_loading = await this.save_stockOP();
+			this.first_time_create_detailstockOP = true;
+			let create_loading = await this.load_create_detailstockOP();
+			
 			//aturannya kalau ngerequest create detailstockop, harus munculin popup detail stockOP
 			this.first_time_create_detailstockOP = true;
 			this.dialog_detailstockopname = true;
-
-		},
-		async add_detailstockOP()
-		{
-			let r = await this.save_detailstockOP();
-			this.closedialog_detailstockopname();
-		},
-		async add_stockOP()
-		{
-			let r = await this.save_stockOP();
-			this.first_time_create_detailstockOP = true;
 			this.load_stockOP();
 			this.load_create_detailstockOP();
 

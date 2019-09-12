@@ -63,6 +63,7 @@
         		<v-btn dark @click='save_to_localstorage()' color='blue'>Cancel</v-btn>
         		<v-btn dark @click='submit()' color='blue'>Submit</v-btn>
         	</v-flex>
+        	
         </v-layout>
         
         <!-- ================================ -->
@@ -74,7 +75,8 @@
 	export default {
 		props : [
 		'prop_list_filter',
-		'prop_temp_data'
+		'prop_temp_data',
+		
 		],
 		data () {
 			return {
@@ -86,11 +88,11 @@
     				{ text: 'Goods', value:'goods_name',sortable:false},
     				{ text: 'Stock', value:'stock',sortable:false},
     				{ text: 'Total Required MR', value:'total_required_by_mr',sortable:false},
-    				{ text: 'Total Already PO', value:'total_already_po',sortable:false},
-    				{ text: 'Amount Order', value:'amount_order',sortable:false},
+    				{ text: 'Total PO', value:'total_already_po',sortable:false},
+    				{ text: 'Qty Order', value:'amount_order',sortable:false},
     				{ text: 'Supplier', value:'supplier',sortable:false},
     				{ text: 'Pricelists', value:'pricelists',sortable:false},
-    				{ text: 'Subtotal', value:'subtotal',sortable:false},
+    				{ text: 'Subtotal', value:'subtotal',sortable:false, width:'15%'},
 				],
 			}
 		},

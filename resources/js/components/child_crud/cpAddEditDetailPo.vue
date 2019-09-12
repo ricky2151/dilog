@@ -35,6 +35,7 @@
 
 						<v-layout row>
 							<v-flex xs12>
+								
 								<v-select
 								v-if='input.goods'
 								:rules='$list_validation.selectdata_req'
@@ -42,7 +43,7 @@
 								v-model='input.pricelist'
 
 								:items='input.goods.pricelists'
-								item-text='price'
+								item-text='pricerupiah'
 								return-object
 
 								class="pa-2"
@@ -166,6 +167,54 @@
 			}
 		},
 		methods : {
+
+
+			strToPrice(angka,prefix)
+	        {
+	            //100000
+	            //9.000
+	            //11212
+	            //11.212
+	            angka = angka.toString();
+	            var hasil = "";
+	            var counter = 0;
+	            for(var i = angka.length - 1;i>= 0;i--)
+	            {
+	                counter++;
+	                if(counter % 3 == 0)
+	                {
+	                    if(i != 0)
+	                        hasil = "." + angka.charAt(i) +  hasil;
+	                    else
+	                            hasil = angka.charAt(i) + hasil;
+	                }
+	                else
+	                {
+	                    hasil = angka.charAt(i) + hasil;
+	                }
+	            }
+	            return prefix + hasil;
+	        },
+			format_data(value,types)
+			{
+				var result = value;
+				result = Math.ceil(result);
+				for(var i = 0;i<types.length;i++)
+				{
+					var type = types[i];
+					if(type == 'price')
+					{
+						result = this.strToPrice(result,"Rp. ");
+					}
+					else if(type == 'percent')
+					{
+						result = result + "%";
+					}
+				}
+				return result;
+			},
+
+
 			prepare_data()
 			{
 				const formData = new FormData();
@@ -315,6 +364,17 @@
 			{
 				let r = await this.get_master_data();
 				this.ref_input = r.data.items;
+				console.log('cek ref_input');
+				console.log(this.ref_input);
+				//buat pricerupiah
+				for(var i = 0;i<this.ref_input.goods.length;i++)
+				{
+					for(var j = 0;j<this.ref_input.goods[i].pricelists.length;j++)
+					{
+						console.log('cekk');
+						this.ref_input.goods[i].pricelists[j].pricerupiah = this.format_data(this.ref_input.goods[i].pricelists[j].price, ["price"]);
+					}
+				}
 			},
 			get_data_before_edit(id_edit) //nanti dihapus karena sudah ada di component
 	        {
@@ -346,6 +406,7 @@
 				if(id == -1)
 				{
 					this.fill_select_master_data();	
+
 				}
 				
 				var ref_input_from_server = [];
@@ -360,17 +421,26 @@
 					
 					this.ref_input.goods = JSON.parse(JSON.stringify(r.master_data.goods));
 
-
+					for(var i = 0;i<this.ref_input.goods.length;i++)
+					{
+						for(var j = 0;j<this.ref_input.goods[i].pricelists.length;j++)
+						{
+							console.log('cekk');
+							this.ref_input.goods[i].pricelists[j].pricerupiah = this.format_data(this.ref_input.goods[i].pricelists[j].price, ["price"]);
+						}
+					}
 					
 
 					//this.input.goods di assign dari master data
 					
 					var id_goods = r.purchase_order_detail.goods.id;
-					for(var i = 0;i<r.master_data.goods.length;i++)
+					for(var i = 0;i<this.ref_input.goods.length;i++)
 					{
-						if(r.master_data.goods[i].id == id_goods)
+						if(this.ref_input.goods[i].id == id_goods)
 						{
-							this.input.goods = r.master_data.goods[i];
+							this.input.goods = this.ref_input.goods[i];
+							console.log('cek inputgoods');
+							console.log(this.input.goods);
 							break;
 						}
 					}

@@ -48,7 +48,7 @@
            :prop_title='info_table.title'
            :prop_search_data='search_data'
            :prop_information='additional_data ? additional_data : ""'
-       :prop_format_information='info_table.format_additional_data ? info_table.format_additional_data : ""'
+            :prop_format_information='info_table.format_additional_data ? info_table.format_additional_data : ""'
            :prop_button_on_index='info_table.button_on_index'
 
            v-on:button_index_clicked='button_index_clicked'
@@ -121,6 +121,21 @@ export default {
                 this.opendialog_createedit(-1);
             }
         },
+        approve_payment(id)
+        {
+            //api/payments/7/approve
+            const formData = new FormData();
+            formData.append('token', localStorage.getItem('token'));
+            formData.append('_method', 'patch');
+            axios.post('api/payments/' + id + '/approve', formData, {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json' //default
+                })
+            .then((r) => {
+                swal("Good job!", "Data saved !", "success");
+                this.refresh_table();
+            });
+        },
         action_change(id,idx_action, data)
         {
             this.selected_data = data;
@@ -130,7 +145,7 @@ export default {
             }
             else if(idx_action == 1)
             {
-                 //approve
+                 this.approve_payment(id);
             }
             else if(idx_action == 2)
             {
