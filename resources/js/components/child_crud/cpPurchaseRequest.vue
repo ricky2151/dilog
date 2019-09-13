@@ -21,7 +21,7 @@
         	<v-dialog v-model="dialog_add_pr" width=750>
 	            <v-card>
 	                <v-toolbar dark color="menu">
-	                    <v-btn icon dark v-on:click="close_dialog()">
+	                    <v-btn icon dark v-on:click="close_dialog_add_pr()">
 	                        <v-icon>close</v-icon>
 	                    </v-btn>
 	                    <v-toolbar-title>Add Purchase Order</v-toolbar-title>

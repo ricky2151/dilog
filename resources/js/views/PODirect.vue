@@ -211,7 +211,20 @@ export default {
                     'Content-type': 'application/json' //default
                     }
                 ).then((r) => {
-                swal("Good job!", "Data Approved !", "success");
+                    console.log(r);
+                    if(r.data.error)
+                    {
+                        if(r.data.message['purchase order'][0] == "Can't approve PO because status is not submit")
+                        {
+                            swal("Failed to Approve", "Can't approve PO because status is not submit", "error");
+                            //Can't approve PO because status is not submit
+                        }
+                    }
+                    else
+                    {
+                        swal("Good job!", "Data Approved !", "success");        
+                    }
+                
                 this.refresh_table();
             }).catch(function (error)
             {

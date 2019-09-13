@@ -149,7 +149,7 @@ export default {
             name_table:'material_requests',
             search_data: null,
 
-            filter_by_user_value : '',
+            filter_by_user_value : '0',
             filter_by_user_ref : [],
 
             open_state : 'MaterialRequest',
@@ -343,6 +343,7 @@ export default {
         {
             this.open_component('cpAddMaterialRequest');
         }
+        this.$refs['cpHeader'].selected_filter = 0;
     },
     mixins:[
         mxCrudBasic

@@ -206,7 +206,7 @@ export default {
 			this.dialog_stockopname = true;
 
 		},
-		closedialog_stopopname()
+		closedialog_stockopname()
 		{
 			this.dialog_stockopname = false;
 		},
