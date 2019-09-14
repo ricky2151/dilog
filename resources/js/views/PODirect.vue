@@ -211,7 +211,7 @@ export default {
                     'Content-type': 'application/json' //default
                     }
                 ).then((r) => {
-                    console.log(r);
+                    
                     if(r.data.error)
                     {
                         if(r.data.message['purchase order'][0] == "Can't approve PO because status is not submit")
