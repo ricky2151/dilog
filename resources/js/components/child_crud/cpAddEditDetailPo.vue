@@ -364,14 +364,13 @@
 			{
 				let r = await this.get_master_data();
 				this.ref_input = r.data.items;
-				console.log('cek ref_input');
-				console.log(this.ref_input);
+				
 				//buat pricerupiah
 				for(var i = 0;i<this.ref_input.goods.length;i++)
 				{
 					for(var j = 0;j<this.ref_input.goods[i].pricelists.length;j++)
 					{
-						console.log('cekk');
+						
 						this.ref_input.goods[i].pricelists[j].pricerupiah = this.format_data(this.ref_input.goods[i].pricelists[j].price, ["price"]);
 					}
 				}
@@ -425,7 +424,7 @@
 					{
 						for(var j = 0;j<this.ref_input.goods[i].pricelists.length;j++)
 						{
-							console.log('cekk');
+							
 							this.ref_input.goods[i].pricelists[j].pricerupiah = this.format_data(this.ref_input.goods[i].pricelists[j].price, ["price"]);
 						}
 					}
@@ -439,8 +438,7 @@
 						if(this.ref_input.goods[i].id == id_goods)
 						{
 							this.input.goods = this.ref_input.goods[i];
-							console.log('cek inputgoods');
-							console.log(this.input.goods);
+							
 							break;
 						}
 					}

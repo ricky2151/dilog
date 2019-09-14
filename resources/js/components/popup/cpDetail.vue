@@ -12,7 +12,6 @@
 
                 </v-toolbar>
                 <div style='padding:30px'>
-                    
                     <v-text-field
                         v-model="search_data"
                         append-icon="search"
@@ -150,6 +149,7 @@
                         }
                     }
                 ).then((r) => {
+
                     this.data = r.data.items[this.prop_response_attribute];
                     
                 });

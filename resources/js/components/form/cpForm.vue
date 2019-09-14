@@ -13,10 +13,10 @@
 						<v-toolbar-title v-html='id_edit == -1 ? "Add " + prop_title : "Edit " + prop_title'></v-toolbar-title>
 					</v-toolbar>
 
-					<v-stepper v-model='stepNow' vertical>
+					<v-stepper v-model='stepNow' vertical v-bind:id='prop_countStep == 1 ? "one_step" : ""'>
 							<!-- FORM SINGLE -->
 							
-						<v-stepper-step :complete='stepNow > 1' step="1" :editable='id_edit == -1 ? prop_editableAdd : prop_editableEdit'>
+						<v-stepper-step :complete='stepNow > 1' step="1" :editable='id_edit == -1 ? prop_editableAdd : prop_editableEdit' class='info_stepper'>
 							<h3>{{prop_title}} Data</h3>
 						</v-stepper-step>
 						<v-stepper-content step='1'>

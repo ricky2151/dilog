@@ -340,8 +340,7 @@ export default {
 		            }
 	                this.open_component('cpPurchaseRequestEdit');
 	                this.$nextTick(() => {
-                        console.log('cek id : ');
-                        console.log(id); 
+                        
                         
 		                this.$refs['cpPurchaseRequestEdit'].fill_data(temp);
                         this.$refs['cpPurchaseRequestEdit'].data.id = id;

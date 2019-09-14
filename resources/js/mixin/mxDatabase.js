@@ -924,15 +924,13 @@ export default
 							single : 
 							{
 								'id' : {show : false},
-								'goods_name' : {show : true},
-								'rack_name' : {show : true},
-								'stock' : {show : true},
+								'name' : {show : true},
+								'is_have_goods' : {show : true},
 							},
 							headers: [
 								{ text: 'No', value:'no'},
-                				{ text: 'Goods', value:'goods_name'},
-                				{ text: 'Racks', value:'rack_name'},
-                				{ text: 'Stock', value:'stock'},
+                				{ text: 'Rack Name', value:'name'},
+                				{ text: 'Is Have Goods', value:'is_have_goods'},
 							]
 						},
 

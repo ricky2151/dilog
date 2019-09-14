@@ -248,8 +248,7 @@ export default {
         {
             
             var filtered = this.$refs['cpDatatable'].get_checklisted();
-            console.log('cek filtered');
-            console.log(filtered);
+            
             const formData = new FormData();
             for(var i = 0;i<filtered.length;i++)
             {
