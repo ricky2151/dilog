@@ -131,7 +131,7 @@
 			cancel()
 			{
 				localStorage.removeItem('temp_pr_recap_' + this.id);
-				this.$router.replace('/PurchaseRequest');
+				this.$router.replace('/purchase-request');
 				//this.$emit('cancel');
 			},
 			make_po(supplier_id)

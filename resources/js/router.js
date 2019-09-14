@@ -44,30 +44,29 @@ const routes = [
         path:'/', component: Authenticated,
         children: [
             { path: '/', component: Home },
-            { path: '/warehouse', component: Warehouse },
-            //{ path: '/goods', component: Goods },
-            { path: '/type', component: Type},
-            { path: '/categorypriceselling', component: Categorypriceselling},
-            { path: '/category', component: Category},
-            { path: '/attribute', component: Attribute},
-            { path: '/unit', component: Unit},
+            { path: '/master-data/type', component: Type},
+            { path: '/master-data/category-price-selling', component: Categorypriceselling},
+            { path: '/master-data/category', component: Category},
+            { path: '/master-data/attribute', component: Attribute},
+            { path: '/master-data/unit', component: Unit},
+            { path: '/master-data/supplier', component: Supplier},
+            { path: '/master-data/customer', component: Customer},
+            { path: '/master-data/cogs', component: Cogs},
+            { path: '/master-data/goods', component: Goods, exact: true },
+            { path: '/master-data/goods/create', component: Goodscreate},
+            { path: '/stock/goods/rack', component: GoodsRack },
+            { path: '/stock/warehouse', component: Warehouse },
+            { path: '/stock/rack', component: Rack},
             { path: '/source', component: Source},
-            { path: '/goods', component: Goods },
-            { path: '/goodsrack', component: GoodsRack },
-            { path: '/goodscreate', component: Goodscreate},
-            { path: '/cogs', component: Cogs},
-            { path: '/rack', component: Rack},
-            { path: '/supplier', component: Supplier},
-            { path: '/customer', component: Customer},
-            { path: '/podirect', component: PODirect},
-
-            { path: '/purchaseorder', component: PurchaseOrder},
+            { path: '/purchase-order', component: PurchaseOrder },
+            { path: '/purchase-order-direct', component: PODirect},
+            { path: '/material-request', component: MaterialRequest },
+            { path: '/purchase-request', component: PurchaseRequest },
 
             { path: '/logout', component: Logout },
 
-            { path: '/materialrequest', component: MaterialRequest },
-
-            { path: '/purchaserequest', component: PurchaseRequest }
+            // 404 redirect to home
+            { path: '*', redirect: '/' }
         ],
         meta: { requiresAuth: true }
     }

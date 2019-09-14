@@ -3612,7 +3612,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     cancel: function cancel() {
       localStorage.removeItem('temp_pr_recap_' + this.id);
-      this.$router.replace('/PurchaseRequest'); //this.$emit('cancel');
+      this.$router.replace('/purchase-request'); //this.$emit('cancel');
     },
     make_po: function make_po(supplier_id) {
       var _this = this;
@@ -7530,39 +7530,39 @@ __webpack_require__.r(__webpack_exports__);
         subroutes: [{
           subicon: "category",
           subtitle: "Goods Categories",
-          subaction: "/category"
+          subaction: "/master-data/category"
         }, {
           subicon: "dns",
           subtitle: "Goods Units",
-          subaction: "/unit"
+          subaction: "/master-data/unit"
         }, {
           subicon: "build",
           subtitle: "Goods Attributes",
-          subaction: "/attribute"
+          subaction: "/master-data/attribute"
         }, {
           subicon: "bookmarks",
           subtitle: "COGS Types",
-          subaction: "/type"
+          subaction: "/master-data/type"
         }, {
           subicon: "compare_arrows",
           subtitle: "Selling Price Categories",
-          subaction: "/categorypriceselling"
+          subaction: "/master-data/category-price-selling"
         }, {
           subicon: "widgets",
           subtitle: "Goods",
-          subaction: "/goods"
+          subaction: "/master-data/goods"
         }, {
           subicon: "monetization_on",
           subtitle: "COGS",
-          subaction: "/cogs"
+          subaction: "/master-data/cogs"
         }, {
           subicon: "perm_contact_calendar",
           subtitle: "Suppliers",
-          subaction: "/supplier"
+          subaction: "/master-data/supplier"
         }, {
           subicon: "person_pin",
           subtitle: "Customers",
-          subaction: "/customer"
+          subaction: "/master-data/customer"
         }]
       }, {
         icon: "local_convenience_store",
@@ -7570,15 +7570,15 @@ __webpack_require__.r(__webpack_exports__);
         subroutes: [{
           subicon: "store",
           subtitle: "Warehouses",
-          subaction: "/warehouse"
+          subaction: "/stock/warehouse"
         }, {
           subicon: "assignment_returned",
           subtitle: "Goods Racks",
-          subaction: "/goodsrack"
+          subaction: "/stock/goods/rack"
         }, {
           subicon: "dns",
           subtitle: "Racks",
-          subaction: "/rack"
+          subaction: "/stock/rack"
         }]
       }, {
         icon: "business",
@@ -7587,19 +7587,19 @@ __webpack_require__.r(__webpack_exports__);
         subroutes: [{
           subicon: "store",
           subtitle: "Purchase Order",
-          subaction: "/purchaseorder"
+          subaction: "/purchase-order"
         }, {
           subicon: "play_arrow",
           subtitle: "PO Direct",
-          subaction: "/podirect"
+          subaction: "/purchase-order-direct"
         }, {
           subicon: "next_week",
           subtitle: "Material Request",
-          subaction: "/materialrequest"
+          subaction: "/material-request"
         }, {
           subicon: "beenhere",
           subtitle: "Purchase Request",
-          subaction: "/PurchaseRequest"
+          subaction: "/purchase-request"
         }]
       }],
       toolbarMenu: [{
@@ -7622,17 +7622,17 @@ __webpack_require__.r(__webpack_exports__);
       notifications: [{
         icon: "feedback",
         title: "Barang sudah habis !",
-        action: "/goods",
+        action: "/master-data/goods",
         bgcolor: "red"
       }, {
         icon: "feedback",
         title: "Barang sudah habis !",
-        action: "/goods",
+        action: "/master-data/goods",
         bgcolor: "red"
       }, {
         icon: "feedback",
         title: "Barang sudah habis !",
-        action: "/goods",
+        action: "/master-data/goods",
         bgcolor: "red"
       }]
     };
@@ -9069,7 +9069,7 @@ __webpack_require__.r(__webpack_exports__);
         this.$refs['cpDatatable'].convert_to_checklist(true);
       } else if (index == 2) {
         //list pr
-        this.$router.replace('/PurchaseRequest');
+        this.$router.replace('/purchase-request');
       } else if (index == 3) {//create po
       }
     },
@@ -9364,6 +9364,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixin_mxCrudBasic__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixin/mxCrudBasic */ "./resources/js/mixin/mxCrudBasic.js");
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -10747,7 +10753,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css?bdb9":
+/***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css":
 /*!***********************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--6-1!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vuetify/dist/vuetify.min.css ***!
   \***********************************************************************************************************************************/
@@ -20387,148 +20393,174 @@ var render = function() {
     { staticClass: "bgwhite" },
     [
       _c(
-        "v-layout",
+        "v-container",
+        { attrs: { "grid-list-lg": "" } },
         [
           _c(
-            "v-flex",
-            { staticStyle: { padding: "50px" }, attrs: { sm4: "" } },
+            "v-layout",
+            { attrs: { row: "", wrap: "" } },
             [
               _c(
-                "v-card",
+                "v-flex",
+                { attrs: { xs12: "", sm4: "" } },
                 [
-                  _c("v-img", {
-                    attrs: {
-                      src:
-                        "https://cdn2.iconfinder.com/data/icons/euro-banking-rounded/512/xxx037-512.png",
-                      height: "200px",
-                      contain: ""
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("v-card-title", { attrs: { "primary-title": "" } }, [
-                    _c("div", { staticStyle: { width: "100%" } }, [
-                      _c("h3", { staticClass: "headline text-lg-center" }, [
-                        _c("b", [_vm._v("PO Direct")])
-                      ]),
-                      _vm._v(" "),
-                      _c("div")
-                    ])
-                  ]),
-                  _vm._v(" "),
                   _c(
-                    "v-card-actions",
+                    "v-card",
                     [
                       _c(
-                        "v-btn",
-                        {
-                          staticStyle: { width: "100%" },
-                          attrs: { flat: "", color: "blue" },
-                          on: {
-                            click: function($event) {
-                              return _vm.goto("/podirect")
+                        "v-card-text",
+                        [
+                          _c("v-img", {
+                            attrs: {
+                              src:
+                                "https://cdn2.iconfinder.com/data/icons/euro-banking-rounded/512/xxx037-512.png",
+                              height: "200px",
+                              contain: ""
                             }
-                          }
-                        },
-                        [_vm._v("Detail")]
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("v-card-title", { attrs: { "primary-title": "" } }, [
+                        _c("div", { staticStyle: { width: "100%" } }, [
+                          _c("h3", { staticClass: "headline text-xs-center" }, [
+                            _c("b", [_vm._v("PO Direct")])
+                          ]),
+                          _vm._v(" "),
+                          _c("div")
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "v-card-actions",
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              staticStyle: { width: "100%" },
+                              attrs: { flat: "", color: "blue" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.goto("/purchase-order-direct")
+                                }
+                              }
+                            },
+                            [_vm._v("Detail")]
+                          )
+                        ],
+                        1
                       )
                     ],
                     1
                   )
                 ],
                 1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "v-flex",
-            { staticStyle: { padding: "50px" }, attrs: { sm4: "" } },
-            [
+              ),
+              _vm._v(" "),
               _c(
-                "v-card",
+                "v-flex",
+                { attrs: { xs12: "", sm4: "" } },
                 [
-                  _c("v-img", {
-                    attrs: {
-                      src:
-                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwR_N7j5Mu5aW1roiU-N_6egPrieUlBkyZmvq2LFX9zp9Ezwol3Q",
-                      height: "200px",
-                      contain: ""
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("v-card-title", { attrs: { "primary-title": "" } }, [
-                    _c("div", { staticStyle: { width: "100%" } }, [
-                      _c("h3", { staticClass: "headline text-lg-center" }, [
-                        _c("b", [_vm._v("Material Request")])
-                      ]),
-                      _vm._v(" "),
-                      _c("div")
-                    ])
-                  ]),
-                  _vm._v(" "),
                   _c(
-                    "v-card-actions",
+                    "v-card",
                     [
                       _c(
-                        "v-btn",
-                        {
-                          staticStyle: { width: "100%" },
-                          attrs: { flat: "", color: "blue" },
-                          on: {
-                            click: function($event) {
-                              return _vm.goto("/materialrequest")
+                        "v-card-text",
+                        [
+                          _c("v-img", {
+                            attrs: {
+                              src:
+                                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwR_N7j5Mu5aW1roiU-N_6egPrieUlBkyZmvq2LFX9zp9Ezwol3Q",
+                              height: "200px",
+                              contain: ""
                             }
-                          }
-                        },
-                        [_vm._v("Detail")]
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("v-card-title", { attrs: { "primary-title": "" } }, [
+                        _c("div", { staticStyle: { width: "100%" } }, [
+                          _c("h3", { staticClass: "headline text-xs-center" }, [
+                            _c("b", [_vm._v("Material Request")])
+                          ]),
+                          _vm._v(" "),
+                          _c("div")
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "v-card-actions",
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              staticStyle: { width: "100%" },
+                              attrs: { flat: "", color: "blue" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.goto("/material-request")
+                                }
+                              }
+                            },
+                            [_vm._v("Detail")]
+                          )
+                        ],
+                        1
                       )
                     ],
                     1
                   )
                 ],
                 1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "v-flex",
-            { staticStyle: { padding: "50px" }, attrs: { sm4: "" } },
-            [
+              ),
+              _vm._v(" "),
               _c(
-                "v-card",
+                "v-flex",
+                { attrs: { xs12: "", sm4: "" } },
                 [
-                  _c("v-img", {
-                    attrs: {
-                      src:
-                        "https://cdn.worldvectorlogo.com/logos/dropbox-2.svg",
-                      height: "200px",
-                      contain: ""
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("v-card-title", { attrs: { "primary-title": "" } }, [
-                    _c("div", { staticStyle: { width: "100%" } }, [
-                      _c("h3", { staticClass: "headline text-lg-center" }, [
-                        _c("b", [_vm._v("Stock Min")])
-                      ]),
-                      _vm._v(" "),
-                      _c("div")
-                    ])
-                  ]),
-                  _vm._v(" "),
                   _c(
-                    "v-card-actions",
+                    "v-card",
                     [
                       _c(
-                        "v-btn",
-                        {
-                          staticStyle: { width: "100%" },
-                          attrs: { flat: "", color: "blue" }
-                        },
-                        [_vm._v("Detail")]
+                        "v-card-text",
+                        [
+                          _c("v-img", {
+                            attrs: {
+                              src:
+                                "https://cdn.worldvectorlogo.com/logos/dropbox-2.svg",
+                              height: "200px",
+                              contain: ""
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("v-card-title", { attrs: { "primary-title": "" } }, [
+                        _c("div", { staticStyle: { width: "100%" } }, [
+                          _c("h3", { staticClass: "headline text-xs-center" }, [
+                            _c("b", [_vm._v("Stock Min")])
+                          ]),
+                          _vm._v(" "),
+                          _c("div")
+                        ])
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "v-card-actions",
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              staticStyle: { width: "100%" },
+                              attrs: { flat: "", color: "blue" }
+                            },
+                            [_vm._v("Detail")]
+                          )
+                        ],
+                        1
                       )
                     ],
                     1
@@ -65650,7 +65682,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_vue__;
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(/*! !../../css-loader??ref--6-1!../../postcss-loader/src??ref--6-2!./vuetify.min.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css?bdb9");
+var content = __webpack_require__(/*! !../../css-loader??ref--6-1!../../postcss-loader/src??ref--6-2!./vuetify.min.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -70062,63 +70094,67 @@ var routes = [{
     path: '/',
     component: _views_Home_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
   }, {
-    path: '/warehouse',
-    component: _views_Warehouse_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
-  }, //{ path: '/goods', component: Goods },
-  {
-    path: '/type',
+    path: '/master-data/type',
     component: _views_Type_vue__WEBPACK_IMPORTED_MODULE_7__["default"]
   }, {
-    path: '/categorypriceselling',
+    path: '/master-data/category-price-selling',
     component: _views_Categorypriceselling_vue__WEBPACK_IMPORTED_MODULE_8__["default"]
   }, {
-    path: '/category',
+    path: '/master-data/category',
     component: _views_Category_vue__WEBPACK_IMPORTED_MODULE_9__["default"]
   }, {
-    path: '/attribute',
+    path: '/master-data/attribute',
     component: _views_Attribute_vue__WEBPACK_IMPORTED_MODULE_10__["default"]
   }, {
-    path: '/unit',
+    path: '/master-data/unit',
     component: _views_Unit_vue__WEBPACK_IMPORTED_MODULE_11__["default"]
+  }, {
+    path: '/master-data/supplier',
+    component: _views_Supplier_vue__WEBPACK_IMPORTED_MODULE_18__["default"]
+  }, {
+    path: '/master-data/customer',
+    component: _views_Customer_vue__WEBPACK_IMPORTED_MODULE_19__["default"]
+  }, {
+    path: '/master-data/cogs',
+    component: _views_Cogs_vue__WEBPACK_IMPORTED_MODULE_16__["default"]
+  }, {
+    path: '/master-data/goods',
+    component: _views_Goods_vue__WEBPACK_IMPORTED_MODULE_13__["default"],
+    exact: true
+  }, {
+    path: '/master-data/goods/create',
+    component: _views_Goodscreate_vue__WEBPACK_IMPORTED_MODULE_14__["default"]
+  }, {
+    path: '/stock/goods/rack',
+    component: _views_GoodsRack_vue__WEBPACK_IMPORTED_MODULE_15__["default"]
+  }, {
+    path: '/stock/warehouse',
+    component: _views_Warehouse_vue__WEBPACK_IMPORTED_MODULE_6__["default"]
+  }, {
+    path: '/stock/rack',
+    component: _views_Rack_vue__WEBPACK_IMPORTED_MODULE_17__["default"]
   }, {
     path: '/source',
     component: _views_Source_vue__WEBPACK_IMPORTED_MODULE_12__["default"]
   }, {
-    path: '/goods',
-    component: _views_Goods_vue__WEBPACK_IMPORTED_MODULE_13__["default"]
+    path: '/purchase-order',
+    component: _views_PurchaseOrder_vue__WEBPACK_IMPORTED_MODULE_21__["default"]
   }, {
-    path: '/goodsrack',
-    component: _views_GoodsRack_vue__WEBPACK_IMPORTED_MODULE_15__["default"]
-  }, {
-    path: '/goodscreate',
-    component: _views_Goodscreate_vue__WEBPACK_IMPORTED_MODULE_14__["default"]
-  }, {
-    path: '/cogs',
-    component: _views_Cogs_vue__WEBPACK_IMPORTED_MODULE_16__["default"]
-  }, {
-    path: '/rack',
-    component: _views_Rack_vue__WEBPACK_IMPORTED_MODULE_17__["default"]
-  }, {
-    path: '/supplier',
-    component: _views_Supplier_vue__WEBPACK_IMPORTED_MODULE_18__["default"]
-  }, {
-    path: '/customer',
-    component: _views_Customer_vue__WEBPACK_IMPORTED_MODULE_19__["default"]
-  }, {
-    path: '/podirect',
+    path: '/purchase-order-direct',
     component: _views_PODirect_vue__WEBPACK_IMPORTED_MODULE_20__["default"]
   }, {
-    path: '/purchaseorder',
-    component: _views_PurchaseOrder_vue__WEBPACK_IMPORTED_MODULE_21__["default"]
+    path: '/material-request',
+    component: _views_MaterialRequest_vue__WEBPACK_IMPORTED_MODULE_22__["default"]
+  }, {
+    path: '/purchase-request',
+    component: _views_PurchaseRequest_vue__WEBPACK_IMPORTED_MODULE_23__["default"]
   }, {
     path: '/logout',
     component: _views_Logout_vue__WEBPACK_IMPORTED_MODULE_25__["default"]
-  }, {
-    path: '/materialrequest',
-    component: _views_MaterialRequest_vue__WEBPACK_IMPORTED_MODULE_22__["default"]
-  }, {
-    path: '/purchaserequest',
-    component: _views_PurchaseRequest_vue__WEBPACK_IMPORTED_MODULE_23__["default"]
+  }, // 404 redirect to home
+  {
+    path: '*',
+    redirect: '/'
   }],
   meta: {
     requiresAuth: true
