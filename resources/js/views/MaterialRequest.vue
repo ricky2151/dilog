@@ -218,7 +218,7 @@ export default {
         },
         cancel_po_edit()
         {
-            this.open_component('cpPurchaseRequest');
+            this.$router.replace('/purchase-request');
         },
         prepare_data_submit_recap()
         {
@@ -261,10 +261,10 @@ export default {
             var data_null = false;
             if(filtered.length == 0)
             {
-                //data_null = true;
+                data_null = true;
             }
-            console.log('cek filtered');
-            console.log(filtered);
+            
+            
             if(data_null == false)
             {
                 for(var i = 0;i<filtered.length;i++)

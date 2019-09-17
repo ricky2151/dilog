@@ -105,10 +105,15 @@
 								result.push(data_table_now[i]);
 							}
 						}
+						for(var i = 0;i<result.length;i++)
+		            	{
+		            		result[i].no = result.length - i;
+		            	}
 						return result;
 					}
 					else
 					{
+
 						return data_table_now;
 					}
 				}
@@ -141,11 +146,11 @@
 			{
 
 				var filtered = [];
-				for(var i = 0;i<this.data_table.length;i++)
+				for(var i = 0;i<this.computed_data_table.length;i++)
 				{
-					if(this.data_table[i].checked)
+					if(this.computed_data_table[i].checked)
 					{
-						filtered.push(this.data_table[i]);
+						filtered.push(this.computed_data_table[i]);
 					}
 				}
 				

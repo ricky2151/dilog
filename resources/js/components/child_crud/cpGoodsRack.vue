@@ -34,6 +34,7 @@
         :prop_input='generate_input(info_table.plural_name)'
         
         :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.plural_name, "create") : null'
+        :prop_idEditTable='prop_list_filter.id_selected ? ["rack", "racks", prop_list_filter.id_selected] : ""'
         
 
         v-on:done='refresh_table()'

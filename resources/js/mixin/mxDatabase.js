@@ -1179,7 +1179,7 @@ export default
 
 					singular_name : 'goods_rack',
 					plural_name : 'goods_racks',
-					custom_response_attribute : 'goods_rack',
+					custom_response_attribute : 'goods_racks',
 					column_desc : 'stock', //untuk fk
 
 					widthForm : '750',

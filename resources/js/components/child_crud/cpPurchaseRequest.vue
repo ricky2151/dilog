@@ -243,7 +243,7 @@ export default {
             {
     		 axios.post(
             	'api/purchaseRequests',
-            		this.prepare_data_submit_recap()
+            		formData
             	 ,{
 	                headers: {
 	                    'Accept': 'application/json',
