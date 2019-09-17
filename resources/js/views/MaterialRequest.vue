@@ -333,7 +333,7 @@ export default {
             else if(index == 2)
             {
                 //list pr
-                this.$router.replace('/PurchaseRequest');
+                this.$router.replace('/purchase-request');
             }
             else if(index == 3)
             {
