@@ -74,7 +74,7 @@
         :prop_infoDatatable='info_table.data.datatable'
         :prop_action_items='info_table.actions'
         :prop_plural_name='info_table.plural_name'
-        :prop_url_index='prop_list_filter? generate_url("racks", "detail",get_property_from_list_filter(prop_list_filter).idparent, get_property_from_list_filter(prop_list_filter).table) :  generate_url(info_table.table_name, "index")'
+        :prop_url_index='prop_list_filter? generate_url("racks", "detail",prop_list_filter["id_selected"], info_table.plural_name) :  generate_url(info_table.table_name, "index")'
         :prop_filter='prop_list_filter'
         :prop_custom_response_attribute='info_table.custom_response_attribute'
 
@@ -97,6 +97,7 @@ export default {
             info_table:{},
             name_table:'goods_racks',
             search_data: null,
+            
         }
     },
     methods: {

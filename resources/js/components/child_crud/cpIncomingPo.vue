@@ -124,7 +124,7 @@
 
 			         <v-layout row style='font-size: 16px;margin-top:50px'>
 			        	<v-flex xs3 class='marginleft30' style='padding-top: 20px'>
-			        		<b>History Incoming : </b>
+			        		<b>History SPBM : </b>
 			        	</v-flex>
 			        	
 			        </v-layout>

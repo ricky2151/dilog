@@ -4,7 +4,7 @@
 		<v-data-table
             disable-initial-sort
             :headers="prop_header"
-            :items="data_table"
+            :items="computed_data_table"
             :search="prop_search_data"
             class="datatable"
             
@@ -13,14 +13,7 @@
         	
 	        	
 			<template v-slot:items="props">
-		    	<template v-if='
-		    		(prop_filter_by_user_value == 0)
-		    		||
-    				(prop_filter_by_user_value && prop_format_filter_by_user.column_in_table && props.item[prop_format_filter_by_user.column_in_table] == prop_filter_by_user_value) 
-    				||
-    				(!prop_filter_by_user_value) '
-    			>
-
+		    	
 					<v-checkbox
 					class='datatable_checklist'
 					v-if='checklisting'
@@ -66,7 +59,7 @@
 			                </v-menu>
 			            </div>
 			        </td>
-			    </template>
+			    
 			</template>
         </v-data-table>
 	</div>
@@ -94,6 +87,38 @@
 		{
 
 		},
+		computed : 
+		{
+			computed_data_table : function() 
+			{
+
+				var data_table_now = JSON.parse(JSON.stringify(this.data_table));
+				var result = [];
+				if((this.prop_filter_by_user_value && this.prop_format_filter_by_user.column_in_table))
+				{
+					if(this.prop_filter_by_user_value != '0')
+					{
+						for(var i = 0;i<data_table_now.length;i++)
+						{
+							if(data_table_now[i][this.prop_format_filter_by_user.column_in_table] == this.prop_filter_by_user_value)
+							{
+								result.push(data_table_now[i]);
+							}
+						}
+						return result;
+					}
+					else
+					{
+						return data_table_now;
+					}
+				}
+				else
+				{
+					return data_table_now;
+				}
+				
+			}
+		},
 		data () {
 			return {
 				checklisting : false,
@@ -114,6 +139,7 @@
 			},
 			get_checklisted()
 			{
+
 				var filtered = [];
 				for(var i = 0;i<this.data_table.length;i++)
 				{
@@ -122,6 +148,8 @@
 						filtered.push(this.data_table[i]);
 					}
 				}
+				
+				
 				return filtered;
 			},
 			strToPrice(angka,prefix)
@@ -212,6 +240,7 @@
 	            	{
 	            		this.send_filter_by_user_ref(r);
 	            	}
+
 	            	for(var i = 0;i<this.data_table.length;i++)
 	            	{
 	            		this.data_table[i].no = this.data_table.length - i;
@@ -228,7 +257,7 @@
 	        },
 	        showTable(r)
         	{
-        		var temp_r;
+        		var temp_r = [];
         		var response_attribute;
         		if(this.prop_custom_response_attribute)
         		{
@@ -248,18 +277,10 @@
     				temp_r = r.data.items[response_attribute];
     			}
         		
-        		// else if(this.prop_filter_by_user_value && this.prop_format_filter_by_user.column_in_table)
-        		// {
-        		// 	console.log('harusnya masuk sini');
-        		// 	for(var i = 0;i<temp_r.length;i++)
-		        //     {
-		        //     	console.log(i);
-		        //         if(temp_r[i][this.prop_format_filter_by_user.column_in_table] == this.prop_filter_by_user_value)
-		        //         {
-		        //             this.data_table.push(temp_r[i]);
-		        //         }
-		        //     }
-        		// }
+        		if(!temp_r)
+        		{
+        			temp_r = [];
+        		}
 		        this.data_table = temp_r;
         		
 	        },

@@ -27,7 +27,7 @@
                     class=""
                     >
                     <template v-slot:items="props">
-                        <td>{{ props.index + 1 }}</td>
+                        <td>{{ props.item.no }}</td>
                         <td v-for='(obj,column_name) in prop_columns' v-if='obj.show'>
                             {{obj.format?
                                     format_data(props.item[column_name],obj.format) : 
@@ -151,6 +151,11 @@
                 ).then((r) => {
 
                     this.data = r.data.items[this.prop_response_attribute];
+
+                    for(var i = 0;i<this.data.length;i++)
+                    {
+                        this.data[i].no = i + 1;
+                    }
                     
                 });
 

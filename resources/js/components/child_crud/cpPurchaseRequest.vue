@@ -1,12 +1,12 @@
 <template>
     <div class='bgwhite'>
-        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs'>
+        <v-breadcrumbs divider=">" :items='computed_breadcrumbs' class='breadcrumbs'>
             <v-breadcrumbs-item
                 slot="item"
                 slot-scope="{ item }"
                 exact
-                :class="{breadcrumbs_hidden : item.disabled}"
-                @click="open_component(item.cp)"
+                :disabled='item.disabled'
+                @click="item.disabled ? '' : open_component(item.cp)"
                 >
 
                 {{ item.text }}
@@ -49,7 +49,7 @@
 				            v-model="props.item['checked']"
 				            color="primary"
 					         ></v-checkbox>
-	                        <td>{{ props.index + 1 }}</td>
+	                        <td>{{ props.item.no }}</td>
 	                        <td>{{ props.item.no_mr }}</td>
 	                        <td>{{ props.item.division }}</td>
 	                        <td>{{ props.item.created_at }}</td>
@@ -175,7 +175,7 @@ export default {
                 },
                 //level 2
                 {
-                    text: 'Edit Purchase Request',
+                    text: 'Detail Purchase Request',
                     disabled: true,
                     cp: 'cpPurchaseRequestEdit',
                     before : 'cpPurchaseRequest'
@@ -196,7 +196,7 @@ export default {
     	},
     	done_po_edit(r,id)
     	{
-    		this.open_component('cpMakePo');
+    		this.open_component('cpMakePo', null, null, '[use_same_text_note_level]');
 
     		this.$nextTick(() => {
             	this.$refs['cpMakePo'].id = id;
@@ -214,20 +214,33 @@ export default {
     	{
     		const formData = new FormData();
     		var idxformdata = 0;
+            var data_null = true;
     		for(var i =0;i<this.data_mr.length;i++)
     		{
     			if(this.data_mr[i].checked)
     			{
+                    data_null = false;
     				formData.append('material_requests[' + idxformdata + '][id]', this.data_mr[i].id);
     				idxformdata+= 1;
     			}
     		}
-    		return formData;
+            if(data_null)
+            {
+                return false;
+            }
+            else
+            {
+        		return formData;
+            }
 
     	},
     	submit_recap()
     	{
     		//api
+            var formData = new FormData();
+            formData = this.prepare_data_submit_recap();
+            if(formData)
+            {
     		 axios.post(
             	'api/purchaseRequests',
             		this.prepare_data_submit_recap()
@@ -246,13 +259,21 @@ export default {
 	            {
 	            	temp[i].no = i + 1;
 	            }
-                this.open_component('cpPurchaseRequestEdit');
+                this.open_component('cpPurchaseRequestEdit', null, null,r.data.items.purchase_request.code);
+                this.dialog_add_pr = false;
                 this.$nextTick(() => {
-                    this.$refs['cpPurchaseRequestEdit'].data.id = r.data.items.purchase_request.id;
-	                this.$refs['cpPurchaseRequestEdit'].fill_data(temp);
+	                this.$refs['cpPurchaseRequestEdit'].fill_data(temp, r.data.items.purchase_request.id);
+                    
+
 	                swal("Good job!", "Recap Successfully !", "success");
 			  	})
             });
+
+            }
+            else
+            {
+                swal('Submit Failed !', "Please Select MR !", "error");
+            }
     	},
     	close_dialog_add_pr()
         {
@@ -275,6 +296,11 @@ export default {
             	}
             }
             this.data_mr = JSON.parse(JSON.stringify(result_r));
+
+            for(var i = 0;i<this.data_mr.length;i++)
+            {
+                this.data_mr[i].no = i + 1;
+            }
 
         },
          //for data
@@ -338,12 +364,12 @@ export default {
 		            {
 		            	temp[i].no = i + 1;
 		            }
-	                this.open_component('cpPurchaseRequestEdit');
+	                this.open_component('cpPurchaseRequestEdit',null,null,this.selected_data.code);
 	                this.$nextTick(() => {
                         
                         
-		                this.$refs['cpPurchaseRequestEdit'].fill_data(temp);
-                        this.$refs['cpPurchaseRequestEdit'].data.id = id;
+		                this.$refs['cpPurchaseRequestEdit'].fill_data(temp, id);
+                        
 		                
 				  	})
 	            });
@@ -368,7 +394,7 @@ export default {
 		                
 		            }).then((r)=> {
 		            var temp = r.data.items;
-	                this.open_component('cpMakePo');
+	                this.open_component('cpMakePo',null,null,this.selected_data.code);
 	                this.$nextTick(() => {
 	                	this.$refs['cpMakePo'].id = id;
 		                this.$refs['cpMakePo'].fill_data(temp);

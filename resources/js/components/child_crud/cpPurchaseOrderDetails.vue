@@ -45,7 +45,6 @@
 
         
         <!-- DATATABLE -->
-        
         <cp-datatable 
         v-if='info_table.data'
 

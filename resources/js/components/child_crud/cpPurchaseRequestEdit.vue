@@ -51,7 +51,12 @@
 	            </td>
 	            <td>
 	            	<div v-if='input[props.index].selected_pricelist'>
+	            		<template v-if='input[props.index].amount_order && input[props.index].selected_pricelist.price'>
 	            		{{strToPrice(input[props.index].amount_order * input[props.index].selected_pricelist.price, "Rp. ")}}
+	            		</template>
+	            		<template v-else>
+	            			{{strToPrice("0", "Rp. ")}}
+	            		</template>
 	            		
 	            	</div>
 	            </td>
@@ -102,8 +107,16 @@
 			{
 				const formData = new FormData();
 				var idxformdata = 0;
+				var data_false = false;
 				for(var i = 0;i<this.input.length;i++)
 				{
+					if((!(this.input[i].goods_id && this.input[i].amount_order && this.input[i].selected_pricelist.price && this.input[i].selected_pricelist.supplier_id && this.input[i].selected_pricelist.id)) || (this.input[i].amount_order > this.data[i].total_required_by_mr))
+					{
+						data_false = true;
+					}
+					console.log('cek amount_order');
+					console.log(this.input[i].amount_order);
+					console.log(this.data[i].total_required_by_mr);
 					formData.append('purchase_request_details[' + idxformdata + '][goods_id]', this.input[i].goods_id);
 					formData.append('purchase_request_details[' + idxformdata + '][qty]', this.input[i].amount_order);
 					formData.append('purchase_request_details[' + idxformdata + '][price]', this.input[i].selected_pricelist.price);
@@ -111,25 +124,42 @@
 					formData.append('purchase_request_details[' + idxformdata + '][pricelist_id]', this.input[i].selected_pricelist.id);
 					idxformdata += 1;
 				}
-				return formData;
+				if(data_false)
+				{
+					return false;
+				}
+				else
+				{
+					return formData;
+				}
 			},
 			submit()
 			{
-				axios.post(
-	            	'api/purchaseRequests/' + this.data.id + '/purchaseRequestDetails',
-	            		this.prepare_data()
-	            	 ,{
-		                headers: {
-		                    'Accept': 'application/json',
-		                    'Content-type': 'application/json'
-		                },
-		                params : 
-		                {
-		                	'token' : localStorage.getItem('token')
-		                }
-		            }).then((r)=> {
-			            this.$emit('done', r,this.data.id);
-	            });
+				var formData = new FormData();
+				formData = this.prepare_data();
+				if(formData)
+				{
+					axios.post(
+		            	'api/purchaseRequests/' + this.data.id + '/purchaseRequestDetails',
+		            		formData
+		            	 ,{
+			                headers: {
+			                    'Accept': 'application/json',
+			                    'Content-type': 'application/json'
+			                },
+			                params : 
+			                {
+			                	'token' : localStorage.getItem('token')
+			                }
+			            }).then((r)=> {
+				            this.$emit('done', r,this.data.id);
+		            });
+
+				}
+				else
+				{
+					swal('Submit Failed !', 'Please input correctly !', 'error');
+				}
 			},
 			save_to_localstorage()
 			{
@@ -164,9 +194,11 @@
 	            return prefix + hasil;
 	        },
 	        
-			fill_data(data_from_server)
+			fill_data(data_from_server, id_pr)
 			{
+
 				this.data = JSON.parse(JSON.stringify(data_from_server));
+				this.data.id = id_pr;
 
 				//sederhanakan array supplier dan array pricelist
 				//sekalian tambahkan attribute supplier_selected dan pricelist_selected pada this.input
@@ -174,6 +206,8 @@
 				var temp_input = localStorage.getItem('temp_pr_recap_' + this.data.id);
 				if(temp_input)
 				{
+					console.log('masuk localStorage');
+					console.log(data_from_server);
 					this.input = JSON.parse(temp_input);
 				}
 				for(var i = 0;i<this.data.length;i++)
@@ -211,6 +245,16 @@
 					delete this.data[i].pricelists;
 				}
 
+				//isi attribute input agar tidak error
+				// for(var i =0;i<this.data.length;i++)
+				// {
+				// 	this.input[i] = {};
+				// 	this.inputf
+				// }
+				console.log('cek input');
+				console.log(this.input);
+				console.log('cek data');
+				console.log(this.data);
 				this.data_ready = true;
 			}
 		},

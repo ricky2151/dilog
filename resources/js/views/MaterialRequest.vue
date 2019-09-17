@@ -1,18 +1,20 @@
 <template>
     <div class='bgwhite' style="height: 100%">
-        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs' v-if="open_state!='cpAddMaterialRequest'">
+        <v-breadcrumbs divider=">" :items='computed_breadcrumbs' class='breadcrumbs' v-if="open_state!='cpAddMaterialRequest'">
+            </v-breadcrumbs-item>
             <v-breadcrumbs-item
                 slot="item"
                 slot-scope="{ item }"
                 exact
-                :class="{breadcrumbs_hidden : item.disabled}"
-                @click="open_component(item.cp)"
+                :disabled='item.disabled'
+                @click="item.disabled ? '' : open_component(item.cp)"
                 >
 
                 {{ item.text }}
             </v-breadcrumbs-item>
         </v-breadcrumbs>
-    
+
+
 
     
         <template v-if='open_state == "MaterialRequest"'>
@@ -183,9 +185,15 @@ export default {
                     before : 'MaterialRequest'
                 },
                 {
-                    text: 'Purchase Request Edit',
+                    text: 'Detail Purchase Request',
                     disabled: true,
                     cp: 'cpPurchaseRequestEdit',
+                    before : 'MaterialRequest'
+                },
+                {
+                    text: 'Make PO',
+                    disabled: true,
+                    cp: 'cpMakePo',
                     before : 'MaterialRequest'
                 },
             ],
@@ -198,7 +206,7 @@ export default {
         },
         done_po_edit(r,id)
         {
-            this.open_component('cpMakePo');
+            this.open_component('cpMakePo', null, null, '[use_same_text_note_level]');
 
             this.$nextTick(() => {
                 this.$refs['cpMakePo'].id = id;
@@ -250,39 +258,54 @@ export default {
             var filtered = this.$refs['cpDatatable'].get_checklisted();
             
             const formData = new FormData();
-            for(var i = 0;i<filtered.length;i++)
+            var data_null = false;
+            if(filtered.length == 0)
             {
-                formData.append('material_requests[' + i + '][id]', filtered[i].id);
+                //data_null = true;
             }
-
-            axios.post(
-                'api/purchaseRequests',
-                    formData
-                 ,{
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-type': 'application/json'
-                    },
-                    params : 
-                    {
-                        'token' : localStorage.getItem('token')
-                    }
-                }).then((r)=> {
-                var temp = r.data.items.rekaps;
-                for(var i = 0;i<temp.length;i++)
+            console.log('cek filtered');
+            console.log(filtered);
+            if(data_null == false)
+            {
+                for(var i = 0;i<filtered.length;i++)
                 {
-                    temp[i].no = i + 1;
+                    formData.append('material_requests[' + i + '][id]', filtered[i].id);
                 }
-                this.open_component('cpPurchaseRequestEdit');
-                this.$refs['cpDatatable'].clear_checklisted();
-                this.$refs['cpHeader'].set_check_listing(false);
-                this.$refs['cpDatatable'].convert_to_checklist(false);
-                this.$nextTick(() => {
-                    this.$refs['cpPurchaseRequestEdit'].fill_data(temp);
-                    this.$refs['cpPurchaseRequestEdit'].data.id = r.data.items.purchase_request.id;
-                    swal("Good job!", "Recap Successfully !", "success");
-                })
-            });
+
+                axios.post(
+                    'api/purchaseRequests',
+                        formData
+                     ,{
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-type': 'application/json'
+                        },
+                        params : 
+                        {
+                            'token' : localStorage.getItem('token')
+                        }
+                    }).then((r)=> {
+                    var temp = r.data.items.rekaps;
+                    for(var i = 0;i<temp.length;i++)
+                    {
+                        temp[i].no = i + 1;
+                    }
+                    this.open_component('cpPurchaseRequestEdit', null, null, r.data.items.purchase_request.code);
+                    this.$refs['cpDatatable'].clear_checklisted();
+                    this.$refs['cpHeader'].set_check_listing(false);
+                    this.$refs['cpDatatable'].convert_to_checklist(false);
+                    this.$nextTick(() => {
+                        this.$refs['cpPurchaseRequestEdit'].fill_data(temp, r.data.items.purchase_request.id);
+                        
+                        swal("Good job!", "Recap Successfully !", "success");
+                    })
+                });
+
+            }
+            else
+            {
+                swal('Failed', "Please Select MR", "error");
+            }
             
 
             

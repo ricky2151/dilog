@@ -130,8 +130,9 @@
 			},
 			cancel()
 			{
+
 				localStorage.removeItem('temp_pr_recap_' + this.id);
-				this.$router.replace('/PurchaseRequest');
+				this.$emit('cancel');
 				//this.$emit('cancel');
 			},
 			make_po(supplier_id)
@@ -197,13 +198,23 @@
 			fill_data(data_from_server)
 			{
 				this.data = JSON.parse(JSON.stringify(data_from_server));
-
-				for(var i = 0;i<this.data.rekap_purchase_orders.length;i++)
+				if(this.data.rekap_purchase_orders.length == 0)
 				{
-					this.data.rekap_purchase_orders[i].disable = false;
+					this.$emit('cancel');
+					swal("All Have Become PO", "If you would like to check it out, please go to the PO menu", "error");
+				}
+				else
+				{
+					for(var i = 0;i<this.data.rekap_purchase_orders.length;i++)
+					{
+						this.data.rekap_purchase_orders[i].disable = false;
+					}
+
+					this.data_ready = true;
+
 				}
 
-				this.data_ready = true;
+				
 			}
 		},
 		computed : 
