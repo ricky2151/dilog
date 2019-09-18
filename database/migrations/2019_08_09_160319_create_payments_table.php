@@ -17,7 +17,7 @@ class CreatePaymentsTable extends Migration
             $table->increments('id');
             $table->integer('purchase_order_id')->unsigned();
             $table->date('payment_date');
-            $table->integer('paid_off');
+            $table->double('paid_off');
             $table->enum('status',['0','1'])->default('0'); //0 for new, 1 for submitted
             $table->integer('approved_by_user_id')->unsigned()->default(0);
             $table->timestamps();

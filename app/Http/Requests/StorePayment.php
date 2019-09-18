@@ -27,7 +27,7 @@ class StorePayment extends FormRequest
     {
         return [
             'purchase_order_id' => 'required|integer|exists:purchase_orders,id', 
-            'paid_off' => 'required|integer|min:1'
+            'paid_off' => 'required|numeric|min:1'
         ];
     }
     
