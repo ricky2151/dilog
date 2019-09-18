@@ -92,7 +92,7 @@ export default {
             formData.append('_method', 'patch');
             formData.append('token', localStorage.getItem('token'));
             axios.post(
-                'api/purchaseOrders/' + this.additional_data.id + '/submit',
+                '/api/purchaseOrders/' + this.additional_data.id + '/submit',
                 formData,
                     {
                     'Accept': 'application/json',

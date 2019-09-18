@@ -127,7 +127,7 @@ export default {
             const formData = new FormData();
             formData.append('token', localStorage.getItem('token'));
             formData.append('_method', 'patch');
-            axios.post('api/payments/' + id + '/approve', formData, {
+            axios.post('/api/payments/' + id + '/approve', formData, {
                     'Accept': 'application/json',
                     'Content-type': 'application/json' //default
                 })

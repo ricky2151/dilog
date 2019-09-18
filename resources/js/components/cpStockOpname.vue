@@ -25,15 +25,15 @@
                         <td>{{ props.item.goods_name }}</td>
                         <td>{{ props.item.current_stock }}</td>
                         <td>
-                        	<v-text-field v-model='props.item.new_stock' label="New Stock"></v-text-field>
+                        	<v-text-field :disabled='approve_edit == "Waiting"' v-model='props.item.new_stock' label="New Stock"></v-text-field>
                         </td>
                         <td>
-                        	<v-text-field v-model='props.item.notes' label="Notes"></v-text-field>
+                        	<v-text-field :disabled='approve_edit == "Waiting"' v-model='props.item.notes' label="Notes"></v-text-field>
                         </td>
                     </template>
                     </v-data-table>
 
-                    <v-btn color='primary' @click='save_detailstockOP'>Save</v-btn>
+                    <v-btn color='primary' v-show='approve_edit != "Waiting"' @click='save_detailstockOP'>Save</v-btn>
                 </div>
             </v-card>
         </v-dialog>
@@ -96,7 +96,7 @@
 							        <v-img
 							          src="https://vemafats.com/wp-content/uploads/2018/02/Screenshot_59.png"
 							          height="200px"
-							          @click='opendialog_detailstockopname(data.id)'
+							          @click='opendialog_detailstockopname(data.id, data.approve)'
 							        >
 							        </v-img>
 
@@ -111,7 +111,7 @@
 							        <v-card-actions style='width: 260px;'>
 										<v-btn flat style='min-width: 0px !important;'><v-icon>print</v-icon></v-btn>
 										<v-btn v-if='data.approve == "New"' @click='submit_to_waiting(data.id)' flat style='min-width: 0px !important;'><v-icon>check</v-icon></v-btn>
-										<v-btn v-if='data.approve == "New"' @click='opendialog_detailstockopname(data.id)' flat style='min-width: 0px !important;'><v-icon>edit</v-icon></v-btn>
+										<v-btn v-if='data.approve == "New"' @click='opendialog_detailstockopname(data.id,data.approve)' flat style='min-width: 0px !important;'><v-icon>edit</v-icon></v-btn>
 										<v-btn v-if='data.approve == "New"' @click='delete_stockOP(data.id)'flat style='min-width: 0px !important;'><v-icon>delete</v-icon></v-btn>
 									</v-card-actions>
 								</v-card>
@@ -139,6 +139,7 @@ export default {
 			dialog_stockopname:null,
 			dialog_detailstockopname:null,
 			id_edit : -1,
+			approve_edit : null,
 
 			first_time_create_detailstockOP:false,
 			warehouse_id : null,
@@ -181,7 +182,7 @@ export default {
 		delete_stockOP(id)
 		{
 			axios.delete(
-				'api/warehouses/stockOpnames/' + id, 
+				'/api/warehouses/stockOpnames/' + id, 
 				{
                 params:{
                     token: localStorage.getItem('token')
@@ -210,10 +211,11 @@ export default {
 		{
 			this.dialog_stockopname = false;
 		},
-		async opendialog_detailstockopname(id)
+		async opendialog_detailstockopname(id,approve_id)
 		{
 			let r = await this.get_edit_detailstockOP(id);
 			this.id_edit = id;
+			this.approve_edit = approve_id;
 			r = r.data.items.detail_stock_opnames;
 			this.data_detailstockopname = [];
 			for(var i =0;i<r.length;i++)
@@ -241,7 +243,7 @@ export default {
 		get_edit_detailstockOP(id)
 		{
 			try{
-				var response = axios.get('api/warehouses/stockOpnames/' + id + '/stockOpnamesDetails/edit', {
+				var response = axios.get('/api/warehouses/stockOpnames/' + id + '/stockOpnamesDetails/edit', {
 	                params:{
 	                    token: localStorage.getItem('token')
 	                }
@@ -280,7 +282,7 @@ export default {
 		get_create_detailstockOP(id)
 		{
 			try{
-				var response = axios.get('api/warehouses/' + this.warehouse_id + '/stockOpnames/stockOpnamesDetails/create', {
+				var response = axios.get('/api/warehouses/' + this.warehouse_id + '/stockOpnames/stockOpnamesDetails/create', {
 	                params:{
 	                    token: localStorage.getItem('token')
 	                }
@@ -305,6 +307,14 @@ export default {
 			var idxformdata = 0;
 			for(var i = 0;i<this.data_detailstockopname.length;i++)
 			{
+				if(!this.data_detailstockopname[i].new_stock)
+				{
+					this.data_detailstockopname[i].new_stock = 0;
+				}
+				if(!this.data_detailstockopname[i].notes)
+				{
+					this.data_detailstockopname[i].notes = '-';
+				}
 				formData.append('detail_stock_opname[' + idxformdata + '][goods_id]', this.data_detailstockopname[i].goods_id);
 				formData.append('detail_stock_opname[' + idxformdata + '][new_stock]', this.data_detailstockopname[i].new_stock);
 				formData.append('detail_stock_opname[' + idxformdata + '][notes]', this.data_detailstockopname[i].notes);
@@ -323,7 +333,7 @@ export default {
 			}
 			try{
 				var response = axios.post(
-					'api/warehouses/stockOpnames/' + id_stockop + '/stockOpnamesDetails', 
+					'/api/warehouses/stockOpnames/' + id_stockop + '/stockOpnamesDetails', 
 					formData,
 					{
 	                params:{
@@ -344,12 +354,14 @@ export default {
         	{
         		console.log('error try catch : ' + error);
         	}
+
+			
 		},
 		update_to_waiting(id)
 		{
 			try{
 				var response = axios.post(
-					'api/warehouses/stockOpnames/' + id + '/setWaitings', 
+					'/api/warehouses/stockOpnames/' + id + '/setWaitings', 
 					{},
 					{
 	                params:{
@@ -376,7 +388,7 @@ export default {
 			formData.append('notes', this.input.notes);
 			try{
 				var response = axios.post(
-					'api/warehouses/' + this.warehouse_id + '/stockOpnames', 
+					'/api/warehouses/' + this.warehouse_id + '/stockOpnames', 
 					formData,
 					{
 	                params:{
@@ -404,7 +416,7 @@ export default {
 		get_stockOP()
 		{
 			try{
-				var response = axios.get('api/warehouses/' + this.warehouse_id + '/stockOpnames', {
+				var response = axios.get('/api/warehouses/' + this.warehouse_id + '/stockOpnames', {
 	                params:{
 	                    token: localStorage.getItem('token')
 	                }
@@ -454,6 +466,7 @@ export default {
 			//aturannya kalau ngerequest create detailstockop, harus munculin popup detail stockOP
 			this.first_time_create_detailstockOP = true;
 			this.dialog_detailstockopname = true;
+			
 			this.load_stockOP();
 			this.load_create_detailstockOP();
 

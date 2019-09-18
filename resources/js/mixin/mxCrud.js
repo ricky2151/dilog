@@ -29,7 +29,6 @@ export default {
         },
         get_property_from_list_filter(obj)
         {
-            console.log(obj);
             var result = [];
             var temp_table = "";
             var temp_idparent = "";

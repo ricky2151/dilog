@@ -394,7 +394,7 @@ import cpDetail from './../popup/cpDetail.vue'
 			},
 			open_detail(id,ref,last_url)
 			{
-				this.$refs['cpDetailMr'].url = 'api/materialRequests/' + id + '/materialRequestDetails'
+				this.$refs['cpDetailMr'].url = '/api/materialRequests/' + id + '/materialRequestDetails'
 	            this.$refs['cpDetailMr'].open_dialog();
 			},
 			submit_mr()
@@ -416,7 +416,7 @@ import cpDetail from './../popup/cpDetail.vue'
 				if(idxformdata > 0) //jika formdata tidak kosong
 				{
 					axios.post(
-	                	'api/materialRequests',
+	                	'/api/materialRequests',
 	                	formData,
 			                	{
 			                'Accept': 'application/json',
@@ -493,7 +493,7 @@ import cpDetail from './../popup/cpDetail.vue'
 			get_data_goods()
 			{
 				try{
-                    var response = axios.get('api/materialRequests/create', {
+                    var response = axios.get('/api/materialRequests/create', {
                         params:{
                             token: localStorage.getItem('token')
                         }
@@ -517,7 +517,7 @@ import cpDetail from './../popup/cpDetail.vue'
 			get_data_index() //datatable
 			{
 				try{
-                    var response = axios.get('api/materialRequests', {
+                    var response = axios.get('/api/materialRequests', {
                         params:{
                             token: localStorage.getItem('token')
                         }
@@ -541,7 +541,7 @@ import cpDetail from './../popup/cpDetail.vue'
 			get_data_profile()
 			{
 				try{
-                    var response = axios.get('api/materialRequests/users/profile', {
+                    var response = axios.get('/api/materialRequests/users/profile', {
                         params:{
                             token: localStorage.getItem('token')
                         }

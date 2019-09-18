@@ -141,7 +141,7 @@
 				const formData = new FormData();
 				formData.append('supplier_id', supplier_id);
 				axios.post(
-	            	'api/purchaseRequests/' + this.id + '/purchaseOrders',
+	            	'/api/purchaseRequests/' + this.id + '/purchaseOrders',
 	            		formData
 	            	 ,{
 		                headers: {

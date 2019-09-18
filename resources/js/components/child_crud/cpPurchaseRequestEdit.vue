@@ -114,9 +114,6 @@
 					{
 						data_false = true;
 					}
-					console.log('cek amount_order');
-					console.log(this.input[i].amount_order);
-					console.log(this.data[i].total_required_by_mr);
 					formData.append('purchase_request_details[' + idxformdata + '][goods_id]', this.input[i].goods_id);
 					formData.append('purchase_request_details[' + idxformdata + '][qty]', this.input[i].amount_order);
 					formData.append('purchase_request_details[' + idxformdata + '][price]', this.input[i].selected_pricelist.price);
@@ -140,7 +137,7 @@
 				if(formData)
 				{
 					axios.post(
-		            	'api/purchaseRequests/' + this.data.id + '/purchaseRequestDetails',
+		            	'/api/purchaseRequests/' + this.data.id + '/purchaseRequestDetails',
 		            		formData
 		            	 ,{
 			                headers: {
@@ -206,8 +203,6 @@
 				var temp_input = localStorage.getItem('temp_pr_recap_' + this.data.id);
 				if(temp_input)
 				{
-					console.log('masuk localStorage');
-					console.log(data_from_server);
 					this.input = JSON.parse(temp_input);
 				}
 				for(var i = 0;i<this.data.length;i++)
@@ -251,10 +246,6 @@
 				// 	this.input[i] = {};
 				// 	this.inputf
 				// }
-				console.log('cek input');
-				console.log(this.input);
-				console.log('cek data');
-				console.log(this.data);
 				this.data_ready = true;
 			}
 		},

@@ -252,11 +252,11 @@
 				var url_post = '';
 				if(this.id_edit == -1)
 				{
-					url_post = 'api/purchaseOrderDetails';
+					url_post = '/api/purchaseOrderDetails';
 				}
 				else
 				{
-					url_post = 'api/purchaseOrderDetails/' + this.id_edit;
+					url_post = '/api/purchaseOrderDetails/' + this.id_edit;
 				}
 
 				axios.post(
@@ -341,7 +341,7 @@
 			get_master_data()
 			{
 				try{
-		            var response = axios.get('api/purchaseOrderDetails/create', {
+		            var response = axios.get('/api/purchaseOrderDetails/create', {
 		                params:{
 		                    token: localStorage.getItem('token'),
 		                    purchase_order_id : this.prop_purchase_order_id,
@@ -378,7 +378,7 @@
 			get_data_before_edit(id_edit) //nanti dihapus karena sudah ada di component
 	        {
 	        	try{
-		            var response = axios.get('api/purchaseOrderDetails/' + id_edit + '/edit', {
+		            var response = axios.get('/api/purchaseOrderDetails/' + id_edit + '/edit', {
 		                params:{
 		                    token: localStorage.getItem('token')
 		                }
@@ -537,6 +537,7 @@
 				
 			},
 			computed_price : function() {
+				
 				var discount_rupiah = 0;
 				var discount_percent = 0;
 				var qty = 0;
@@ -573,7 +574,16 @@
 					if(this.input.discount_rupiah && this.input.pricelist)
 					{
 						//return Math.floor((discount_rupiah / (price * tax * qty)) * 100);
-						return Math.floor((discount_rupiah / (price * qty)) * 100);
+						var result = Math.floor((discount_rupiah / (price * qty)) * 100);
+						if(result)
+						{
+
+							return result;
+						}
+						else
+						{
+							return 0;
+						}
 					}
 				}
 				else
@@ -581,10 +591,19 @@
 					if(this.input.pricelist)
 					{
 						//return Math.floor((price * tax * qty) * discount_percent);	
-						return Math.floor(price * qty * discount_percent);
+						var result = Math.floor(price * qty * discount_percent);
+						if(result)
+						{
+							return result;
+						}
+						else
+						{
+							return 0;
+						}
 					}
 					
 				}
+				return 0;
 			}
 		},
 		watch : {

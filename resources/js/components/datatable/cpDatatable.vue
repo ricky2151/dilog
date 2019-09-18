@@ -232,7 +232,7 @@
 				this.$emit('response_filter_by_user_ref', result);
 			},
 			get_data() {
-
+				
 	            axios.get(this.prop_url_index, {
 	                params:{
 	                    token: localStorage.getItem('token')

@@ -273,7 +273,7 @@ export default {
                 }
 
                 axios.post(
-                    'api/purchaseRequests',
+                    '/api/purchaseRequests',
                         formData
                      ,{
                         headers: {

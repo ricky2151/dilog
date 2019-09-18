@@ -854,7 +854,7 @@ export default
 							'cpMakeOrCopyChild' : 
 							{
 								title : 'Racks',
-								url : 'api/warehouses/create',
+								url : '/api/warehouses/create',
 								parent : 
 								{
 									title : "Warehouse",

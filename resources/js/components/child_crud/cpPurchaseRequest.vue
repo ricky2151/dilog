@@ -242,7 +242,7 @@ export default {
             if(formData)
             {
     		 axios.post(
-            	'api/purchaseRequests',
+            	'/api/purchaseRequests',
             		formData
             	 ,{
 	                headers: {
@@ -307,7 +307,7 @@ export default {
         get_data_mr()
         {
         	try{
-	            var response = axios.get('api/purchaseRequests/create', {
+	            var response = axios.get('/api/purchaseRequests/create', {
 	                params:{
 	                    token: localStorage.getItem('token')
 	                }
@@ -345,7 +345,7 @@ export default {
             {
             	//api
 	    		 axios.get(
-	            	'api/purchaseRequests/' + id + '/rekaps',
+	            	'/api/purchaseRequests/' + id + '/rekaps',
             		{
             			params : 
 		                {
@@ -379,7 +379,7 @@ export default {
             {
             	//api
 	    		 axios.get(
-	            	'api/purchaseRequests/' + id + '/purchaseRequestDetailsToPurchaseOrder',
+	            	'/api/purchaseRequests/' + id + '/purchaseRequestDetailsToPurchaseOrder',
             		{
             			params : 
 		                {
