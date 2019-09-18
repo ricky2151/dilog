@@ -1,12 +1,12 @@
 <template>
     <div class='bgwhite'>
-        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs'>
+        <v-breadcrumbs divider=">" :items='computed_breadcrumbs' class='breadcrumbs'>
             <v-breadcrumbs-item
                 slot="item"
                 slot-scope="{ item }"
                 exact
-                :class="{breadcrumbs_hidden : item.disabled}"
-                @click="open_component(item.cp)"
+                :disabled='item.disabled'
+                @click="item.disabled ? '' : open_component(item.cp)"
                 >
 
                 {{ item.text }}
@@ -176,7 +176,7 @@ export default {
             else if(idx_action == 1)
             {
                 this.selected_data = data;
-                this.open_component('cpGoodsRack', 'goods_rack', id);
+                this.open_component('cpGoodsRack', 'goods_rack', id, this.selected_data.name);
             }
             else if(idx_action == 2)
             {

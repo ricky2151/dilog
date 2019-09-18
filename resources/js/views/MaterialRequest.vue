@@ -1,18 +1,20 @@
 <template>
     <div class='bgwhite' style="height: 100%">
-        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs' v-if="open_state!='cpAddMaterialRequest'">
+        <v-breadcrumbs divider=">" :items='computed_breadcrumbs' class='breadcrumbs' v-if="open_state!='cpAddMaterialRequest'">
+            </v-breadcrumbs-item>
             <v-breadcrumbs-item
                 slot="item"
                 slot-scope="{ item }"
                 exact
-                :class="{breadcrumbs_hidden : item.disabled}"
-                @click="open_component(item.cp)"
+                :disabled='item.disabled'
+                @click="item.disabled ? '' : open_component(item.cp)"
                 >
 
                 {{ item.text }}
             </v-breadcrumbs-item>
         </v-breadcrumbs>
-    
+
+
 
     
         <template v-if='open_state == "MaterialRequest"'>
@@ -103,6 +105,23 @@
             ></cp-add-material-request>
         </template>
 
+         <template v-if="open_state=='cpPurchaseRequestEdit'">
+            <cp-purchase-request-edit
+            :prop_list_filter='list_state["cpPurchaseRequestEdit"]'
+            :prop_data='data_edit'
+            ref='cpPurchaseRequestEdit'
+            v-on:cancel='cancel_po_edit'
+            v-on:done='done_po_edit'
+            ></cp-purchase-request-edit>
+        </template>
+
+        <template v-if="open_state=='cpMakePo'">
+            <cp-make-po
+            :prop_list_filter='list_state["cpMakePo"]'
+            ref='cpMakePo'
+            v-on:cancel='cancel_make_po'
+            ></cp-make-po>
+        </template>
         
 
         <!-- ================================ -->
@@ -114,20 +133,25 @@
 import mxCrudBasic from '../mixin/mxCrudBasic';
 import cpPurchaseRequest from './../components/child_crud/cpPurchaseRequest.vue'
 import cpAddMaterialRequest from './../components/child_crud/cpAddMaterialRequest.vue'
+import cpPurchaseRequestEdit from './../components/child_crud/cpPurchaseRequestEdit.vue'
+import cpMakePo from './../components/child_crud/cpMakePo.vue'
 
 
 export default {
     components : {
         cpPurchaseRequest,
         cpAddMaterialRequest,
+        cpPurchaseRequestEdit,
+        cpMakePo
     },
     data () {
         return {
             info_table:{},
+            data_edit : [],
             name_table:'material_requests',
             search_data: null,
 
-            filter_by_user_value : '',
+            filter_by_user_value : '0',
             filter_by_user_ref : [],
 
             open_state : 'MaterialRequest',
@@ -136,6 +160,7 @@ export default {
                 'MaterialRequest' : {},
                 'cpPurchaseRequest' : {},
                 'cpAddMaterialRequest' : {},
+                'cpPurchaseRequestEdit' : {},
             },
             
             breadcrumbs:[
@@ -159,10 +184,60 @@ export default {
                     cp: 'cpAddMaterialRequest',
                     before : 'MaterialRequest'
                 },
+                {
+                    text: 'Detail Purchase Request',
+                    disabled: true,
+                    cp: 'cpPurchaseRequestEdit',
+                    before : 'MaterialRequest'
+                },
+                {
+                    text: 'Make PO',
+                    disabled: true,
+                    cp: 'cpMakePo',
+                    before : 'MaterialRequest'
+                },
             ],
         }
     },
     methods: {
+        cancel_make_po()
+        {
+            this.open_component('cpPurchaseRequest');
+        },
+        done_po_edit(r,id)
+        {
+            this.open_component('cpMakePo', null, null, '[use_same_text_note_level]');
+
+            this.$nextTick(() => {
+                this.$refs['cpMakePo'].id = id;
+                this.$refs['cpMakePo'].fill_data(r.data.items);
+            })
+
+
+            
+        },
+        cancel_po_edit()
+        {
+            this.$router.replace('/purchase-request');
+        },
+        prepare_data_submit_recap()
+        {
+            const formData = new FormData();
+            var idxformdata = 0;
+            for(var i =0;i<this.data_mr.length;i++)
+            {
+                if(this.data_mr[i].checked)
+                {
+                    formData.append('material_requests[' + idxformdata + '][id]', this.data_mr[i].id);
+                    idxformdata+= 1;
+                }
+            }
+            return formData;
+
+        },
+       
+
+
         add_mr_done()
         {
 
@@ -179,11 +254,61 @@ export default {
         },
         submit_checklist()
         {
-            //post mark complete
-            //ambil nilai dari cpdatatable yang di checklist
-            //===
-            this.$refs['cpHeader'].set_check_listing(false);
-            this.$refs['cpDatatable'].convert_to_checklist(false);
+            
+            var filtered = this.$refs['cpDatatable'].get_checklisted();
+            
+            const formData = new FormData();
+            var data_null = false;
+            if(filtered.length == 0)
+            {
+                data_null = true;
+            }
+            
+            
+            if(data_null == false)
+            {
+                for(var i = 0;i<filtered.length;i++)
+                {
+                    formData.append('material_requests[' + i + '][id]', filtered[i].id);
+                }
+
+                axios.post(
+                    'api/purchaseRequests',
+                        formData
+                     ,{
+                        headers: {
+                            'Accept': 'application/json',
+                            'Content-type': 'application/json'
+                        },
+                        params : 
+                        {
+                            'token' : localStorage.getItem('token')
+                        }
+                    }).then((r)=> {
+                    var temp = r.data.items.rekaps;
+                    for(var i = 0;i<temp.length;i++)
+                    {
+                        temp[i].no = i + 1;
+                    }
+                    this.open_component('cpPurchaseRequestEdit', null, null, r.data.items.purchase_request.code);
+                    this.$refs['cpDatatable'].clear_checklisted();
+                    this.$refs['cpHeader'].set_check_listing(false);
+                    this.$refs['cpDatatable'].convert_to_checklist(false);
+                    this.$nextTick(() => {
+                        this.$refs['cpPurchaseRequestEdit'].fill_data(temp, r.data.items.purchase_request.id);
+                        
+                        swal("Good job!", "Recap Successfully !", "success");
+                    })
+                });
+
+            }
+            else
+            {
+                swal('Failed', "Please Select MR", "error");
+            }
+            
+
+            
         },
         cancel_checklist()
         {
@@ -208,7 +333,7 @@ export default {
             else if(index == 2)
             {
                 //list pr
-                this.$router.replace('/PurchaseRequest');
+                this.$router.replace('/purchase-request');
             }
             else if(index == 3)
             {
@@ -240,6 +365,7 @@ export default {
         {
             this.open_component('cpAddMaterialRequest');
         }
+        this.$refs['cpHeader'].selected_filter = 0;
     },
     mixins:[
         mxCrudBasic

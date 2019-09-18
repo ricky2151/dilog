@@ -57,7 +57,7 @@
 				</v-flex>
 				<v-flex xs4>
 					<div class='addmr_column'>
-						<v-btn>Request Custom Goods</v-btn>
+						
 					</div>
 				</v-flex>
 			</v-layout>
@@ -147,7 +147,7 @@
 		            :items="profile.list_mr"
 		            >
 		            <template v-slot:items="props">
-		                <td>{{ props.index + 1 }}</td>
+		                <td>{{ props.item.no }}</td>
 		                <td>{{ props.item.no_mr }}</td>
 		                <td>{{ props.item.total }}</td>
 		                <td>{{ props.item.created_at }}</td>
@@ -575,6 +575,7 @@ import cpDetail from './../popup/cpDetail.vue'
 					this.goods[i].thumbnail = 'storage/' + this.goods[i].thumbnail;
 				}
 				this.periode = r_goods.periodes;
+				this.periode_selected = this.periode[this.periode.length - 1];
 
 				//halaman profile
 				var temp_user = JSON.parse(localStorage.getItem('user'));
@@ -590,6 +591,10 @@ import cpDetail from './../popup/cpDetail.vue'
 				}
 
 				this.profile.list_mr = r_profile.material_requests;
+				for(var i = 0;i<this.profile.list_mr.length;i++)
+	            {
+	                this.profile.list_mr[i].no = i + 1;
+	            }
 				
 			}
 		},

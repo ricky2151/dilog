@@ -252,6 +252,7 @@ export default
 							},
 							{
 								column : 'nominal',
+								format : ['price']
 							},
 							{
 								column : 'type_name',
@@ -327,6 +328,7 @@ export default
 							},
 							{
 								column : 'discount',
+								format : ['percent']
 							},
 						],
 						
@@ -440,7 +442,7 @@ export default
 					editable_add : false,
 					count_step : 6,
 
-					actions:['Edit', 'Rack', 'SP', 'Stock Card', 'Supplier', 'COGS', 'Delete'],
+					actions:['Edit', 'Rack', 'SP', 'Supplier', 'Delete'],
 					button_on_index : ['Add Data'],
 
 					request_master_data : true,
@@ -458,7 +460,7 @@ export default
 						},
 						rule_update:'some',
 						datatable:[
-							{ column : 'name' }, { column : 'code' }, { column : 'value' }, { column : 'status' }, { column : 'last_buy_pricelist' }, { column : 'avg_price' }, { column : 'stock' }, { column : '', value : ['avg_price', '*', 'stock'] },
+							{ column : 'name' }, { column : 'code' }, { column : 'value' }, { column : 'status' }, { column : 'last_buy_pricelist', format:['price'] }, { column : 'avg_price', format : ['price'] }, { column : 'stock' }, { format : ['price'], column : '', value : ['avg_price', '*', 'stock'] },
 						],
 						
 						headers: [
@@ -725,9 +727,9 @@ export default
 								'category_price_selling_id' : {show : false},
 								'warehouse_id' : {show : false},
 								'warehouse_name' : {show : true},
-								'stock_cut_off' : {show : true},
+								'stock_cut_off' : {show : true, format : ['price']},
 								'category_price_selling_name' : {show : true},
-								'price' : {show : true},
+								'price' : {show : true, format : ['price']},
 								'free' : {show : true},
 							},
 							headers: [
@@ -783,7 +785,7 @@ export default
 					editable_add : true,
 					count_step : 2,
 
-					actions:['Edit', 'Rack', 'Goods', 'Stock OP', 'Delete'],
+					actions:['Edit', 'Rack', 'Stock OP', 'Delete'],
 					button_on_index : ['Add Data'],
 
 					request_master_data : true,
@@ -798,7 +800,7 @@ export default
 						headers: [
 			                { text: 'No', value: 'no'},
 			                { text: 'Name', value: 'name'},
-			                { text: 'Address', value: 'address', align:'right' },
+			                { text: 'Address', value: 'address' },
 			                { text: 'Telephone', value: 'telp', align:'right' },
 			                { text: 'PIC', value: 'pic', align:'right' },
 			                { text: 'Action', align:'left',width:'15%',sortable:false},
@@ -922,43 +924,41 @@ export default
 							single : 
 							{
 								'id' : {show : false},
-								'goods_name' : {show : true},
-								'rack_name' : {show : true},
-								'stock' : {show : true},
+								'name' : {show : true},
+								'is_have_goods' : {show : true},
 							},
 							headers: [
 								{ text: 'No', value:'no'},
-                				{ text: 'Goods', value:'goods_name'},
-                				{ text: 'Racks', value:'rack_name'},
-                				{ text: 'Stock', value:'stock'},
+                				{ text: 'Rack Name', value:'name'},
+                				{ text: 'Is Have Goods', value:'is_have_goods'},
 							]
 						},
 
-						"goods":
-						{
-							table_name : 'goods',
-							title : 'Goods',
-							single : 
-							{
-								'id' : {show : false},
-								'goods_id' : {show : false},
-								'category_price_selling_id' : {show : false},
-								'warehouse_id' : {show : false},
-								'warehouse_name' : {show : true},
-								'stock_cut_off' : {show : true},
-								'category_price_selling_name' : {show : true},
-								'price' : {show : true},
-								'free' : {show : true},
-							},
-							headers: [
-								{ text: 'No', value:'no'},
-                				{ text: 'Warehouse', value:'warehouse_name'},
-                				{ text: 'Stock Cut Off', value:'stock_cut_off'},
-                				{ text: 'Category Price Selling', value:'category_price_selling_name'},
-                				{ text: 'Price', value:'price'},
-                				{ text: 'Free', value:'free'},
-							]
-						},
+						// "goods":
+						// {
+						// 	table_name : 'goods',
+						// 	title : 'Goods',
+						// 	single : 
+						// 	{
+						// 		'id' : {show : false},
+						// 		'goods_id' : {show : false},
+						// 		'category_price_selling_id' : {show : false},
+						// 		'warehouse_id' : {show : false},
+						// 		'warehouse_name' : {show : true},
+						// 		'stock_cut_off' : {show : true},
+						// 		'category_price_selling_name' : {show : true},
+						// 		'price' : {show : true},
+						// 		'free' : {show : true},
+						// 	},
+						// 	headers: [
+						// 		{ text: 'No', value:'no'},
+      //           				{ text: 'Warehouse', value:'warehouse_name'},
+      //           				{ text: 'Stock Cut Off', value:'stock_cut_off'},
+      //           				{ text: 'Category Price Selling', value:'category_price_selling_name'},
+      //           				{ text: 'Price', value:'price'},
+      //           				{ text: 'Free', value:'free'},
+						// 	]
+						// },
 
 
 					}
@@ -1179,7 +1179,7 @@ export default
 
 					singular_name : 'goods_rack',
 					plural_name : 'goods_racks',
-					custom_response_attribute : 'goods_rack',
+					custom_response_attribute : 'goods_racks',
 					column_desc : 'stock', //untuk fk
 
 					widthForm : '750',
@@ -1335,7 +1335,7 @@ export default
 					editable_add:true,
 					count_step:1,
 
-					actions:['Detail', 'Approve', 'Incoming', 'Payment', 'History', 'Retur'],
+					actions:['Detail', 'Approve', 'SPBM', 'Payment'],
 					button_on_index : ['Add Data'],
 
 					request_master_data : true,
@@ -1354,12 +1354,15 @@ export default
 							},
 							{
 								column : 'arrival_percent',
+								format : ['percent'],
 							},
 							{
 								column : 'total',
+								format : ['price'],
 							},
 							{
 								column : 'payment_percent',
+								format : ['percent'],
 							},
 							{
 								column : 'created_at',
@@ -1372,12 +1375,16 @@ export default
 							},
 							{
 								column : 'tax',
+								format : ['percent']
+
 							},
 							{
 								column : 'discount_percent',
+								format : ['percent']
 							},
 							{
 								column : '',
+								format:['price'],
 								value:['total', '+', 'tax'],
 							},
 						],
@@ -1390,17 +1397,17 @@ export default
 						},
 
 						headers: [
-								{ text: 'No', value:'no'},
-                				{ text: 'NO PO', value:'no_po'},
-                				{ text: '% Arrival', value:'is_completed'},
-                				{ text: 'Total', value:'total'},
-                				{ text: '% Payment', value:'percent_payment'},
-                				{ text: 'Created At', value:'created_at'},
-                				{ text: 'Supplier', value:'supplier_name'},
-                				{ text: 'Status', value:'status'},
-                				{ text: 'Tax', value:'tax'},
-                				{ text: '% Discount', value:'discount'},
-                				{ text: 'DPP', value:'dpp'},
+								{ text: 'No', value:'no' , width:'5%'},
+                				{ text: 'NO PO', value:'no_po', width:'5%'},
+                				{ text: '% Arrival', value:'is_completed', width:'5%'},
+                				{ text: 'Total', value:'total', width:'5%'},
+                				{ text: '% Payment', value:'percent_payment', width:'5%'},
+                				{ text: 'Created At', value:'created_at', width:'5%'},
+                				{ text: 'Supplier', value:'supplier_name', width:'5%'},
+                				{ text: 'Status', value:'status', width:'5%'},
+                				{ text: 'Tax', value:'tax', width:'5%'},
+                				{ text: '% Discount', value:'discount', width:'5%'},
+                				{ text: 'DPP', value:'dpp', width:'20%'},
                 				{ text: 'Action', value:'action',sortable:false, width:'15%'},
 						],
 
@@ -1474,7 +1481,7 @@ export default
 					additional_param_index : 'purchase_order_id',
 					additional_param_create : 'purchase_order_id',
 
-					actions:['Edit', 'Revision', 'Delete'],
+					actions:['Edit', 'Delete'],
 					button_on_index : ['Add Data', 'Submit', 'Print'],
 
 					format_additional_data : 
@@ -1502,12 +1509,15 @@ export default
 							},
 							{
 								column : 'discount_percent',
+								format : ['percent'],
 							},
 							{
 								column : 'discount_rupiah',
+								format : ['price'],
 							},
 							{
 								column : 'subtotal',
+								format : ['price'],
 							},
 						],
 						filter_by_user : {
@@ -1595,8 +1605,8 @@ export default
 					// editable_add:true,
 					// count_step:1,
 
-					actions:['Detail', 'Approve'],
-					button_on_index : ['Add Data', 'Mark Complete', 'List PR', 'Create PO'],
+					actions:['Detail'],
+					button_on_index : ['Add Data', 'Mark Complete', 'List PR'],
 					button_for_checklist : ['Mark Complete'],
 
 					request_master_data : false,
@@ -1891,7 +1901,12 @@ export default
 							},
 							{
 								column : 'paid_off',
+								format : ['price']
 							},
+							{
+								column : 'status',
+								format : ['approveornot'],
+							}
 						],
 						
 
@@ -1899,6 +1914,7 @@ export default
 								{ text: 'No', value:'no'},
                 				{ text: 'Payment Date', value:'payment_date'},
                 				{ text: 'Paid Off', value:'paid_off'},
+                				{ text: 'Status Approved', value:'status'},
                 				{ text: 'Action', value:'action',sortable:false, width:'15%'},
 						],
 

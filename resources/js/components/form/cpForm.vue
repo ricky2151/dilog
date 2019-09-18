@@ -3,7 +3,7 @@
 
 
 		<v-dialog v-model='dialog_form' :width='prop_widthForm' >
-			<v-form v-model='valid' ref='form'>
+			<v-form v-model='valid' ref='form' onSubmit="return false;">
 
 				<v-card>
 					<v-toolbar dark color="menu">
@@ -13,10 +13,10 @@
 						<v-toolbar-title v-html='id_edit == -1 ? "Add " + prop_title : "Edit " + prop_title'></v-toolbar-title>
 					</v-toolbar>
 
-					<v-stepper v-model='stepNow' vertical>
+					<v-stepper v-model='stepNow' vertical v-bind:id='prop_countStep == 1 ? "one_step" : ""'>
 							<!-- FORM SINGLE -->
 							
-						<v-stepper-step :complete='stepNow > 1' step="1" :editable='id_edit == -1 ? prop_editableAdd : prop_editableEdit'>
+						<v-stepper-step :complete='stepNow > 1' step="1" :editable='id_edit == -1 ? prop_editableAdd : prop_editableEdit' class='info_stepper'>
 							<h3>{{prop_title}} Data</h3>
 						</v-stepper-step>
 						<v-stepper-content step='1'>
@@ -463,6 +463,7 @@
 		'prop_additional_param_create_value',
 		'prop_send_parent_table_key',
 		'prop_send_parent_table_value',
+		'prop_idEditTable',
 
 		],
 		data() {
@@ -640,6 +641,21 @@
 
 		        		}
 		        	}
+		        	if(this.prop_idEditTable)
+		        	{
+		        		var temp_name_column = this.prop_idEditTable[0];
+		        		var temp_name_table = this.prop_idEditTable[1];
+		        		var temp_id_selected = this.prop_idEditTable[2];
+		        		for(var i = 0;i<this.ref_input[temp_name_table].length;i++)
+		        		{
+		        			if(this.ref_input[temp_name_table][i].id == temp_id_selected)
+		        			{
+		        				this.input[temp_name_column] = this.ref_input[temp_name_table][i];
+		        				break;
+		        			}
+		        		}
+		        	}
+
 		        	
 		        }
 
@@ -1406,6 +1422,17 @@
 	                    this.close_dialog();
 	                    this.$emit('done');
 	                    swal("Good job!", "Data saved !", "success");
+	                }).catch(function (error)
+	                {
+	                    
+	                    if(error.response.status == 422)
+	                    {
+	                        swal('Request Failed', 'Check your input !', 'error');
+	                    }
+	                    else
+	                    {
+	                        swal('Unkown Error', error.response.data , 'error');
+	                    }
 	                });
 	            }
 	        },

@@ -45,11 +45,10 @@
 
         
         <!-- DATATABLE -->
-        
         <cp-datatable 
         v-if='info_table.data'
 
-        :prop_header='info_table.data.headers'
+        :prop_header='JSON.parse(JSON.stringify(info_table.data.headers))'
         :prop_search_data='search_data'
         :prop_infoDatatable='info_table.data.datatable'
         :prop_action_items='info_table.actions'
@@ -102,6 +101,7 @@ export default {
                 ).then((r) => {
                 swal("Good job!", "Data Submited !", "success");
                 this.refresh_table();
+                
             }).catch(function (error)
             {
                 
@@ -151,12 +151,9 @@ export default {
                 }
                 else if(idx_action == 1)
                 {
-                    
-                }
-                else if(idx_action == 2)
-                {
                     this.delete_data(id);
                 }
+                
                 
             }
         },
@@ -168,8 +165,12 @@ export default {
                 //conditional khusus component ini
                 //jika status != new, maka tidak bisa submit/add/edit/delete
                 
-                this.info_table.actions = ['Revision'];
-                this.info_table.button_on_index = ["Incoming", "Print"];
+                this.info_table.actions = [];
+                this.info_table.button_on_index = [];
+                this.info_table.data.headers.splice(6, 1);
+                // console.log(JSON.parse(JSON.stringify(this.$refs['cpDatatable'].prop_header)));
+                // this.$refs['cpDatatable'].prop_header.splice(this.$refs['cpDatatable'].prop_header.length - 1, 1);
+                // console.log(JSON.parse(JSON.stringify(this.$refs['cpDatatable'].prop_header)));
             }
         }
 

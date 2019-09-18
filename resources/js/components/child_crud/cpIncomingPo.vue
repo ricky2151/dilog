@@ -6,7 +6,7 @@
 					<v-btn icon dark v-on:click='close_dialog()'>
 						<v-icon>close</v-icon>
 					</v-btn>
-					<v-toolbar-title>Incoming PO</v-toolbar-title>
+					<v-toolbar-title>SPBM</v-toolbar-title>
 				</v-toolbar>
 				<div>
 
@@ -120,11 +120,11 @@
 			        	</v-flex>
 			        </v-layout>
 
-			        <v-btn v-on:click='submit' dark color='menu' style='margin: 20px 30px' class='marginright25'>Submit Incoming PO</v-btn>
+			        <v-btn v-on:click='submit' dark color='menu' style='margin: 20px 30px' class='marginright25'>Submit SPBM</v-btn>
 
 			         <v-layout row style='font-size: 16px;margin-top:50px'>
 			        	<v-flex xs3 class='marginleft30' style='padding-top: 20px'>
-			        		<b>History Incoming : </b>
+			        		<b>History SPBM : </b>
 			        	</v-flex>
 			        	
 			        </v-layout>
@@ -240,7 +240,7 @@
                 		this.input.goods[i].rack = null;
                 	}
                 	this.dialog = false;
-                	swal('Incoming Cannot Submited', 'Cant open because PO status is not approve/complete', 'error');
+                	swal('SPBM Cannot Submited', 'Cant open because PO status is not approve/complete', 'error');
                 	
                 });
 			},
@@ -278,7 +278,7 @@
                 })
                 .catch(error => {
 
-                	swal('Incoming Is Not Avaiable', "Can't open because PO status is not approve/complete", 'error');
+                	swal('SPBM Is Not Avaiable', "Can't open because PO status is not approve/complete", 'error');
                 	
                 });
 
@@ -334,7 +334,15 @@
 						total_have_arrived_plus_incoming += (parseInt(this.input.goods[i].have_arrived) + parseInt(this.input.goods[i].incoming));
 						total_order_qty += parseInt(this.input.goods[i].order_quantity);
 					}
-					this.percent_after_goods = Math.floor((total_have_arrived_plus_incoming / total_order_qty) * 100);
+					if(total_have_arrived_plus_incoming && total_order_qty)
+					{
+						this.percent_after_goods = Math.floor((total_have_arrived_plus_incoming / total_order_qty) * 100);
+
+					}
+					else
+					{
+						this.percent_after_goods = 0;
+					}
 				},
 				deep:true,
 			}

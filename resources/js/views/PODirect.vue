@@ -1,12 +1,19 @@
 <template>
     <div class='bgwhite'>
-        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs'>
+        <v-breadcrumbs divider=">" :items='computed_breadcrumbs' class='breadcrumbs'>
+
+            <!-- <v-breadcrumbs-item 
+            v-if='item.cp == cpPurchaseOrderDetails'
+
+            > -->
+                <!-- no_po -->
+            </v-breadcrumbs-item>
             <v-breadcrumbs-item
                 slot="item"
                 slot-scope="{ item }"
                 exact
-                :class="{breadcrumbs_hidden : item.disabled}"
-                @click="open_component(item.cp)"
+                :disabled='item.disabled'
+                @click="item.disabled ? '' : open_component(item.cp)"
                 >
 
                 {{ item.text }}
@@ -112,12 +119,15 @@
         <template v-if="open_state=='cpPurchaseOrderDetails'">
             <cp-purchase-order-details
             :prop_list_filter='list_state["cpPurchaseOrderDetails"]'
+            ref='cpPurchaseOrderDetails'
+            
             ></cp-purchase-order-details>
         </template>
 
         <template v-if="open_state=='cpPayment'">
             <cp-payment
             :prop_list_filter='list_state["cpPayment"]'
+            ref='cpPayment'
             >
             </cp-payment>
         </template>
@@ -144,6 +154,7 @@ export default {
         cpIncomingPo,
         cpPayment,
     },
+   
     data () {
         return {
             info_table:{},
@@ -211,7 +222,20 @@ export default {
                     'Content-type': 'application/json' //default
                     }
                 ).then((r) => {
-                swal("Good job!", "Data Approved !", "success");
+                    
+                    if(r.data.error)
+                    {
+                        if(r.data.message['purchase order'][0] == "Can't approve PO because status is not submit")
+                        {
+                            swal("Failed to Approve", "Can't approve PO because status is not submit", "error");
+                            //Can't approve PO because status is not submit
+                        }
+                    }
+                    else
+                    {
+                        swal("Good job!", "Data Approved !", "success");        
+                    }
+                
                 this.refresh_table();
             }).catch(function (error)
             {
@@ -231,7 +255,7 @@ export default {
             this.selected_data = data;
             if(idx_action == 0)
             {
-                 this.open_component('cpPurchaseOrderDetails', 'purchase_order', id);
+                 this.open_component('cpPurchaseOrderDetails', 'purchase_order', id, this.selected_data.no_po);
             }
             else if(idx_action == 1)
             {
@@ -246,7 +270,7 @@ export default {
             {
                 if(data.status == 'Approve' || data.status == 'Finish')
                 {
-                    this.open_component('cpPayment', 'purchase_order', id);
+                    this.open_component('cpPayment', 'purchase_order', id, this.selected_data.no_po);
                 }
                 else
                 {

@@ -45,11 +45,12 @@
 
         <v-layout row>
         	<v-flex xs8 class='marginleft30'>
+
         		<v-select
 				v-if='prop_filter_by_user_format && prop_filter_by_user_ref'
 				:label='prop_filter_by_user_format.title'
 				@change='filter_by_user_change'
-
+                v-model='selected_filter'
 				:items='prop_filter_by_user_ref'
 				:item-text='prop_filter_by_user_format.itemText'
 				:item-value='prop_filter_by_user_format.itemValue'
@@ -93,6 +94,7 @@
 			return {
 				search_data :null,
 				check_listing : false,
+                selected_filter : null, //cuma buat setting default value
 			}
 		},
 		watch:{
