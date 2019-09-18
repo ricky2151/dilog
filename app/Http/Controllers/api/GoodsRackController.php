@@ -32,7 +32,7 @@ class GoodsRackController extends Controller
     {
         $this->goodsRackService->handleEmptyModel();
 
-        return formatResponse(false,(["goods_rack"=>$this->goodsRack->index()]));
+        return formatResponse(false,(["goods_racks"=>$this->goodsRack->index()]));
     }
 
     /**
