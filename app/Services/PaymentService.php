@@ -44,16 +44,19 @@ class PaymentService
             throw new InvalidParameterException(json_encode(["payment"=>["payment cannot be approved because the previous status has been approved"]]));
         }
         else{
+            // return $purchaseOrder->getTotalPayment() + $payment['paidOff'] - $purchaseOrder['total'];
+            if($purchaseOrder->getTotalPayment() + $payment['paidOff'] >= $purchaseOrder['total'] ) throw new InvalidParameterException(json_encode(["payment"=>["payment exceeds the specified limit"]]));
             $payment->approve();
         }
     }
     
-    public function handleStore($purchaseOrderId){
+    public function handleStore($purchaseOrderId, $paidOff){
         $purchaseOrder = $this->purchaseOrder->find($purchaseOrderId);
         $this->statusApprovePo($purchaseOrder);
         if(!($purchaseOrder->status == 3 || $purchaseOrder->status == 4)){
             throw new InvalidParameterException(json_encode(["payment"=>["payment cannot be stored because the status PO not approve/complete"]]));
         }
+        if($purchaseOrder->getTotalPayment() + $paidOff > $purchaseOrder['total'] ) throw new InvalidParameterException(json_encode(["payment"=>["payment exceeds the specified limit"]]));
     }
 
     public function handleUpdate($id){
