@@ -37,7 +37,19 @@
 		        		<b>{{replace_underscore_with_space(key)}} :</b>
 		        	</v-flex>
 		        	<v-flex xs7>
-		        		<b>{{ prop_information[format] }}</b>
+		        		<b>
+                            <template v-if='prop_function_format_information'>
+                                <template v-if='prop_function_format_information[format] && prop_function_format_information[format]["format_data"]'>
+                                    {{ format_data(prop_information[format], prop_function_format_information[format]["format_data"]) }}
+                                </template>
+                                <template v-else>
+                                    {{prop_information[format]}}
+                                </template>
+                            </template>
+                            <template v-else>
+                                {{prop_information[format]}}
+                            </template>
+                        </b>
 		        	</v-flex>
 		        </v-layout>
         	</template>
@@ -89,7 +101,7 @@
 </template>
 <script>
 	export default {
-		props : ['prop_icon', 'prop_title', 'prop_type_header', 'prop_search_data', 'prop_button_on_index','prop_information', 'prop_format_information', 'prop_filter_by_user_format', 'prop_filter_by_user_ref', 'prop_button_for_checklist'],
+		props : ['prop_icon', 'prop_title', 'prop_type_header', 'prop_search_data', 'prop_button_on_index','prop_information', 'prop_format_information', 'prop_filter_by_user_format', 'prop_filter_by_user_ref', 'prop_button_for_checklist', 'prop_function_format_information'],
 		data () {
 			return {
 				search_data :null,
@@ -105,6 +117,61 @@
 		},
 		methods:
 		{
+            strToPrice(angka,prefix)
+            {
+                //100000
+                //9.000
+                //11212
+                //11.212
+                angka = angka.toString();
+                var hasil = "";
+                var counter = 0;
+                for(var i = angka.length - 1;i>= 0;i--)
+                {
+                    counter++;
+                    if(counter % 3 == 0)
+                    {
+                        if(i != 0)
+                            hasil = "." + angka.charAt(i) +  hasil;
+                        else
+                                hasil = angka.charAt(i) + hasil;
+                    }
+                    else
+                    {
+                        hasil = angka.charAt(i) + hasil;
+                    }
+                }
+                return prefix + hasil;
+            },
+            format_data(value,types)
+            {
+                var result = value;
+                result = Math.ceil(result);
+                for(var i = 0;i<types.length;i++)
+                {
+                    var type = types[i];
+                    if(type == 'price')
+                    {
+                        result = this.strToPrice(result,"Rp. ");
+                    }
+                    else if(type == 'percent')
+                    {
+                        result = result + "%";
+                    }
+                    else if(type == 'approveornot')
+                    {
+                        if(result == 0)
+                        {
+                            result = 'New';
+                        }
+                        else
+                        {
+                            result = 'Approved';
+                        }
+                    }
+                }
+                return result;
+            },
 			set_check_listing(val)
 			{
 				this.check_listing = val;

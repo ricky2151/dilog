@@ -1880,6 +1880,15 @@ export default
 					additional_param_store : 'purchase_order_id',
 
 					actions:['Edit', 'Approve', 'Delete'],
+					conditional_action:[
+						{
+							"data" : [],
+							"parent" : [],
+						},
+						{},
+						{}
+					], //berlaku per row
+					conditional_action_button : ['status', '==', '0'], //langsung tombolnya per row
 					button_on_index : ['Add Data'],
 
 					format_additional_data : 
@@ -1888,6 +1897,12 @@ export default
 						'Type' : 'po_type_name',
 						'Total' : 'total',
 						
+					},
+					function_format_additional_data : 
+					{
+						'total' : {
+							format_data : ['price'],
+						},
 					},
 
 					request_master_data : false,

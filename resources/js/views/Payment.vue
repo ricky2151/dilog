@@ -2,7 +2,7 @@
     <div>
         
     
-
+SALAHHHHHHHHHHHHHHHHHHHHH
     
         <template v-if='open_state == "Payemnt"'>
 
@@ -48,6 +48,7 @@
            :prop_search_data='search_data'
            
            :prop_button_on_index='info_table.button_on_index'
+           :prop_function_format_information='info_table.function_format_additional_data'
 
            v-on:button_index_clicked='button_index_clicked'
            v-on:search_change='search_data=$event'
@@ -61,7 +62,7 @@
 
             
             <!-- DATATABLE -->
-
+asdfasdf
             <cp-datatable 
             v-if='info_table.data'
 

@@ -50,6 +50,7 @@
            :prop_information='additional_data ? additional_data : ""'
             :prop_format_information='info_table.format_additional_data ? info_table.format_additional_data : ""'
            :prop_button_on_index='info_table.button_on_index'
+           :prop_function_format_information='info_table.function_format_additional_data'
 
            v-on:button_index_clicked='button_index_clicked'
            v-on:search_change='search_data=$event'
@@ -75,9 +76,12 @@
             :prop_url_index='prop_list_filter? generate_url("purchase_orders", "detail",prop_list_filter["id_selected"], info_table.plural_name) :  generate_url(info_table.table_name, "index")'
             :prop_filter='prop_list_filter'
             prop_get_additional_data='true'
+            prop_trigger_after_refresh_data='true'
+            :prop_conditional_action_button='info_table.conditional_action_button'
+
 
             
-
+            v-on:data_refreshed='after_data_refreshed'
             v-on:show_additional_data='fill_additional_data'            
             v-on:action_clicked='action_change'
             ref="cpDatatable"
@@ -110,6 +114,51 @@ export default {
         }
     },
     methods: {
+        after_data_refreshed()
+        {
+
+            //hitung semua total payment yang di approve
+            //lalu jika total payment = total yang harus dibayarkan, maka disable tombol add
+            var temp_data_table = JSON.parse(JSON.stringify(this.$refs['cpDatatable'].data_table));
+            var total_payment_approved = 0;
+            for(var i = 0;i<temp_data_table.length;i++)
+            {
+                if(temp_data_table[i].status == 1)
+                {
+                    total_payment_approved += temp_data_table[i].paid_off;
+                }
+            }
+            console.log('cek totalpayment');
+            console.log(total_payment_approved);
+            console.log(this.additional_data.total);
+            if(total_payment_approved >= this.additional_data.total)
+            {
+                this.info_table.button_on_index = [];
+            }
+        },
+        after_fill_additional_data()
+        {
+            
+            //hitung semua total payment yang di approve
+            //lalu jika total payment = total yang harus dibayarkan, maka disable tombol add
+            var temp_data_table = JSON.parse(JSON.stringify(this.$refs['cpDatatable'].data_table));
+            var total_payment_approved = 0;
+            for(var i = 0;i<temp_data_table.length;i++)
+            {
+                if(temp_data_table[i].status == 1)
+                {
+                    total_payment_approved += temp_data_table[i].paid_off;
+                }
+            }
+            console.log('cek totalpayment');
+            console.log(total_payment_approved);
+            console.log(this.additional_data.total);
+            if(total_payment_approved >= this.additional_data.total)
+            {
+                this.info_table.button_on_index = [];
+            }
+           
+        },
         done_submit_incoming()
         {
             swal("Good job!", "Data Saved !", "success");

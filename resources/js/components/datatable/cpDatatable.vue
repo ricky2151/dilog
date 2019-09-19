@@ -35,7 +35,7 @@
 						}}
 			    	</td>
 			        <td v-show='prop_action_items.length > 0'>
-			            <div class="text-xs-left">
+			            <div class="text-xs-left" v-if='(prop_conditional_action_button && check_conditional_action_button(props.item, prop_conditional_action_button)) || (!prop_conditional_action_button)'>
 			                <v-menu offset-y>
 			                  <template v-slot:activator="{ on }">
 			                    <v-btn
@@ -49,11 +49,12 @@
 			                  </template>
 			                  <v-list>
 			                    <v-list-tile
-			                      v-for="(item, index) in prop_action_items"
-			                      :key="index"
-			                      v-on:click="$emit('action_clicked',props.item.id,index, props.item)"
+			                      v-for="(item, index_action) in prop_action_items"
+			                      :key="index_action"
+			                      v-if='prop_conditional_action && prop_conditional_action[index_action].length > 0 ? check_conditional_action(props.item[prop_conditional_action[index_action][0]],prop_conditional_action[index_action][1],prop_conditional_action[index_action][2]) : true '
+			                      v-on:click="$emit('action_clicked',props.item.id,index_action, props.item)"
 			                    >
-			                      <v-list-tile-title>{{ item }}</v-list-tile-title>
+			                      <v-list-tile-title >{{ item }}</v-list-tile-title>
 			                    </v-list-tile>
 			                  </v-list>
 			                </v-menu>
@@ -82,6 +83,9 @@
 			'prop_filter_by_user_value',
 			'prop_get_additional_data',
 			'prop_custom_response_attribute',
+			'prop_trigger_after_refresh_data',
+			'prop_conditional_action',
+			'prop_conditional_action_button'
 		],
 		watch : 
 		{
@@ -135,6 +139,43 @@
 			}
 		},
 		methods: {
+			check_conditional_action_button(data,requireif)
+			{
+				console.log('cek prop_conditional_action_button');
+				console.log(data);
+				console.log(requireif);
+				var result = true;
+				if(requireif[1] == '==')
+				{
+					if(data[requireif[0]] == requireif[2])
+					{
+						result = true;
+					}
+					else
+					{
+						result = false;
+					}
+				}
+				return result;
+			},
+			check_conditional_action(data,logical,truevalue)
+			{
+				console.log('masuk check_conditional_action');
+				console.log(data);
+				console.log(logical);
+				console.log(truevalue);
+				if(logical == '==')
+				{
+					if(data == truevalue)
+					{
+						return true;
+					}
+					else
+					{
+						return false;
+					}
+				}
+			},
 			clear_checklisted()
 			{
 				for(var i = 0;i<this.data_table.length;i++)
@@ -255,6 +296,10 @@
 	            	if(this.prop_get_additional_data)
 	            	{
 	            		this.$emit('show_additional_data', r.data.items[this.prop_filter['table_parent']]);
+	            	}
+	            	if(this.prop_trigger_after_refresh_data)
+	            	{
+	            		this.$emit('data_refreshed');
 	            	}
 
 
