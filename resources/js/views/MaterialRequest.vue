@@ -82,6 +82,7 @@
             :prop_format_filter_by_user='info_table.data.filter_by_user'
             :prop_filter_by_user_value='filter_by_user_value'
             :prop_custom_response_attribute='info_table.custom_response_attribute'
+            :prop_conditional_checklist='info_table.conditional_checklist'
 
             v-on:response_filter_by_user_ref='fill_filter_by_user_ref'
             v-on:action_clicked='action_change'

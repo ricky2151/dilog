@@ -87,7 +87,8 @@
 			'prop_custom_response_attribute',
 			'prop_trigger_after_refresh_data',
 			'prop_conditional_action',
-			'prop_conditional_action_button'
+			'prop_conditional_action_button',
+			'prop_conditional_checklist',
 		],
 		watch : 
 		{
@@ -99,6 +100,25 @@
 			{
 
 				var data_table_now = JSON.parse(JSON.stringify(this.data_table));
+				if(this.checklisting && this.prop_conditional_checklist)
+				{
+					var i = 0;
+					while(i<data_table_now.length)
+					{
+						var pushtrue = false;
+						
+						if(!(data_table_now[i][this.prop_conditional_checklist[0]] == this.prop_conditional_checklist[2]))
+						{
+							data_table_now.splice(i,1);
+							i--;
+						}
+						
+						
+
+						i++
+					}
+				}
+				
 				var result = [];
 				if((this.prop_filter_by_user_value && this.prop_format_filter_by_user.column_in_table))
 				{
@@ -108,7 +128,31 @@
 						{
 							if(data_table_now[i][this.prop_format_filter_by_user.column_in_table] == this.prop_filter_by_user_value)
 							{
-								result.push(data_table_now[i]);
+								var pushtrue = false;
+								if(this.checklisting && this.prop_conditional_checklist)
+								{
+									//console.log(this.prop_conditional_checklist);
+									if(data_table_now[i][this.prop_conditional_checklist[0]] == this.prop_conditional_checklist[2])
+									{
+										pushtrue = true;
+									}
+									else
+									{
+
+										pushtrue = false;
+									}
+								}
+								else
+								{
+									pushtrue = true;
+								}
+
+								if(pushtrue)
+								{
+									result.push(data_table_now[i]);	
+								}
+								
+								
 							}
 						}
 						for(var i = 0;i<result.length;i++)

@@ -1629,6 +1629,7 @@ export default
 					actions:['Detail'],
 					button_on_index : ['Add Data', 'Mark Complete', 'List PR'],
 					button_for_checklist : ['Mark Complete'],
+					conditional_checklist : ['status', '=', 'New'],
 
 					request_master_data : false,
 					data : 

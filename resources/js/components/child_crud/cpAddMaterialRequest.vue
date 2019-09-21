@@ -3,14 +3,33 @@
 
 		<v-layout row >
 			<v-toolbar
+				id='toolbar_mr'
 		      color='blue'
 		      dark
 		    >
-		        <v-toolbar-items style='height: 30px'>
-		        	<v-toolbar-title v-if='this_user_is_finance'><v-btn color='blue' dark depressed @click='$emit("back")'><h3>BACK</h3></v-btn></v-toolbar-title>
-		          <v-toolbar-title><v-btn color='blue' dark depressed @click='change_tab("Home")'><h3>HOME</h3></v-btn></v-toolbar-title>
-		          <v-toolbar-title v-if='profile_enable'><v-btn color='blue' dark depressed @click='change_tab("Profile")'><h3>PROFILE</h3></v-btn></v-toolbar-title>
+		        <v-toolbar-items>
+		        	
+		          	<v-toolbar-title v-bind:style='{"background-color" : tab=="Home" ? "#3046e6" : "transparent"}'>
+		          		<v-btn  style='height: 100%' :ripple='false' color='transparent' dark depressed @click='change_tab("Home")'>
+		          			<h3>HOME</h3>
+		          		</v-btn>
+		          	</v-toolbar-title>
+		          <v-toolbar-title style='margin-left: 0px' v-if='profile_enable' v-bind:style='{"background-color" : tab=="Profile" ? "#3046e6" : "transparent"}'>
+		          	<v-btn style='height: 100%' :ripple='false' color='transparent' dark depressed @click='change_tab("Profile")'>
+		          		<h3>PROFILE</h3>
+		          	</v-btn>
+		          </v-toolbar-title>
 		        </v-toolbar-items>
+
+		        <v-spacer>
+		        </v-spacer>
+
+		        <v-toolbar-title v-if='this_user_is_finance' style='height: 100%'>
+	        		<v-btn style='height: 100%;padding: 0px;margin: 0px;' :ripple='false' color='blue' dark depressed @click='$emit("back")'>
+	        			<h3>X Close</h3>
+	        		</v-btn>
+	        	</v-toolbar-title>
+
 		  </v-toolbar>
 		</v-layout>
 		<div v-show='tab=="Home"' class='mr_div_container'>
@@ -86,8 +105,10 @@
 						</v-flex>
 					</v-layout>
 					<center>
-						<v-btn class='button-action' fab depressed small dark @click='change_page(-1)'><v-icon small>keyboard_arrow_left</v-icon></v-btn>
-						<v-btn class='button-action' fab depressed small dark @click='change_page(1)'><v-icon small>keyboard_arrow_right</v-icon></v-btn>
+						
+						<v-btn v-if='page > 1' class='button-action' fab depressed small dark @click='change_page(-1)'><v-icon small>keyboard_arrow_left</v-icon></v-btn>
+						<b>Page : {{page}}</b>
+						<v-btn v-if='page < Math.ceil(this.goods.length / 6)' class='button-action' fab depressed small dark @click='change_page(1)'><v-icon small>keyboard_arrow_right</v-icon></v-btn>
 					</center>
 				</v-flex>
 

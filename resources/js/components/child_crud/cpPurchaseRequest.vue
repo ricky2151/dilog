@@ -73,6 +73,7 @@
            v-on:search_change='search_data=$event'
            v-on:filter_by_user_change='fill_filter_by_user_value'
            v-on:add_clicked='opendialog_createedit(-1)'
+           ref='cpHeader'
            >
            </cp-header>
 
@@ -412,6 +413,7 @@ export default {
     mounted(){      
         this.info_table = this.database[this.name_table];
         this.filter_finance();
+        this.$refs['cpHeader'].selected_filter = 0;
     },
     mixins:[
         mxCrudBasic
