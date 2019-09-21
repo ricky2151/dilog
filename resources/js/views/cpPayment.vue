@@ -129,9 +129,6 @@ export default {
                     total_payment_approved += temp_data_table[i].paid_off;
                 }
             }
-            console.log('cek totalpayment');
-            console.log(total_payment_approved);
-            console.log(this.additional_data.total);
             if(total_payment_approved >= this.additional_data.total)
             {
                 this.info_table.button_on_index = [];
@@ -151,9 +148,6 @@ export default {
                     total_payment_approved += temp_data_table[i].paid_off;
                 }
             }
-            console.log('cek totalpayment');
-            console.log(total_payment_approved);
-            console.log(this.additional_data.total);
             if(total_payment_approved >= this.additional_data.total)
             {
                 this.info_table.button_on_index = [];

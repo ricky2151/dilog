@@ -161,15 +161,12 @@
 			},
 			check_conditional_action(data,parent,requireifdata,requireifparent)
 			{
-				console.log('masuk check_conditional_action');
-				console.log(requireifparent);
 				var result_requireifdata = false;
 				var result_requireifparent = false;
 				if(requireifdata)
 				{
 					if(requireifdata[1] == '==')
 					{
-						console.log('masuk sini coy');
 						if(data[requireifdata[0]] == requireifdata[2])
 						{
 							result_requireifdata = true;
