@@ -78,6 +78,7 @@
             prop_get_additional_data='true'
             prop_trigger_after_refresh_data='true'
             :prop_conditional_action_button='info_table.conditional_action_button'
+            :prop_conditional_action='info_table.conditional_action'
 
 
             
@@ -170,20 +171,29 @@ export default {
                 this.opendialog_createedit(-1);
             }
         },
-        approve_payment(id)
+        approve_payment(id,data)
         {
             //api/payments/7/approve
-            const formData = new FormData();
-            formData.append('token', localStorage.getItem('token'));
-            formData.append('_method', 'patch');
-            axios.post('/api/payments/' + id + '/approve', formData, {
-                    'Accept': 'application/json',
-                    'Content-type': 'application/json' //default
-                })
-            .then((r) => {
-                swal("Good job!", "Data saved !", "success");
-                this.refresh_table();
-            });
+            //cek apakah payment tidak melebihi dari kekurangan yang harus dibaya
+            if(data.paid_off >= this.$refs['cpDatatable'].not_paid_yet)
+            {
+                const formData = new FormData();
+                formData.append('token', localStorage.getItem('token'));
+                formData.append('_method', 'patch');
+                axios.post('/api/payments/' + id + '/approve', formData, {
+                        'Accept': 'application/json',
+                        'Content-type': 'application/json' //default
+                    })
+                .then((r) => {
+                    swal("Good job!", "Data saved !", "success");
+                    this.refresh_table();
+                });
+
+            }
+            else
+            {
+                swal('Wrong Payment !', 'Your payment bigger then no yet paid !', 'error');
+            }
         },
         action_change(id,idx_action, data)
         {
@@ -194,7 +204,7 @@ export default {
             }
             else if(idx_action == 1)
             {
-                 this.approve_payment(id);
+                 this.approve_payment(id,data);
             }
             else if(idx_action == 2)
             {

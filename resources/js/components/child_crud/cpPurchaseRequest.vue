@@ -94,6 +94,7 @@
             :prop_filter='info_table.data.filter'
             :prop_format_filter_by_user='info_table.data.filter_by_user'
             :prop_filter_by_user_value='filter_by_user_value'
+            :prop_conditional_action_button='info_table.conditional_action_button'
 
             v-on:response_filter_by_user_ref='fill_filter_by_user_ref'
             v-on:action_clicked='action_change'
@@ -401,10 +402,7 @@ export default {
 				  	})
 	            });
             }
-            else if(idx_action == 2)
-            {
-                this.delete_data(id_datatable);
-            }
+            
             
         },
         

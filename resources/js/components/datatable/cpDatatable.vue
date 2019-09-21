@@ -48,12 +48,14 @@
 			                    </v-btn>
 			                  </template>
 			                  <v-list>
+
 			                    <v-list-tile
 			                      v-for="(item, index_action) in prop_action_items"
 			                      :key="index_action"
-			                      v-if='prop_conditional_action && prop_conditional_action[index_action].length > 0 ? check_conditional_action(props.item[prop_conditional_action[index_action][0]],prop_conditional_action[index_action][1],prop_conditional_action[index_action][2]) : true '
+			                      v-if='prop_conditional_action && prop_conditional_action[index_action] ? check_conditional_action(props.item, additional_data, prop_conditional_action[index_action].data, prop_conditional_action[index_action].parent) : true '
 			                      v-on:click="$emit('action_clicked',props.item.id,index_action, props.item)"
 			                    >
+
 			                      <v-list-tile-title >{{ item }}</v-list-tile-title>
 			                    </v-list-tile>
 			                  </v-list>
@@ -132,6 +134,7 @@
 			return {
 				checklisting : false,
 				data_table:[],
+				additional_data:[],
 				header_api:{
 	                'Accept': 'application/json',
 	                'Content-type': 'application/json'
@@ -141,9 +144,7 @@
 		methods: {
 			check_conditional_action_button(data,requireif)
 			{
-				console.log('cek prop_conditional_action_button');
-				console.log(data);
-				console.log(requireif);
+				
 				var result = true;
 				if(requireif[1] == '==')
 				{
@@ -158,23 +159,60 @@
 				}
 				return result;
 			},
-			check_conditional_action(data,logical,truevalue)
+			check_conditional_action(data,parent,requireifdata,requireifparent)
 			{
 				console.log('masuk check_conditional_action');
-				console.log(data);
-				console.log(logical);
-				console.log(truevalue);
-				if(logical == '==')
+				console.log(requireifparent);
+				var result_requireifdata = false;
+				var result_requireifparent = false;
+				if(requireifdata)
 				{
-					if(data == truevalue)
+					if(requireifdata[1] == '==')
 					{
-						return true;
-					}
-					else
-					{
-						return false;
+						console.log('masuk sini coy');
+						if(data[requireifdata[0]] == requireifdata[2])
+						{
+							result_requireifdata = true;
+						}
 					}
 				}
+				else
+				{
+					result_requireifdata = true;
+				}
+
+				if(requireifparent)
+				{
+					if(requireifparent[1] == '==')
+					{
+						if(parent[requireifparent[0]] == requireifparent[2])
+						{
+							result_requireifparent = true;
+						}
+					}
+					else if(requireifparent[1] == '>')
+					{
+						if(parent[requireifparent[0]] > requireifparent[2])
+						{
+							result_requireifparent = true;
+						}
+					}
+				}
+				else
+				{
+					result_requireifparent = true;
+				}
+
+				if(result_requireifdata && result_requireifparent)
+				{
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+
+				
 			},
 			clear_checklisted()
 			{
@@ -295,6 +333,7 @@
 	            	//jika ada additional data, emit data tersebut lalu dikirimkan ke cpheader
 	            	if(this.prop_get_additional_data)
 	            	{
+
 	            		this.$emit('show_additional_data', r.data.items[this.prop_filter['table_parent']]);
 	            	}
 	            	if(this.prop_trigger_after_refresh_data)
@@ -320,6 +359,7 @@
         		//jika adaadditional_data, maka format r nya agak beda
         		if(this.prop_get_additional_data)
         		{
+        			this.additional_data = r.data.items[this.prop_filter['table_parent']];
         			temp_r = r.data.items[this.prop_filter['table_parent']][response_attribute];
         		}
         		else

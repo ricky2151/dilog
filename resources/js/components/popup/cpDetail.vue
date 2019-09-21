@@ -134,6 +134,44 @@
                             result = 'Approved';
                         }
                     }
+                    else if(type == 'freeornot')
+                    {
+                        if(result == 0)
+                        {
+                            result = 'Not Free';
+                        }
+                        else
+                        {
+                            result = 'Free';
+                        }
+                    }
+                    else if(type == 'havegoodsornot')
+                    {
+                        if(result == 0)
+                        {
+                            result = 'Not Have Goods';
+                        }
+                        else
+                        {
+                            result = 'Have Goods';
+                        }   
+                    }
+                    else if(type == 'statusmaterialrequest')
+                    {
+                        //Status is condition this Material Request where value 2 = diproses ,1 = approved, 0 = new
+                        if(result == 0)
+                        {
+                            result = 'New';
+                        }
+                        else if(result == 1)
+                        {
+                            result = 'Have Goods';
+                        } 
+                        else if(result == 2)
+                        {
+                            result = 'Proccess';  
+                        }
+                    }
                 }
                 return result;
             },

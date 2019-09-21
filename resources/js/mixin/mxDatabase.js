@@ -730,7 +730,7 @@ export default
 								'stock_cut_off' : {show : true, format : ['price']},
 								'category_price_selling_name' : {show : true},
 								'price' : {show : true, format : ['price']},
-								'free' : {show : true},
+								'free' : {show : true, format : ['freeornot']},
 							},
 							headers: [
 								{ text: 'No', value:'no'},
@@ -750,7 +750,7 @@ export default
 							{
 								'id' : {show : false},
 								'supplier' : {show : true},
-								'price' : {show : true},
+								'price' : {show : true,format : ['price']},
 							},
 							headers: [
 								{ text: 'No', value:'no'},
@@ -925,7 +925,7 @@ export default
 							{
 								'id' : {show : false},
 								'name' : {show : true},
-								'is_have_goods' : {show : true},
+								'is_have_goods' : {show : true, format : ['havegoodsornot']},
 							},
 							headers: [
 								{ text: 'No', value:'no'},
@@ -1336,7 +1336,22 @@ export default
 					count_step:1,
 
 					actions:['Detail', 'Approve', 'SPBM', 'Payment'],
+
 					button_on_index : ['Add Data'],
+					conditional_action:[
+						//untuk detail
+						{
+							
+						},
+						//untuk approve
+						{
+							"data" : ['status', '==', 'Submit'],
+						},
+						//untuk SPBM
+						{},
+						//untuk payment
+						{}
+					], //berlaku per row
 
 					request_master_data : true,
 					data : 
@@ -1375,7 +1390,7 @@ export default
 							},
 							{
 								column : 'tax',
-								format : ['percent']
+								format : ['price']
 
 							},
 							{
@@ -1487,10 +1502,16 @@ export default
 					format_additional_data : 
 					{
 						'NO_PO' : 'no_po',
-						'Type' : 'type',
+						'Type' : 'type_name',
 						'Total' : 'total',
 						'Created_By' : 'created_by_user_name',
 						'Status' : 'status_name'
+					},
+					function_format_additional_data : 
+					{
+						'total' : {
+							format_data : ['price'],
+						},
 					},
 
 					request_master_data : false,
@@ -1694,8 +1715,8 @@ export default
 								'id' : {show : false},
 								'goods_name' : {show : true},
 								'qty' : {show : true},
-								'total' : {show : true},
-								'status' : {show : true},
+								'total' : {show : true,format : ['price']},
+								'status' : {show : true, format : ['statusmaterialrequest']},
 							},
 							headers: [
 								{ text: 'No', value:'no'},
@@ -1802,7 +1823,10 @@ export default
 					
 
 
-					actions:['Edit', 'Make PO', 'Delete'],
+					actions:['Edit', 'Make PO'],
+					conditional_action_button : ['status_name', '==', 'new'], //langsung tombolnya per row
+
+
 					button_on_index : ['Add Data'],
 
 					
@@ -1881,11 +1905,17 @@ export default
 
 					actions:['Edit', 'Approve', 'Delete'],
 					conditional_action:[
+						//untuk edit
 						{
-							"data" : [],
-							"parent" : [],
+							// "data" : [],
+							"parent" : ['not_paid_yet', '>', '0'],
 						},
-						{},
+						//untuk approve
+						{
+							// "data" : [],
+							"parent" : ['not_paid_yet', '>', '0'],	
+						},
+						//untuk delete
 						{}
 					], //berlaku per row
 					conditional_action_button : ['status', '==', '0'], //langsung tombolnya per row
@@ -1896,11 +1926,19 @@ export default
 						'NO_PO' : 'po_no',
 						'Type' : 'po_type_name',
 						'Total' : 'total',
+						'Already_Paid' : 'already_paid_off',
+						'Not_Paid_Yet' : 'not_paid_yet',
 						
 					},
 					function_format_additional_data : 
 					{
 						'total' : {
+							format_data : ['price'],
+						},
+						'already_paid_off' : {
+							format_data : ['price'],
+						},
+						'not_paid_yet' : {
 							format_data : ['price'],
 						},
 					},

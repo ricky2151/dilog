@@ -109,6 +109,7 @@ export default {
                         {
                             this.breadcrumbs[i].text_note = text_note;
                         }
+//                        this.breadcrumbs[i].disabled = true;
                     }
                     
 
@@ -284,6 +285,7 @@ export default {
           {
             if(result_breadcrumbs[i].text_note)
             {
+                result_breadcrumbs[i].disabled=  true;
                 result_breadcrumbs.splice(i,0, {
                     text : result_breadcrumbs[i].text_note,
                     disabled : true,
@@ -294,8 +296,14 @@ export default {
             i++;
 
           }
-          
-          return result_breadcrumbs;
+          if(result_breadcrumbs.length == 1)
+          {
+            return [];
+          }
+          else
+          {
+              return result_breadcrumbs;
+          }
         }
     },
 	mixins:[

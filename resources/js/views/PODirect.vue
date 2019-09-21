@@ -1,12 +1,6 @@
 <template>
     <div class='bgwhite'>
         <v-breadcrumbs divider=">" :items='computed_breadcrumbs' class='breadcrumbs'>
-
-            <!-- <v-breadcrumbs-item 
-            v-if='item.cp == cpPurchaseOrderDetails'
-
-            > -->
-                <!-- no_po -->
             </v-breadcrumbs-item>
             <v-breadcrumbs-item
                 slot="item"
@@ -81,6 +75,7 @@
            :prop_filter_by_user_format='info_table.data.filter_by_user'
            :prop_filter_by_user_ref='filter_by_user_ref'
            :prop_button_on_index='info_table.button_on_index'
+           
 
            v-on:button_index_clicked='button_index_clicked'
            v-on:search_change='search_data=$event'
@@ -107,6 +102,7 @@
             :prop_filter='info_table.data.filter'
             :prop_format_filter_by_user='info_table.data.filter_by_user'
             :prop_filter_by_user_value='filter_by_user_value'
+            :prop_conditional_action='info_table.conditional_action'
 
             v-on:response_filter_by_user_ref='fill_filter_by_user_ref'
             v-on:action_clicked='action_change'

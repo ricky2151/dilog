@@ -135,6 +135,7 @@
 										<template v-if='objColumn.type == "s"'>
 											<v-select
 											v-if='!objColumn.child_of'
+											v-show='ref_input[objColumn.table_ref]'
 											:rules='$list_validation[objColumn.validation]'
 											:label='objColumn.label'
 											v-model='input[column]'
@@ -150,6 +151,7 @@
 
 											<v-select
 											v-if='objColumn.child_of && input[objColumn.child_of]'
+											v-show='input[objColumn.child_of][objColumn.table_ref]'
 											:rules='$list_validation[objColumn.validation]'
 											:label='objColumn.label'
 											v-model='input[column]'
@@ -301,6 +303,7 @@
 
 												<v-select
 												v-if='objColumn.type=="s" && temp_input[table_name]'
+												v-show='ref_input[objColumn.table_ref]'
 												:rules='$list_validation[objColumn.validation]'
 												:label='objColumn.label'
 												v-model='temp_input[table_name][column]'
