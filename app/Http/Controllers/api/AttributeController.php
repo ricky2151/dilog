@@ -29,11 +29,8 @@ class AttributeController extends Controller
     public function index()
     {
         $this->attributeService->handleEmptyModel();
-        $attributes = $this->attribute->latest()->get();
-
-        return formatResponse(false,(["attributes"=>$attributes]));
+        return formatResponse(false,(["attributes"=>$this->attribute->latest()->get()]));
     }
-
 
     /**
      * Store a newly created attribute in storage.
@@ -50,7 +47,7 @@ class AttributeController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified attribute.
      *
      * @param  $id
      * @return \Illuminate\Http\JsonResponse
@@ -60,12 +57,25 @@ class AttributeController extends Controller
         $this->attributeService->handleInvalidParameter($id);
         $this->attributeService->handleModelNotFound($id);
 
-        $attribute = $this->attribute->find($id);
-        return formatResponse(false,(["attribute"=>$attribute]));
+        return formatResponse(false,(["attribute"=>$this->attribute->find($id)]));
     }
 
     /**
-     * Update the specified resource in storage.
+     * Show the form for editing the specified attribute.
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id)
+    {
+        $this->attributeService->handleInvalidParameter($id);
+        $this->attributeService->handleModelNotFound($id);
+
+        return formatResponse(false,(["attribute"=>$this->attribute->find($id,['id','name']), "master_data"=>[]]));
+    }
+
+    /**
+     * Update the specified attribute in storage.
      *
      * @param  \Illuminate\Http\UpdateAttribute  $request
      * @param  $id
@@ -81,7 +91,7 @@ class AttributeController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified attribute from storage.
      *
      * @param  $id
      * @return \Illuminate\Http\JsonResponse

@@ -5,8 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use App\Http\Traits\Uuids;
 use Storage;
+use App\Exceptions\DatabaseTransactionErrorException;
+use Illuminate\Support\Facades\DB;
 
 class Goods extends Model
 {
@@ -28,12 +31,12 @@ class Goods extends Model
     public function updatePriceSellings($priceSellings){
         foreach($priceSellings as $priceSelling){
             if($priceSelling['type'] == 1) {
-                $this->priceSelling()->create($priceSelling);
+                $this->priceSellings()->create($priceSelling);
             }
             else if($priceSelling['type'] == 0) {
-                $this->priceSelling()->find($priceSelling['id'])->update($priceSelling);
+                $this->priceSellings()->find($priceSelling['id'])->update($priceSelling);
             } else {
-                $this->priceSelling()->find($priceSelling['id'])->delete();
+                $this->priceSellings()->find($priceSelling['id'])->delete();
             }
         }
     }
@@ -51,8 +54,42 @@ class Goods extends Model
         }
     }
 
-    public static function allDataCreate(){
-        return ['categories' => Category::all(['id','name']), 'warehouses' => Warehouse::all(['id','name']), 'category_price_sellings' => CategoryPriceSelling::all(['id','name']),'attributes' => Attribute::all(['id','name']),'units'=>Unit::all(['id','name']),'cogs'=>Cogs::all(['id','name']),'suppliers'=>Supplier::all(['id','name_company','name_owner','name_pic','name_sales'])];
+    public function updatePricelists($pricelists){
+        foreach($pricelists as $pricelist){
+            if($pricelist['type'] == 1) {
+                $this->pricelists()->create($pricelist);
+            }
+            else if($pricelist['type'] == 0) {
+                $this->pricelists()->find($pricelist['id'])->update($pricelist);
+            } else {
+                $this->pricelists()->find($pricelist['id'])->delete();
+            }
+        }
+    }
+
+    public function getHaveArrived($purchaseOrderId){
+        return $this->spbmDetails->map(function($item) use($purchaseOrderId){
+            if($item->spbm['purchase_order_id'] == $purchaseOrderId)
+                return $item;
+        })->sum('qty');
+    }
+
+    public function warehouseWithRack(){
+        return $this->goodsRack->map(function($item){
+            return $item->rack;
+        })->groupBy('warehouse_id')->map(function($item, $key){
+            $warehouse = Warehouse::find($key);
+            return Arr::add(collect($warehouse),'racks',$item);
+            return $item->rack;
+        })->values();
+    }
+
+    public function spbmDetails(){
+        return $this->hasMany('App\Models\spbmDetail');
+    }
+
+    public function purchaseOrderDetails(){
+        return $this->hasMany('App\Models\PurchaseOrderDetail');
     }
 
     public function goodsRack(){
@@ -63,9 +100,9 @@ class Goods extends Model
         return $this->hasMany('App\Models\Pricelist');
     }
 
-    // public function suppliers(){
-    //     return $this->belongsToMany('App\Models\Supplier','pricelists','goods_id','supplier_id')->withPivot('price')->withTimestamps()->orderBy('pivot_updated_at', 'desc');
-    // }
+    public function suppliers(){
+        return $this->belongsToMany('App\Models\Supplier','pricelists','goods_id','supplier_id')->withPivot('price')->withTimestamps()->orderBy('pivot_updated_at', 'desc');
+    }
 
     public function user(){
         return $this->belongsTo('App\Models\User');
@@ -91,7 +128,7 @@ class Goods extends Model
         return $this->hasMany('App\Models\Material')->orderBy('updated_at', 'desc');
     }
     
-    public function priceSelling(){
+    public function priceSellings(){
         return $this->hasMany('App\Models\PriceSelling')->orderBy('updated_at', 'desc');
     }
 
@@ -99,8 +136,8 @@ class Goods extends Model
         return collect($this->goodsRack)->sum('stock');
     }
 
-    public static function index(){
-        $collectionGoods = Goods::latest()->get();
+    public function index(){
+        $collectionGoods = $this->latest()->get();
 
         $collectionGoods = $collectionGoods->map(function ($item) {
             $item = collect($item)->put('stock', $item->stock());
@@ -121,7 +158,7 @@ class Goods extends Model
     }
 
     public function getSellingPrices(){
-        $priceSellings = $this->priceSelling->map(function ($item) {
+        $priceSellings = $this->priceSellings->map(function ($item) {
             $item = Arr::add($item, 'warehouse_name', $item['warehouse']['name']);
             $item = Arr::add($item, 'category_price_selling_name', $item['categoryPriceSelling']['name']);
             return Arr::except($item, ['warehouse','categoryPriceSelling']);
@@ -137,6 +174,89 @@ class Goods extends Model
 
         return $pricelists;
     }
-    
 
+    public function formatDataRelationAttributeGoods($data){
+        $data['attribute_goods'] = $data['attribute_goods']->map(function($item){
+            return ['attribute'=>['id'=> $item['id'], 'name'=> $item['name']], "value" => $item['pivot']['value']];
+        });
+        return $data['attribute_goods'];
+    }
+
+    public function formatDataRelationCategoryGoods($data){
+        $data['category_goods'] = $data['category_goods']->map(function($item){
+            return ['category'=>['id'=> $item['id'], 'name'=> $item['name']]];
+        });
+        return $data['category_goods'];
+    }
+
+    public function selectedColoumns($data, $coloumn, $selectedColoumns){
+        $selectedColoumns = collect($selectedColoumns);
+        return $data->map(function($item) use($selectedColoumns, $coloumn){
+            $data = collect();
+            foreach ($selectedColoumns as $selectedColoumn) {
+                $data[Str::snake($selectedColoumn)] = $item["$selectedColoumn"];
+            }
+            if(is_null($coloumn)){
+                return $data;
+            }
+            else{
+                return ["$coloumn"=>$data];
+            }
+        });
+    }
+
+    public function getDataAndRelation($id){
+        $data = $this->with('unit:id,name',
+                    'cogs:id,name',
+                    'priceSellings',
+                    'priceSellings.warehouse:id,name',
+                    'priceSellings.categoryPriceSelling:id,name',
+                    'pricelists',
+                    'pricelists.supplier:id,name_company',
+                    'attributes',
+                    'categories',
+                    'materials'
+                )->where('id',$id)->first();
+        $data['attribute_goods'] = $data['attributes'];
+        $data['category_goods'] = $data['categories'];
+        
+        //olah data untuk user
+        $data['attribute_goods'] = $this->formatDataRelationAttributeGoods($data);
+        $data['category_goods'] = $this->selectedColoumns($data['category_goods'],'category',["id","name"]);
+        $data['price_sellings'] = $this->selectedColoumns($data['priceSellings'],null,["id","stock_cut_off","free","price","warehouse","categoryPriceSelling"]);
+        $tampPricelists = $this->selectedColoumns($data['pricelists'],null,["id","price","supplier"]);
+        $tampMaterials = $this->selectedColoumns($data['materials'],null,["id","name","total","adjust"]);
+
+        $data = Arr::except($data, 
+            ['attributes',
+            'categories',
+            'user_id',
+            'unit_id',
+            'cogs_id',
+            'created_at',
+            'updated_at',
+            'deleted_at',
+            'priceSellings',
+            'pricelists',
+            'materials'
+            ]);
+
+        $data["thumbnail"] = Storage::url($data["thumbnail"]);
+        $data["pricelists"] = $tampPricelists;
+        $data["materials"] = $tampMaterials;
+
+        return $data;
+    }
+    
+    public function getMasterData(){
+        return [
+            'categories' => Category::all(['id','name']), 
+            'warehouses' => Warehouse::all(['id','name']), 
+            'category_price_sellings' => CategoryPriceSelling::all(['id','name']),
+            'attributes' => Attribute::all(['id','name']),
+            'units'=>Unit::all(['id','name']),
+            'cogs'=>Cogs::all(['id','name']),
+            'suppliers'=>Supplier::all(['id','name_company','name_owner','name_pic','name_sales'])
+        ];
+    }
 }

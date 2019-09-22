@@ -26,8 +26,8 @@ class UpdateRack extends FormRequest
     public function rules()
     {
         return [
-            'name' => "string|filled",
-            'warehouse_id' => "filled|integer|min:1|exists:warehouses,id",
+            'name' => "required|string",
+            'warehouse_id' => "required|integer|min:1|exists:warehouses,id",
             
             'goods_racks.*.id' => "filled|integer|min:1|exists:goods_rack,id" ,
             'goods_racks.*.goods_id' => "filled|integer|min:1|exists:goods,id" ,

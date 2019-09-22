@@ -18,6 +18,7 @@ class CreateMaterialRequestDetailsTable extends Migration
             $table->integer('material_request_id')->unsigned();
             $table->integer('goods_id')->unsigned();
             $table->integer('qty')->unsigned();
+            $table->float('total')->unsigned();
             $table->enum('status', [1, 0, -1])->default(0); // 1 : diterima, 0 : menunggu, -1 : ditolak
             $table->string('notes');
             $table->timestamps();

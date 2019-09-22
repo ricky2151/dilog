@@ -8,7 +8,7 @@ import FullScreen from 'vue-fullscreen'
 import 'vuetify/dist/vuetify.min.css'
 import * as VueGoogleMaps from 'vue2-google-maps'
 import colors from 'vuetify/es5/util/colors'
-import PluginValidation from './plugin/PluginValidation'
+import PluginValidation from './plugin/PluginValidation' //kayaknya ini tidak perlu lagi karena sudah ada di component
 import DilogApp from './DilogApp'
 
 
@@ -24,6 +24,8 @@ Vue.use(VueGoogleMaps, {
   load: {
     key: '',
   },
+  
+  
 
 })
 

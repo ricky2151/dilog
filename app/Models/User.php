@@ -90,9 +90,22 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany('App\Models\Goods');
     }
 
+    public function getTotalMrRp(){
+        return $this->materialRequests->sum(function($item){
+            return $item->getTotal();
+        });
+    }
+
     public function materialRequests()
     {
         return $this->hasMany('App\Models\MaterialRequest','request_by_user_id');
     }
 
+    public function purchaseOrdersCreated(){
+        return $this->hasMany('App\Models\PurchaseOrder','created_by_user_id');
+    }
+
+    public function purchaseRequests(){
+        return $this->hasMany('App\Models\PurchaseRequest','created_by_user_id');
+    }
 }

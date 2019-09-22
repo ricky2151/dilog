@@ -41,8 +41,8 @@ class WarehouseController extends Controller
     public function index()
     {
         $this->warehouseService->handleEmptyModel();
-        $warehouses = $this->warehouse->latest()->get();
-        return formatResponse(false,(["warehouse"=>$warehouses]));
+        $warehouses = $this->warehouse->latest()->get(['id','name','address','pic','telp']);
+        return formatResponse(false,(["warehouses"=>$warehouses]));
     }
     
     /**
@@ -56,9 +56,9 @@ class WarehouseController extends Controller
         $this->warehouseService->handleInvalidParameter($id);
         $this->warehouseService->handleModelNotFound($id);
 
-        $warehouse = $this->warehouse->find($id)->stockOpnames()->latest()->get();
+        $stockOpnames = $this->warehouse->find($id)->stockOpnames()->latest()->get();
 
-        return formatResponse(false,(["warehouse"=>$warehouse]));
+        return formatResponse(false,(["stock_opnames"=>$stockOpnames]));
     }
 
     /**
@@ -78,7 +78,7 @@ class WarehouseController extends Controller
         $data = Arr::add($data, 'user_id', $this->user->makeVisible('id')['id']);  
         $warehouse = $this->user->warehouse->find($id)->stockOpnames()->create($data);
 
-        return formatResponse(false,(["warehouse"=>["Stock opname in specific warehouse successfully created"]]));
+        return formatResponse(false,(["stock_opname"=>["Stock opname in specific warehouse successfully created"]]));
     }
 
     /**
@@ -92,7 +92,7 @@ class WarehouseController extends Controller
         $this->warehouseService->handleInvalidParameter($warehouseId);
         $this->warehouseService->handleModelNotFound($warehouseId);
 
-        return formatResponse(false,(["warehouse"=>$this->warehouse->find($warehouseId)->getGoodsWithStock()]));
+        return formatResponse(false,(["detail_stock_opnames"=>$this->warehouse->find($warehouseId)->getGoodsWithStock()]));
     }
 
     /**
@@ -110,7 +110,7 @@ class WarehouseController extends Controller
         $this->warehouseService->handleModelStockOpnameNotFound($stockOpnamesId);
         $result = $this->warehouseService->storeStockOpnamesDetails($data, $this->stockOpname->find($stockOpnamesId)->warehouse->getGoodsWithStock(), $stockOpnamesId);
 
-        return formatResponse(false,(["warehouse"=>[$result]]));
+        return formatResponse(false,(["detail_stock_opname"=>[$result]]));
     }
 
     /**
@@ -125,7 +125,7 @@ class WarehouseController extends Controller
         $this->warehouseService->handleModelStockOpnameNotFound($stockOpnamesId);
         $stockOpnameDetails = $this->warehouseService->detailStockOpnames($stockOpnamesId);
 
-        return formatResponse(false,(["warehouse"=>$stockOpnameDetails]));
+        return formatResponse(false,(["detail_stock_opnames"=>$stockOpnameDetails]));
     }
 
     /**
@@ -142,9 +142,9 @@ class WarehouseController extends Controller
 
         $this->warehouseService->handleInvalidParameter($stockOpnamesId);
         $this->warehouseService->handleModelStockOpnameNotFound($stockOpnamesId);
-        return $this->warehouseService->updateStockOpnamesDetails($data, $this->stockOpname->find($stockOpnamesId)->stockOpnameDetails, $stockOpnamesId);
+        $stockOpnameDetails = $this->warehouseService->updateStockOpnamesDetails($data, $this->stockOpname->find($stockOpnamesId)->stockOpnameDetails, $stockOpnamesId);
 
-        return formatResponse(false,(["warehouse"=>["details stock opname in specific warehouse successfully updated"]]));
+        return formatResponse(false,(["detail_stock_opname"=>[$stockOpnameDetails]]));
     }
 
     /**
@@ -158,18 +158,24 @@ class WarehouseController extends Controller
         
         $this->warehouseService->handleInvalidParameter($stockOpnamesId);
         $this->warehouseService->handleModelStockOpnameNotFound($stockOpnamesId);
-
-        DB::beginTransaction();
-        try {
-            $this->stockOpname->find($stockOpnamesId)->stockOpnameDetails()->delete();
-            $this->stockOpname->find($stockOpnamesId)->delete();
-
-            DB::commit();
-        }catch (\Throwable $e) {
-            DB::rollback();
-            throw new DatabaseTransactionErrorException("Warehouse");
+        
+        $stockOpname = $this->stockOpname->find($stockOpnamesId);
+        if($stockOpname['approve'] == 1){
+            return formatResponse(true,(["stock_opname "=>["stock opname cannot be deleted because it has been submitted"]]));
         }
-        return formatResponse(false,(["warehouse"=>["warehouse deleted successfully"]]));
+        else{
+            DB::beginTransaction();
+            try {
+                $this->stockOpname->find($stockOpnamesId)->stockOpnameDetails()->delete();
+                $this->stockOpname->find($stockOpnamesId)->delete();
+
+                DB::commit();
+            }catch (\Throwable $e) {
+                DB::rollback();
+                throw new DatabaseTransactionErrorException("Warehouse");
+            }
+            return formatResponse(false,(["stock_opname"=>["stock opname deleted successfully"]]));
+        }
     }
 
     
@@ -185,9 +191,16 @@ class WarehouseController extends Controller
         $this->warehouseService->handleInvalidParameter($stockOpnamesId);
         $this->warehouseService->handleModelStockOpnameNotFound($stockOpnamesId);
         
-        $this->stockOpname->find($stockOpnamesId)->setWaitings();
+        $stockOpname = $this->stockOpname->find($stockOpnamesId);
+        if($stockOpname['approve'] == 1){
+            return formatResponse(true,(["stock_opname"=>["stock opname cannot be submitted because it has been submitted"]]));
+        }
+        else{
+            $this->stockOpname->find($stockOpnamesId)->setWaitings();
+            return formatResponse(false,(["stock_opname"=>["stock opname status change to waiting"]]));
+        }
+        
 
-        return formatResponse(false,(["warehouse"=>["stockopname status change to waiting"]]));
     }
 
     /**
@@ -202,7 +215,7 @@ class WarehouseController extends Controller
 
         $racks = $this->warehouse->find($id)->getRackWithHaveGoods();
 
-        return formatResponse(false,(["warehouse"=>$racks]));
+        return formatResponse(false,(["racks"=>$racks]));
     }
 
     /**
@@ -215,9 +228,9 @@ class WarehouseController extends Controller
         $this->warehouseService->handleInvalidParameter($id);
         $this->warehouseService->handleModelNotFound($id);
 
-        $racks = $this->warehouse->find($id)->getGoodsRack();
+        $goodsRacks = $this->warehouse->find($id)->getGoodsRack();
 
-        return formatResponse(false,(["warehouse"=>$racks]));
+        return formatResponse(false,(["goods_racks"=>$goodsRacks]));
     }
 
     /**
@@ -283,7 +296,9 @@ class WarehouseController extends Controller
         $warehouse = $this->warehouse->find($id);
         $warehouse = collect($warehouse);
         
-        $concatenated = $warehouse->union(["racks"=>$this->warehouse->find($id)->racks]);
+        $concatenated = $warehouse->union(["racks"=>$this->warehouse->find($id)->racks->map(function($item){
+            return $item->only(['id','name']);
+        })]);
 
         return formatResponse(false,(["warehouse"=>$concatenated]));
     }

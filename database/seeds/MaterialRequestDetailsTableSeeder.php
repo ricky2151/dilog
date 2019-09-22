@@ -21,6 +21,7 @@ class MaterialRequestDetailsTableSeeder extends Seeder
                     "material_request_id" => $i,
                     "goods_id" => rand(1,4),
                     "qty" => rand(10, 100),
+                    "total" => 10 * $i,
                     "notes"=> $faker->sentence,
                 ]);
             }

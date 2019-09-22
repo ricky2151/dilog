@@ -8,8 +8,15 @@ use App\Models\Material;
 
 class MaterialService
 {
+    private $material;
+
+    public function __construct(Material $material)
+    {
+        $this->material = $material;
+    }
+
     public function handleEmptyModel(){
-        if(Material::all()->count() === 0){
+        if($this->material->all()->count() === 0){
             throw new CustomModelNotFoundException("material"); 
         } 
 
@@ -23,7 +30,7 @@ class MaterialService
 
     public function handleModelNotFound($id){
         try{
-            $user = Material::findOrFail($id);
+            $material = $this->material->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {

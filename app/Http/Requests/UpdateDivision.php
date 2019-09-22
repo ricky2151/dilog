@@ -26,8 +26,8 @@ class UpdateDivision extends FormRequest
     public function rules()
     {
         return [
-            "name" => "filled|string",
-            "mr_enable" => "filled|boolean"
+            "name" => "required|string",
+            "mr_enable" => "required|boolean"
         ];
     }
 

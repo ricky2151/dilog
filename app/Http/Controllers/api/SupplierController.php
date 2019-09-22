@@ -31,8 +31,7 @@ class SupplierController extends Controller
     {
         $this->supplierService->handleEmptyModel();
 
-        $suppliers = $this->supplier->latest()->get();
-        return formatResponse(false,(["suppliers"=>$suppliers]));
+        return formatResponse(false,(["suppliers"=>$this->supplier->latest()->get(['id','name_company','name_pic','address'])]));
     }
 
     /**
@@ -42,7 +41,7 @@ class SupplierController extends Controller
      */
     public function create()
     {
-        return formatResponse(false,([$this->supplier->allDataCreate()]));
+        return formatResponse(false,($this->supplier->getMasterData()));
     }
 
     /**
@@ -100,14 +99,8 @@ class SupplierController extends Controller
         $this->supplierService->handleInvalidParameter($id);
         $this->supplierService->handleModelNotFound($id);
 
-        $allGoods = collect($this->supplier->allDataCreate());
 
-        $supplier = $this->supplier->find($id);
-        $supplier = collect($supplier);
-        
-        $concatenated = $supplier->union($allGoods)->union($this->showFormatData($id));
-
-        return formatResponse(false,(["supplier"=>$concatenated]));
+        return formatResponse(false,(["supplier"=>$this->supplier->getDataAndRelation($id), 'master_data'=>$this->supplier->getMasterData()]));
     }
 
     /**
@@ -139,7 +132,7 @@ class SupplierController extends Controller
             throw new DatabaseTransactionErrorException("Supplier");
         }
 
-        return formatResponse(false,(["Supplier"=>["Supplier successfully updated"]]));
+        return formatResponse(false,(["supplier"=>["Supplier successfully updated"]]));
     }
 
     /**
@@ -155,7 +148,7 @@ class SupplierController extends Controller
 
         DB::beginTransaction();
         try {
-            $this->supplier->find($id)->goods()->sync([]);
+            // $this->supplier->pricelists($id)->goods()->sync([]);
             $this->supplier->find($id)->delete();
 
             DB::commit();
@@ -164,25 +157,6 @@ class SupplierController extends Controller
             throw new DatabaseTransactionErrorException("Supplier");
         }
 
-        return formatResponse(false,(["Supplier"=>["Supplier deleted successfully"]]));
-    }
-
-    /**
-     * Format supplier relation data in method show.
-     *
-     * @param  $id
-     * @return Illuminate\Support\Collection
-     */
-    public function showFormatData($id){
-        $pricelists = $this->supplier->find($id)->pricelists;
-
-        $pricelists = $pricelists->map(function ($item) { 
-            $item = Arr::add($item, 'goods_name', $item['goods']['name']);
-            return Arr::except($item,['goods']);
-        });
-
-        $data = collect(["pricelists" => $pricelists]);
-
-        return $data;
+        return formatResponse(false,(["supplier"=>["Supplier deleted successfully"]]));
     }
 }

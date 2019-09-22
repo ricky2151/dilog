@@ -1,28 +1,33 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Unauthenticated from './views/Unauthenticated'
-import Authenticated from './views/Authenticated'
+import Unauthenticated from './views/Unauthenticated.vue'
+import Authenticated from './views/Authenticated.vue'
 
-import Home from './views/Home'
-import Warehouse from './views/Warehouse'
+import Home from './views/Home.vue'
+import Warehouse from './views/Warehouse.vue'
 //import Goods from './views/Goods'
-import Type from './views/Type'
-import Categorypriceselling from './views/Categorypriceselling'
-import Category from './views/Category'
-import Attribute from './views/Attribute'
-import Unit from './views/Unit'
-import Source from './views/Source'
-import Goods from './views/Goods'
-import Goodscreate from './views/Goodscreate'
-import GoodsRack from './views/GoodsRack'
-import Cogs from './views/Cogs'
-import Rack from './views/Rack'
-import Supplier from './views/Supplier'
-import Customer from './views/Customer'
+import Type from './views/Type.vue'
+import Categorypriceselling from './views/Categorypriceselling.vue'
+import Category from './views/Category.vue'
+import Attribute from './views/Attribute.vue'
+import Unit from './views/Unit.vue'
+import Source from './views/Source.vue'
+import Goods from './views/Goods.vue'
+import Goodscreate from './views/Goodscreate.vue'
+import GoodsRack from './views/GoodsRack.vue'
+import Cogs from './views/Cogs.vue'
+import Rack from './views/Rack.vue'
+import Supplier from './views/Supplier.vue'
+import Customer from './views/Customer.vue'
+import PODirect from './views/PODirect.vue'
 
-import Login from './views/Login'
-import Logout from './views/Logout'
+import PurchaseOrder from './views/PurchaseOrder.vue'
+import MaterialRequest from './views/MaterialRequest.vue'
+import PurchaseRequest from './views/PurchaseRequest.vue'
+
+import Login from './views/Login.vue'
+import Logout from './views/Logout.vue'
 
 
 Vue.use(VueRouter)
@@ -39,25 +44,32 @@ const routes = [
         path:'/', component: Authenticated,
         children: [
             { path: '/', component: Home },
-            { path: '/warehouse', component: Warehouse },
-            //{ path: '/goods', component: Goods },
-            { path: '/type', component: Type},
-            { path: '/categorypriceselling', component: Categorypriceselling},
-            { path: '/category', component: Category},
-            { path: '/attribute', component: Attribute},
-            { path: '/unit', component: Unit},
+            { path: '/master-data/type', component: Type},
+            { path: '/master-data/category-price-selling', component: Categorypriceselling},
+            { path: '/master-data/category', component: Category},
+            { path: '/master-data/attribute', component: Attribute},
+            { path: '/master-data/unit', component: Unit},
+            { path: '/master-data/supplier', component: Supplier},
+            { path: '/master-data/customer', component: Customer},
+            { path: '/master-data/cogs', component: Cogs},
+            { path: '/master-data/goods', component: Goods, exact: true },
+            { path: '/master-data/goods/create', component: Goodscreate},
+            { path: '/stock/goods/rack', component: GoodsRack },
+            { path: '/stock/warehouse', component: Warehouse },
+            { path: '/stock/rack', component: Rack},
             { path: '/source', component: Source},
-            { path: '/goods', component: Goods },
-            { path: '/goodsrack', component: GoodsRack },
-            { path: '/goodscreate', component: Goodscreate},
-            { path: '/cogs', component: Cogs},
-            { path: '/rack', component: Rack},
-            { path: '/supplier', component: Supplier},
-            { path: '/customer', component: Customer},
-            { path: '/logout', component: Logout, },
+            { path: '/purchase-order', component: PurchaseOrder },
+            { path: '/purchase-order-direct', component: PODirect},
+            { path: '/material-request', component: MaterialRequest },
+            { path: '/purchase-request', component: PurchaseRequest },
+
+            { path: '/logout', component: Logout },
+
+            // 404 redirect to home
+            { path: '*', redirect: '/' }
         ],
         meta: { requiresAuth: true }
-    },
+    }
 
 
 ]
@@ -72,7 +84,7 @@ router.beforeEach(async (to, from, next) => {
     // check if the route requires authentication and user is not logged in
     if (to.matched.some(route => route.meta.requiresAuth)) {
         try {
-            if(!localStorage.getItem('token')) {
+            if(!localStorage.getItem('token') || localStorage.getItem('token') === 'undefined') {
                 next({ path: '/login', replace: true})
                 return
             }
@@ -83,7 +95,7 @@ router.beforeEach(async (to, from, next) => {
 
     // if logged in redirect to dashboard
     if(to.path === '/login') {
-        if(localStorage.getItem('token')) {
+        if(localStorage.getItem('token') && localStorage.getItem('token') !== 'undefined') {
             next({ path: '/', replace: true})
             return
         }
@@ -93,3 +105,4 @@ router.beforeEach(async (to, from, next) => {
 })
 
 export default router;
+

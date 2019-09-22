@@ -155,6 +155,7 @@
                             :key="'menu'+index"
 
                             >
+
                             <v-list-tile-action class='ltc-icon'>
                                 <v-icon class='color-text-sidebar icon-sidebar'>{{ item.icon }}</v-icon>
                             </v-list-tile-action>
@@ -233,52 +234,52 @@ export default {
                     {
                         subicon:"category",
                         subtitle:"Goods Categories",
-                        subaction: "/category"
+                        subaction: "/master-data/category"
                     },
                     {
                         subicon:"dns",
                         subtitle:"Goods Units",
-                        subaction: "/unit"
+                        subaction: "/master-data/unit"
                     },
                     {
                         subicon:"build",
                         subtitle:"Goods Attributes",
-                        subaction: "/attribute"
+                        subaction: "/master-data/attribute"
                     },
 
                     {
                         subicon:"bookmarks",
                         subtitle:"COGS Types",
-                        subaction: "/type"
+                        subaction: "/master-data/type"
                     },
                     {
                         subicon:"compare_arrows",
                         subtitle:"Selling Price Categories",
-                        subaction: "/categorypriceselling"
+                        subaction: "/master-data/category-price-selling"
                     },
 
                     {
                         subicon:"widgets",
                         subtitle:"Goods",
-                        subaction: "/goods"
+                        subaction: "/master-data/goods"
                     },
 
                     {
                         subicon:"monetization_on",
                         subtitle:"COGS",
-                        subaction: "/cogs"
+                        subaction: "/master-data/cogs"
                     },
 
                     {
                         subicon:"perm_contact_calendar",
                         subtitle:"Suppliers",
-                        subaction: "/supplier"
+                        subaction: "/master-data/supplier"
                     },
 
                     {
                         subicon:"person_pin",
                         subtitle:"Customers",
-                        subaction: "/customer"
+                        subaction: "/master-data/customer"
                     },
                     
                     ]
@@ -290,20 +291,49 @@ export default {
                     {
                         subicon:"store",
                         subtitle:"Warehouses",
-                        subaction: "/warehouse"
+                        subaction: "/stock/warehouse"
                     },
                     {
                         subicon:"assignment_returned",
                         subtitle:"Goods Racks",
-                        subaction: "/goodsrack"
+                        subaction: "/stock/goods/rack"
                     },
                     {
                         subicon:"dns",
                         subtitle:"Racks",
-                        subaction: "/rack"
+                        subaction: "/stock/rack"
                     },
 
                    
+                    
+                    ]
+                },
+                {
+                    icon: "business",
+                    title: "Purchase Order",
+                    action:'/PurchaseOrder',
+                    subroutes:[
+                    {
+                        subicon:"store",
+                        subtitle:"Purchase Order",
+                        subaction: "/purchase-order"
+                    },
+                    {
+                        subicon:"play_arrow",
+                        subtitle:"PO Direct",
+                        subaction: "/purchase-order-direct"
+                    },
+                    {
+                        subicon:"next_week",
+                        subtitle:"Material Request",
+                        subaction: "/material-request"
+                    },
+                    {
+                        subicon:"beenhere",
+                        subtitle:"Purchase Request",
+                        subaction: "/purchase-request"
+                    },
+
                     
                     ]
                 },
@@ -337,19 +367,19 @@ export default {
                 {
                     icon: "feedback",
                     title: "Barang sudah habis !",
-                    action: "/goods",
+                    action: "/master-data/goods",
                     bgcolor : "red",
                 },
                 {
                     icon: "feedback",
                     title: "Barang sudah habis !",
-                    action: "/goods",
+                    action: "/master-data/goods",
                     bgcolor : "red",
                 },
                 {
                     icon: "feedback",
                     title: "Barang sudah habis !",
-                    action: "/goods",
+                    action: "/master-data/goods",
                     bgcolor : "red",
                 }
             ]

@@ -8,8 +8,15 @@ use App\Models\Unit;
 
 class UnitService
 {
+    private $unit;
+
+    public function __construct(Unit $unit)
+    {
+        $this->unit = $unit;
+    }
+
     public function handleEmptyModel(){
-        if(Unit::all()->count() === 0){
+        if($this->unit->all()->count() === 0){
             throw new CustomModelNotFoundException("unit"); 
         } 
 
@@ -23,7 +30,7 @@ class UnitService
 
     public function handleModelNotFound($id){
         try{
-            $user = Unit::findOrFail($id);
+            $unit = $this->unit->findOrFail($id);
         }
         catch(ModelNotFoundException $e)
         {
