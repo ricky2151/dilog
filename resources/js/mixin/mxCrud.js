@@ -61,7 +61,7 @@ export default {
                 this.after_fill_additional_data();
             }
         },
-        open_component(name_component, table_parent,id_selected)
+        open_component(name_component, table_parent,id_selected, text_note)
         {
             if(table_parent)
             {
@@ -69,6 +69,8 @@ export default {
                 this.list_state[name_component]['id_selected'] = id_selected;
             }
             this.open_state = name_component;
+
+            var idx_selected = -1;
 
             //setting breadcrumbs
             //disable semua breadcrumbs
@@ -80,8 +82,38 @@ export default {
             {
                 if(this.breadcrumbs[i].cp == name_component)
                 {
+                    idx_selected = i;
                     var temp_breadcrumb = this.breadcrumbs[i];
                     this.breadcrumbs[i].disabled = false;
+
+                    //atur text_note
+                    if(text_note)
+                    {
+                        if(text_note == '[use_same_text_note_level]')
+                        {
+                            //isi text_note dengan text_note yang selevel
+                            var temp_before = temp_breadcrumb.before;
+                            var text_note_this_level = '';
+                            for(var j = 0;j<this.breadcrumbs.length;j++)
+                            {
+                                if(this.breadcrumbs[j].before == temp_before && this.breadcrumbs[j].text_note)
+                                {
+                                    text_note_this_level = this.breadcrumbs[j].text_note;
+                                    break;
+
+                                }
+                            }
+                            this.breadcrumbs[i].text_note = text_note_this_level;
+                        }  
+                        else
+                        {
+                            this.breadcrumbs[i].text_note = text_note;
+                        }
+//                        this.breadcrumbs[i].disabled = true;
+                    }
+                    
+
+
                     while(temp_breadcrumb.before)
                     {
                         for(var j = 0;j<this.breadcrumbs.length;j++)
@@ -97,6 +129,11 @@ export default {
                     break;
                 }
             }
+
+
+
+
+            
 
         },
 		findDataById(id)
@@ -220,7 +257,54 @@ export default {
 
             }
         }
+
         
+    },
+    computed : 
+    {
+        computed_breadcrumbs: function () {
+          var result_breadcrumbs = JSON.parse(JSON.stringify(this.breadcrumbs));
+          var i = 0;
+
+          //hapus item breadcrumb yang gak kepake
+          while(i<result_breadcrumbs.length)
+          {
+            if(result_breadcrumbs[i].disabled)
+            {
+                result_breadcrumbs.splice(i,1);
+                i--;
+            }
+
+            i++;
+
+          }
+
+          //beri note jika ada note yang diperlukan
+          i = 0;
+          while(i<result_breadcrumbs.length)
+          {
+            if(result_breadcrumbs[i].text_note)
+            {
+                result_breadcrumbs[i].disabled=  true;
+                result_breadcrumbs.splice(i,0, {
+                    text : result_breadcrumbs[i].text_note,
+                    disabled : true,
+                });
+                i++;
+            }
+
+            i++;
+
+          }
+          if(result_breadcrumbs.length == 1)
+          {
+            return [];
+          }
+          else
+          {
+              return result_breadcrumbs;
+          }
+        }
     },
 	mixins:[
 		mxStringProcessing,

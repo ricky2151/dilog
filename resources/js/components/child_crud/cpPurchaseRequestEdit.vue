@@ -13,6 +13,8 @@
         :headers="headers"
         :items="data"
         v-if='data_ready'
+        :rows-per-page-items='[{"text" : "All", "value" : -1}]'
+		hide-actions
         >
 	        <template v-slot:items="props">
 	            <td>{{ props.item.no }}</td>
@@ -51,7 +53,12 @@
 	            </td>
 	            <td>
 	            	<div v-if='input[props.index].selected_pricelist'>
+	            		<template v-if='input[props.index].amount_order && input[props.index].selected_pricelist.price'>
 	            		{{strToPrice(input[props.index].amount_order * input[props.index].selected_pricelist.price, "Rp. ")}}
+	            		</template>
+	            		<template v-else>
+	            			{{strToPrice("0", "Rp. ")}}
+	            		</template>
 	            		
 	            	</div>
 	            </td>
@@ -63,6 +70,7 @@
         		<v-btn dark @click='save_to_localstorage()' color='blue'>Cancel</v-btn>
         		<v-btn dark @click='submit()' color='blue'>Submit</v-btn>
         	</v-flex>
+        	
         </v-layout>
         
         <!-- ================================ -->
@@ -74,7 +82,8 @@
 	export default {
 		props : [
 		'prop_list_filter',
-		'prop_temp_data'
+		'prop_temp_data',
+		
 		],
 		data () {
 			return {
@@ -86,11 +95,11 @@
     				{ text: 'Goods', value:'goods_name',sortable:false},
     				{ text: 'Stock', value:'stock',sortable:false},
     				{ text: 'Total Required MR', value:'total_required_by_mr',sortable:false},
-    				{ text: 'Total Already PO', value:'total_already_po',sortable:false},
-    				{ text: 'Amount Order', value:'amount_order',sortable:false},
+    				{ text: 'Total PO', value:'total_already_po',sortable:false},
+    				{ text: 'Qty Order', value:'amount_order',sortable:false},
     				{ text: 'Supplier', value:'supplier',sortable:false},
     				{ text: 'Pricelists', value:'pricelists',sortable:false},
-    				{ text: 'Subtotal', value:'subtotal',sortable:false},
+    				{ text: 'Subtotal', value:'subtotal',sortable:false, width:'15%'},
 				],
 			}
 		},
@@ -100,8 +109,13 @@
 			{
 				const formData = new FormData();
 				var idxformdata = 0;
+				var data_false = false;
 				for(var i = 0;i<this.input.length;i++)
 				{
+					if( (!(this.input[i].goods_id && this.input[i].amount_order && this.input[i].selected_pricelist.price && this.input[i].selected_pricelist.supplier_id && this.input[i].selected_pricelist.id)) || ((parseInt(this.input[i].amount_order) + parseInt(this.data[i].total_already_po)) > (parseInt(this.data[i].total_required_by_mr) )))
+					{
+						data_false = true;
+					}
 					formData.append('purchase_request_details[' + idxformdata + '][goods_id]', this.input[i].goods_id);
 					formData.append('purchase_request_details[' + idxformdata + '][qty]', this.input[i].amount_order);
 					formData.append('purchase_request_details[' + idxformdata + '][price]', this.input[i].selected_pricelist.price);
@@ -109,25 +123,42 @@
 					formData.append('purchase_request_details[' + idxformdata + '][pricelist_id]', this.input[i].selected_pricelist.id);
 					idxformdata += 1;
 				}
-				return formData;
+				if(data_false)
+				{
+					return false;
+				}
+				else
+				{
+					return formData;
+				}
 			},
 			submit()
 			{
-				axios.post(
-	            	'api/purchaseRequests/' + this.data.id + '/purchaseRequestDetails',
-	            		this.prepare_data()
-	            	 ,{
-		                headers: {
-		                    'Accept': 'application/json',
-		                    'Content-type': 'application/json'
-		                },
-		                params : 
-		                {
-		                	'token' : localStorage.getItem('token')
-		                }
-		            }).then((r)=> {
-			            this.$emit('done', r,this.data.id);
-	            });
+				var formData = new FormData();
+				formData = this.prepare_data();
+				if(formData)
+				{
+					axios.post(
+		            	'/api/purchaseRequests/' + this.data.id + '/purchaseRequestDetails',
+		            		formData
+		            	 ,{
+			                headers: {
+			                    'Accept': 'application/json',
+			                    'Content-type': 'application/json'
+			                },
+			                params : 
+			                {
+			                	'token' : localStorage.getItem('token')
+			                }
+			            }).then((r)=> {
+				            this.$emit('done', r,this.data.id);
+		            });
+
+				}
+				else
+				{
+					swal('Submit Failed !', 'Please input correctly !', 'error');
+				}
 			},
 			save_to_localstorage()
 			{
@@ -162,9 +193,11 @@
 	            return prefix + hasil;
 	        },
 	        
-			fill_data(data_from_server)
+			fill_data(data_from_server, id_pr)
 			{
+
 				this.data = JSON.parse(JSON.stringify(data_from_server));
+				this.data.id = id_pr;
 
 				//sederhanakan array supplier dan array pricelist
 				//sekalian tambahkan attribute supplier_selected dan pricelist_selected pada this.input
@@ -209,6 +242,12 @@
 					delete this.data[i].pricelists;
 				}
 
+				//isi attribute input agar tidak error
+				// for(var i =0;i<this.data.length;i++)
+				// {
+				// 	this.input[i] = {};
+				// 	this.inputf
+				// }
 				this.data_ready = true;
 			}
 		},

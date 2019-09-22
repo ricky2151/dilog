@@ -6,10 +6,18 @@
 					<v-btn icon dark v-on:click='close_dialog()'>
 						<v-icon>close</v-icon>
 					</v-btn>
-					<v-toolbar-title>Incoming PO</v-toolbar-title>
+					<v-toolbar-title>SPBM</v-toolbar-title>
 				</v-toolbar>
 				<div>
 
+					<div v-if='percent_goods == 100'>
+						<v-layout row style='font-size: 16px;margin: 15px 4px'>
+				        	<v-flex xs5 class='marginleft30'>
+				        		<h3 >SPBM Is Completed !</h3>
+				        	</v-flex>
+				        	
+				        </v-layout>
+					</div>
 					<v-layout row style='font-size: 16px;margin: 10px 4px'>
 			        	<v-flex xs3 class='marginleft30'>
 			        		<b >No PO :</b>
@@ -28,103 +36,106 @@
 			        	</v-flex>
 			        </v-layout>
 
-			        <v-layout row style='font-size: 16px;margin: 10px 4px'>
-			        	<v-flex xs3 class='marginleft30' style='padding-top: 20px'>
-			        		<b>Target Warehouse : </b>
-			        	</v-flex>
-			        	<v-flex xs5>
-			        		<v-select
-								label='Select Warehouse'
-								v-model='input.warehouse'
+			        <template v-if='percent_goods != 100'>
+				        <v-layout row style='font-size: 16px;margin: 10px 4px'>
+				        	<v-flex xs3 class='marginleft30' style='padding-top: 20px'>
+				        		<b>Target Warehouse : </b>
+				        	</v-flex>
+				        	<v-flex xs5>
+				        		<v-select
+									label='Select Warehouse'
+									v-model='input.warehouse'
 
-								:items='warehouses'
-								item-text='name'
-								return-object
+									:items='warehouses'
+									item-text='name'
+									return-object
 
-								class="pa-2"
-								>
-							</v-select>
-			        	</v-flex>
-			        </v-layout>
+									class="pa-2"
+									>
+								</v-select>
+				        	</v-flex>
+				        </v-layout>
 
-			        <v-layout row style='font-size: 16px;margin: 10px 4px'>
-			        	<v-flex xs3 class='marginleft30' style='padding-top: 20px'>
-			        		<b>Delivery Order : </b>
-			        	</v-flex>
-			        	<v-flex xs5>
-			        		<v-text-field
-								label='Delivery Order'
-								v-model='input.delivery_order'
-								class="pa-2"
-								>
-							</v-text-field>
-			        	</v-flex>
-			        </v-layout>
+				        <v-layout row style='font-size: 16px;margin: 10px 4px'>
+				        	<v-flex xs3 class='marginleft30' style='padding-top: 20px'>
+				        		<b>Delivery Order : </b>
+				        	</v-flex>
+				        	<v-flex xs5>
+				        		<v-text-field
+									label='Delivery Order'
+									v-model='input.delivery_order'
+									class="pa-2"
+									>
+								</v-text-field>
+				        	</v-flex>
+				        </v-layout>
 
-			        <v-data-table
-			        	
-			            disable-initial-sort
-			            :headers="headers_goods"
-			            :items="input.goods"
-			            class="datatable"
-			        >
-			        	
+				        <v-data-table
 				        	
-						<template v-slot:items="props">
-					    	
-						        <td>{{ props.item.no }}</td>
-						        <td>{{ props.item.goods_name }}</td>
-						        <td>{{ props.item.order_quantity }}</td>
-						        <td>{{ props.item.have_arrived }}</td>
-						        <td>
-						        	<v-text-field
-										label='Incoming'
-										v-model='input.goods[props.index].incoming'
-										class="pa-2"
-										>
-									</v-text-field>
-						        </td>
-						        <td>
-						        	<v-select
-						        		v-if='input.warehouse'
-										label='Select Rack'
-										v-model='input.goods[props.index].rack'
+				            disable-initial-sort
+				            :headers="headers_goods"
+				            :items="input.goods"
+				            class="datatable"
+				        >
+				        	
+					        	
+							<template v-slot:items="props">
+						    	
+							        <td>{{ props.item.no }}</td>
+							        <td>{{ props.item.goods_name }}</td>
+							        <td>{{ props.item.order_quantity }}</td>
+							        <td>{{ props.item.have_arrived }}</td>
+							        <td>
+							        	<v-text-field
+											label='Incoming'
+											v-model='input.goods[props.index].incoming'
+											class="pa-2"
+											>
+										</v-text-field>
+							        </td>
+							        <td>
+							        	<v-select
+							        		v-if='input.warehouse'
+											label='Select Rack'
+											v-model='input.goods[props.index].rack'
 
-										:items='input.warehouse.racks'
-										item-text='name'
-										return-object
+											:items='input.warehouse.racks'
+											item-text='name'
+											return-object
 
-										class="pa-2"
-										>
-									</v-select>
-						        </td>
-						    
-						</template>
-			        </v-data-table>
+											class="pa-2"
+											>
+										</v-select>
+							        </td>
+							    
+							</template>
+				        </v-data-table>
 
-			        <v-layout row>
-			        	<v-flex xs3 class='marginleft30'>
-			        		<b>% Arrival before submit : </b>
-			        	</v-flex>
-			        	<v-flex xs5>
-			        		<b>{{ percent_goods }}%</b>
-			        	</v-flex>
-			        </v-layout>
+				        <v-layout row>
+				        	<v-flex xs3 class='marginleft30'>
+				        		<b>% Arrival before submit : </b>
+				        	</v-flex>
+				        	<v-flex xs5>
+				        		<b>{{ percent_goods }}%</b>
+				        	</v-flex>
+				        </v-layout>
 
-			        <v-layout row>
-			        	<v-flex xs3 class='marginleft30'>
-			        		<b>% Arrival After submit : </b>
-			        	</v-flex>
-			        	<v-flex xs5>
-			        		<b>{{percent_after_goods}}%</b>
-			        	</v-flex>
-			        </v-layout>
+				        <v-layout row>
+				        	<v-flex xs3 class='marginleft30'>
+				        		<b>% Arrival After submit : </b>
+				        	</v-flex>
+				        	<v-flex xs5>
+				        		<b>{{percent_after_goods}}%</b>
+				        	</v-flex>
+				        </v-layout>
 
-			        <v-btn v-on:click='submit' dark color='menu' style='margin: 20px 30px' class='marginright25'>Submit Incoming PO</v-btn>
-
-			         <v-layout row style='font-size: 16px;margin-top:50px'>
+				        <v-btn v-on:click='submit' dark color='menu' style='margin: 20px 30px' class='marginright25'>Submit SPBM</v-btn>
+				        <div style='margin-top:50px'></div>
+				     </template>
+				     
+			         <v-layout row style='font-size: 16px'>
 			        	<v-flex xs3 class='marginleft30' style='padding-top: 20px'>
-			        		<b>History Incoming : </b>
+			        		<b>History SPBM : </b>
 			        	</v-flex>
 			        	
 			        </v-layout>
@@ -161,7 +172,7 @@
 		data() {
 			return {
 				dialog:false,
-
+				
 				headers_goods: [
 					{ text: 'No', value:'no'},
     				{ text: 'Goods', value:'goods_name'},
@@ -240,7 +251,7 @@
                 		this.input.goods[i].rack = null;
                 	}
                 	this.dialog = false;
-                	swal('Incoming Cannot Submited', 'Cant open because PO status is not approve/complete', 'error');
+                	swal('SPBM Cannot Submited', 'Cant open because PO status is not approve/complete', 'error');
                 	
                 });
 			},
@@ -259,6 +270,7 @@
 			},
 			get_data()
 			{
+
 				var url = "/api/spbms/create";
 				
                 axios.get(url, {
@@ -278,7 +290,7 @@
                 })
                 .catch(error => {
 
-                	swal('Incoming Is Not Avaiable', "Can't open because PO status is not approve/complete", 'error');
+                	swal('SPBM Is Not Avaiable', "Can't open because PO status is not approve/complete", 'error');
                 	
                 });
 
@@ -305,7 +317,7 @@
 				{
 					this.input.goods[i].no = (i + 1);
 				}
-			
+				
 				this.dialog = true;	
 
 				
@@ -334,7 +346,15 @@
 						total_have_arrived_plus_incoming += (parseInt(this.input.goods[i].have_arrived) + parseInt(this.input.goods[i].incoming));
 						total_order_qty += parseInt(this.input.goods[i].order_quantity);
 					}
-					this.percent_after_goods = Math.floor((total_have_arrived_plus_incoming / total_order_qty) * 100);
+					if(total_have_arrived_plus_incoming && total_order_qty)
+					{
+						this.percent_after_goods = Math.floor((total_have_arrived_plus_incoming / total_order_qty) * 100);
+
+					}
+					else
+					{
+						this.percent_after_goods = 0;
+					}
 				},
 				deep:true,
 			}

@@ -147,6 +147,8 @@ class PurchaseOrderController extends Controller
                 'po_no'=> $purchaseOrder['no_po'],
                 'po_type_name'=> $purchaseOrder->getNameTypePo(),
                 'total' => $purchaseOrder['total'],
+                'already_paid_off' => $purchaseOrder->getTotalPayment(),
+                'not_paid_yet' => $purchaseOrder['total']-$purchaseOrder->getTotalPayment(),
                 "payments"=>$purchaseOrder->payments->sortByDesc('created_at')->values()
             ]
         ]));

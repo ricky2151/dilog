@@ -3,13 +3,14 @@
 <template>
     <div class='bgwhite'>
         
-        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs'>
+        <v-breadcrumbs divider=">" :items='computed_breadcrumbs' class='breadcrumbs'>
+            </v-breadcrumbs-item>
             <v-breadcrumbs-item
                 slot="item"
                 slot-scope="{ item }"
                 exact
-                :class="{breadcrumbs_hidden : item.disabled}"
-                @click="open_component(item.cp)"
+                :disabled='item.disabled'
+                @click="item.disabled ? '' : open_component(item.cp)"
                 >
 
                 {{ item.text }}
@@ -167,21 +168,13 @@ export default {
             }
             else if(idx_action == 3)
             {
-                //opendialog_detailstockcards(id_datatable);
+                this.opendialog_detail(id_datatable, 'cpDetailPricelists', 'pricelists');
             }
             else if(idx_action == 4)
             {
-                this.opendialog_detail(id_datatable, 'cpDetailPricelists', 'pricelists');
-            }
-            else if(idx_action == 5)
-            {
-
-            }
-            else if(idx_action == 6)
-            {
-
                 this.delete_data(id_datatable);
             }
+           
             //this.action_selected[id_datatable] = null;
         },
         

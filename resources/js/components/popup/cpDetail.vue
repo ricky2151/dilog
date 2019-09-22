@@ -12,7 +12,6 @@
 
                 </v-toolbar>
                 <div style='padding:30px'>
-                    
                     <v-text-field
                         v-model="search_data"
                         append-icon="search"
@@ -28,8 +27,12 @@
                     class=""
                     >
                     <template v-slot:items="props">
-                        <td>{{ props.index + 1 }}</td>
-                        <td v-for='(obj,column_name) in prop_columns' v-if='obj.show'>{{props.item[column_name]}}</td>
+                        <td>{{ props.item.no }}</td>
+                        <td v-for='(obj,column_name) in prop_columns' v-if='obj.show'>
+                            {{obj.format?
+                                    format_data(props.item[column_name],obj.format) : 
+                                props.item[column_name]}}
+                        </td>
                     </template>
                     </v-data-table>
                 </div>
@@ -79,7 +82,99 @@
                 this.get_data();
             },
             
-
+            strToPrice(angka,prefix)
+            {
+                //100000
+                //9.000
+                //11212
+                //11.212
+                angka = angka.toString();
+                var hasil = "";
+                var counter = 0;
+                for(var i = angka.length - 1;i>= 0;i--)
+                {
+                    counter++;
+                    if(counter % 3 == 0)
+                    {
+                        if(i != 0)
+                            hasil = "." + angka.charAt(i) +  hasil;
+                        else
+                                hasil = angka.charAt(i) + hasil;
+                    }
+                    else
+                    {
+                        hasil = angka.charAt(i) + hasil;
+                    }
+                }
+                return prefix + hasil;
+            },
+            format_data(value,types)
+            {
+                var result = value;
+                result = Math.ceil(result);
+                for(var i = 0;i<types.length;i++)
+                {
+                    var type = types[i];
+                    if(type == 'price')
+                    {
+                        result = this.strToPrice(result,"Rp. ");
+                    }
+                    else if(type == 'percent')
+                    {
+                        result = result + "%";
+                    }
+                    else if(type == 'approveornot')
+                    {
+                        if(result == 0)
+                        {
+                            result = 'New';
+                        }
+                        else
+                        {
+                            result = 'Approved';
+                        }
+                    }
+                    else if(type == 'freeornot')
+                    {
+                        if(result == 0)
+                        {
+                            result = 'Not Free';
+                        }
+                        else
+                        {
+                            result = 'Free';
+                        }
+                    }
+                    else if(type == 'havegoodsornot')
+                    {
+                        if(result == 0)
+                        {
+                            result = 'Not Have Goods';
+                        }
+                        else
+                        {
+                            result = 'Have Goods';
+                        }   
+                    }
+                    else if(type == 'statusmaterialrequest')
+                    {
+                        //Status is condition this Material Request where value 2 = diproses ,1 = approved, 0 = new
+                        if(result == 0)
+                        {
+                            result = 'New';
+                        }
+                        else if(result == 1)
+                        {
+                            result = 'Have Goods';
+                        } 
+                        else if(result == 2)
+                        {
+                            result = 'Proccess';  
+                        }
+                    }
+                }
+                return result;
+            },
 
             //for data
             get_data()
@@ -92,7 +187,13 @@
                         }
                     }
                 ).then((r) => {
+
                     this.data = r.data.items[this.prop_response_attribute];
+
+                    for(var i = 0;i<this.data.length;i++)
+                    {
+                        this.data[i].no = i + 1;
+                    }
                     
                 });
 

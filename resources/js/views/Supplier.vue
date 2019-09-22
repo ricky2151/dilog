@@ -3,13 +3,14 @@
 <template>
     <div class='bgwhite'>
         
-        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs'>
+       <v-breadcrumbs divider=">" :items='computed_breadcrumbs' class='breadcrumbs'>
+            </v-breadcrumbs-item>
             <v-breadcrumbs-item
                 slot="item"
                 slot-scope="{ item }"
                 exact
-                :class="{breadcrumbs_hidden : item.disabled}"
-                @click="open_component(item.cp)"
+                :disabled='item.disabled'
+                @click="item.disabled ? '' : open_component(item.cp)"
                 >
 
                 {{ item.text }}

@@ -1,13 +1,14 @@
 <template>
     <div class='bgwhite'>
 
-        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs'>
+        <v-breadcrumbs divider=">" :items='computed_breadcrumbs' class='breadcrumbs'>
+            </v-breadcrumbs-item>
             <v-breadcrumbs-item
                 slot="item"
                 slot-scope="{ item }"
                 exact
-                :class="{breadcrumbs_hidden : item.disabled}"
-                @click="open_component(item.cp)"
+                :disabled='item.disabled'
+                @click="item.disabled ? '' : open_component(item.cp)"
                 >
 
                 {{ item.text }}
@@ -25,6 +26,7 @@
 <script>
 import axios from 'axios'
 import cpGoodsRack from './../components/child_crud/cpGoodsRack.vue'
+
 
 export default {
     name:'GoodsRack',
@@ -61,6 +63,52 @@ export default {
         
         
 
+    },
+    computed : 
+    {
+        computed_breadcrumbs: function () {
+          var result_breadcrumbs = JSON.parse(JSON.stringify(this.breadcrumbs));
+          var i = 0;
+
+          //hapus item breadcrumb yang gak kepake
+          while(i<result_breadcrumbs.length)
+          {
+            if(result_breadcrumbs[i].disabled)
+            {
+                result_breadcrumbs.splice(i,1);
+                i--;
+            }
+
+            i++;
+
+          }
+
+          //beri note jika ada note yang diperlukan
+          i = 0;
+          while(i<result_breadcrumbs.length)
+          {
+            if(result_breadcrumbs[i].text_note)
+            {
+                result_breadcrumbs[i].disabled=  true;
+                result_breadcrumbs.splice(i,0, {
+                    text : result_breadcrumbs[i].text_note,
+                    disabled : true,
+                });
+                i++;
+            }
+
+            i++;
+
+          }
+          if(result_breadcrumbs.length == 1)
+          {
+            return [];
+          }
+          else
+          {
+              return result_breadcrumbs;
+          }
+        }
     },
 }
 </script>

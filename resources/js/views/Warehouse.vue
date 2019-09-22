@@ -2,13 +2,14 @@
 <template>
     <div class='bgwhite'>
         
-        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs'>
+        <v-breadcrumbs divider=">" :items='computed_breadcrumbs' class='breadcrumbs'>
+            </v-breadcrumbs-item>
             <v-breadcrumbs-item
                 slot="item"
                 slot-scope="{ item }"
                 exact
-                :class="{breadcrumbs_hidden : item.disabled}"
-                @click="open_component(item.cp)"
+                :disabled='item.disabled'
+                @click="item.disabled ? '' : open_component(item.cp)"
                 >
 
                 {{ item.text }}
@@ -23,7 +24,7 @@
             v-for='(data_detail,key,index) in info_table.get_data_detail'
 
             :prop_title='"Detail " + data_detail.title' 
-            :prop_response_attribute='info_table.key'
+            :prop_response_attribute='data_detail.table_name'
             :prop_headers='data_detail.headers'
             :prop_columns='data_detail.single'
             :ref='"cpDetail"+ removeSpace(data_detail.title)'
@@ -195,7 +196,7 @@ export default {
             if(index == 0)
             {
                 this.opendialog_createedit(-1);
-                this.$refs['cpForm'].prop_dataInfo = JSON.parse(JSON.stringify(this.info_table.data))
+                
             }
         },
         action_change(id_datatable,idx_action)
@@ -217,16 +218,17 @@ export default {
             }
             else if(idx_action == 2)
             {
-                this.opendialog_detail(id_datatable, 'cpDetailGoods', 'goods');
+                //this.opendialog_detail(id_datatable, 'cpDetailGoods', 'goods');
+                this.opendialog_stockopname(id_datatable);
             }
             else if(idx_action == 3)
             {
-                //stock opname
-                this.opendialog_stockopname(id_datatable);
+                
+                this.delete_data(id_datatable);
             }
             else if(idx_action == 4)
             {
-                this.delete_data(id_datatable);
+                
             }
             
         },

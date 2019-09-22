@@ -35,6 +35,7 @@
 
 						<v-layout row>
 							<v-flex xs12>
+								
 								<v-select
 								v-if='input.goods'
 								:rules='$list_validation.selectdata_req'
@@ -42,7 +43,7 @@
 								v-model='input.pricelist'
 
 								:items='input.goods.pricelists'
-								item-text='price'
+								item-text='pricerupiah'
 								return-object
 
 								class="pa-2"
@@ -166,6 +167,54 @@
 			}
 		},
 		methods : {
+
+
+			strToPrice(angka,prefix)
+	        {
+	            //100000
+	            //9.000
+	            //11212
+	            //11.212
+	            angka = angka.toString();
+	            var hasil = "";
+	            var counter = 0;
+	            for(var i = angka.length - 1;i>= 0;i--)
+	            {
+	                counter++;
+	                if(counter % 3 == 0)
+	                {
+	                    if(i != 0)
+	                        hasil = "." + angka.charAt(i) +  hasil;
+	                    else
+	                            hasil = angka.charAt(i) + hasil;
+	                }
+	                else
+	                {
+	                    hasil = angka.charAt(i) + hasil;
+	                }
+	            }
+	            return prefix + hasil;
+	        },
+			format_data(value,types)
+			{
+				var result = value;
+				result = Math.ceil(result);
+				for(var i = 0;i<types.length;i++)
+				{
+					var type = types[i];
+					if(type == 'price')
+					{
+						result = this.strToPrice(result,"Rp. ");
+					}
+					else if(type == 'percent')
+					{
+						result = result + "%";
+					}
+				}
+				return result;
+			},
+
+
 			prepare_data()
 			{
 				const formData = new FormData();
@@ -203,11 +252,11 @@
 				var url_post = '';
 				if(this.id_edit == -1)
 				{
-					url_post = 'api/purchaseOrderDetails';
+					url_post = '/api/purchaseOrderDetails';
 				}
 				else
 				{
-					url_post = 'api/purchaseOrderDetails/' + this.id_edit;
+					url_post = '/api/purchaseOrderDetails/' + this.id_edit;
 				}
 
 				axios.post(
@@ -292,7 +341,7 @@
 			get_master_data()
 			{
 				try{
-		            var response = axios.get('api/purchaseOrderDetails/create', {
+		            var response = axios.get('/api/purchaseOrderDetails/create', {
 		                params:{
 		                    token: localStorage.getItem('token'),
 		                    purchase_order_id : this.prop_purchase_order_id,
@@ -315,11 +364,21 @@
 			{
 				let r = await this.get_master_data();
 				this.ref_input = r.data.items;
+				
+				//buat pricerupiah
+				for(var i = 0;i<this.ref_input.goods.length;i++)
+				{
+					for(var j = 0;j<this.ref_input.goods[i].pricelists.length;j++)
+					{
+						
+						this.ref_input.goods[i].pricelists[j].pricerupiah = this.format_data(this.ref_input.goods[i].pricelists[j].price, ["price"]);
+					}
+				}
 			},
 			get_data_before_edit(id_edit) //nanti dihapus karena sudah ada di component
 	        {
 	        	try{
-		            var response = axios.get('api/purchaseOrderDetails/' + id_edit + '/edit', {
+		            var response = axios.get('/api/purchaseOrderDetails/' + id_edit + '/edit', {
 		                params:{
 		                    token: localStorage.getItem('token')
 		                }
@@ -346,6 +405,7 @@
 				if(id == -1)
 				{
 					this.fill_select_master_data();	
+
 				}
 				
 				var ref_input_from_server = [];
@@ -360,17 +420,25 @@
 					
 					this.ref_input.goods = JSON.parse(JSON.stringify(r.master_data.goods));
 
-
+					for(var i = 0;i<this.ref_input.goods.length;i++)
+					{
+						for(var j = 0;j<this.ref_input.goods[i].pricelists.length;j++)
+						{
+							
+							this.ref_input.goods[i].pricelists[j].pricerupiah = this.format_data(this.ref_input.goods[i].pricelists[j].price, ["price"]);
+						}
+					}
 					
 
 					//this.input.goods di assign dari master data
 					
 					var id_goods = r.purchase_order_detail.goods.id;
-					for(var i = 0;i<r.master_data.goods.length;i++)
+					for(var i = 0;i<this.ref_input.goods.length;i++)
 					{
-						if(r.master_data.goods[i].id == id_goods)
+						if(this.ref_input.goods[i].id == id_goods)
 						{
-							this.input.goods = r.master_data.goods[i];
+							this.input.goods = this.ref_input.goods[i];
+							
 							break;
 						}
 					}
@@ -469,6 +537,7 @@
 				
 			},
 			computed_price : function() {
+				
 				var discount_rupiah = 0;
 				var discount_percent = 0;
 				var qty = 0;
@@ -505,7 +574,16 @@
 					if(this.input.discount_rupiah && this.input.pricelist)
 					{
 						//return Math.floor((discount_rupiah / (price * tax * qty)) * 100);
-						return Math.floor((discount_rupiah / (price * qty)) * 100);
+						var result = Math.floor((discount_rupiah / (price * qty)) * 100);
+						if(result)
+						{
+
+							return result;
+						}
+						else
+						{
+							return 0;
+						}
 					}
 				}
 				else
@@ -513,10 +591,19 @@
 					if(this.input.pricelist)
 					{
 						//return Math.floor((price * tax * qty) * discount_percent);	
-						return Math.floor(price * qty * discount_percent);
+						var result = Math.floor(price * qty * discount_percent);
+						if(result)
+						{
+							return result;
+						}
+						else
+						{
+							return 0;
+						}
 					}
 					
 				}
+				return 0;
 			}
 		},
 		watch : {

@@ -1,12 +1,13 @@
 <template>
     <div class='bgwhite'>
-        <v-breadcrumbs divider=">" :items='breadcrumbs' class='breadcrumbs'>
+        <v-breadcrumbs divider=">" :items='computed_breadcrumbs' class='breadcrumbs'>
+            </v-breadcrumbs-item>
             <v-breadcrumbs-item
                 slot="item"
                 slot-scope="{ item }"
                 exact
-                :class="{breadcrumbs_hidden : item.disabled}"
-                @click="open_component(item.cp)"
+                :disabled='item.disabled'
+                @click="item.disabled ? '' : open_component(item.cp)"
                 >
 
                 {{ item.text }}
@@ -66,7 +67,6 @@
 
 
             <!-- HEADER DATATABLE -->
-
            <cp-header
            :prop_icon='info_table.icon'
            :prop_title='info_table.title'
@@ -74,11 +74,13 @@
            :prop_filter_by_user_format='info_table.data.filter_by_user'
            :prop_filter_by_user_ref='filter_by_user_ref'
            :prop_button_on_index='info_table.button_on_index'
+           
 
            v-on:button_index_clicked='button_index_clicked'
            v-on:search_change='search_data=$event'
            v-on:filter_by_user_change='fill_filter_by_user_value'
            v-on:add_clicked='opendialog_createedit(-1)'
+           ref='cpHeader'
            >
            </cp-header>
 
@@ -100,6 +102,7 @@
             :prop_filter='info_table.data.filter'
             :prop_format_filter_by_user='info_table.data.filter_by_user'
             :prop_filter_by_user_value='filter_by_user_value'
+            :prop_conditional_action='info_table.conditional_action'
 
             v-on:response_filter_by_user_ref='fill_filter_by_user_ref'
             v-on:action_clicked='action_change'
@@ -112,12 +115,15 @@
         <template v-if="open_state=='cpPurchaseOrderDetails'">
             <cp-purchase-order-details
             :prop_list_filter='list_state["cpPurchaseOrderDetails"]'
+            ref='cpPurchaseOrderDetails'
+            
             ></cp-purchase-order-details>
         </template>
 
         <template v-if="open_state=='cpPayment'">
             <cp-payment
             :prop_list_filter='list_state["cpPayment"]'
+            ref='cpPayment'
             >
             </cp-payment>
         </template>
@@ -144,6 +150,7 @@ export default {
         cpIncomingPo,
         cpPayment,
     },
+   
     data () {
         return {
             info_table:{},
@@ -204,14 +211,27 @@ export default {
             formData.append('_method', 'patch');
             formData.append('token', localStorage.getItem('token'));
             axios.post(
-                'api/purchaseOrders/' + id + '/approve',
+                '/api/purchaseOrders/' + id + '/approve',
                 formData,
                     {
                     'Accept': 'application/json',
                     'Content-type': 'application/json' //default
                     }
                 ).then((r) => {
-                swal("Good job!", "Data Approved !", "success");
+                    
+                    if(r.data.error)
+                    {
+                        if(r.data.message['purchase order'][0] == "Can't approve PO because status is not submit")
+                        {
+                            swal("Failed to Approve", "Can't approve PO because status is not submit", "error");
+                            //Can't approve PO because status is not submit
+                        }
+                    }
+                    else
+                    {
+                        swal("Good job!", "Data Approved !", "success");        
+                    }
+                
                 this.refresh_table();
             }).catch(function (error)
             {
@@ -231,7 +251,7 @@ export default {
             this.selected_data = data;
             if(idx_action == 0)
             {
-                 this.open_component('cpPurchaseOrderDetails', 'purchase_order', id);
+                 this.open_component('cpPurchaseOrderDetails', 'purchase_order', id, this.selected_data.no_po);
             }
             else if(idx_action == 1)
             {
@@ -246,7 +266,7 @@ export default {
             {
                 if(data.status == 'Approve' || data.status == 'Finish')
                 {
-                    this.open_component('cpPayment', 'purchase_order', id);
+                    this.open_component('cpPayment', 'purchase_order', id, this.selected_data.no_po);
                 }
                 else
                 {
@@ -266,6 +286,8 @@ export default {
     },
     mounted(){      
         this.info_table = this.database[this.name_table];
+
+        this.$refs['cpHeader'].selected_filter = 0;
     },
     mixins:[
         mxCrudBasic
