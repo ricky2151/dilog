@@ -372,6 +372,13 @@ export default {
         mxCrudBasic
 
     ],
+    watch : 
+    {
+        filter_by_user_ref : function(val)
+        {
+            this.$refs['cpHeader'].selected_filter = 0;
+        }
+    }
 }
 </script>
 
