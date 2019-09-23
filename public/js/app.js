@@ -2570,6 +2570,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -3305,6 +3326,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -3780,6 +3812,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3878,6 +3911,8 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//
+//
 //
 //
 //
@@ -4263,14 +4298,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
             _this3.$refs['cpMakePo'].fill_data(temp);
           });
         });
-      } else if (idx_action == 2) {
-        this.delete_data(id_datatable);
       }
     }
   },
   mounted: function mounted() {
     this.info_table = this.database[this.name_table];
     this.filter_finance();
+    this.$refs['cpHeader'].selected_filter = 0;
   },
   mixins: [_mixin_mxCrudBasic__WEBPACK_IMPORTED_MODULE_1__["default"]]
 });
@@ -4286,6 +4320,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
 //
 //
 //
@@ -4417,7 +4453,7 @@ __webpack_require__.r(__webpack_exports__);
       var data_false = false;
 
       for (var i = 0; i < this.input.length; i++) {
-        if (!(this.input[i].goods_id && this.input[i].amount_order && this.input[i].selected_pricelist.price && this.input[i].selected_pricelist.supplier_id && this.input[i].selected_pricelist.id) || this.input[i].amount_order > this.data[i].total_required_by_mr) {
+        if (!(this.input[i].goods_id && this.input[i].amount_order && this.input[i].selected_pricelist.price && this.input[i].selected_pricelist.supplier_id && this.input[i].selected_pricelist.id) || parseInt(this.input[i].amount_order) + parseInt(this.data[i].total_already_po) > parseInt(this.data[i].total_required_by_mr)) {
           data_false = true;
         }
 
@@ -5234,21 +5270,55 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = (_mixins$props$watch$c = {
   mixins: [_mixin_mxVariableProcess__WEBPACK_IMPORTED_MODULE_0__["default"]],
-  props: ['prop_header', 'prop_search_data', 'prop_infoDatatable', 'prop_action_items', 'prop_plural_name', 'prop_url_index', 'prop_filter', 'prop_format_filter_by_user', 'prop_filter_by_user_value', 'prop_get_additional_data', 'prop_custom_response_attribute'],
+  props: ['prop_header', 'prop_search_data', 'prop_infoDatatable', 'prop_action_items', 'prop_plural_name', 'prop_url_index', 'prop_filter', 'prop_format_filter_by_user', 'prop_filter_by_user_value', 'prop_get_additional_data', 'prop_custom_response_attribute', 'prop_trigger_after_refresh_data', 'prop_conditional_action', 'prop_conditional_action_button', 'prop_conditional_checklist'],
   watch: {},
   computed: {
     computed_data_table: function computed_data_table() {
       var data_table_now = JSON.parse(JSON.stringify(this.data_table));
+
+      if (this.checklisting && this.prop_conditional_checklist) {
+        var i = 0;
+
+        while (i < data_table_now.length) {
+          var pushtrue = false;
+
+          if (!(data_table_now[i][this.prop_conditional_checklist[0]] == this.prop_conditional_checklist[2])) {
+            data_table_now.splice(i, 1);
+            i--;
+          }
+
+          i++;
+        }
+      }
+
       var result = [];
 
       if (this.prop_filter_by_user_value && this.prop_format_filter_by_user.column_in_table) {
         if (this.prop_filter_by_user_value != '0') {
           for (var i = 0; i < data_table_now.length; i++) {
             if (data_table_now[i][this.prop_format_filter_by_user.column_in_table] == this.prop_filter_by_user_value) {
-              result.push(data_table_now[i]);
+              var pushtrue = false;
+
+              if (this.checklisting && this.prop_conditional_checklist) {
+                //console.log(this.prop_conditional_checklist);
+                if (data_table_now[i][this.prop_conditional_checklist[0]] == this.prop_conditional_checklist[2]) {
+                  pushtrue = true;
+                } else {
+                  pushtrue = false;
+                }
+              } else {
+                pushtrue = true;
+              }
+
+              if (pushtrue) {
+                result.push(data_table_now[i]);
+              }
             }
           }
 
@@ -5269,6 +5339,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     return {
       checklisting: false,
       data_table: [],
+      additional_data: [],
       header_api: {
         'Accept': 'application/json',
         'Content-type': 'application/json'
@@ -5276,6 +5347,53 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
   },
   methods: {
+    check_conditional_action_button: function check_conditional_action_button(data, requireif) {
+      var result = true;
+
+      if (requireif[1] == '==') {
+        if (data[requireif[0]] == requireif[2]) {
+          result = true;
+        } else {
+          result = false;
+        }
+      }
+
+      return result;
+    },
+    check_conditional_action: function check_conditional_action(data, parent, requireifdata, requireifparent) {
+      var result_requireifdata = false;
+      var result_requireifparent = false;
+
+      if (requireifdata) {
+        if (requireifdata[1] == '==') {
+          if (data[requireifdata[0]] == requireifdata[2]) {
+            result_requireifdata = true;
+          }
+        }
+      } else {
+        result_requireifdata = true;
+      }
+
+      if (requireifparent) {
+        if (requireifparent[1] == '==') {
+          if (parent[requireifparent[0]] == requireifparent[2]) {
+            result_requireifparent = true;
+          }
+        } else if (requireifparent[1] == '>') {
+          if (parent[requireifparent[0]] > requireifparent[2]) {
+            result_requireifparent = true;
+          }
+        }
+      } else {
+        result_requireifparent = true;
+      }
+
+      if (result_requireifdata && result_requireifparent) {
+        return true;
+      } else {
+        return false;
+      }
+    },
     clear_checklisted: function clear_checklisted() {
       for (var i = 0; i < this.data_table.length; i++) {
         this.data_table[i].checked = false;
@@ -5378,6 +5496,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         if (_this.prop_get_additional_data) {
           _this.$emit('show_additional_data', r.data.items[_this.prop_filter['table_parent']]);
         }
+
+        if (_this.prop_trigger_after_refresh_data) {
+          _this.$emit('data_refreshed');
+        }
       });
     },
     showTable: function showTable(r) {
@@ -5392,6 +5514,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 
       if (this.prop_get_additional_data) {
+        this.additional_data = r.data.items[this.prop_filter['table_parent']];
         temp_r = r.data.items[this.prop_filter['table_parent']][response_attribute];
       } else {
         temp_r = r.data.items[response_attribute];
@@ -5519,8 +5642,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['prop_icon', 'prop_title', 'prop_type_header', 'prop_search_data', 'prop_button_on_index', 'prop_information', 'prop_format_information', 'prop_filter_by_user_format', 'prop_filter_by_user_ref', 'prop_button_for_checklist'],
+  props: ['prop_icon', 'prop_title', 'prop_type_header', 'prop_search_data', 'prop_button_on_index', 'prop_information', 'prop_format_information', 'prop_filter_by_user_format', 'prop_filter_by_user_ref', 'prop_button_for_checklist', 'prop_function_format_information'],
   data: function data() {
     return {
       search_data: null,
@@ -5535,6 +5670,49 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    strToPrice: function strToPrice(angka, prefix) {
+      //100000
+      //9.000
+      //11212
+      //11.212
+      angka = angka.toString();
+      var hasil = "";
+      var counter = 0;
+
+      for (var i = angka.length - 1; i >= 0; i--) {
+        counter++;
+
+        if (counter % 3 == 0) {
+          if (i != 0) hasil = "." + angka.charAt(i) + hasil;else hasil = angka.charAt(i) + hasil;
+        } else {
+          hasil = angka.charAt(i) + hasil;
+        }
+      }
+
+      return prefix + hasil;
+    },
+    format_data: function format_data(value, types) {
+      var result = value;
+      result = Math.ceil(result);
+
+      for (var i = 0; i < types.length; i++) {
+        var type = types[i];
+
+        if (type == 'price') {
+          result = this.strToPrice(result, "Rp. ");
+        } else if (type == 'percent') {
+          result = result + "%";
+        } else if (type == 'approveornot') {
+          if (result == 0) {
+            result = 'New';
+          } else {
+            result = 'Approved';
+          }
+        }
+      }
+
+      return result;
+    },
     set_check_listing: function set_check_listing(val) {
       this.check_listing = val;
     },
@@ -5577,6 +5755,9 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+//
+//
+//
 //
 //
 //
@@ -7241,6 +7422,27 @@ __webpack_require__.r(__webpack_exports__);
           } else {
             result = 'Approved';
           }
+        } else if (type == 'freeornot') {
+          if (result == 0) {
+            result = 'Not Free';
+          } else {
+            result = 'Free';
+          }
+        } else if (type == 'havegoodsornot') {
+          if (result == 0) {
+            result = 'Not Have Goods';
+          } else {
+            result = 'Have Goods';
+          }
+        } else if (type == 'statusmaterialrequest') {
+          //Status is condition this Material Request where value 2 = diproses ,1 = approved, 0 = new
+          if (result == 0) {
+            result = 'New';
+          } else if (result == 1) {
+            result = 'Have Goods';
+          } else if (result == 2) {
+            result = 'Proccess';
+          }
         }
       }
 
@@ -7277,6 +7479,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixin_mxCrudBasic__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixin/mxCrudBasic */ "./resources/js/mixin/mxCrudBasic.js");
+//
 //
 //
 //
@@ -7890,6 +8093,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -7944,6 +8148,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixin_mxCrudBasic__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixin/mxCrudBasic */ "./resources/js/mixin/mxCrudBasic.js");
+//
 //
 //
 //
@@ -8194,6 +8399,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -8246,6 +8452,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixin_mxCrudBasic__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixin/mxCrudBasic */ "./resources/js/mixin/mxCrudBasic.js");
+//
 //
 //
 //
@@ -8500,6 +8707,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -8585,6 +8793,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -8608,7 +8817,44 @@ __webpack_require__.r(__webpack_exports__);
       }]
     };
   },
-  mounted: function mounted() {}
+  mounted: function mounted() {},
+  computed: {
+    computed_breadcrumbs: function computed_breadcrumbs() {
+      var result_breadcrumbs = JSON.parse(JSON.stringify(this.breadcrumbs));
+      var i = 0; //hapus item breadcrumb yang gak kepake
+
+      while (i < result_breadcrumbs.length) {
+        if (result_breadcrumbs[i].disabled) {
+          result_breadcrumbs.splice(i, 1);
+          i--;
+        }
+
+        i++;
+      } //beri note jika ada note yang diperlukan
+
+
+      i = 0;
+
+      while (i < result_breadcrumbs.length) {
+        if (result_breadcrumbs[i].text_note) {
+          result_breadcrumbs[i].disabled = true;
+          result_breadcrumbs.splice(i, 0, {
+            text: result_breadcrumbs[i].text_note,
+            disabled: true
+          });
+          i++;
+        }
+
+        i++;
+      }
+
+      if (result_breadcrumbs.length == 1) {
+        return [];
+      } else {
+        return result_breadcrumbs;
+      }
+    }
+  }
 });
 
 /***/ }),
@@ -8919,6 +9165,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_child_crud_cpAddMaterialRequest_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../components/child_crud/cpAddMaterialRequest.vue */ "./resources/js/components/child_crud/cpAddMaterialRequest.vue");
 /* harmony import */ var _components_child_crud_cpPurchaseRequestEdit_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../components/child_crud/cpPurchaseRequestEdit.vue */ "./resources/js/components/child_crud/cpPurchaseRequestEdit.vue");
 /* harmony import */ var _components_child_crud_cpMakePo_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../components/child_crud/cpMakePo.vue */ "./resources/js/components/child_crud/cpMakePo.vue");
+//
 //
 //
 //
@@ -9393,10 +9640,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
 
 
 
@@ -9500,6 +9743,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.info_table = this.database[this.name_table];
+    this.$refs['cpHeader'].selected_filter = 0;
   },
   mixins: [_mixin_mxCrudBasic__WEBPACK_IMPORTED_MODULE_0__["default"]]
 });
@@ -10154,6 +10398,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -10206,6 +10451,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixin_mxCrudBasic__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixin/mxCrudBasic */ "./resources/js/mixin/mxCrudBasic.js");
+//
 //
 //
 //
@@ -10474,6 +10720,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -10527,6 +10774,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _mixin_mxCrudChildForm__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../mixin/mxCrudChildForm */ "./resources/js/mixin/mxCrudChildForm.js");
 /* harmony import */ var _components_cpStockOpname_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../components/cpStockOpname.vue */ "./resources/js/components/cpStockOpname.vue");
+//
 //
 //
 //
@@ -10847,6 +11095,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['prop_list_filter', 'prop_format_additional_data', 'prop_additional_data'],
@@ -10859,6 +11112,38 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    after_data_refreshed: function after_data_refreshed() {
+      //hitung semua total payment yang di approve
+      //lalu jika total payment = total yang harus dibayarkan, maka disable tombol add
+      var temp_data_table = JSON.parse(JSON.stringify(this.$refs['cpDatatable'].data_table));
+      var total_payment_approved = 0;
+
+      for (var i = 0; i < temp_data_table.length; i++) {
+        if (temp_data_table[i].status == 1) {
+          total_payment_approved += temp_data_table[i].paid_off;
+        }
+      }
+
+      if (total_payment_approved >= this.additional_data.total) {
+        this.info_table.button_on_index = [];
+      }
+    },
+    after_fill_additional_data: function after_fill_additional_data() {
+      //hitung semua total payment yang di approve
+      //lalu jika total payment = total yang harus dibayarkan, maka disable tombol add
+      var temp_data_table = JSON.parse(JSON.stringify(this.$refs['cpDatatable'].data_table));
+      var total_payment_approved = 0;
+
+      for (var i = 0; i < temp_data_table.length; i++) {
+        if (temp_data_table[i].status == 1) {
+          total_payment_approved += temp_data_table[i].paid_off;
+        }
+      }
+
+      if (total_payment_approved >= this.additional_data.total) {
+        this.info_table.button_on_index = [];
+      }
+    },
     done_submit_incoming: function done_submit_incoming() {
       swal("Good job!", "Data Saved !", "success");
     },
@@ -10867,22 +11152,27 @@ __webpack_require__.r(__webpack_exports__);
         this.opendialog_createedit(-1);
       }
     },
-    approve_payment: function approve_payment(id) {
+    approve_payment: function approve_payment(id, data) {
       var _this = this;
 
       //api/payments/7/approve
-      var formData = new FormData();
-      formData.append('token', localStorage.getItem('token'));
-      formData.append('_method', 'patch');
-      axios.post('/api/payments/' + id + '/approve', formData, {
-        'Accept': 'application/json',
-        'Content-type': 'application/json' //default
+      //cek apakah payment tidak melebihi dari kekurangan yang harus dibaya
+      if (data.paid_off >= this.$refs['cpDatatable'].not_paid_yet) {
+        var formData = new FormData();
+        formData.append('token', localStorage.getItem('token'));
+        formData.append('_method', 'patch');
+        axios.post('/api/payments/' + id + '/approve', formData, {
+          'Accept': 'application/json',
+          'Content-type': 'application/json' //default
 
-      }).then(function (r) {
-        swal("Good job!", "Data saved !", "success");
+        }).then(function (r) {
+          swal("Good job!", "Data saved !", "success");
 
-        _this.refresh_table();
-      });
+          _this.refresh_table();
+        });
+      } else {
+        swal('Wrong Payment !', 'Your payment bigger then no yet paid !', 'error');
+      }
     },
     action_change: function action_change(id, idx_action, data) {
       this.selected_data = data;
@@ -10890,7 +11180,7 @@ __webpack_require__.r(__webpack_exports__);
       if (idx_action == 0) {
         this.opendialog_createedit(id);
       } else if (idx_action == 1) {
-        this.approve_payment(id);
+        this.approve_payment(id, data);
       } else if (idx_action == 2) {
         //delete
         this.delete_data(id);
@@ -10905,7 +11195,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css":
+/***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css?bdb9":
 /*!***********************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--6-1!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vuetify/dist/vuetify.min.css ***!
   \***********************************************************************************************************************************/
@@ -10936,7 +11226,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "#one_step .info_stepper\r\n{\r\n\tdisplay: none !important;\r\n}\r\n#one_step .v-stepper__content\r\n{\r\n\tborder-left: 1px solid white !important;\r\n\tmargin-left: 0px !important;\r\n\tmargin-top: 10px !important;\r\n}\r\n\r\n.bg-login\r\n{\r\n\tbackground-image: url('https://static.vecteezy.com/system/resources/previews/000/101/237/non_2x/free-abstract-background-11-vector.jpg');\r\n\tbackground-size: cover;\r\n\theight: 100%;\r\n\tpadding-top: 150px;\r\n}\r\n.swal-footer {\r\n\ttext-align: center;\r\n}\r\n.padding30{\r\n\tpadding:30px;\r\n}\r\n.fixfullscreen{\r\n    height: 100%;\r\n}\r\n.text-link{\r\n    color:blue;\r\n    text-decoration: underline;\r\n    cursor:pointer;\r\n}\r\n.button-action{\r\n    width: 30px;\r\n    height: 30px;\r\n}\r\n.button-action i{\r\n    font-size: 14px !important;\r\n}\r\n\r\n.bgwhite\r\n{\r\n\tbackground-color: white !important;\r\n}\r\n\r\n.marginleft30\r\n{\r\n\tmargin-left: 30px !important;\r\n}\r\n\r\n.marginhorizontal10\r\n{\r\n\tmargin-right: 10px !important;\r\n\tmargin-left: 10px !important;\r\n\r\n}\r\n.margintop10\r\n{\r\n\tmargin-top: 10px !important;\r\n}\r\n\r\n\r\n.colorblack .accent--text\r\n{\r\n\tcolor: #0060ff !important;\r\n}\r\n\r\n.colorblack label\r\n{\r\n\tcolor: black !important;\r\n}\r\n\r\n.colorblack .v-input__slot\r\n{\r\n\tmargin-top:10px !important;\r\n\tmargin-bottom: 0px !important;\r\n}\r\n\r\n\r\n.datatable\r\n{\r\n\tmargin-left: 10px !important;\r\n\twidth: 98% !important;\r\n\tmargin-top: 20px !important;\r\n}\r\n\r\n.datatable td, .datatable th\r\n{\r\n\tborder: 1px solid #ddd !important;\r\n}\r\n\r\n.datatable tr:nth-child(even)\r\n{\r\n\tbackground-color: #ededff;\r\n}\r\n\r\n.datatable th\r\n{\r\n\tcolor: white !important;\r\n\tbackground-color: #0d47a1 !important;\r\n}\r\n\r\n.datatable thead tr:nth-child(1), .datatable tbody tr td\r\n{\r\n\theight: 40px !important;\r\n}\r\n\r\n.searchdatatable\r\n{\r\n\tpadding-top: 7px !important;\r\n\twidth: 50% !important;\r\n\tmargin-right: 10px !important;\r\n\tmargin-left: 10px !important;\r\n}\r\n.icontitledatatable\r\n{\r\n\tposition: static !important;\r\n\tmargin-top: 3px !important;\r\n\tdisplay: inline-block !important;\r\n}\r\n\r\n.titledatatable\r\n{\r\n\tposition: static !important;\r\n\tmargin-left: 5px !important;\r\n\tdisplay: inline-block !important;\r\n}\r\n\r\n.datatable th i\r\n{\r\n\tcolor: white !important;\r\n}\r\n\r\n.addmr_row\r\n{\r\n\theight:-moz-fit-content;\r\n  \theight:-webkit-fit-content;\r\n  \theight:fit-content;\r\n\tpadding:20px !important;\r\n\r\n}\r\n.addmr_row div\r\n{\r\n\theight:-moz-fit-content;\r\n  \theight:-webkit-fit-content;\r\n  \theight:fit-content;\r\n}\r\n.addmr_row .addmr_column\r\n{\r\n\r\n}\r\n.btnplusminus\r\n{\r\n\tmin-width: 10px !important;\r\n\r\n}\r\n.btnadddata\r\n{\r\n\twidth: 120px !important;\r\n\tmargin-left: 20px !important;\r\n\theight: 35px !important;\r\n\tmargin-top:0px !important;\r\n}\r\n.btnaction\r\n{\r\n\theight: 30px !important;\r\n}\r\n.addmr_goods b\r\n{\r\n\tcolor:#484848 !important;\r\n}\r\n.addmr_summary .button-action\r\n{\r\n\tmargin-left: 0px;\r\n\tmargin-right: 0px;\r\n\tmargin-top: 0px;\r\n}\r\n.addmr_summary\r\n{\r\n\tbackground-color: #f2eeff !important;\r\n\tpadding: 30px !important;\r\n}\r\n.mr_div_container\r\n{\r\n\tbackground-color: white;\r\n}\r\n.datatable_checklist .v-input__control\r\n{\r\n\tmargin: auto !important;\r\n\tvertical-align: middle !important; \r\n\theight: 20px !important;\r\n\tmargin-top: 9px !important;\r\n}\r\n.floatright\r\n{\r\n\tfloat:right !important;\r\n}\r\n\r\n.marginright25\r\n{\r\n\tmargin-right: 25px !important;\r\n}\r\n\r\n.breadcrumbs\r\n{\r\n\tpadding-left: 30px !important;\r\n\tpadding-bottom: 0px !important;\r\n\tmargin-top: 10px !important;\t\r\n}\r\n.breadcrumbs a\r\n{\r\n\tfont-size: 15px !important;\r\n}\r\n\r\n\r\n\r\n\r\n\r\n\r\n.breadcrumbs_hidden, .breadcrumbs_hidden + .v-breadcrumbs__divider\r\n{\r\n\tdisplay: none !important;\r\n}\r\n\r\n.cardStockOpname\r\n{\r\n\tdisplay: table-cell;\r\n\tpadding: 20px;\r\n\r\n}\r\n#containerCardStockOpname\r\n{\r\n\twidth: 680px !important;\r\n\tmargin-left: 15px !important;\r\n\toverflow-x: scroll;\r\n}", ""]);
+exports.push([module.i, "#one_step .info_stepper\r\n{\r\n\tdisplay: none !important;\r\n}\r\n#one_step .v-stepper__content\r\n{\r\n\tborder-left: 1px solid white !important;\r\n\tmargin-left: 0px !important;\r\n\tmargin-top: 10px !important;\r\n}\r\n\r\n#toolbar_mr .v-toolbar__content\r\n{\r\n\tpadding:0px !important;\r\n}\r\n.bg-login\r\n{\r\n\tbackground-image: url('https://static.vecteezy.com/system/resources/previews/000/101/237/non_2x/free-abstract-background-11-vector.jpg');\r\n\tbackground-size: cover;\r\n\theight: 100%;\r\n\tpadding-top: 150px;\r\n}\r\n.swal-footer {\r\n\ttext-align: center;\r\n}\r\n.padding30{\r\n\tpadding:30px;\r\n}\r\n.fixfullscreen{\r\n    height: 100%;\r\n}\r\n.text-link{\r\n    color:blue;\r\n    text-decoration: underline;\r\n    cursor:pointer;\r\n}\r\n.button-action{\r\n    width: 30px;\r\n    height: 30px;\r\n}\r\n.button-action i{\r\n    font-size: 14px !important;\r\n}\r\n\r\n.bgwhite\r\n{\r\n\tbackground-color: white !important;\r\n}\r\n\r\n.marginleft30\r\n{\r\n\tmargin-left: 30px !important;\r\n}\r\n\r\n.marginhorizontal10\r\n{\r\n\tmargin-right: 10px !important;\r\n\tmargin-left: 10px !important;\r\n\r\n}\r\n.margintop10\r\n{\r\n\tmargin-top: 10px !important;\r\n}\r\n\r\n\r\n.colorblack .accent--text\r\n{\r\n\tcolor: #0060ff !important;\r\n}\r\n\r\n.colorblack label\r\n{\r\n\tcolor: black !important;\r\n}\r\n\r\n.colorblack .v-input__slot\r\n{\r\n\tmargin-top:10px !important;\r\n\tmargin-bottom: 0px !important;\r\n}\r\n\r\n\r\n.datatable\r\n{\r\n\tmargin-left: 10px !important;\r\n\twidth: 98% !important;\r\n\tmargin-top: 20px !important;\r\n}\r\n\r\n.datatable td, .datatable th\r\n{\r\n\tborder: 1px solid #ddd !important;\r\n}\r\n\r\n.datatable tr:nth-child(even)\r\n{\r\n\tbackground-color: #ededff;\r\n}\r\n\r\n.datatable th\r\n{\r\n\tcolor: white !important;\r\n\tbackground-color: #0d47a1 !important;\r\n}\r\n\r\n.datatable thead tr:nth-child(1), .datatable tbody tr td\r\n{\r\n\theight: 40px !important;\r\n}\r\n\r\n.searchdatatable\r\n{\r\n\tpadding-top: 7px !important;\r\n\twidth: 50% !important;\r\n\tmargin-right: 10px !important;\r\n\tmargin-left: 10px !important;\r\n}\r\n.icontitledatatable\r\n{\r\n\tposition: static !important;\r\n\tmargin-top: 3px !important;\r\n\tdisplay: inline-block !important;\r\n}\r\n\r\n.titledatatable\r\n{\r\n\tposition: static !important;\r\n\tmargin-left: 5px !important;\r\n\tdisplay: inline-block !important;\r\n}\r\n\r\n.datatable th i\r\n{\r\n\tcolor: white !important;\r\n}\r\n\r\n.addmr_row\r\n{\r\n\theight:-moz-fit-content;\r\n  \theight:-webkit-fit-content;\r\n  \theight:fit-content;\r\n\tpadding:20px !important;\r\n\r\n}\r\n.addmr_row div\r\n{\r\n\theight:-moz-fit-content;\r\n  \theight:-webkit-fit-content;\r\n  \theight:fit-content;\r\n}\r\n.addmr_row .addmr_column\r\n{\r\n\r\n}\r\n.btnplusminus\r\n{\r\n\tmin-width: 10px !important;\r\n\r\n}\r\n.btnadddata\r\n{\r\n\twidth: 120px !important;\r\n\tmargin-left: 20px !important;\r\n\theight: 35px !important;\r\n\tmargin-top:0px !important;\r\n}\r\n.btnaction\r\n{\r\n\theight: 30px !important;\r\n}\r\n.addmr_goods b\r\n{\r\n\tcolor:#484848 !important;\r\n}\r\n.addmr_summary .button-action\r\n{\r\n\tmargin-left: 0px;\r\n\tmargin-right: 0px;\r\n\tmargin-top: 0px;\r\n}\r\n.addmr_summary\r\n{\r\n\tbackground-color: #f2eeff !important;\r\n\tpadding: 30px !important;\r\n}\r\n.mr_div_container\r\n{\r\n\tbackground-color: white;\r\n}\r\n.datatable_checklist .v-input__control\r\n{\r\n\tmargin: auto !important;\r\n\tvertical-align: middle !important; \r\n\theight: 20px !important;\r\n\tmargin-top: 9px !important;\r\n}\r\n.floatright\r\n{\r\n\tfloat:right !important;\r\n}\r\n\r\n.marginright25\r\n{\r\n\tmargin-right: 25px !important;\r\n}\r\n\r\n.breadcrumbs\r\n{\r\n\tpadding-left: 30px !important;\r\n\tpadding-bottom: 0px !important;\r\n\tmargin-top: 10px !important;\t\r\n}\r\n.breadcrumbs a\r\n{\r\n\tfont-size: 15px !important;\r\n}\r\n\r\n\r\n\r\n\r\n\r\n\r\n.breadcrumbs_hidden, .breadcrumbs_hidden + .v-breadcrumbs__divider\r\n{\r\n\tdisplay: none !important;\r\n}\r\n\r\n.cardStockOpname\r\n{\r\n\tdisplay: table-cell;\r\n\tpadding: 20px;\r\n\r\n}\r\n#containerCardStockOpname\r\n{\r\n\twidth: 680px !important;\r\n\tmargin-left: 15px !important;\r\n\toverflow-x: scroll;\r\n}", ""]);
 
 // exports
 
@@ -13636,40 +13926,30 @@ var render = function() {
         [
           _c(
             "v-toolbar",
-            { attrs: { color: "blue", dark: "" } },
+            { attrs: { id: "toolbar_mr", color: "blue", dark: "" } },
             [
               _c(
                 "v-toolbar-items",
-                { staticStyle: { height: "30px" } },
                 [
-                  _vm.this_user_is_finance
-                    ? _c(
-                        "v-toolbar-title",
-                        [
-                          _c(
-                            "v-btn",
-                            {
-                              attrs: { color: "blue", dark: "", depressed: "" },
-                              on: {
-                                click: function($event) {
-                                  return _vm.$emit("back")
-                                }
-                              }
-                            },
-                            [_c("h3", [_vm._v("BACK")])]
-                          )
-                        ],
-                        1
-                      )
-                    : _vm._e(),
-                  _vm._v(" "),
                   _c(
                     "v-toolbar-title",
+                    {
+                      style: {
+                        "background-color":
+                          _vm.tab == "Home" ? "#3046e6" : "transparent"
+                      }
+                    },
                     [
                       _c(
                         "v-btn",
                         {
-                          attrs: { color: "blue", dark: "", depressed: "" },
+                          staticStyle: { height: "100%" },
+                          attrs: {
+                            ripple: false,
+                            color: "transparent",
+                            dark: "",
+                            depressed: ""
+                          },
                           on: {
                             click: function($event) {
                               return _vm.change_tab("Home")
@@ -13685,11 +13965,24 @@ var render = function() {
                   _vm.profile_enable
                     ? _c(
                         "v-toolbar-title",
+                        {
+                          staticStyle: { "margin-left": "0px" },
+                          style: {
+                            "background-color":
+                              _vm.tab == "Profile" ? "#3046e6" : "transparent"
+                          }
+                        },
                         [
                           _c(
                             "v-btn",
                             {
-                              attrs: { color: "blue", dark: "", depressed: "" },
+                              staticStyle: { height: "100%" },
+                              attrs: {
+                                ripple: false,
+                                color: "transparent",
+                                dark: "",
+                                depressed: ""
+                              },
                               on: {
                                 click: function($event) {
                                   return _vm.change_tab("Profile")
@@ -13704,7 +13997,41 @@ var render = function() {
                     : _vm._e()
                 ],
                 1
-              )
+              ),
+              _vm._v(" "),
+              _c("v-spacer"),
+              _vm._v(" "),
+              _vm.this_user_is_finance
+                ? _c(
+                    "v-toolbar-title",
+                    { staticStyle: { height: "100%" } },
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          staticStyle: {
+                            height: "100%",
+                            padding: "0px",
+                            margin: "0px"
+                          },
+                          attrs: {
+                            ripple: false,
+                            color: "blue",
+                            dark: "",
+                            depressed: ""
+                          },
+                          on: {
+                            click: function($event) {
+                              return _vm.$emit("back")
+                            }
+                          }
+                        },
+                        [_c("h3", [_vm._v("X Close")])]
+                      )
+                    ],
+                    1
+                  )
+                : _vm._e()
             ],
             1
           )
@@ -14022,53 +14349,59 @@ var render = function() {
                   _c(
                     "center",
                     [
-                      _c(
-                        "v-btn",
-                        {
-                          staticClass: "button-action",
-                          attrs: {
-                            fab: "",
-                            depressed: "",
-                            small: "",
-                            dark: ""
-                          },
-                          on: {
-                            click: function($event) {
-                              return _vm.change_page(-1)
-                            }
-                          }
-                        },
-                        [
-                          _c("v-icon", { attrs: { small: "" } }, [
-                            _vm._v("keyboard_arrow_left")
-                          ])
-                        ],
-                        1
-                      ),
+                      _vm.page > 1
+                        ? _c(
+                            "v-btn",
+                            {
+                              staticClass: "button-action",
+                              attrs: {
+                                fab: "",
+                                depressed: "",
+                                small: "",
+                                dark: ""
+                              },
+                              on: {
+                                click: function($event) {
+                                  return _vm.change_page(-1)
+                                }
+                              }
+                            },
+                            [
+                              _c("v-icon", { attrs: { small: "" } }, [
+                                _vm._v("keyboard_arrow_left")
+                              ])
+                            ],
+                            1
+                          )
+                        : _vm._e(),
                       _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        {
-                          staticClass: "button-action",
-                          attrs: {
-                            fab: "",
-                            depressed: "",
-                            small: "",
-                            dark: ""
-                          },
-                          on: {
-                            click: function($event) {
-                              return _vm.change_page(1)
-                            }
-                          }
-                        },
-                        [
-                          _c("v-icon", { attrs: { small: "" } }, [
-                            _vm._v("keyboard_arrow_right")
-                          ])
-                        ],
-                        1
-                      )
+                      _c("b", [_vm._v("Page : " + _vm._s(_vm.page))]),
+                      _vm._v(" "),
+                      _vm.page < Math.ceil(this.goods.length / 6)
+                        ? _c(
+                            "v-btn",
+                            {
+                              staticClass: "button-action",
+                              attrs: {
+                                fab: "",
+                                depressed: "",
+                                small: "",
+                                dark: ""
+                              },
+                              on: {
+                                click: function($event) {
+                                  return _vm.change_page(1)
+                                }
+                              }
+                            },
+                            [
+                              _c("v-icon", { attrs: { small: "" } }, [
+                                _vm._v("keyboard_arrow_right")
+                              ])
+                            ],
+                            1
+                          )
+                        : _vm._e()
                     ],
                     1
                   )
@@ -14587,6 +14920,36 @@ var render = function() {
                   _c(
                     "div",
                     [
+                      _vm.percent_goods == 100
+                        ? _c(
+                            "div",
+                            [
+                              _c(
+                                "v-layout",
+                                {
+                                  staticStyle: {
+                                    "font-size": "16px",
+                                    margin: "15px 4px"
+                                  },
+                                  attrs: { row: "" }
+                                },
+                                [
+                                  _c(
+                                    "v-flex",
+                                    {
+                                      staticClass: "marginleft30",
+                                      attrs: { xs5: "" }
+                                    },
+                                    [_c("h3", [_vm._v("SPBM Is Completed !")])]
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        : _vm._e(),
+                      _vm._v(" "),
                       _c(
                         "v-layout",
                         {
@@ -14635,242 +14998,279 @@ var render = function() {
                         1
                       ),
                       _vm._v(" "),
-                      _c(
-                        "v-layout",
-                        {
-                          staticStyle: {
-                            "font-size": "16px",
-                            margin: "10px 4px"
-                          },
-                          attrs: { row: "" }
-                        },
-                        [
-                          _c(
-                            "v-flex",
-                            {
-                              staticClass: "marginleft30",
-                              staticStyle: { "padding-top": "20px" },
-                              attrs: { xs3: "" }
-                            },
-                            [_c("b", [_vm._v("Target Warehouse : ")])]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-flex",
-                            { attrs: { xs5: "" } },
-                            [
-                              _c("v-select", {
-                                staticClass: "pa-2",
-                                attrs: {
-                                  label: "Select Warehouse",
-                                  items: _vm.warehouses,
-                                  "item-text": "name",
-                                  "return-object": ""
+                      _vm.percent_goods != 100
+                        ? [
+                            _c(
+                              "v-layout",
+                              {
+                                staticStyle: {
+                                  "font-size": "16px",
+                                  margin: "10px 4px"
                                 },
-                                model: {
-                                  value: _vm.input.warehouse,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.input, "warehouse", $$v)
+                                attrs: { row: "" }
+                              },
+                              [
+                                _c(
+                                  "v-flex",
+                                  {
+                                    staticClass: "marginleft30",
+                                    staticStyle: { "padding-top": "20px" },
+                                    attrs: { xs3: "" }
                                   },
-                                  expression: "input.warehouse"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-layout",
-                        {
-                          staticStyle: {
-                            "font-size": "16px",
-                            margin: "10px 4px"
-                          },
-                          attrs: { row: "" }
-                        },
-                        [
-                          _c(
-                            "v-flex",
-                            {
-                              staticClass: "marginleft30",
-                              staticStyle: { "padding-top": "20px" },
-                              attrs: { xs3: "" }
-                            },
-                            [_c("b", [_vm._v("Delivery Order : ")])]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-flex",
-                            { attrs: { xs5: "" } },
-                            [
-                              _c("v-text-field", {
-                                staticClass: "pa-2",
-                                attrs: { label: "Delivery Order" },
-                                model: {
-                                  value: _vm.input.delivery_order,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.input, "delivery_order", $$v)
+                                  [_c("b", [_vm._v("Target Warehouse : ")])]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-flex",
+                                  { attrs: { xs5: "" } },
+                                  [
+                                    _c("v-select", {
+                                      staticClass: "pa-2",
+                                      attrs: {
+                                        label: "Select Warehouse",
+                                        items: _vm.warehouses,
+                                        "item-text": "name",
+                                        "return-object": ""
+                                      },
+                                      model: {
+                                        value: _vm.input.warehouse,
+                                        callback: function($$v) {
+                                          _vm.$set(_vm.input, "warehouse", $$v)
+                                        },
+                                        expression: "input.warehouse"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "v-layout",
+                              {
+                                staticStyle: {
+                                  "font-size": "16px",
+                                  margin: "10px 4px"
+                                },
+                                attrs: { row: "" }
+                              },
+                              [
+                                _c(
+                                  "v-flex",
+                                  {
+                                    staticClass: "marginleft30",
+                                    staticStyle: { "padding-top": "20px" },
+                                    attrs: { xs3: "" }
                                   },
-                                  expression: "input.delivery_order"
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c("v-data-table", {
-                        staticClass: "datatable",
-                        attrs: {
-                          "disable-initial-sort": "",
-                          headers: _vm.headers_goods,
-                          items: _vm.input.goods
-                        },
-                        scopedSlots: _vm._u(
-                          [
-                            {
-                              key: "items",
-                              fn: function(props) {
-                                return [
-                                  _c("td", [_vm._v(_vm._s(props.item.no))]),
-                                  _vm._v(" "),
-                                  _c("td", [
-                                    _vm._v(_vm._s(props.item.goods_name))
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("td", [
-                                    _vm._v(_vm._s(props.item.order_quantity))
-                                  ]),
-                                  _vm._v(" "),
-                                  _c("td", [
-                                    _vm._v(_vm._s(props.item.have_arrived))
-                                  ]),
-                                  _vm._v(" "),
-                                  _c(
-                                    "td",
-                                    [
-                                      _c("v-text-field", {
-                                        staticClass: "pa-2",
-                                        attrs: { label: "Incoming" },
-                                        model: {
-                                          value:
-                                            _vm.input.goods[props.index]
-                                              .incoming,
-                                          callback: function($$v) {
-                                            _vm.$set(
-                                              _vm.input.goods[props.index],
-                                              "incoming",
-                                              $$v
-                                            )
-                                          },
-                                          expression:
-                                            "input.goods[props.index].incoming"
-                                        }
-                                      })
-                                    ],
-                                    1
-                                  ),
-                                  _vm._v(" "),
-                                  _c(
-                                    "td",
-                                    [
-                                      _vm.input.warehouse
-                                        ? _c("v-select", {
-                                            staticClass: "pa-2",
-                                            attrs: {
-                                              label: "Select Rack",
-                                              items: _vm.input.warehouse.racks,
-                                              "item-text": "name",
-                                              "return-object": ""
-                                            },
-                                            model: {
-                                              value:
-                                                _vm.input.goods[props.index]
-                                                  .rack,
-                                              callback: function($$v) {
-                                                _vm.$set(
-                                                  _vm.input.goods[props.index],
-                                                  "rack",
-                                                  $$v
-                                                )
-                                              },
-                                              expression:
-                                                "input.goods[props.index].rack"
-                                            }
-                                          })
-                                        : _vm._e()
-                                    ],
-                                    1
-                                  )
-                                ]
-                              }
-                            }
-                          ],
-                          null,
-                          false,
-                          1927817099
-                        )
-                      }),
+                                  [_c("b", [_vm._v("Delivery Order : ")])]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-flex",
+                                  { attrs: { xs5: "" } },
+                                  [
+                                    _c("v-text-field", {
+                                      staticClass: "pa-2",
+                                      attrs: { label: "Delivery Order" },
+                                      model: {
+                                        value: _vm.input.delivery_order,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.input,
+                                            "delivery_order",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "input.delivery_order"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c("v-data-table", {
+                              staticClass: "datatable",
+                              attrs: {
+                                "disable-initial-sort": "",
+                                headers: _vm.headers_goods,
+                                items: _vm.input.goods
+                              },
+                              scopedSlots: _vm._u(
+                                [
+                                  {
+                                    key: "items",
+                                    fn: function(props) {
+                                      return [
+                                        _c("td", [
+                                          _vm._v(_vm._s(props.item.no))
+                                        ]),
+                                        _vm._v(" "),
+                                        _c("td", [
+                                          _vm._v(_vm._s(props.item.goods_name))
+                                        ]),
+                                        _vm._v(" "),
+                                        _c("td", [
+                                          _vm._v(
+                                            _vm._s(props.item.order_quantity)
+                                          )
+                                        ]),
+                                        _vm._v(" "),
+                                        _c("td", [
+                                          _vm._v(
+                                            _vm._s(props.item.have_arrived)
+                                          )
+                                        ]),
+                                        _vm._v(" "),
+                                        _c(
+                                          "td",
+                                          [
+                                            _c("v-text-field", {
+                                              staticClass: "pa-2",
+                                              attrs: { label: "Incoming" },
+                                              model: {
+                                                value:
+                                                  _vm.input.goods[props.index]
+                                                    .incoming,
+                                                callback: function($$v) {
+                                                  _vm.$set(
+                                                    _vm.input.goods[
+                                                      props.index
+                                                    ],
+                                                    "incoming",
+                                                    $$v
+                                                  )
+                                                },
+                                                expression:
+                                                  "input.goods[props.index].incoming"
+                                              }
+                                            })
+                                          ],
+                                          1
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "td",
+                                          [
+                                            _vm.input.warehouse
+                                              ? _c("v-select", {
+                                                  staticClass: "pa-2",
+                                                  attrs: {
+                                                    label: "Select Rack",
+                                                    items:
+                                                      _vm.input.warehouse.racks,
+                                                    "item-text": "name",
+                                                    "return-object": ""
+                                                  },
+                                                  model: {
+                                                    value:
+                                                      _vm.input.goods[
+                                                        props.index
+                                                      ].rack,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.input.goods[
+                                                          props.index
+                                                        ],
+                                                        "rack",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "input.goods[props.index].rack"
+                                                  }
+                                                })
+                                              : _vm._e()
+                                          ],
+                                          1
+                                        )
+                                      ]
+                                    }
+                                  }
+                                ],
+                                null,
+                                false,
+                                1927817099
+                              )
+                            }),
+                            _vm._v(" "),
+                            _c(
+                              "v-layout",
+                              { attrs: { row: "" } },
+                              [
+                                _c(
+                                  "v-flex",
+                                  {
+                                    staticClass: "marginleft30",
+                                    attrs: { xs3: "" }
+                                  },
+                                  [
+                                    _c("b", [
+                                      _vm._v("% Arrival before submit : ")
+                                    ])
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c("v-flex", { attrs: { xs5: "" } }, [
+                                  _c("b", [
+                                    _vm._v(_vm._s(_vm.percent_goods) + "%")
+                                  ])
+                                ])
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "v-layout",
+                              { attrs: { row: "" } },
+                              [
+                                _c(
+                                  "v-flex",
+                                  {
+                                    staticClass: "marginleft30",
+                                    attrs: { xs3: "" }
+                                  },
+                                  [
+                                    _c("b", [
+                                      _vm._v("% Arrival After submit : ")
+                                    ])
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c("v-flex", { attrs: { xs5: "" } }, [
+                                  _c("b", [
+                                    _vm._v(
+                                      _vm._s(_vm.percent_after_goods) + "%"
+                                    )
+                                  ])
+                                ])
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "v-btn",
+                              {
+                                staticClass: "marginright25",
+                                staticStyle: { margin: "20px 30px" },
+                                attrs: { dark: "", color: "menu" },
+                                on: { click: _vm.submit }
+                              },
+                              [_vm._v("Submit SPBM")]
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticStyle: { "margin-top": "50px" } })
+                          ]
+                        : _vm._e(),
                       _vm._v(" "),
                       _c(
                         "v-layout",
-                        { attrs: { row: "" } },
-                        [
-                          _c(
-                            "v-flex",
-                            { staticClass: "marginleft30", attrs: { xs3: "" } },
-                            [_c("b", [_vm._v("% Arrival before submit : ")])]
-                          ),
-                          _vm._v(" "),
-                          _c("v-flex", { attrs: { xs5: "" } }, [
-                            _c("b", [_vm._v(_vm._s(_vm.percent_goods) + "%")])
-                          ])
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-layout",
-                        { attrs: { row: "" } },
-                        [
-                          _c(
-                            "v-flex",
-                            { staticClass: "marginleft30", attrs: { xs3: "" } },
-                            [_c("b", [_vm._v("% Arrival After submit : ")])]
-                          ),
-                          _vm._v(" "),
-                          _c("v-flex", { attrs: { xs5: "" } }, [
-                            _c("b", [
-                              _vm._v(_vm._s(_vm.percent_after_goods) + "%")
-                            ])
-                          ])
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
                         {
-                          staticClass: "marginright25",
-                          staticStyle: { margin: "20px 30px" },
-                          attrs: { dark: "", color: "menu" },
-                          on: { click: _vm.submit }
-                        },
-                        [_vm._v("Submit SPBM")]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-layout",
-                        {
-                          staticStyle: {
-                            "font-size": "16px",
-                            "margin-top": "50px"
-                          },
+                          staticStyle: { "font-size": "16px" },
                           attrs: { row: "" }
                         },
                         [
@@ -14931,7 +15331,7 @@ var render = function() {
                         )
                       })
                     ],
-                    1
+                    2
                   )
                 ],
                 1
@@ -15214,7 +15614,9 @@ var render = function() {
           prop_information: _vm.additional_data ? _vm.additional_data : "",
           prop_format_information: _vm.info_table.format_additional_data
             ? _vm.info_table.format_additional_data
-            : ""
+            : "",
+          prop_function_format_information:
+            _vm.info_table.function_format_additional_data
         },
         on: {
           button_index_clicked: _vm.button_index_clicked,
@@ -15456,6 +15858,7 @@ var render = function() {
             ),
             _vm._v(" "),
             _c("cp-header", {
+              ref: "cpHeader",
               attrs: {
                 prop_icon: _vm.info_table.icon,
                 prop_title: _vm.info_table.title,
@@ -15492,7 +15895,9 @@ var render = function() {
                     prop_filter: _vm.info_table.data.filter,
                     prop_format_filter_by_user:
                       _vm.info_table.data.filter_by_user,
-                    prop_filter_by_user_value: _vm.filter_by_user_value
+                    prop_filter_by_user_value: _vm.filter_by_user_value,
+                    prop_conditional_action_button:
+                      _vm.info_table.conditional_action_button
                   },
                   on: {
                     response_filter_by_user_ref: _vm.fill_filter_by_user_ref,
@@ -15578,7 +15983,9 @@ var render = function() {
             attrs: {
               "disable-initial-sort": "",
               headers: _vm.headers,
-              items: _vm.data
+              items: _vm.data,
+              "rows-per-page-items": [{ text: "All", value: -1 }],
+              "hide-actions": ""
             },
             scopedSlots: _vm._u(
               [
@@ -16378,86 +16785,109 @@ var render = function() {
                           ]
                         },
                         [
-                          _c(
-                            "div",
-                            { staticClass: "text-xs-left" },
-                            [
-                              _c(
-                                "v-menu",
-                                {
-                                  attrs: { "offset-y": "" },
-                                  scopedSlots: _vm._u(
-                                    [
-                                      {
-                                        key: "activator",
-                                        fn: function(ref) {
-                                          var on = ref.on
-                                          return [
-                                            _c(
-                                              "v-btn",
-                                              _vm._g(
-                                                {
-                                                  staticClass: "btnaction",
-                                                  attrs: {
-                                                    color: "primary",
-                                                    dark: ""
-                                                  }
-                                                },
-                                                on
-                                              ),
-                                              [
-                                                _vm._v(
-                                                  "\n\t\t\t                      Action\n\t\t\t                    "
+                          (_vm.prop_conditional_action_button &&
+                            _vm.check_conditional_action_button(
+                              props.item,
+                              _vm.prop_conditional_action_button
+                            )) ||
+                          !_vm.prop_conditional_action_button
+                            ? _c(
+                                "div",
+                                { staticClass: "text-xs-left" },
+                                [
+                                  _c(
+                                    "v-menu",
+                                    {
+                                      attrs: { "offset-y": "" },
+                                      scopedSlots: _vm._u(
+                                        [
+                                          {
+                                            key: "activator",
+                                            fn: function(ref) {
+                                              var on = ref.on
+                                              return [
+                                                _c(
+                                                  "v-btn",
+                                                  _vm._g(
+                                                    {
+                                                      staticClass: "btnaction",
+                                                      attrs: {
+                                                        color: "primary",
+                                                        dark: ""
+                                                      }
+                                                    },
+                                                    on
+                                                  ),
+                                                  [
+                                                    _vm._v(
+                                                      "\n\t\t\t                      Action\n\t\t\t                    "
+                                                    )
+                                                  ]
                                                 )
                                               ]
-                                            )
-                                          ]
-                                        }
-                                      }
-                                    ],
-                                    null,
-                                    true
-                                  )
-                                },
-                                [
-                                  _vm._v(" "),
-                                  _c(
-                                    "v-list",
-                                    _vm._l(_vm.prop_action_items, function(
-                                      item,
-                                      index
-                                    ) {
-                                      return _c(
-                                        "v-list-tile",
-                                        {
-                                          key: index,
-                                          on: {
-                                            click: function($event) {
-                                              return _vm.$emit(
-                                                "action_clicked",
-                                                props.item.id,
-                                                index,
-                                                props.item
-                                              )
                                             }
                                           }
-                                        },
-                                        [
-                                          _c("v-list-tile-title", [
-                                            _vm._v(_vm._s(item))
-                                          ])
                                         ],
+                                        null,
+                                        true
+                                      )
+                                    },
+                                    [
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-list",
+                                        _vm._l(_vm.prop_action_items, function(
+                                          item,
+                                          index_action
+                                        ) {
+                                          return (_vm.prop_conditional_action &&
+                                          _vm.prop_conditional_action[
+                                            index_action
+                                          ]
+                                          ? _vm.check_conditional_action(
+                                              props.item,
+                                              _vm.additional_data,
+                                              _vm.prop_conditional_action[
+                                                index_action
+                                              ].data,
+                                              _vm.prop_conditional_action[
+                                                index_action
+                                              ].parent
+                                            )
+                                          : true)
+                                            ? _c(
+                                                "v-list-tile",
+                                                {
+                                                  key: index_action,
+                                                  on: {
+                                                    click: function($event) {
+                                                      return _vm.$emit(
+                                                        "action_clicked",
+                                                        props.item.id,
+                                                        index_action,
+                                                        props.item
+                                                      )
+                                                    }
+                                                  }
+                                                },
+                                                [
+                                                  _c("v-list-tile-title", [
+                                                    _vm._v(_vm._s(item))
+                                                  ])
+                                                ],
+                                                1
+                                              )
+                                            : _vm._e()
+                                        }),
                                         1
                                       )
-                                    }),
+                                    ],
                                     1
                                   )
                                 ],
                                 1
                               )
-                            ],
-                            1
-                          )
+                            : _vm._e()
                         ]
                       )
                     ]
@@ -16466,7 +16896,7 @@ var render = function() {
               ],
               null,
               false,
-              4148296453
+              2354724008
             )
           })
         ],
@@ -16600,7 +17030,48 @@ var render = function() {
                     ),
                     _vm._v(" "),
                     _c("v-flex", { attrs: { xs7: "" } }, [
-                      _c("b", [_vm._v(_vm._s(_vm.prop_information[format]))])
+                      _c(
+                        "b",
+                        [
+                          _vm.prop_function_format_information
+                            ? [
+                                _vm.prop_function_format_information[format] &&
+                                _vm.prop_function_format_information[format][
+                                  "format_data"
+                                ]
+                                  ? [
+                                      _vm._v(
+                                        "\n                                    " +
+                                          _vm._s(
+                                            _vm.format_data(
+                                              _vm.prop_information[format],
+                                              _vm
+                                                .prop_function_format_information[
+                                                format
+                                              ]["format_data"]
+                                            )
+                                          ) +
+                                          "\n                                "
+                                      )
+                                    ]
+                                  : [
+                                      _vm._v(
+                                        "\n                                    " +
+                                          _vm._s(_vm.prop_information[format]) +
+                                          "\n                                "
+                                      )
+                                    ]
+                              ]
+                            : [
+                                _vm._v(
+                                  "\n                                " +
+                                    _vm._s(_vm.prop_information[format]) +
+                                    "\n                            "
+                                )
+                              ]
+                        ],
+                        2
+                      )
                     ])
                   ],
                   1
@@ -17159,6 +17630,19 @@ var render = function() {
                                           ? [
                                               !_vm.objColumn.child_of
                                                 ? _c("v-select", {
+                                                    directives: [
+                                                      {
+                                                        name: "show",
+                                                        rawName: "v-show",
+                                                        value:
+                                                          _vm.ref_input[
+                                                            _vm.objColumn
+                                                              .table_ref
+                                                          ],
+                                                        expression:
+                                                          "ref_input[objColumn.table_ref]"
+                                                      }
+                                                    ],
                                                     staticClass: "pa-2",
                                                     attrs: {
                                                       rules:
@@ -17197,6 +17681,22 @@ var render = function() {
                                               _vm.objColumn.child_of &&
                                               _vm.input[_vm.objColumn.child_of]
                                                 ? _c("v-select", {
+                                                    directives: [
+                                                      {
+                                                        name: "show",
+                                                        rawName: "v-show",
+                                                        value:
+                                                          _vm.input[
+                                                            _vm.objColumn
+                                                              .child_of
+                                                          ][
+                                                            _vm.objColumn
+                                                              .table_ref
+                                                          ],
+                                                        expression:
+                                                          "input[objColumn.child_of][objColumn.table_ref]"
+                                                      }
+                                                    ],
                                                     staticClass: "pa-2",
                                                     attrs: {
                                                       rules:
@@ -17695,6 +18195,21 @@ var render = function() {
                                                         "s" &&
                                                       _vm.temp_input[table_name]
                                                         ? _c("v-select", {
+                                                            directives: [
+                                                              {
+                                                                name: "show",
+                                                                rawName:
+                                                                  "v-show",
+                                                                value:
+                                                                  _vm.ref_input[
+                                                                    _vm
+                                                                      .objColumn
+                                                                      .table_ref
+                                                                  ],
+                                                                expression:
+                                                                  "ref_input[objColumn.table_ref]"
+                                                              }
+                                                            ],
                                                             attrs: {
                                                               rules:
                                                                 _vm
@@ -18611,7 +19126,7 @@ var render = function() {
     [
       _c("v-breadcrumbs", {
         staticClass: "breadcrumbs",
-        attrs: { divider: ">", items: _vm.breadcrumbs },
+        attrs: { divider: ">", items: _vm.computed_breadcrumbs },
         scopedSlots: _vm._u([
           {
             key: "item",
@@ -18620,11 +19135,10 @@ var render = function() {
               return _c(
                 "v-breadcrumbs-item",
                 {
-                  class: { breadcrumbs_hidden: item.disabled },
-                  attrs: { exact: "" },
+                  attrs: { exact: "", disabled: item.disabled },
                   on: {
                     click: function($event) {
-                      return _vm.open_component(item.cp)
+                      item.disabled ? "" : _vm.open_component(item.cp)
                     }
                   }
                 },
@@ -19185,7 +19699,7 @@ var render = function() {
     [
       _c("v-breadcrumbs", {
         staticClass: "breadcrumbs",
-        attrs: { divider: ">", items: _vm.breadcrumbs },
+        attrs: { divider: ">", items: _vm.computed_breadcrumbs },
         scopedSlots: _vm._u([
           {
             key: "item",
@@ -19194,11 +19708,10 @@ var render = function() {
               return _c(
                 "v-breadcrumbs-item",
                 {
-                  class: { breadcrumbs_hidden: item.disabled },
-                  attrs: { exact: "" },
+                  attrs: { exact: "", disabled: item.disabled },
                   on: {
                     click: function($event) {
-                      return _vm.open_component(item.cp)
+                      item.disabled ? "" : _vm.open_component(item.cp)
                     }
                   }
                 },
@@ -19321,7 +19834,7 @@ var render = function() {
     [
       _c("v-breadcrumbs", {
         staticClass: "breadcrumbs",
-        attrs: { divider: ">", items: _vm.breadcrumbs },
+        attrs: { divider: ">", items: _vm.computed_breadcrumbs },
         scopedSlots: _vm._u([
           {
             key: "item",
@@ -19330,11 +19843,10 @@ var render = function() {
               return _c(
                 "v-breadcrumbs-item",
                 {
-                  class: { breadcrumbs_hidden: item.disabled },
-                  attrs: { exact: "" },
+                  attrs: { exact: "", disabled: item.disabled },
                   on: {
                     click: function($event) {
-                      return _vm.open_component(item.cp)
+                      item.disabled ? "" : _vm.open_component(item.cp)
                     }
                   }
                 },
@@ -19457,7 +19969,7 @@ var render = function() {
     [
       _c("v-breadcrumbs", {
         staticClass: "breadcrumbs",
-        attrs: { divider: ">", items: _vm.breadcrumbs },
+        attrs: { divider: ">", items: _vm.computed_breadcrumbs },
         scopedSlots: _vm._u([
           {
             key: "item",
@@ -19466,11 +19978,10 @@ var render = function() {
               return _c(
                 "v-breadcrumbs-item",
                 {
-                  class: { breadcrumbs_hidden: item.disabled },
-                  attrs: { exact: "" },
+                  attrs: { exact: "", disabled: item.disabled },
                   on: {
                     click: function($event) {
-                      return _vm.open_component(item.cp)
+                      item.disabled ? "" : _vm.open_component(item.cp)
                     }
                   }
                 },
@@ -19593,7 +20104,7 @@ var render = function() {
     [
       _c("v-breadcrumbs", {
         staticClass: "breadcrumbs",
-        attrs: { divider: ">", items: _vm.breadcrumbs },
+        attrs: { divider: ">", items: _vm.computed_breadcrumbs },
         scopedSlots: _vm._u([
           {
             key: "item",
@@ -19602,11 +20113,10 @@ var render = function() {
               return _c(
                 "v-breadcrumbs-item",
                 {
-                  class: { breadcrumbs_hidden: item.disabled },
-                  attrs: { exact: "" },
+                  attrs: { exact: "", disabled: item.disabled },
                   on: {
                     click: function($event) {
-                      return _vm.open_component(item.cp)
+                      item.disabled ? "" : _vm.open_component(item.cp)
                     }
                   }
                 },
@@ -19729,7 +20239,7 @@ var render = function() {
     [
       _c("v-breadcrumbs", {
         staticClass: "breadcrumbs",
-        attrs: { divider: ">", items: _vm.breadcrumbs },
+        attrs: { divider: ">", items: _vm.computed_breadcrumbs },
         scopedSlots: _vm._u([
           {
             key: "item",
@@ -19738,11 +20248,10 @@ var render = function() {
               return _c(
                 "v-breadcrumbs-item",
                 {
-                  class: { breadcrumbs_hidden: item.disabled },
-                  attrs: { exact: "" },
+                  attrs: { exact: "", disabled: item.disabled },
                   on: {
                     click: function($event) {
-                      return _vm.open_component(item.cp)
+                      item.disabled ? "" : _vm.open_component(item.cp)
                     }
                   }
                 },
@@ -19869,7 +20378,7 @@ var render = function() {
     [
       _c("v-breadcrumbs", {
         staticClass: "breadcrumbs",
-        attrs: { divider: ">", items: _vm.breadcrumbs },
+        attrs: { divider: ">", items: _vm.computed_breadcrumbs },
         scopedSlots: _vm._u([
           {
             key: "item",
@@ -19878,11 +20387,10 @@ var render = function() {
               return _c(
                 "v-breadcrumbs-item",
                 {
-                  class: { breadcrumbs_hidden: item.disabled },
-                  attrs: { exact: "" },
+                  attrs: { exact: "", disabled: item.disabled },
                   on: {
                     click: function($event) {
-                      return _vm.open_component(item.cp)
+                      item.disabled ? "" : _vm.open_component(item.cp)
                     }
                   }
                 },
@@ -20306,7 +20814,9 @@ var render = function() {
                       _vm.info_table.data.filter_by_user,
                     prop_filter_by_user_value: _vm.filter_by_user_value,
                     prop_custom_response_attribute:
-                      _vm.info_table.custom_response_attribute
+                      _vm.info_table.custom_response_attribute,
+                    prop_conditional_checklist:
+                      _vm.info_table.conditional_checklist
                   },
                   on: {
                     response_filter_by_user_ref: _vm.fill_filter_by_user_ref,
@@ -20461,6 +20971,7 @@ var render = function() {
             }),
             _vm._v(" "),
             _c("cp-header", {
+              ref: "cpHeader",
               attrs: {
                 prop_icon: _vm.info_table.icon,
                 prop_title: _vm.info_table.title,
@@ -20497,7 +21008,8 @@ var render = function() {
                     prop_filter: _vm.info_table.data.filter,
                     prop_format_filter_by_user:
                       _vm.info_table.data.filter_by_user,
-                    prop_filter_by_user_value: _vm.filter_by_user_value
+                    prop_filter_by_user_value: _vm.filter_by_user_value,
+                    prop_conditional_action: _vm.info_table.conditional_action
                   },
                   on: {
                     response_filter_by_user_ref: _vm.fill_filter_by_user_ref,
@@ -21166,7 +21678,7 @@ var render = function() {
     [
       _c("v-breadcrumbs", {
         staticClass: "breadcrumbs",
-        attrs: { divider: ">", items: _vm.breadcrumbs },
+        attrs: { divider: ">", items: _vm.computed_breadcrumbs },
         scopedSlots: _vm._u([
           {
             key: "item",
@@ -21175,11 +21687,10 @@ var render = function() {
               return _c(
                 "v-breadcrumbs-item",
                 {
-                  class: { breadcrumbs_hidden: item.disabled },
-                  attrs: { exact: "" },
+                  attrs: { exact: "", disabled: item.disabled },
                   on: {
                     click: function($event) {
-                      return _vm.open_component(item.cp)
+                      item.disabled ? "" : _vm.open_component(item.cp)
                     }
                   }
                 },
@@ -21306,7 +21817,7 @@ var render = function() {
     [
       _c("v-breadcrumbs", {
         staticClass: "breadcrumbs",
-        attrs: { divider: ">", items: _vm.breadcrumbs },
+        attrs: { divider: ">", items: _vm.computed_breadcrumbs },
         scopedSlots: _vm._u([
           {
             key: "item",
@@ -21315,11 +21826,10 @@ var render = function() {
               return _c(
                 "v-breadcrumbs-item",
                 {
-                  class: { breadcrumbs_hidden: item.disabled },
-                  attrs: { exact: "" },
+                  attrs: { exact: "", disabled: item.disabled },
                   on: {
                     click: function($event) {
-                      return _vm.open_component(item.cp)
+                      item.disabled ? "" : _vm.open_component(item.cp)
                     }
                   }
                 },
@@ -21466,7 +21976,7 @@ var render = function() {
     [
       _c("v-breadcrumbs", {
         staticClass: "breadcrumbs",
-        attrs: { divider: ">", items: _vm.breadcrumbs },
+        attrs: { divider: ">", items: _vm.computed_breadcrumbs },
         scopedSlots: _vm._u([
           {
             key: "item",
@@ -21475,11 +21985,10 @@ var render = function() {
               return _c(
                 "v-breadcrumbs-item",
                 {
-                  class: { breadcrumbs_hidden: item.disabled },
-                  attrs: { exact: "" },
+                  attrs: { exact: "", disabled: item.disabled },
                   on: {
                     click: function($event) {
-                      return _vm.open_component(item.cp)
+                      item.disabled ? "" : _vm.open_component(item.cp)
                     }
                   }
                 },
@@ -21602,7 +22111,7 @@ var render = function() {
     [
       _c("v-breadcrumbs", {
         staticClass: "breadcrumbs",
-        attrs: { divider: ">", items: _vm.breadcrumbs },
+        attrs: { divider: ">", items: _vm.computed_breadcrumbs },
         scopedSlots: _vm._u([
           {
             key: "item",
@@ -21611,11 +22120,10 @@ var render = function() {
               return _c(
                 "v-breadcrumbs-item",
                 {
-                  class: { breadcrumbs_hidden: item.disabled },
-                  attrs: { exact: "" },
+                  attrs: { exact: "", disabled: item.disabled },
                   on: {
                     click: function($event) {
-                      return _vm.open_component(item.cp)
+                      item.disabled ? "" : _vm.open_component(item.cp)
                     }
                   }
                 },
@@ -21775,7 +22283,9 @@ var render = function() {
           prop_format_information: _vm.info_table.format_additional_data
             ? _vm.info_table.format_additional_data
             : "",
-          prop_button_on_index: _vm.info_table.button_on_index
+          prop_button_on_index: _vm.info_table.button_on_index,
+          prop_function_format_information:
+            _vm.info_table.function_format_additional_data
         },
         on: {
           button_index_clicked: _vm.button_index_clicked,
@@ -21806,9 +22316,14 @@ var render = function() {
                   )
                 : _vm.generate_url(_vm.info_table.table_name, "index"),
               prop_filter: _vm.prop_list_filter,
-              prop_get_additional_data: "true"
+              prop_get_additional_data: "true",
+              prop_trigger_after_refresh_data: "true",
+              prop_conditional_action_button:
+                _vm.info_table.conditional_action_button,
+              prop_conditional_action: _vm.info_table.conditional_action
             },
             on: {
+              data_refreshed: _vm.after_data_refreshed,
               show_additional_data: _vm.fill_additional_data,
               action_clicked: _vm.action_change
             }
@@ -65851,7 +66366,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_vue__;
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(/*! !../../css-loader??ref--6-1!../../postcss-loader/src??ref--6-2!./vuetify.min.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css");
+var content = __webpack_require__(/*! !../../css-loader??ref--6-1!../../postcss-loader/src??ref--6-2!./vuetify.min.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css?bdb9");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -67494,7 +68009,8 @@ __webpack_require__.r(__webpack_exports__);
               this.breadcrumbs[i].text_note = text_note_this_level;
             } else {
               this.breadcrumbs[i].text_note = text_note;
-            }
+            } //                        this.breadcrumbs[i].disabled = true;
+
           }
 
           while (temp_breadcrumb.before) {
@@ -67612,6 +68128,7 @@ __webpack_require__.r(__webpack_exports__);
 
       while (i < result_breadcrumbs.length) {
         if (result_breadcrumbs[i].text_note) {
+          result_breadcrumbs[i].disabled = true;
           result_breadcrumbs.splice(i, 0, {
             text: result_breadcrumbs[i].text_note,
             disabled: true
@@ -67622,7 +68139,11 @@ __webpack_require__.r(__webpack_exports__);
         i++;
       }
 
-      return result_breadcrumbs;
+      if (result_breadcrumbs.length == 1) {
+        return [];
+      } else {
+        return result_breadcrumbs;
+      }
     }
   },
   mixins: [_mixin_mxStringProcessing__WEBPACK_IMPORTED_MODULE_0__["default"], _mixin_mxDatabase__WEBPACK_IMPORTED_MODULE_1__["default"], _mixin_mxVariableProcess__WEBPACK_IMPORTED_MODULE_2__["default"]]
@@ -68631,7 +69152,8 @@ __webpack_require__.r(__webpack_exports__);
                   format: ['price']
                 },
                 'free': {
-                  show: true
+                  show: true,
+                  format: ['freeornot']
                 }
               },
               headers: [{
@@ -68665,7 +69187,8 @@ __webpack_require__.r(__webpack_exports__);
                   show: true
                 },
                 'price': {
-                  show: true
+                  show: true,
+                  format: ['price']
                 }
               },
               headers: [{
@@ -68869,7 +69392,8 @@ __webpack_require__.r(__webpack_exports__);
                   show: true
                 },
                 'is_have_goods': {
-                  show: true
+                  show: true,
+                  format: ['havegoodsornot']
                 }
               },
               headers: [{
@@ -69328,6 +69852,14 @@ __webpack_require__.r(__webpack_exports__);
           count_step: 1,
           actions: ['Detail', 'Approve', 'SPBM', 'Payment'],
           button_on_index: ['Add Data'],
+          conditional_action: [//untuk detail
+          {}, //untuk approve
+          {
+            "data": ['status', '==', 'Submit']
+          }, //untuk SPBM
+          {}, //untuk payment
+          {}],
+          //berlaku per row
           request_master_data: true,
           data: {
             custom_master_data: {
@@ -69359,7 +69891,7 @@ __webpack_require__.r(__webpack_exports__);
               column: 'status'
             }, {
               column: 'tax',
-              format: ['percent']
+              format: ['price']
             }, {
               column: 'discount_percent',
               format: ['percent']
@@ -69509,10 +70041,15 @@ __webpack_require__.r(__webpack_exports__);
           button_on_index: ['Add Data', 'Submit', 'Print'],
           format_additional_data: {
             'NO_PO': 'no_po',
-            'Type': 'type',
+            'Type': 'type_name',
             'Total': 'total',
             'Created_By': 'created_by_user_name',
             'Status': 'status_name'
+          },
+          function_format_additional_data: {
+            'total': {
+              format_data: ['price']
+            }
           },
           request_master_data: false,
           data: {
@@ -69641,6 +70178,7 @@ __webpack_require__.r(__webpack_exports__);
           actions: ['Detail'],
           button_on_index: ['Add Data', 'Mark Complete', 'List PR'],
           button_for_checklist: ['Mark Complete'],
+          conditional_checklist: ['status', '=', 'New'],
           request_master_data: false,
           data: {
             rule_update: 'some',
@@ -69731,10 +70269,12 @@ __webpack_require__.r(__webpack_exports__);
                   show: true
                 },
                 'total': {
-                  show: true
+                  show: true,
+                  format: ['price']
                 },
                 'status': {
-                  show: true
+                  show: true,
+                  format: ['statusmaterialrequest']
                 }
               },
               headers: [{
@@ -69839,7 +70379,9 @@ __webpack_require__.r(__webpack_exports__);
           plural_name: 'purchase_requests',
           column_desc: 'code',
           //untuk fk
-          actions: ['Edit', 'Make PO', 'Delete'],
+          actions: ['Edit', 'Make PO'],
+          conditional_action_button: ['status_name', '==', 'new'],
+          //langsung tombolnya per row
           button_on_index: ['Add Data'],
           data: {
             custom_master_data: {},
@@ -69904,11 +70446,37 @@ __webpack_require__.r(__webpack_exports__);
           additional_param_index: 'purchase_order_id',
           additional_param_store: 'purchase_order_id',
           actions: ['Edit', 'Approve', 'Delete'],
+          conditional_action: [//untuk edit
+          {
+            // "data" : [],
+            "parent": ['not_paid_yet', '>', '0']
+          }, //untuk approve
+          {
+            // "data" : [],
+            "parent": ['not_paid_yet', '>', '0']
+          }, //untuk delete
+          {}],
+          //berlaku per row
+          conditional_action_button: ['status', '==', '0'],
+          //langsung tombolnya per row
           button_on_index: ['Add Data'],
           format_additional_data: {
             'NO_PO': 'po_no',
             'Type': 'po_type_name',
-            'Total': 'total'
+            'Total': 'total',
+            'Already_Paid': 'already_paid_off',
+            'Not_Paid_Yet': 'not_paid_yet'
+          },
+          function_format_additional_data: {
+            'total': {
+              format_data: ['price']
+            },
+            'already_paid_off': {
+              format_data: ['price']
+            },
+            'not_paid_yet': {
+              format_data: ['price']
+            }
           },
           request_master_data: false,
           data: {
