@@ -1,0 +1,295 @@
+{
+    "error": false,
+    "items": {
+        "goods": {
+            "id": 5,
+            "uuid": "b1a61800-b22b-11e9-8e98-73c1824b39e3",
+            "name": "barang1",
+            "code": "brg1",
+            "desc": "1",
+            "margin": 9,
+            "value": 3,
+            "status": 2,
+            "last_buy_pricelist": 4,
+            "barcode_master": "5",
+            "thumbnail": "http:\/\/localhost:8000\/storage\/goods\/5d3f35d2724d8barang1w62xnfy9jc.jpg",
+            "avg_price_status": 1,
+            "avg_price": 7,
+            "tax": 8,
+	    "unit" : 
+		{
+			"id" : "3"
+			"name" : "unit3"
+		}
+	     "cogs" : 
+		{
+			"id" : "3"
+			"name" : "cogs3"
+		}
+            "attribute_goods": [
+                {
+		    "attribute" : 
+		    {
+			"id" : "1",
+			"name" : "attribute1"
+		    },
+                    "value": 4,
+                },
+                {
+		    "attribute" : 
+		    {
+			"id" : "2",
+			"name" : "attribute2"
+		    },
+                    "value": 4,
+                },
+            ],
+            "category_goods": [
+                {
+		    "category" : 
+		    {
+			"id" : "1",
+			"name" : "category1"
+		    },
+                },
+                {
+		    "category" : 
+		    {
+			"id" : "1",
+			"name" : "category21"
+		    },
+                },
+            ],
+            "price_sellings": [
+                {
+                    "id": 5,
+                    "stock_cut_off": 1,
+                    "price": 13,
+                    "free": 0,
+	   "warehouse" : {
+	          "id" : "1",
+                           "name" : "warehouse1"
+	    },
+	   "category_price_selling" : {
+	           "id" : "1",
+	           "name" : "category21"
+	    }
+                }
+            ],
+            "pricelists": [
+                {
+                    "id": 11,
+                    "price": 12,
+                    "supplier" :  {
+                              "id" : "1",
+                              "name_company" : "supplier1"
+	    }
+                }
+            ],
+            "materials": [
+		{
+			"id" : 1,
+			"name" : "material1",
+			"total" : 1,
+			"adjust" : "adjust1"
+		}
+	     ]
+        },
+        "master_data": {
+            "categories": [
+                {
+                    "id": 1,
+                    "name": "Botol"
+                },
+                {
+                    "id": 2,
+                    "name": "Snacky"
+                },
+                {
+                    "id": 3,
+                    "name": "Cemilan"
+                },
+                {
+                    "id": 8,
+                    "name": "Kardus"
+                },
+                {
+                    "id": 9,
+                    "name": "Kelapa Sari Murni Nasional"
+                },
+                {
+                    "id": 10,
+                    "name": "owhaww"
+                },
+                {
+                    "id": 11,
+                    "name": "Aku sayang kamu"
+                },
+                {
+                    "id": 12,
+                    "name": "Kategori1"
+                },
+                {
+                    "id": 13,
+                    "name": "Kategori2 ah ah ah"
+                },
+                {
+                    "id": 14,
+                    "name": "Kategori3"
+                },
+                {
+                    "id": 15,
+                    "name": "Kategori 4"
+                }
+            ],
+            "warehouses": [
+                {
+                    "id": 1,
+                    "name": "Bakpia Ku"
+                },
+                {
+                    "id": 2,
+                    "name": "Bakpia Tugu"
+                },
+                {
+                    "id": 3,
+                    "name": "Bakpia Kukus"
+                },
+                {
+                    "id": 4,
+                    "name": "Bakpia Pathok"
+                }
+            ],
+            "category_price_sellings": [
+                {
+                    "id": 1,
+                    "name": "Category Price Selling 1"
+                },
+                {
+                    "id": 2,
+                    "name": "Category Price Selling 2"
+                },
+                {
+                    "id": 3,
+                    "name": "Category Price Selling 3"
+                },
+                {
+                    "id": 4,
+                    "name": "Category Price Selling 4"
+                }
+            ],
+            "attributes": [
+                {
+                    "id": 1,
+                    "name": "Bungkus"
+                },
+                {
+                    "id": 2,
+                    "name": "Dus"
+                },
+                {
+                    "id": 3,
+                    "name": "Plastik"
+                },
+                {
+                    "id": 4,
+                    "name": "Cup"
+                },
+                {
+                    "id": 5,
+                    "name": "sdfsdf"
+                },
+                {
+                    "id": 6,
+                    "name": "zzzz"
+                },
+                {
+                    "id": 7,
+                    "name": "123123"
+                },
+                {
+                    "id": 8,
+                    "name": "aaa"
+                },
+                {
+                    "id": 9,
+                    "name": "bbb"
+                },
+                {
+                    "id": 10,
+                    "name": "cccc"
+                },
+                {
+                    "id": 11,
+                    "name": "ddd"
+                }
+            ],
+            "units": [
+                {
+                    "id": 1,
+                    "name": "unit 1"
+                },
+                {
+                    "id": 4,
+                    "name": "unit 4"
+                },
+                {
+                    "id": 5,
+                    "name": "Unit tambahan1"
+                },
+                {
+                    "id": 6,
+                    "name": "Unit tambahan2"
+                }
+            ],
+            "cogs": [
+                {
+                    "id": 1,
+                    "name": "Cogs 1"
+                },
+                {
+                    "id": 2,
+                    "name": "Cogs 2"
+                },
+                {
+                    "id": 3,
+                    "name": "Cogs 3"
+                },
+                {
+                    "id": 4,
+                    "name": "Cogs 4"
+                }
+            ],
+            "suppliers": [
+                {
+                    "id": 1,
+                    "name_company": "Company 1",
+                    "name_owner": "Owner 1",
+                    "name_pic": "Pic 1",
+                    "name_sales": "Sales 1"
+                },
+                {
+                    "id": 2,
+                    "name_company": "Company 2",
+                    "name_owner": "Owner 2",
+                    "name_pic": "Pic 2",
+                    "name_sales": "Sales 2"
+                },
+                {
+                    "id": 3,
+                    "name_company": "Company 3",
+                    "name_owner": "Owner 3",
+                    "name_pic": "Pic 3",
+                    "name_sales": "Sales 3"
+                },
+                {
+                    "id": 4,
+                    "name_company": "Company 4",
+                    "name_owner": "Owner 4",
+                    "name_pic": "Pic 4",
+                    "name_sales": "Sales 4"
+                }
+            ]
+        }
+    }
+}

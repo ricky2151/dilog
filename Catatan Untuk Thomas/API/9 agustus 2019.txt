@@ -1,0 +1,11 @@
+1. api create PO Direct, response nya gak perlu dibungkus pakai array "purchase_order", langsung "supplier", "periode". Supaya sama seperti api create yang lainnya (cth api create goods)
+ ===> FIXED by Thomas
+
+2. api index PO Direct, masih belum ada kolom 'supplier_name', 'tax', dan 'diskon'
+===> FIXED by Thomas
+
+3. api index detail PO, urlnya apa ? 
+===> FIXED by thomas, http://127.0.0.1:8000/api/purchaseOrders/5/purchaseOrderDetail
+
+4. aku minta postmanmu yang terbaru
+===> FIXED send WA
