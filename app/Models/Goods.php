@@ -85,7 +85,7 @@ class Goods extends Model
     }
 
     public function spbmDetails(){
-        return $this->hasMany('App\Models\spbmDetail');
+        return $this->hasMany('App\Models\SpbmDetail');
     }
 
     public function purchaseOrderDetails(){
@@ -95,7 +95,7 @@ class Goods extends Model
     public function goodsRack(){
         return $this->hasMany('App\Models\GoodsRack');
     }
-    
+
     public function pricelists(){
         return $this->hasMany('App\Models\Pricelist');
     }
@@ -127,7 +127,7 @@ class Goods extends Model
     public function materials(){
         return $this->hasMany('App\Models\Material')->orderBy('updated_at', 'desc');
     }
-    
+
     public function priceSellings(){
         return $this->hasMany('App\Models\PriceSelling')->orderBy('updated_at', 'desc');
     }
@@ -142,7 +142,7 @@ class Goods extends Model
         $collectionGoods = $collectionGoods->map(function ($item) {
             $item = collect($item)->put('stock', $item->stock());
             Arr::set($item, 'thumbnail', Storage::url($item["thumbnail"]));
-            
+
             return $item;
         });
 
@@ -219,7 +219,7 @@ class Goods extends Model
                 )->where('id',$id)->first();
         $data['attribute_goods'] = $data['attributes'];
         $data['category_goods'] = $data['categories'];
-        
+
         //olah data untuk user
         $data['attribute_goods'] = $this->formatDataRelationAttributeGoods($data);
         $data['category_goods'] = $this->selectedColoumns($data['category_goods'],'category',["id","name"]);
@@ -227,7 +227,7 @@ class Goods extends Model
         $tampPricelists = $this->selectedColoumns($data['pricelists'],null,["id","price","supplier"]);
         $tampMaterials = $this->selectedColoumns($data['materials'],null,["id","name","total","adjust"]);
 
-        $data = Arr::except($data, 
+        $data = Arr::except($data,
             ['attributes',
             'categories',
             'user_id',
@@ -247,11 +247,11 @@ class Goods extends Model
 
         return $data;
     }
-    
+
     public function getMasterData(){
         return [
-            'categories' => Category::all(['id','name']), 
-            'warehouses' => Warehouse::all(['id','name']), 
+            'categories' => Category::all(['id','name']),
+            'warehouses' => Warehouse::all(['id','name']),
             'category_price_sellings' => CategoryPriceSelling::all(['id','name']),
             'attributes' => Attribute::all(['id','name']),
             'units'=>Unit::all(['id','name']),
