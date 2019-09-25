@@ -169,7 +169,7 @@ export default {
         {
             //api/payments/7/approve
             //cek apakah payment tidak melebihi dari kekurangan yang harus dibaya
-            if(data.paid_off >= this.$refs['cpDatatable'].not_paid_yet)
+            if(data.paid_off <= this.$refs['cpDatatable'].additional_data.not_paid_yet)
             {
                 const formData = new FormData();
                 formData.append('token', localStorage.getItem('token'));
