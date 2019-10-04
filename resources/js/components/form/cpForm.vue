@@ -199,11 +199,11 @@
 											>
 											</v-text-field>
 											<input
-	                                        :id='column'
+	                                        :id='JSON.parse(JSON.stringify(column))'
 	                                        type="file"
 	                                        style="display: none"
 	                                        accept="image/*"
-	                                        v-on:change='changeImage($event)'
+	                                        v-on:change='changeImage($event, column)'
 
 	                                        class="pa-2"
 	                                    	>
@@ -281,7 +281,7 @@
 											:xs12='objColumn.width == 12'
 											>
 
-											{{testlog(temp_input)}}
+											
 												<v-text-field
 												v-if='objColumn.type=="tf" && temp_input[table_name]'
 												:rules='$list_validation[objColumn.validation]'
@@ -289,6 +289,7 @@
 												v-model='temp_input[table_name][column]'
 												:disabled='objColumn.disabled'
 												:prefix='objColumn.prefix ? objColumn.prefix : ""'
+												value='0'
 												>
 												</v-text-field>
 
@@ -697,10 +698,12 @@
 			{
 				
 			},
-			changeImage(e){
+			changeImage(e, id){
 
 				
-				var id = e.explicitOriginalTarget.id //penyelamat :) ini sama saja dengan nama kolom
+				
+				console.log('cek id');
+				console.log(id);
 				var fileNameVariable = this.prop_dataInfo.single[id].fileNameVariable;
 				var previewVariable = this.prop_dataInfo.single[id].previewVariable;
 				var fileVariable = this.prop_dataInfo.single[id].fileVariable;
@@ -1582,6 +1585,7 @@
 						}
 					}
 				}
+
 				return result;
 
 			},
@@ -1658,7 +1662,7 @@
 					// }
 
 
-					//cek multiple
+					//cek multiple & cek default value
 					if(this.prop_dataInfo.form_multiple)
 					{
 						for(var i = 0;i<this.prop_dataInfo.form_multiple.length;i++)
@@ -1667,6 +1671,14 @@
 							if(!this.prop_dataInfo.multiple[temp].single) continue;
 							Object.keys(this.prop_dataInfo.multiple[temp].single).map(function(key, index) {
 								var obj = self.prop_dataInfo.multiple[temp].single[key];
+								var temp3 = JSON.parse(JSON.stringify(temp));
+								if(obj.defaultzero)
+								{
+									if(!self.temp_input[temp3][key])
+									{
+										self.temp_input[temp3][key] = 0;
+									}
+								}
 							    if(obj.value) //jika valuenya custom
 								{
 									var formula = obj.value;
