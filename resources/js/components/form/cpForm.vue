@@ -1585,7 +1585,10 @@
 						}
 					}
 				}
-
+				if(dataType == 'int' && !result)
+				{
+					result = 0;
+				}
 				return result;
 
 			},
