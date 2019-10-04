@@ -1,3 +1,7 @@
+.v-label.v-label--active.v-label--is-disabled.theme--light+.v-text-field__prefix
+{
+	color:rgba(0,0,0,.38) !important;
+}
 #one_step .info_stepper
 {
 	display: none !important;

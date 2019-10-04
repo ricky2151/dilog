@@ -155,6 +155,7 @@ export default {
             if(idx_action == 0)
             {
                 this.opendialog_createedit(id_datatable);
+                
             }
             else if(idx_action == 1)
             {
