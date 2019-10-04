@@ -31,8 +31,8 @@ class PaymentService
     }
 
     public function statusApprovePo($purchaseOrder){
-        if($purchaseOrder['status']!=3){
-            throw new InvalidParameterException(json_encode(["payment"=>["payment cannot be update/read/create because the status of PO not approved"]]));
+        if($purchaseOrder['status'] < 3 ){
+            throw new InvalidParameterException(json_encode(["payment"=>["payment cannot be update/read/create because the status of PO not approved/finished"]]));
         }
     } 
 
