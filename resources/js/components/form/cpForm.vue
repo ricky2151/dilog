@@ -50,7 +50,7 @@
 											:label='objColumn.label'
 											v-model='input[column]'
 											:disabled='objColumn.disabled'
-
+											:prefix='objColumn.prefix ? objColumn.prefix : ""'
 											class="pa-2"
 											>
 											</v-text-field>
@@ -115,7 +115,7 @@
 											:label='objColumn.label'
 											v-model='input[column]'
 											:disabled='objColumn.disabled'
-
+											:prefix='objColumn.prefix ? objColumn.prefix : ""'
 											class="pa-2"
 											>
 											</v-text-field>
@@ -127,7 +127,7 @@
 										:label='objColumn.label'
 										v-model='input[column]'
 										:disabled='objColumn.disabled'
-
+										:prefix='objColumn.prefix ? objColumn.prefix : ""'
 										class="pa-2"
 										>
 										</v-textarea>
@@ -194,7 +194,7 @@
 											label='Select Image'
 											v-model='input[objColumn.fileNameVariable]'
 											:disabled='objColumn.disabled'
-
+											:prefix='objColumn.prefix ? objColumn.prefix : ""'
 											class="pa-2"
 											>
 											</v-text-field>
@@ -288,6 +288,7 @@
 												:label='objColumn.label'
 												v-model='temp_input[table_name][column]'
 												:disabled='objColumn.disabled'
+												:prefix='objColumn.prefix ? objColumn.prefix : ""'
 												>
 												</v-text-field>
 
@@ -296,6 +297,7 @@
 												:rules='$list_validation[objColumn.validation]'
 												:label='objColumn.label'
 												v-model='temp_input[table_name][column]'
+												:prefix='objColumn.prefix ? objColumn.prefix : ""'
 												:disabled='objColumn.disabled'
 												>
 												</v-textarea>
@@ -311,6 +313,7 @@
 												:items='ref_input[objColumn.table_ref]'
 												:item-text='objColumn.itemText'
 												return-object
+												:prefix='objColumn.prefix ? objColumn.prefix : ""'
 												:disabled='objColumn.disabled'
 												>
 												</v-select>
@@ -322,6 +325,7 @@
 												:items='ref_input[objColumn.table_ref]'
 												:item-text='objColumn.itemText'
 												return-object
+												:prefix='objColumn.prefix ? objColumn.prefix : ""'
 												:disabled='objColumn.disabled'
 
 										        
@@ -377,7 +381,17 @@
 
 			                                <template v-slot:items="props">
 			                                    <td>{{ props.index + 1 }}</td>
-			                                    <td v-for='obj in prop_dataInfo.multiple[table_name].datatable'>{{obj.column.length == 1 ? props.item[obj.column[0]] : props.item[obj.column[0]][obj.column[1]]}}</td>
+			                                    <td v-for='obj in prop_dataInfo.multiple[table_name].datatable'>
+			                                    	{{obj.column.length == 1 ? 
+			                                    		obj.format ? 
+			                                    		format_data(props.item[obj.column[0]], obj.format) : 
+			                                    		props.item[obj.column[0]]
+			                                    		:
+			                                    	obj.format ?
+			                                    	format_data(props.item[obj.column[0]][obj.column[1]], obj.format) : 
+			                                    	props.item[obj.column[0]][obj.column[1]]
+			                                    }}
+			                                	</td>
 			                                    <td>
 			                                        <v-btn class='button-action' v-on:click='tableShowData(props.index,table_name)' color="primary" fab depressed small dark>
 			                                            <v-icon small>edit</v-icon>
@@ -1439,7 +1453,61 @@
 	                });
 	            }
 	        },
-
+	        strToPrice(angka,prefix)
+	        {
+	            //100000
+	            //9.000
+	            //11212
+	            //11.212
+	            angka = angka.toString();
+	            var hasil = "";
+	            var counter = 0;
+	            for(var i = angka.length - 1;i>= 0;i--)
+	            {
+	                counter++;
+	                if(counter % 3 == 0)
+	                {
+	                    if(i != 0)
+	                        hasil = "." + angka.charAt(i) +  hasil;
+	                    else
+	                            hasil = angka.charAt(i) + hasil;
+	                }
+	                else
+	                {
+	                    hasil = angka.charAt(i) + hasil;
+	                }
+	            }
+	            return prefix + hasil;
+	        },
+			format_data(value,types)
+			{
+				var result = value;
+				result = Math.ceil(result);
+				for(var i = 0;i<types.length;i++)
+				{
+					var type = types[i];
+					if(type == 'price')
+					{
+						result = this.strToPrice(result,"Rp. ");
+					}
+					else if(type == 'percent')
+					{
+						result = result + "%";
+					}
+					else if(type == 'approveornot')
+					{
+						if(result == 0)
+						{
+							result = 'New';
+						}
+						else
+						{
+							result = 'Approved';
+						}
+					}
+				}
+				return result;
+			},
 	        calculate_custom_value(data, value, dataType)
 			{
 				//data adalah row dari database

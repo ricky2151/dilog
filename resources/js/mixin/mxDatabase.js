@@ -584,7 +584,7 @@ export default
 								singular_name : 'price_sellings',
 								plural_name : 'price_sellings',
 
-								datatable : [{column : ['warehouse', 'name']}, {column : ['stock_cut_off']}, {column : ['category_price_selling','name']}, {column : ['price']}, {column : ['free','name']}],
+								datatable : [{column : ['warehouse', 'name']}, {column : ['stock_cut_off'], format:['price'],}, {column : ['category_price_selling','name']}, {column : ['price'], format:['price']}, {column : ['free','name']}],
 								headers: 
 								[
 									{ text: 'No', value:'no'},
@@ -614,7 +614,7 @@ export default
 									},
 									'price' : { 
 										label : 'Price', width:12, type:'tf',
-										value : ['margin', '+', 'last_buy_pricelist'], disabled : true, column:'price'
+										value : ['margin', '+', 'last_buy_pricelist'], disabled : true, column:'price', prefix:'Rp. ',
 									},
 									'free' : { 
 										label : 'Free', width:12, type:'s',
