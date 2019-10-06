@@ -5,6 +5,7 @@
 \.idea/
 /public/js
 /public/css
+/public/storage
 #/storage/app/public/*
 storage/*
 !storage/app/
