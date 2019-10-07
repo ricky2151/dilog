@@ -73,6 +73,7 @@
 								label='Tax'
 								v-model='input.tax'
 								class="pa-2"
+								suffix='%'
 								>
 								</v-text-field>
 
