@@ -277,7 +277,7 @@ export default
 								label : 'Name', width:12, type:'tf', validation:'max_req',
 							},
 							'nominal' : {
-								label : 'Nominal', width:12, type:'tf', validation:'numeric_req',
+								label : 'Nominal', width:12, type:'tf', validation:'numeric_req', prefix:'Rp. '
 							},
 							'type' : {
 								label : 'Type', width:12, type:'s', validation:'selectdata_req',
@@ -349,7 +349,7 @@ export default
 								label : 'Name', width:12, type:'tf', validation:'max_req',
 							},
 							'discount' : {
-								label : 'Discount', width:12, type:'tf', validation:'numeric_req',
+								label : 'Discount', width:12, type:'tf', validation:'numeric_req', suffix : '%'
 							},
 
 						},
@@ -491,7 +491,7 @@ export default
 								label : 'Description', width:12, type:'ta', validation:'max',
 							},
 							'margin' : { 
-								label : 'Margin', width:12, type:'tf', validation:'numeric_req',
+								label : 'Margin', width:12, type:'tf', validation:'numeric_req', prefix:'Rp. '
 							},
 							'value' : { 
 								label : 'Value', width:6, type:'tf', validation:'numeric_req',
@@ -510,10 +510,10 @@ export default
 								itemText:'name', itemValue:'value', column:'avg_price_status',table_ref:'avg_price_status'
 							},
 							'avg_price' : { 
-								label : 'Average Price', width:6, type:'tf', validation:'numeric',
+								label : 'Average Price', width:6, type:'tf', validation:'numeric', prefix : 'Rp. '
 							},
 							'tax' : { 
-								label : 'Tax', width:6, type:'tf', validation:'numeric',
+								label : 'Tax', width:6, type:'tf', validation:'numeric', suffix:'%'
 							},
 							'unit' : { 
 								label : 'Unit', width:12, type:'s', validation:'selectdata_req', 
@@ -566,11 +566,13 @@ export default
 									},
 									'attribute' : { 
 										label : 'Attribute', width:12, type:'s',
-										itemText:'name', itemValue:'id', column:'attribute_id', table_ref:'attributes'
+										itemText:'name', itemValue:'id', column:'attribute_id', table_ref:'attributes',
+										required : true,
 
 									},
 									'value' : { 
-										label : 'Value', width:12, type:'tf', column:'value'
+										label : 'Value', width:12, type:'tf', column:'value',
+										required : true,
 									},
 									
 								},
@@ -584,7 +586,7 @@ export default
 								singular_name : 'price_sellings',
 								plural_name : 'price_sellings',
 
-								datatable : [{column : ['warehouse', 'name']}, {column : ['stock_cut_off']}, {column : ['category_price_selling','name']}, {column : ['price']}, {column : ['free','name']}],
+								datatable : [{column : ['warehouse', 'name']}, {column : ['stock_cut_off'], format:['price']}, {column : ['category_price_selling','name']}, {column : ['price'], format:['price']}, {column : ['free','name']}],
 								headers: 
 								[
 									{ text: 'No', value:'no'},
@@ -603,22 +605,27 @@ export default
 									},
 									'warehouse' : { 
 										label : 'Warehouse', width:12, type:'s',
-										itemText:'name', itemValue:'id', column:'warehouse_id', table_ref:'warehouses'
+										itemText:'name', itemValue:'id', column:'warehouse_id', table_ref:'warehouses',
+										required : true,
 									},
 									'stock_cut_off' : { 
-										label : 'Stock Cut Off', width:12, type:'tf', column:'stock_cut_off'
+										label : 'Stock Cut Off', width:12, type:'tf', column:'stock_cut_off',prefix:'Rp. ',
+										required : true,
 									},
 									'category_price_selling' : { 
 										label : 'Category Price Selling', width:12, type:'s',
-										itemText:'name', itemValue:'id', column:'category_price_selling_id', table_ref:'category_price_sellings'
+										itemText:'name', itemValue:'id', column:'category_price_selling_id', table_ref:'category_price_sellings',
+										required : true,
 									},
 									'price' : { 
 										label : 'Price', width:12, type:'tf',
-										value : ['margin', '+', 'last_buy_pricelist'], disabled : true, column:'price'
+										value : ['margin', '+', 'last_buy_pricelist'], disabled : true, column:'price', prefix:'Rp. ', defaultzero:true,
+										required : true,
 									},
 									'free' : { 
 										label : 'Free', width:12, type:'s',
-										itemText:'name', itemValue:'value', column:'free', table_ref:'free', custom_table_ref:true
+										itemText:'name', itemValue:'value', column:'free', table_ref:'free', custom_table_ref:true,
+										required : true,
 									},
 									
 								},
@@ -632,7 +639,7 @@ export default
 								singular_name : 'pricelists',
 								plural_name : 'pricelists',
 
-								datatable : [{column : ['supplier', 'name_company']}, {column : ['price']} ],
+								datatable : [{column : ['supplier', 'name_company']}, {column : ['price'], format : ['price']} ],
 								headers: 
 								[
 									{ text: 'No', value:'no'},
@@ -649,10 +656,12 @@ export default
 									},
 									'supplier' : { 
 										label : 'Supplier', width:12, type:'s',
-										itemText:'name_company', itemValue:'id', column:'supplier_id', table_ref:'suppliers'
+										itemText:'name_company', itemValue:'id', column:'supplier_id', table_ref:'suppliers',
+										required : true,
 									},
 									'price' : { 
-										label : 'Price', width:12, type:'tf', column:'price'
+										label : 'Price', width:12, type:'tf', column:'price', prefix : 'Rp. ',
+										required : true,
 									},
 									
 								},
@@ -683,13 +692,16 @@ export default
 										label : '', 
 									},
 									'name' : { 
-										label : 'Name', width:12, type:'tf', column:'name'
+										label : 'Name', width:12, type:'tf', column:'name',
+										required : true,
 									},
 									'total' : { 
-										label : 'Total', width:12, type:'tf', column:'total'
+										label : 'Total', width:12, type:'tf', column:'total',
+										required : true,
 									},
 									'adjust' : { 
-										label : 'Adjust', width:12, type:'tf', column:'adjust'
+										label : 'Adjust', width:12, type:'tf', column:'adjust',
+										required : true,
 									},
 									
 								},
@@ -1056,7 +1068,7 @@ export default
 								singular_name : 'pricelists',
 								plural_name : 'pricelists',
 
-								datatable : [{column : ['goods', 'name']}, {column : ['price']}],
+								datatable : [{column : ['goods', 'name']}, {column : ['price'], format:['price']}],
 								headers: 
 								[
 									{ text: 'No', value:'no'},
@@ -1072,11 +1084,13 @@ export default
 									},
 									'goods' : { 
 										label : 'Goods', width:12, type:'s2',
-										itemText:'name', itemValue:'id', column:'goods_id', table_ref:'goods'
+										itemText:'name', itemValue:'id', column:'goods_id', table_ref:'goods',
+										required : true,
 
 									},
 									'price' : { 
-										label : 'Price', width:12, type:'tf', column:'price'
+										label : 'Price', width:12, type:'tf', column:'price', prefix:'Rp. ',
+										required : true,
 									},
 									
 								},
@@ -1583,14 +1597,14 @@ export default
 								label : 'Quantity', width:12, type:'tf', validation:'numeric_req',
 							},
 							'tax' : {
-								label : 'Tax', width:12, type:'tf', validation:'numeric_req',
+								label : 'Tax', width:12, type:'tf', validation:'numeric_req', suffix : '%',
 							},
 							'discount_percent' : {
-								label : 'Discount Percent', width:12, type:'tf', validation:'numeric_req',
+								label : 'Discount Percent', width:12, type:'tf', validation:'numeric_req', suffix: '%',
 
 							},
 							'discount_rupiah' : {
-								label : 'Discount Rupiah', width:12, type:'tf', validation:'numeric_req',
+								label : 'Discount Rupiah', width:12, type:'tf', validation:'numeric_req', suffix : '%',
 							},
 
 						},
@@ -1985,7 +1999,7 @@ export default
 								
 							},
 							'paid_off' : {
-								label : 'Paid Off', width:12, type:'tf', validation:'numeric_req',
+								label : 'Paid Off', width:12, type:'tf', validation:'numeric_req', prefix : 'Rp. '
 							},
 
 						},
