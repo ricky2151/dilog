@@ -16,8 +16,26 @@ class PurchaseRequestDetail extends Model
         $this->save();
     }
 
+    public function getMasterData(){
+        $goods = collect($this->load(['purchaseRequest.rekaps'])['purchaseRequest']['rekaps'])->map(function($data){
+            return $data['goods_id'];
+        });
+        return ['goods' => Goods::whereIn('id',$goods)->get()->map(function($data){
+                // $data = collect($data);
+            $suppliers = $data['suppliers']->map(function($supplier) use($data){
+                $pricelists = $supplier['pricelists']->where('goods_id', $data['id'])->values();
+                $supplier = collect($supplier);
+                $supplier['pricelists'] = $pricelists;
+                return $supplier;
+            });
+            $data = collect($data);
+            $data['suppliers'] = $suppliers;
+            return $data;
+        })];
+    }
+
     public function purchaseRequest(){
-        return $this->belongsTo('App\Models\PurchaseRequest');
+        return $this->belongsTo('App\Models\PurchaseRequest','purchase_request_id','id');
     }
 
     public function goods(){
