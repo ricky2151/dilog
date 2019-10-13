@@ -329,6 +329,39 @@
 							result = 'Approved';
 						}
 					}
+					else if(type == 'enableordisable')
+					{
+						if(result == 0)
+						{
+							result = 'Disable';
+						}
+						else
+						{
+							result = 'Enable';
+						}
+					}
+					else if(type == 'freeornot')
+					{
+						if(result == 0)
+						{
+							result = 'Not Free';
+						}
+						else
+						{
+							result = 'Free';
+						}
+					}
+					else if(type == 'activeornot')
+					{
+						if(result == 0)
+						{
+							result = 'Not Active';
+						}
+						else
+						{
+							result = 'Active';
+						}
+					}
 				}
 				return result;
 			},
