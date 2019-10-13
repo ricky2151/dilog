@@ -52,6 +52,7 @@ class PurchaseRequestService
                 "supplier_id"=>$supplierId,
                 "payment_type" => 2,
                 "type" => 2,
+                "status"=>2,
                 "periode_id" => $this->periode->getPeriodeActive()['id']
             ]);
 
