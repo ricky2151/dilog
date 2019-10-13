@@ -24,7 +24,7 @@
 	                    <v-btn icon dark v-on:click="close_dialog_add_pr()">
 	                        <v-icon>close</v-icon>
 	                    </v-btn>
-	                    <v-toolbar-title>Add Purchase Order</v-toolbar-title>
+	                    <v-toolbar-title>Add Purchase Request</v-toolbar-title>
 
 	                </v-toolbar>
 	                <div style='padding:30px'>
