@@ -21,6 +21,8 @@ import Rack from './views/Rack.vue'
 import Supplier from './views/Supplier.vue'
 import Customer from './views/Customer.vue'
 import PODirect from './views/PODirect.vue'
+import Periode from './views/Periode.vue'
+import Division from './views/Division.vue'
 
 import PurchaseOrder from './views/PurchaseOrder.vue'
 import MaterialRequest from './views/MaterialRequest.vue'
@@ -54,6 +56,8 @@ const routes = [
             { path: '/master-data/cogs', component: Cogs},
             { path: '/master-data/goods', component: Goods, exact: true },
             { path: '/master-data/goods/create', component: Goodscreate},
+            { path: '/master-data/division', component: Division, exact: true },
+            { path: '/master-data/periode', component: Periode, exact: true },
             { path: '/stock/goods/rack', component: GoodsRack },
             { path: '/stock/warehouse', component: Warehouse },
             { path: '/stock/rack', component: Rack},

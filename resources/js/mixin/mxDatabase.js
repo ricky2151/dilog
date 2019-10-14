@@ -457,6 +457,10 @@ export default
 			                    {value:1,name:'True'},
 			                    {value:0,name:'False'},
 			                ],
+			                'activeornot':[
+			                    {value:1,name:'Active'},
+			                    {value:0,name:'Not Active'},
+			                ],
 						},
 						rule_update:'some',
 						datatable:[
@@ -497,7 +501,11 @@ export default
 								label : 'Value', width:6, type:'tf', validation:'numeric_req',
 							},
 							'status' : { 
-								label : 'Status', width:12,  type:'tf', validation:'numeric_req',
+								//label : 'Status', width:12,  type:'tf', validation:'numeric_req', 
+								label : 'Status', width:12, type:'s',
+								itemText:'name', itemValue:'value', column:'status', table_ref:'activeornot', custom_table_ref:true,
+								format : ['activeornot'],
+								required : true,
 							},
 							'last_buy_pricelist' : { 
 								label : 'Last Buy Pricelist', width:6,  type:'tf', validation:'numeric',
@@ -1838,7 +1846,7 @@ export default
 					
 
 
-					actions:['Edit', 'Make PO'],
+					actions:['Add Detail', 'Make PO'],
 					conditional_action_button : ['status_name', '==', 'new'], //langsung tombolnya per row
 
 
@@ -1995,7 +2003,7 @@ export default
 								label : '',
 							},
 							'payment_date' : {
-								label : 'Payment Date', width:12, type:'date',
+								label : 'Payment Date', width:12, type:'date', validation:'max_req'
 								
 							},
 							'paid_off' : {
@@ -2017,6 +2025,178 @@ export default
 						
 					}
 				},
+
+
+				//19. crud-periodes
+				"periodes" : 
+				{
+					table_name : 'periodes',
+					title : 'Periode',
+					icon : 'access_time',
+
+					singular_name : 'periode',
+					plural_name : 'periodes',
+					column_desc : 'name', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
+
+					request_master_data : false,
+					data : 
+					{
+						custom_master_data : {
+			                'activeornot':[
+			                    {value:1,name:'Active'},
+			                    {value:0,name:'Not Active'},
+			                ],
+						},
+						rule_update:'send_all',
+						datatable:[
+							{
+								column : 'name',
+							},
+							{
+								column : 'from',
+							},
+							{
+								column : 'to',
+							},
+							{
+								column : 'code',
+							},
+							{
+								column : 'status',
+								format : ['activeornot'],
+							},
+						],
+						
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'From', value:'from'},
+                				{ text: 'To', value:'to'},
+                				{ text: 'Code', value:'code'},
+                				{ text: 'Status', value:'status'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						form_single : [['name'],['from'],['to'],['status']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'name' : {
+								label : 'Name', width:12, type:'tf', validation:'max_req',
+							},
+							'from' : {
+								label : 'From', width:12, type:'date', validation:'max_req',
+							},
+							'to' : {
+								label : 'To', width:12, type:'date', date_before_column : 'from',
+							},
+
+							'status' : {
+								label : 'Status', width:12, type:'s',
+								itemText:'name', itemValue:'value', column:'status', table_ref:'activeornot', custom_table_ref:true,
+								format : ['activeornot'],
+								required : true, validation:'selectdata_req'
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+
+				//19. crud-division
+				"divisions" : 
+				{
+					table_name : 'divisions',
+					title : 'Divison',
+					icon : 'people_alt',
+
+					singular_name : 'division',
+					plural_name : 'divisions',
+					column_desc : 'name', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
+
+					request_master_data : false,
+					data : 
+					{
+						custom_master_data : {
+			                'mr_enable':[
+			                    {value:1,name:'Enable'},
+			                    {value:0,name:'Disable'},
+			                ],
+						},
+						rule_update:'send_all',
+						datatable:[
+							{
+								column : 'name',
+							},
+							{
+								column : 'mr_enable',
+								format : ['enableordisable'],
+							},
+						],
+						
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'MR Enable', value:'mr_enable'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						form_single : [['name'],['mr_enable']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'name' : {
+								label : 'Name', width:12, type:'tf', validation:'max_req',
+							},
+							'mr_enable' : {
+								label : 'MR Enable', width:12, type:'s',
+								itemText:'name', itemValue:'value', column:'mr_enable', table_ref:'mr_enable', custom_table_ref:true,
+								required : true, validation:'selectdata_req'
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+
 			}
 		}
 	},

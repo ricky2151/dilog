@@ -116,12 +116,20 @@
 					{
 						data_false = true;
 					}
-					formData.append('purchase_request_details[' + idxformdata + '][goods_id]', this.input[i].goods_id);
-					formData.append('purchase_request_details[' + idxformdata + '][qty]', this.input[i].amount_order);
-					formData.append('purchase_request_details[' + idxformdata + '][price]', this.input[i].selected_pricelist.price);
-					formData.append('purchase_request_details[' + idxformdata + '][supplier_id]', this.input[i].selected_pricelist.supplier_id);
-					formData.append('purchase_request_details[' + idxformdata + '][pricelist_id]', this.input[i].selected_pricelist.id);
-					idxformdata += 1;
+					else
+					{
+						if(this.input[i].amount_order != 0)
+						{
+							formData.append('purchase_request_details[' + idxformdata + '][goods_id]', this.input[i].goods_id);
+							formData.append('purchase_request_details[' + idxformdata + '][qty]', this.input[i].amount_order);
+							formData.append('purchase_request_details[' + idxformdata + '][price]', this.input[i].selected_pricelist.price);
+							formData.append('purchase_request_details[' + idxformdata + '][supplier_id]', this.input[i].selected_pricelist.supplier_id);
+							formData.append('purchase_request_details[' + idxformdata + '][pricelist_id]', this.input[i].selected_pricelist.id);
+							idxformdata += 1;	
+						}
+						
+					}
+					
 				}
 				if(data_false)
 				{
