@@ -29,7 +29,7 @@ class StorePeriode extends FormRequest
             'name' => "required|string",
             'from' => "required|date|before:to",
             'to' => "required|date|after:from",
-            // 'status' => "required|boolean"
+            'status' => "required|in:0,1"
         ];
     }
 
