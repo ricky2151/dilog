@@ -64,7 +64,7 @@ class PurchaseRequestDetailController extends Controller
         $this->purchaseRequestDetailService->handleInvalidParameter($id);
         $this->purchaseRequestDetailService->handleModelNotFound($id);
         return formatResponse(false,([
-            "purchase_request_detail"=>$this->purchaseRequestDetail->find($id)
+            "purchase_request_detail"=>$this->purchaseRequestDetail->find($id)->load(['goods','purchaseRequest','supplier','pricelist'])
         ]));
     }
 
@@ -79,7 +79,7 @@ class PurchaseRequestDetailController extends Controller
         $this->purchaseRequestDetailService->handleInvalidParameter($id);
         $this->purchaseRequestDetailService->handleModelNotFound($id);
 
-        $purchaseRequestDetail = $this->purchaseRequestDetail->find($id);
+        $purchaseRequestDetail = $this->purchaseRequestDetail->find($id)->load(['goods','purchaseRequest','supplier','pricelist']);
         return formatResponse(false,([
             "purchase_request_detail"=>collect($purchaseRequestDetail),
             'master_data'=>$purchaseRequestDetail->getMasterData()
@@ -121,8 +121,6 @@ class PurchaseRequestDetailController extends Controller
                 return formatResponse(false,(["purchaseRequestDetail"=>"purchase request detail was successfully updated"]));
             }
         }
-
-        return $purchaseRequestDetail;
         
     }
 
@@ -132,8 +130,18 @@ class PurchaseRequestDetailController extends Controller
      * @param  \App\models\PurchaseRequestDetail  $purchaseRequestDetail
      * @return \Illuminate\Http\Response
      */
-    public function destroy(PurchaseRequestDetail $purchaseRequestDetail)
+    public function destroy($id)
     {
-        //
+        $this->purchaseRequestDetailService->handleInvalidParameter($id);
+        $this->purchaseRequestDetailService->handleModelNotFound($id);
+
+        $purchaseRequestDetail = $this->purchaseRequestDetail->find($id);
+        if($purchaseRequestDetail->is_created_as_po == 0){
+            $purchaseRequestDetail->delete();
+            return formatResponse(false,(["purchaseRequestDetail"=>"successfull delete"]));
+        }
+        else{
+            return formatResponse(true,(["purchaseRequestDetail"=>"cannot be deleted because it has been made into PO"]));
+        }
     }
 }
