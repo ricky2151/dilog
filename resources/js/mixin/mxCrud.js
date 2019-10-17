@@ -68,6 +68,7 @@ export default {
                 this.list_state[name_component]['table_parent'] = table_parent;
                 this.list_state[name_component]['id_selected'] = id_selected;
             }
+            
             this.open_state = name_component;
 
             var idx_selected = -1;

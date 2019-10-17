@@ -20,7 +20,7 @@
 							<h3>{{prop_title}} Data</h3>
 						</v-stepper-step>
 						<v-stepper-content step='1'>
-								{{input}}
+								
 								<v-layout row 
 								v-for='(columns,key,idx) in prop_dataInfo.form_single' :key='key'>
 									<v-flex 

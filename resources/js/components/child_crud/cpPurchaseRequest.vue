@@ -105,14 +105,22 @@
 
         </template>
 
-        <template v-if="open_state=='cpPurchaseRequestEdit'">
-            <cp-purchase-request-edit
-            :prop_list_filter='list_state["cpPurchaseRequestEdit"]'
+        <template v-if="open_state=='cpPurchaseRequestAdd'">
+            <cp-purchase-request-add
+            :prop_list_filter='list_state["cpPurchaseRequestAdd"]'
             :prop_data='data_edit'
-            ref='cpPurchaseRequestEdit'
+            ref='cpPurchaseRequestAdd'
             v-on:cancel='cancel_po_edit'
             v-on:done='done_po_edit'
-            ></cp-purchase-request-edit>
+            ></cp-purchase-request-add>
+        </template>
+
+        <template v-if="open_state=='cpPurchaseRequestDetail'">
+            <cp-purchase-request-detail
+            :prop_list_filter='list_state["cpPurchaseRequestDetail"]'
+            ref='cpPurchaseRequestDetail'
+            
+            ></cp-purchase-request-detail>
         </template>
 
         <template v-if="open_state=='cpMakePo'">
@@ -131,12 +139,14 @@
 
 <script>
 import mxCrudBasic from '../../mixin/mxCrudBasic';
-import cpPurchaseRequestEdit from './cpPurchaseRequestEdit.vue'
+import cpPurchaseRequestAdd from './cpPurchaseRequestAdd.vue'
+import cpPurchaseRequestDetail from './cpPurchaseRequestDetail.vue'
 import cpMakePo from './cpMakePo.vue'
 
 export default {
     components : {
-        cpPurchaseRequestEdit,
+        cpPurchaseRequestAdd,
+        cpPurchaseRequestDetail,
         cpMakePo
     },
     data () {
@@ -163,7 +173,8 @@ export default {
             list_state : 
             {
                 'cpPurchaseRequest' : {},
-                'cpPurchaseRequestEdit' : {},
+                'cpPurchaseRequestAdd' : {},
+                'cpPurchaseRequestDetail' : {},
                 'cpMakePo' : {},
             },
             
@@ -177,9 +188,15 @@ export default {
                 },
                 //level 2
                 {
-                    text: 'Detail Purchase Request',
+                    text: 'Add Purchase Request',
                     disabled: true,
-                    cp: 'cpPurchaseRequestEdit',
+                    cp: 'cpPurchaseRequestAdd',
+                    before : 'cpPurchaseRequest'
+                },
+                {
+                    text: 'Edit Purchase Request',
+                    disabled: true,
+                    cp: 'cpPurchaseRequestDetail',
                     before : 'cpPurchaseRequest'
                 },
                 {
@@ -261,10 +278,10 @@ export default {
 	            {
 	            	temp[i].no = i + 1;
 	            }
-                this.open_component('cpPurchaseRequestEdit', null, null,r.data.items.purchase_request.code);
+                this.open_component('cpPurchaseRequestAdd', null, null,r.data.items.purchase_request.code);
                 this.dialog_add_pr = false;
                 this.$nextTick(() => {
-	                this.$refs['cpPurchaseRequestEdit'].fill_data(temp, r.data.items.purchase_request.id);
+	                this.$refs['cpPurchaseRequestAdd'].fill_data(temp, r.data.items.purchase_request.id);
                     
 
 	                swal("Good job!", "Recap Successfully !", "success");
@@ -366,18 +383,22 @@ export default {
 		            {
 		            	temp[i].no = i + 1;
 		            }
-	                this.open_component('cpPurchaseRequestEdit',null,null,this.selected_data.code);
+	                this.open_component('cpPurchaseRequestAdd',null,null,this.selected_data.code);
 	                this.$nextTick(() => {
                         
                         
-		                this.$refs['cpPurchaseRequestEdit'].fill_data(temp, id);
+		                this.$refs['cpPurchaseRequestAdd'].fill_data(temp, id);
                         
 		                
 				  	})
 	            });
-                 //this.open_component('cpPurchaseRequestEdit', 'purchase_request', id);
+                 //this.open_component('cpPurchaseRequestAdd', 'purchase_request', id);
             }
             else if(idx_action == 1)
+            {
+                this.open_component('cpPurchaseRequestDetail', 'purchase_request', id, this.selected_data.code);
+            }
+            else if(idx_action == 2)
             {
             	//api
 	    		 axios.get(

@@ -1846,7 +1846,7 @@ export default
 					
 
 
-					actions:['Add Detail', 'Make PO'],
+					actions:['Add Detail','Edit Detail', 'Make PO'],
 					conditional_action_button : ['status_name', '==', 'new'], //langsung tombolnya per row
 
 
@@ -2189,6 +2189,107 @@ export default
 						multiple:{},
 						form_custom_component:[],
 						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+				//14. crud-purchase_request_details
+				"purchase_request_details" : 
+				{
+					table_name : 'purchase_request_details',
+					title : 'Purchase Request Detail',
+					icon : 'add_shopping_cart',
+
+					singular_name : 'purchase_request_detail',
+					plural_name : 'purchase_request_details',
+					column_desc : 'code', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					additional_param_index : 'purchase_request_id',
+					additional_param_create : 'purchase_request_id',
+
+					actions:['Edit', 'Delete'],
+					button_on_index : [],
+
+					format_additional_data : 
+					{
+						'Code' : 'code',
+					},
+					function_format_additional_data : 
+					{
+						
+					},
+
+					request_master_data : false,
+					data : 
+					{
+						custom_master_data : {
+							
+						},
+						rule_update:'some',
+						change_format_data : [
+							{
+								column : ['supplier', 'name_company'],
+								change_to : ['supplier_name'],
+							},
+							{
+								column : ['goods', 'name'],
+								change_to : ['goods_name'],
+							}
+						],
+						datatable:[
+							{
+								column : 'goods_name',
+							},
+							{
+								column : 'qty',
+							},
+							{
+								column : 'supplier_name',
+							},
+							{
+								column : 'price',
+								format : ['price'],
+							},
+							{
+								column : '',
+								format : ['price'],
+								value : ['qty', '*', 'price']
+							},
+						],
+						filter_by_user : {
+							
+						},
+
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Goods', value:'goods_name'},
+                				{ text: 'Quantity', value:'qty'},
+                				{ text: 'Supplier', value:'supplier_name'},
+                				{ text: 'Pricelist', value:'price'},
+                				{ text: 'Subtotal', value:'subtotal'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						
+
+
+						
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+						conditional_input:{
+							
+						}
 					},
 					get_data_detail : 
 					{
