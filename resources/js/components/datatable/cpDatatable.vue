@@ -413,7 +413,7 @@
 	            	}
 	            	if(this.prop_trigger_after_refresh_data)
 	            	{
-	            		this.$emit('data_refreshed');
+	            		this.$emit('data_refreshed', r.data.items);
 	            	}
 
 

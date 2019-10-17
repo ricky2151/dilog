@@ -111,6 +111,8 @@
 					supplier : null,
 					qty : 0,
 				},
+
+				
 				ref_input : [],
 			}
 		},
@@ -311,52 +313,63 @@
 					let r = await this.get_data_before_edit(id);
 					r = r.data.items;
 
-
-					//isi master data dulu
-					//isi refinput
 					
-					this.ref_input.goods = JSON.parse(JSON.stringify(r.master_data.goods));
-
-					
-					
-
-					//this.input.goods di assign dari master data
-					
-					var id_goods = r.purchase_request_detail.goods_id;
-					for(var i = 0;i<this.ref_input.goods.length;i++)
+					if(r.purchase_request_detail.is_created_as_po == 1)
 					{
-						if(this.ref_input.goods[i].id == id_goods)
+						swal('Cannot Edit !', 'This PR has been submitted to PO', 'error');
+						this.close_dialog();
+						return 0;
+					}
+					else
+					{
+						//isi master data dulu
+						//isi refinput
+						
+						this.ref_input.goods = JSON.parse(JSON.stringify(r.master_data.goods));
+
+						
+						
+
+						//this.input.goods di assign dari master data
+						
+						var id_goods = r.purchase_request_detail.goods_id;
+						for(var i = 0;i<this.ref_input.goods.length;i++)
 						{
-							this.input.goods = this.ref_input.goods[i];
-							
-							break;
+							if(this.ref_input.goods[i].id == id_goods)
+							{
+								this.input.goods = this.ref_input.goods[i];
+								
+								break;
+							}
 						}
+
+						var id_supplier = r.purchase_request_detail.supplier_id;
+						for(var i = 0;i<this.input.goods.suppliers.length;i++)
+						{
+							if(this.input.goods.suppliers[i].id == id_supplier)
+							{
+								this.input.supplier = this.input.goods.suppliers[i];
+								break;
+							}
+						}
+						console.log('cek id supplier');
+						console.log(this.input);
+
+						//this.input.pricelist di assign dari input.goods.pricelists
+						var id_pricelist = r.purchase_request_detail.pricelist_id;
+						for(var i = 0;i<this.input.supplier.pricelists.length;i++)
+						{
+							if(this.input.supplier.pricelists[i].id == id_pricelist)
+							{
+								this.input.pricelist = this.input.supplier.pricelists[i];
+								break;
+							}
+						}
+
+						this.input.qty = r.purchase_request_detail.qty;
+
 					}
 
-					var id_supplier = r.purchase_request_detail.supplier_id;
-					for(var i = 0;i<this.input.goods.suppliers.length;i++)
-					{
-						if(this.input.goods.suppliers[i].id == id_supplier)
-						{
-							this.input.supplier = this.input.goods.suppliers[i];
-							break;
-						}
-					}
-					console.log('cek id supplier');
-					console.log(this.input);
-
-					//this.input.pricelist di assign dari input.goods.pricelists
-					var id_pricelist = r.purchase_request_detail.pricelist_id;
-					for(var i = 0;i<this.input.supplier.pricelists.length;i++)
-					{
-						if(this.input.supplier.pricelists[i].id == id_pricelist)
-						{
-							this.input.pricelist = this.input.supplier.pricelists[i];
-							break;
-						}
-					}
-
-					this.input.qty = r.purchase_request_detail.qty;
 
 					
 					

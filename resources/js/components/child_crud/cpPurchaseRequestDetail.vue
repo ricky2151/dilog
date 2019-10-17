@@ -49,7 +49,7 @@
         <cp-datatable 
         v-if='info_table.data'
 
-        :prop_header='JSON.parse(JSON.stringify(info_table.data.headers))'
+        :prop_header='info_table.data.headers'
         :prop_search_data='search_data'
         :prop_infoDatatable='info_table.data.datatable'
         :prop_action_items='info_table.actions'
@@ -58,9 +58,11 @@
         :prop_filter='prop_list_filter'
         prop_get_additional_data='true'
         :prop_change_format_data='info_table.data.change_format_data'
+        prop_trigger_after_refresh_data=true
 
         v-on:show_additional_data='fill_additional_data'
         v-on:action_clicked='action_change'
+        v-on:data_refreshed='data_refreshed'
         ref="cpDatatable"
 
         ></cp-datatable>
@@ -79,15 +81,41 @@ export default {
         cpAddEditDetailPr,
     },
     props: ['prop_list_filter'],
+    
     data () {
         return {
             info_table:{},
             name_table:'purchase_request_details',
             search_data: null,
             additional_data:null,
+            can_edit:true,
         }
     },
     methods: {
+        data_refreshed(data)
+        {
+            console.log('cek data_refreshed');
+            console.log(data);
+            for(var i = 0;i<data.purchase_request.purchase_request_details.length;i++)
+            {
+                var temp = data.purchase_request.purchase_request_details[i];
+                if(temp.is_created_as_po == 1)
+                {
+                    this.can_edit = false;
+                    this.info_table.actions = [];
+                    this.info_table.data.headers = [
+                                { text: 'No', value:'no'},
+                                { text: 'Goods', value:'goods_name'},
+                                { text: 'Quantity', value:'qty'},
+                                { text: 'Supplier', value:'supplier_name'},
+                                { text: 'Pricelist', value:'price'},
+                                { text: 'Subtotal', value:'subtotal'},
+                        ];
+                    break;
+                }
+            }
+            
+        },
         submit_data()
         {
             const formData = new FormData();
@@ -127,6 +155,8 @@ export default {
             {
                 if(index == 0)
                 {
+                    console.log('eaaa');
+                    console.log(this.$refs['cpDatatable'].data_table);
                     this.$refs['cpAddEditDetailPr'].open_dialog(-1);
                     //this.opendialog_createedit(-1);
                 }
@@ -140,7 +170,8 @@ export default {
         },
         action_change(id,idx_action)
         {
-           
+           if(this.can_edit)
+           {
                 if(idx_action == 0)
                 {
                     this.$refs['cpAddEditDetailPr'].open_dialog(id);
@@ -150,6 +181,16 @@ export default {
                 {
                     this.delete_data(id);
                 }
+
+           }
+           else
+           {
+                if(idx_action == 0)
+                {
+                    this.delete_data(id);
+                }
+                
+           }
                 
                 
             
@@ -163,9 +204,11 @@ export default {
     mounted(){      
         this.info_table = JSON.parse(JSON.stringify(this.database[this.name_table])); //harusnya semau begini
         
+
         
         
     },
+   
     mixins:[
         mxCrudBasic
     ],
