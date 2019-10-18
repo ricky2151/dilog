@@ -148,10 +148,6 @@ export default {
         },
         action_change(id_datatable,idx_action, data_item)
         {
-            
-            //console.log('action_change');
-            //console.log(this.action_selected);
-            // console.log(this.action_selected == 'Rack');
             if(idx_action == 0)
             {
                 this.opendialog_createedit(id_datatable);
@@ -175,14 +171,8 @@ export default {
             {
                 this.delete_data(id_datatable);
             }
-           
-            //this.action_selected[id_datatable] = null;
-        },
         
-
-
-
-
+        },
     },
     mixins:[
         mxCrudChildForm,

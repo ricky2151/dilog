@@ -352,8 +352,6 @@
 								break;
 							}
 						}
-						console.log('cek id supplier');
-						console.log(this.input);
 
 						//this.input.pricelist di assign dari input.goods.pricelists
 						var id_pricelist = r.purchase_request_detail.pricelist_id;

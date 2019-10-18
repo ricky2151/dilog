@@ -132,7 +132,6 @@
 								var pushtrue = false;
 								if(this.checklisting && this.prop_conditional_checklist)
 								{
-									//console.log(this.prop_conditional_checklist);
 									if(data_table_now[i][this.prop_conditional_checklist[0]] == this.prop_conditional_checklist[2])
 									{
 										pushtrue = true;
