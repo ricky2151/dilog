@@ -43,8 +43,6 @@ export default {
         },
         fill_filter_by_user_ref(arr)
         {
-            // console.log('sampe fill filter by user ref');
-            // console.log(arr);
             this.filter_by_user_ref = arr;
         },
         fill_filter_by_user_value(val)

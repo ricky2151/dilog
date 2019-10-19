@@ -27,7 +27,6 @@ class StoreGoods extends FormRequest
     {
         return [
             'name' => "required|string",
-            'code' => "required|string|unique:goods",
             'desc' => "string|nullable",
             'margin' => "required|integer",
             'value' => "required|integer",

@@ -169,9 +169,6 @@ export default {
                 this.info_table.actions = [];
                 this.info_table.button_on_index = [];
                 this.info_table.data.headers.splice(6, 1);
-                // console.log(JSON.parse(JSON.stringify(this.$refs['cpDatatable'].prop_header)));
-                // this.$refs['cpDatatable'].prop_header.splice(this.$refs['cpDatatable'].prop_header.length - 1, 1);
-                // console.log(JSON.parse(JSON.stringify(this.$refs['cpDatatable'].prop_header)));
             }
         }
 

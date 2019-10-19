@@ -94,8 +94,6 @@ export default {
     methods: {
         data_refreshed(data)
         {
-            console.log('cek data_refreshed');
-            console.log(data);
             for(var i = 0;i<data.purchase_request.purchase_request_details.length;i++)
             {
                 var temp = data.purchase_request.purchase_request_details[i];
@@ -155,10 +153,7 @@ export default {
             {
                 if(index == 0)
                 {
-                    console.log('eaaa');
-                    console.log(this.$refs['cpDatatable'].data_table);
                     this.$refs['cpAddEditDetailPr'].open_dialog(-1);
-                    //this.opendialog_createedit(-1);
                 }
                 else if(index == 1)
                 {

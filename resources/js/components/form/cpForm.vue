@@ -546,15 +546,10 @@
 		{
 			compare_date_validation(date1, date2, compare_string)
 			{
-				console.log('masuk1');
 		        if (typeof date1 !== 'undefined' && typeof date2 !== 'undefined')
 		        {
-		        	console.log('masuk2');
 		        	if(date1 && date2)
 		        	{
-		        		console.log('masuk3');
-		        		console.log(date1);
-		        		console.log(date2);
 		        		var dt_before = parseInt(date1.substring(8,10));
 			            var mt_before = parseInt(date1.substring(5,7));
 			            var yr_before = parseInt(date1.substring(0,4));
@@ -565,7 +560,6 @@
 
 			            var temp_date_before = new Date(yr_before, mt_before-1, dt_before);
 			            var temp_date_after = new Date(yr_after, mt_after-1, dt_after);
-			            console.log(temp_date_after > temp_date_before);
 			            if(compare_string == '>')
 			            {
 			            	if(temp_date_after < temp_date_before)
@@ -576,7 +570,6 @@
 			            	{
 			            		return true;
 			            	}
-			            	//return temp_date_after > temp_date_before ? "alo" : "ili";
 			            }
 			            else if(compare_string == '<')
 			            {
@@ -588,7 +581,6 @@
 			            	{
 			            		return true;
 			            	}
-			            	//return temp_date_after < temp_date_before ? "plo" : "pli";
 			            }
 			            else
 			            {
@@ -743,9 +735,6 @@
 		            	
 		            	this.fill_select_master_data(null, true);
 		            }
-		            console.log('hasu');
-		            console.log(this.prop_onlyCustomMasterData);
-
 
 		        	if(this.prop_idEditTable)
 		        	{
@@ -850,7 +839,6 @@
 	        },
 
 			pickFile (idElement) {
-				//console.log(idElement);
 	            var el = document.getElementById(idElement).click();
 	        },
 
@@ -1101,7 +1089,6 @@
 
 	        fill_select_master_data(r, only_custom_master_data)
 	        {
-	        	console.log('masuk fill_select_master_data');
 	        	var self = this;
 	        	var temp_r;
 	        	if(!only_custom_master_data)
@@ -1127,10 +1114,6 @@
 					
 				    self.ref_input[key] = obj;
 				});
-
-				console.log('cek nih');
-				console.log(self.ref_input);
-
 
 	        },
 
@@ -1401,11 +1384,6 @@
 		        				for(var j = 0;j<this.input[nameTable].length;j++)
 		        				{
 		        					var temp = this.input[nameTable][j];
-		        					console.log('cek keanehan');
-		        					console.log(JSON.parse(JSON.stringify(nameTable)));
-		        					console.log(JSON.parse(JSON.stringify(j)));
-		        					console.log(JSON.parse(JSON.stringify(temp)));
-		        					console.log('=======');
 		        					if(temp.id == null) //jika form ini untuk add data (id_edit = -1)
 		        					{
 		        						var self = this;
@@ -1431,7 +1409,6 @@
 		        					}
 		        					else
 		        					{
-		        						console.log('sampe masuk sini berarti benar2 aneh');
 		        						//cocokan dengan input_before_edit karena ini mungkin sudah ada(dibiarkan) atau diupdate
 		        						var edittrue = false;
 				                        for(var k = 0;k<this.input_before_edit[nameTable].length;k++)
