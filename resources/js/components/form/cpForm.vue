@@ -496,6 +496,7 @@
 		'prop_send_parent_table_key',
 		'prop_send_parent_table_value',
 		'prop_idEditTable',
+		'prop_validateFirstStep'
 
 		],
 		data() {
@@ -773,7 +774,31 @@
 			},
 			next_step()
 			{
-				this.stepNow = parseInt(this.stepNow) + 1;
+
+				if(this.prop_validateFirstStep)
+				{
+					if(this.stepNow == 1)
+					{
+						if(this.valid)
+						{
+							this.stepNow = parseInt(this.stepNow) + 1;
+						}
+						else
+						{
+							this.$refs['form'].validate();
+						}
+						
+					}
+					else
+					{
+						this.stepNow = parseInt(this.stepNow) + 1;
+					}
+				}
+				else
+				{
+					this.stepNow = parseInt(this.stepNow) + 1;	
+				}
+				
 
 			},
 			prev_step()

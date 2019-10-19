@@ -112,7 +112,16 @@
 				var data_false = false;
 				for(var i = 0;i<this.input.length;i++)
 				{
-					if( (!(this.input[i].goods_id && this.input[i].amount_order && this.input[i].selected_pricelist.price && this.input[i].selected_pricelist.supplier_id && this.input[i].selected_pricelist.id)) || ((parseInt(this.input[i].amount_order) + parseInt(this.data[i].total_already_po)) > (parseInt(this.data[i].total_required_by_mr) )))
+					if
+						( 
+							(!
+								(this.input[i].goods_id && this.input[i].amount_order && this.input[i].selected_pricelist.price && this.input[i].selected_pricelist.supplier_id && this.input[i].selected_pricelist.id)
+							) || 
+							(
+								(parseInt(this.input[i].amount_order) + parseInt(this.data[i].total_already_po)) > 
+								(parseInt(this.data[i].total_required_by_mr) )
+							)
+						)
 					{
 						data_false = true;
 					}

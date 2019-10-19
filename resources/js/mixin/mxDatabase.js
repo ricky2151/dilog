@@ -441,6 +441,7 @@ export default
 					editable_edit : true,
 					editable_add : false,
 					count_step : 6,
+					validate_first_step : true,
 
 					actions:['Edit', 'Rack', 'SP', 'Supplier', 'Delete'],
 					button_on_index : ['Add Data'],
@@ -492,7 +493,7 @@ export default
 								label : 'Code', width:3, type:'tf', validation:'max_req',
 							},
 							'desc' : { 
-								label : 'Description', width:12, type:'ta', validation:'max',
+								label : 'Description', width:12, type:'ta', validation:'max_req',
 							},
 							'margin' : { 
 								label : 'Margin', width:12, type:'tf', validation:'numeric_req', prefix:'Rp. '
@@ -506,9 +507,10 @@ export default
 								itemText:'name', itemValue:'value', column:'status', table_ref:'activeornot', custom_table_ref:true,
 								format : ['activeornot'],
 								required : true,
+								validation : 'selectdata_req'
 							},
 							'last_buy_pricelist' : { 
-								label : 'Last Buy Pricelist', width:6,  type:'tf', validation:'numeric',
+								label : 'Last Buy Pricelist', width:6,  type:'tf', validation:'numeric_req', prefix:'Rp. '
 							},
 							'barcode_master' : { 
 								label : 'Barcode', width:12,  type:'tf', validation:'max',
@@ -518,10 +520,10 @@ export default
 								itemText:'name', itemValue:'value', column:'avg_price_status',table_ref:'avg_price_status'
 							},
 							'avg_price' : { 
-								label : 'Average Price', width:6, type:'tf', validation:'numeric', prefix : 'Rp. '
+								label : 'Average Price', width:6, type:'tf', validation:'numeric', prefix : 'Rp. ',validation:'selectdata_req', 
 							},
 							'tax' : { 
-								label : 'Tax', width:6, type:'tf', validation:'numeric', suffix:'%'
+								label : 'Tax', width:6, type:'tf', validation:'numeric', suffix:'%',validation:'numeric_req'
 							},
 							'unit' : { 
 								label : 'Unit', width:12, type:'s', validation:'selectdata_req', 
