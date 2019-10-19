@@ -480,17 +480,18 @@ export default
 			                { text: 'Inventory Value', value: 'inventory_value'},
 			                { text: 'Action', align:'left',sortable:false, width:'15%'},
 			            ],
-						form_single : [['name', 'code'], ['desc'],['status'], ['value', 'last_buy_pricelist'], ['barcode_master'], ['thumbnail'], ['avg_price_status'], ['avg_price', 'tax'], ['unit'], ['cogs'], ['margin']],
+						form_single : [['name'],['code'], ['desc'],['status'], ['value', 'last_buy_pricelist'], ['barcode_master'], ['thumbnail'], ['avg_price_status'], ['avg_price', 'tax'], ['unit'], ['cogs'], ['margin']],
 						single : 
 						{
 							'id' : { 
 								label : '', 
 							},
 							'name' : { 
-								label : 'Name', width:9, type:'tf', validation:'max_req',
+								label : 'Name', width:12, type:'tf', validation:'max_req',
 							},
 							'code' : { 
-								label : 'Code', width:3, type:'tf', validation:'max_req',
+								label : 'Code', width:12, type:'tf', validation:'max_req',
+								showOnlyWhenEdit:true,
 							},
 							'desc' : { 
 								label : 'Description', width:12, type:'ta', validation:'max_req',

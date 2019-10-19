@@ -42,21 +42,22 @@
 									:xs12='objColumn.width == 12'
 									>
 									<template v-if='objColumn.type=="tf"'><!--  -->
+										<template v-if='(!objColumn.showOnlyWhenEdit) || (objColumn.showOnlyWhenEdit && id_edit != -1)'>
+											<template v-if='(!objColumn.vif) || (input[conditional_input[column][0]] && input[conditional_input[column][0]][conditional_input[column][1]] == 1)'>
+												
+												<v-text-field
+												:rules='$list_validation[objColumn.validation]'
+												:label='objColumn.label'
+												v-model='input[column]'
+												:disabled='objColumn.disabled'
+												:prefix='objColumn.prefix ? objColumn.prefix : ""'
+												:suffix='objColumn.suffix ? objColumn.suffix : ""'
 
-										<template v-if='(!objColumn.vif) || (input[conditional_input[column][0]] && input[conditional_input[column][0]][conditional_input[column][1]] == 1)'>
-											
-											<v-text-field
-											:rules='$list_validation[objColumn.validation]'
-											:label='objColumn.label'
-											v-model='input[column]'
-											:disabled='objColumn.disabled'
-											:prefix='objColumn.prefix ? objColumn.prefix : ""'
-											:suffix='objColumn.suffix ? objColumn.suffix : ""'
-
-											class="pa-2"
-											>
-											</v-text-field>
-											
+												class="pa-2"
+												>
+												</v-text-field>
+												
+											</template>
 										</template>
 									</template>
 									

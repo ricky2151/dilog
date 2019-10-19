@@ -36,6 +36,7 @@
 								:rules='$list_validation.selectdata_req'
 								label='Supplier'
 								v-model='input.supplier'
+								:clearable='true'
 
 								:items='input.goods.suppliers'
 								item-text='name_company'
@@ -56,6 +57,7 @@
 								:rules='$list_validation.selectdata_req'
 								label='Pricelist'
 								v-model='input.pricelist'
+								:clearable='true'
 
 								:items='input.supplier.pricelists'
 								item-text='price'

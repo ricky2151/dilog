@@ -33,6 +33,7 @@
 	            <td>
 	            	<v-select
 					label='Supplier'
+					:clearable='true'
 					v-model='input[props.index].selected_supplier'
 					:items='props.item.suppliers'
 					item-text='name_company'
@@ -43,7 +44,7 @@
 	            <td>
 	            	<v-select
 					label='Pricelists'
-					
+					:clearable='true'
 					v-model='input[props.index].selected_pricelist'
 					:items='input[props.index].selected_supplier.pricelists'
 					item-text='price_rupiah'
@@ -94,11 +95,11 @@
 					{ text: 'No', value:'no',sortable:false},
     				{ text: 'Goods', value:'goods_name',sortable:false},
     				{ text: 'Stock', value:'stock',sortable:false},
-    				{ text: 'Total Required MR', value:'total_required_by_mr',sortable:false},
+    				{ text: 'Total MR', value:'total_required_by_mr',sortable:false},
     				{ text: 'Total PO', value:'total_already_po',sortable:false},
     				{ text: 'Qty Order', value:'amount_order',sortable:false},
-    				{ text: 'Supplier', value:'supplier',sortable:false},
-    				{ text: 'Pricelists', value:'pricelists',sortable:false},
+    				{ text: 'Supplier', value:'supplier',sortable:false, width:'16%'},
+    				{ text: 'Pricelists', value:'pricelists',sortable:false, width:'18%'},
     				{ text: 'Subtotal', value:'subtotal',sortable:false, width:'15%'},
 				],
 			}
@@ -112,22 +113,52 @@
 				var data_false = false;
 				for(var i = 0;i<this.input.length;i++)
 				{
+
+					//(B==S && B+F?G) && (!(B)) && (!C || !D || !E || !F)
+					//a = this.input[i].amount_order && (parseInt(this.input[i].amount_order) + parseInt(this.data[i].total_already_po) > (parseInt(this.data[i].total_required_by_mr)))
+					//!b = this.input[i].amount_order != 0
+					//!c = this.input[i].amount_order <= 0
+					//!d = this.input[i].selected_pricelist.price == null
+					//!e = this.input[i].selected_pricelist.id == null
+					//!f = this.input[i].selected_pricelist.supplier_id
+
+					//
 					if
-						( 
-							(!
-								(this.input[i].goods_id && this.input[i].amount_order && this.input[i].selected_pricelist.price && this.input[i].selected_pricelist.supplier_id && this.input[i].selected_pricelist.id)
-							) || 
+						(!(
 							(
-								(parseInt(this.input[i].amount_order) + parseInt(this.data[i].total_already_po)) > 
-								(parseInt(this.data[i].total_required_by_mr) )
+								(this.input[i].amount_order != '0' && this.input[i].amount_order && (parseInt(this.input[i].amount_order) + parseInt(this.data[i].total_already_po) <= (parseInt(this.data[i].total_required_by_mr)))) 
+								&& (
+								this.input[i].amount_order != null && this.input[i].selected_pricelist.price != null && this.input[i].selected_pricelist.id != null && this.input[i].selected_pricelist.supplier_id != null
 							)
-						)
+							)
+							|| this.input[i].amount_order == '0'
+							
+							
+							
+							
+							
+						))
 					{
 						data_false = true;
+						break;
 					}
+
+					// if
+					// 	( 
+					// 		(!
+					// 			(this.input[i].goods_id && this.input[i].amount_order && this.input[i].selected_pricelist.price && this.input[i].selected_pricelist.supplier_id && this.input[i].selected_pricelist.id)
+					// 		) || 
+					// 		(
+					// 			(parseInt(this.input[i].amount_order) + parseInt(this.data[i].total_already_po)) > 
+					// 			(parseInt(this.data[i].total_required_by_mr) )
+					// 		)
+					// 	)
+					// {
+					// 	data_false = true;
+					// }
 					else
 					{
-						if(this.input[i].amount_order != 0)
+						if(this.input[i].amount_order != '0')
 						{
 							formData.append('purchase_request_details[' + idxformdata + '][goods_id]', this.input[i].goods_id);
 							formData.append('purchase_request_details[' + idxformdata + '][qty]', this.input[i].amount_order);
@@ -168,6 +199,7 @@
 			                	'token' : localStorage.getItem('token')
 			                }
 			            }).then((r)=> {
+			            	this.delete_from_localstorage();
 				            this.$emit('done', r,this.data.id);
 		            });
 
@@ -181,6 +213,10 @@
 			{
 				localStorage.setItem('temp_pr_recap_' + this.data.id, JSON.stringify(this.input));
 				this.$emit('cancel');
+			},
+			delete_from_localstorage()
+			{
+				localStorage.setItem('temp_pr_recap_' + this.data.id, "");
 			},
 			strToPrice(angka,prefix)
 	        {
