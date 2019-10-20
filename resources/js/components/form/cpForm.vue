@@ -42,28 +42,30 @@
 									:xs12='objColumn.width == 12'
 									>
 									<template v-if='objColumn.type=="tf"'><!--  -->
+										<template v-if='(!objColumn.showOnlyWhenEdit) || (objColumn.showOnlyWhenEdit && id_edit != -1)'>
+											<template v-if='(!objColumn.vif) || (input[conditional_input[column][0]] && input[conditional_input[column][0]][conditional_input[column][1]] == 1)'>
+												
+												<v-text-field
+												:rules='$list_validation[objColumn.validation]'
+												:label='objColumn.label'
+												v-model='input[column]'
+												:disabled='objColumn.disabled'
+												:prefix='objColumn.prefix ? objColumn.prefix : ""'
+												:suffix='objColumn.suffix ? objColumn.suffix : ""'
 
-										<template v-if='(!objColumn.vif) || (input[conditional_input[column][0]] && input[conditional_input[column][0]][conditional_input[column][1]] == 1)'>
-											
-											<v-text-field
-											:rules='$list_validation[objColumn.validation]'
-											:label='objColumn.label'
-											v-model='input[column]'
-											:disabled='objColumn.disabled'
-											:prefix='objColumn.prefix ? objColumn.prefix : ""'
-											:suffix='objColumn.suffix ? objColumn.suffix : ""'
-											class="pa-2"
-											>
-											</v-text-field>
-											
+												class="pa-2"
+												>
+												</v-text-field>
+												
+											</template>
 										</template>
 									</template>
 									
 									<template v-if='objColumn.type=="date"'><!--  -->
 
 										<v-menu
-			                              ref="menu_date"
-			                              v-model="menu_date"
+			                              ref="menu_date[column]"
+			                              v-model="menu_date[column]"
 			                              :close-on-content-click="false"
 			                              :nudge-right="40"
 			                              lazy
@@ -75,16 +77,20 @@
 			                            >
 			                              <template v-slot:activator="{ on }">
 			                                <v-text-field
+			                                  :rules='prop_dataInfo.single[column].date_before_column ? [
+			                                  	compare_date_validation(input[prop_dataInfo.single[column].date_before_column],input[column], ">"), $list_validation.max_req[0]
+			                                  	] : $list_validation[prop_dataInfo.single[column].validation]'
 			                                  v-model="input[column]"
-			                                  label="Date"
+			                                  :label="prop_dataInfo.single[column].label"
 			                                  hint="YYYY/MM/DD format"
 			                                  persistent-hint
 			                                  prepend-icon="event"
 			                                  @blur="date = input[column]"
 			                                  v-on="on"
+
 			                                ></v-text-field>
 			                              </template>
-			                              <v-date-picker v-model="input[column]" no-title @input="menu_date = false"></v-date-picker>
+			                              <v-date-picker v-model="input[column]" no-title @input="menu_date[column] = false"></v-date-picker>
 			                            </v-menu>
 											
 										
@@ -134,7 +140,7 @@
 										class="pa-2"
 										>
 										</v-textarea>
-
+										
 										<template v-if='objColumn.type == "s"'>
 											<v-select
 											v-if='!objColumn.child_of'
@@ -484,12 +490,14 @@
 		'prop_custom_formData',
 		'prop_preview',
 		'prop_urlGetMasterData',
+		'prop_onlyCustomMasterData',
 		'prop_urlMOCC',
 		'prop_additional_param_create_key',
 		'prop_additional_param_create_value',
 		'prop_send_parent_table_key',
 		'prop_send_parent_table_value',
 		'prop_idEditTable',
+		'prop_validateFirstStep'
 
 		],
 		data() {
@@ -499,7 +507,7 @@
 				valid:null,
 				stepNow:null,
 				id_edit:-1,
-				menu_date:null,
+				menu_date:[],
 
 				//for data
 				input : [],
@@ -537,12 +545,61 @@
 		},
 		methods:
 		{
-			isNumeric(n) {
-				return !isNaN(parseFloat(n)) && isFinite(n);
-			},
-			testlog(obj)
+			compare_date_validation(date1, date2, compare_string)
 			{
-				
+		        if (typeof date1 !== 'undefined' && typeof date2 !== 'undefined')
+		        {
+		        	if(date1 && date2)
+		        	{
+		        		var dt_before = parseInt(date1.substring(8,10));
+			            var mt_before = parseInt(date1.substring(5,7));
+			            var yr_before = parseInt(date1.substring(0,4));
+
+			            var dt_after = parseInt(date2.substring(8,10));
+			            var mt_after = parseInt(date2.substring(5,7));
+			            var yr_after = parseInt(date2.substring(0,4)); 
+
+			            var temp_date_before = new Date(yr_before, mt_before-1, dt_before);
+			            var temp_date_after = new Date(yr_after, mt_after-1, dt_after);
+			            if(compare_string == '>')
+			            {
+			            	if(temp_date_after < temp_date_before)
+			            	{
+			            		return "Second date must greather than first date";
+			            	}
+			            	else
+			            	{
+			            		return true;
+			            	}
+			            }
+			            else if(compare_string == '<')
+			            {
+			            	if(temp_date_after < temp_date_before)
+			            	{
+			            		return "Second date must smaller than first date";
+			            	}
+			            	else
+			            	{
+			            		return true;
+			            	}
+			            }
+			            else
+			            {
+			            	return true;
+			            }
+			            
+		        	}
+		        	else
+		        	{
+		        		return true;
+		        	}
+		          	
+				}
+				else
+				{
+					return true;
+				}
+
 			},
 			//for other component
 			
@@ -651,11 +708,16 @@
 
 		            	this.fill_select_master_data(r);
 		            }
+		            else if(this.prop_onlyCustomMasterData)
+		            {
+		            	this.fill_select_master_data(null, true);
+		            }
 
 		            
 		        }
 		        else //sedang add
 		        {
+
 		        	this.id_edit = -1;
 		        	if(this.prop_urlGetMasterData != null)
 		        	{
@@ -669,6 +731,12 @@
 
 		        		}
 		        	}
+		        	else if(this.prop_onlyCustomMasterData)
+		            {
+		            	
+		            	this.fill_select_master_data(null, true);
+		            }
+
 		        	if(this.prop_idEditTable)
 		        	{
 		        		var temp_name_column = this.prop_idEditTable[0];
@@ -696,7 +764,31 @@
 			},
 			next_step()
 			{
-				this.stepNow = parseInt(this.stepNow) + 1;
+
+				if(this.prop_validateFirstStep)
+				{
+					if(this.stepNow == 1)
+					{
+						if(this.valid)
+						{
+							this.stepNow = parseInt(this.stepNow) + 1;
+						}
+						else
+						{
+							this.$refs['form'].validate();
+						}
+						
+					}
+					else
+					{
+						this.stepNow = parseInt(this.stepNow) + 1;
+					}
+				}
+				else
+				{
+					this.stepNow = parseInt(this.stepNow) + 1;	
+				}
+				
 
 			},
 			prev_step()
@@ -748,7 +840,6 @@
 	        },
 
 			pickFile (idElement) {
-				//console.log(idElement);
 	            var el = document.getElementById(idElement).click();
 	        },
 
@@ -777,7 +868,7 @@
 	                    }
 	                    else
 	                    {
-	                        this.input[key] = "";
+	                        this.input[key] = null;
 	                    }
 	                    
 	                    
@@ -911,8 +1002,16 @@
 				    	}
 				    	else
 				    	{
-
-							this.input[nameColumn] = temp_r[nameColumn];
+				    		if(objColumn.custom_table_ref)
+				    		{
+				    			this.input[nameColumn] = {};
+				    			this.input[nameColumn][objColumn.itemValue] = temp_r[nameColumn];
+				    		}
+				    		else
+				    		{
+				    			this.input[nameColumn] = temp_r[nameColumn];
+				    		}
+							
 				    	}
 	        		}
 	        	}
@@ -989,24 +1088,26 @@
 				this.input_before_edit = JSON.parse(JSON.stringify(this.input));
 	        },
 
-	        fill_select_master_data(r)
+	        fill_select_master_data(r, only_custom_master_data)
 	        {
-	        	
 	        	var self = this;
 	        	var temp_r;
-
-	        	if(this.id_edit == -1) //jika sedang add, maka kan dia manggilnya yang /create jadi langsung aja
+	        	if(!only_custom_master_data)
 	        	{
-	        		temp_r = r.data.items;
-	        	}
-	        	else //jika sedang edit, maka kan dia dapet datanya sekalian waktu manggil /edit, nah jadi pembungkus arraynya adalah 'master_data'
-	        	{
-	        		temp_r = r.data.items.master_data;
-	        	}
+		        	if(this.id_edit == -1) //jika sedang add, maka kan dia manggilnya yang /create jadi langsung aja
+		        	{
+		        		temp_r = r.data.items;
+		        	}
+		        	else //jika sedang edit, maka kan dia dapet datanya sekalian waktu manggil /edit, nah jadi pembungkus arraynya adalah 'master_data'
+		        	{
+		        		temp_r = r.data.items.master_data;
+		        	}
 
-	            for(var index in temp_r) { 
-				   this.ref_input[index] = temp_r[index];
-				}
+		            for(var index in temp_r) { 
+					   this.ref_input[index] = temp_r[index];
+					}
+
+	        	}
 				
 				//cek custom master data
 				Object.keys(this.prop_dataInfo.custom_master_data).map(function(key, index) {
@@ -1014,7 +1115,6 @@
 					
 				    self.ref_input[key] = obj;
 				});
-
 
 	        },
 
@@ -1068,9 +1168,10 @@
 					var tempkey = JSON.parse(JSON.stringify(this.prop_dataInfo.multiple[table_name].form_single[i][0]));
 					if(this.prop_dataInfo.multiple[table_name].single[tempkey].required == true)
 					{
+						
 						if(temp[tempkey] == null || (temp[tempkey] == '' && !this.isNumeric(temp[tempkey])))
 						{
-							
+
 							cansave = false;
 							break;
 						}
@@ -1276,6 +1377,7 @@
 		        		}
 		        		else if(objTable.send_type=='2')
 		        		{
+
 		        			//selama ini belum ada tipe send 2 dengan chips, pasti pake table
 		        			if(objTable.type == 'table')
 		        			{
@@ -1351,33 +1453,37 @@
 		        					}
 		        				}
 
-		        				//cek di input_before_edit cocokin dengan input
-				                //1. jika ada data dengan id yang tidak ada di data input, berarti data tersebut pasti dihapus
-				                if(this.input_before_edit.hasOwnProperty(nameTable))
-				                {
-					                for(var j = 0;j<this.input_before_edit[nameTable].length;j++)
+		        				if(this.id_edit != -1)
+		        				{
+			        				//cek di input_before_edit cocokin dengan input
+					                //1. jika ada data dengan id yang tidak ada di data input, berarti data tersebut pasti dihapus
+					                if(this.input_before_edit.hasOwnProperty(nameTable))
 					                {
-					                    var deletetrue = true;
-					                    for(var k=0;k<this.input[nameTable].length;k++)
-					                    {
-					                        if(this.input[nameTable][k].id == this.input_before_edit[nameTable][j].id)
-					                        {
-					                            deletetrue = false;
-					                            break;
-					                        }
-					                    }
+						                for(var j = 0;j<this.input_before_edit[nameTable].length;j++)
+						                {
+						                    var deletetrue = true;
+						                    for(var k=0;k<this.input[nameTable].length;k++)
+						                    {
+						                        if(this.input[nameTable][k].id == this.input_before_edit[nameTable][j].id)
+						                        {
+						                            deletetrue = false;
+						                            break;
+						                        }
+						                    }
 
-					                    if(deletetrue)
-					                    {
-					                    	formData.append(nameTable + '[' + counteridx + '][id]',this.input_before_edit[nameTable][j].id);
-					                    	formData.append(nameTable + '[' + counteridx + '][type]','-1'); //artinya data ini sedang di didelete 
+						                    if(deletetrue)
+						                    {
+						                    	formData.append(nameTable + '[' + counteridx + '][id]',this.input_before_edit[nameTable][j].id);
+						                    	formData.append(nameTable + '[' + counteridx + '][type]','-1'); //artinya data ini sedang di didelete 
 
-					                        
-					                        counteridx++;
-					                    }
+						                        
+						                        counteridx++;
+						                    }
+						                }
+
 					                }
-
-				                }
+		        					
+		        				}
 		        			}
 		        		}
 
@@ -1553,6 +1659,17 @@
 						else
 						{
 							result = 'Approved';
+						}
+					}
+					else if(type == 'activeornot')
+					{
+						if(result == 0)
+						{
+							result = 'Not Active';
+						}
+						else
+						{
+							result = 'Active';
 						}
 					}
 				}

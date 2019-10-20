@@ -89,6 +89,7 @@
 			'prop_conditional_action',
 			'prop_conditional_action_button',
 			'prop_conditional_checklist',
+			'prop_change_format_data'
 		],
 		watch : 
 		{
@@ -131,7 +132,6 @@
 								var pushtrue = false;
 								if(this.checklisting && this.prop_conditional_checklist)
 								{
-									//console.log(this.prop_conditional_checklist);
 									if(data_table_now[i][this.prop_conditional_checklist[0]] == this.prop_conditional_checklist[2])
 									{
 										pushtrue = true;
@@ -329,6 +329,39 @@
 							result = 'Approved';
 						}
 					}
+					else if(type == 'enableordisable')
+					{
+						if(result == 0)
+						{
+							result = 'Disable';
+						}
+						else
+						{
+							result = 'Enable';
+						}
+					}
+					else if(type == 'freeornot')
+					{
+						if(result == 0)
+						{
+							result = 'Not Free';
+						}
+						else
+						{
+							result = 'Free';
+						}
+					}
+					else if(type == 'activeornot')
+					{
+						if(result == 0)
+						{
+							result = 'Not Active';
+						}
+						else
+						{
+							result = 'Active';
+						}
+					}
 				}
 				return result;
 			},
@@ -379,7 +412,7 @@
 	            	}
 	            	if(this.prop_trigger_after_refresh_data)
 	            	{
-	            		this.$emit('data_refreshed');
+	            		this.$emit('data_refreshed', r.data.items);
 	            	}
 
 
@@ -387,6 +420,7 @@
 	        },
 	        showTable(r)
         	{
+        		
         		var temp_r = [];
         		var response_attribute;
         		if(this.prop_custom_response_attribute)
@@ -412,7 +446,29 @@
         		{
         			temp_r = [];
         		}
+        		else
+        		{
+        			//cek change format data
+        			if(this.prop_change_format_data)
+        			{
+        				for(var i = 0;i<this.prop_change_format_data.length;i++)
+        				{
+        					var temp_column = this.prop_change_format_data[i].column;
+        					var temp_change_to = this.prop_change_format_data[i].change_to;
+        					for(var j = 0;j<temp_r.length;j++)
+        					{
+        						var value_record = temp_r[j];
+        						for(var k = 0;k<temp_column.length;k++)
+        						{
+        							value_record = value_record[temp_column[k]];
+        						}
+        						temp_r[j][temp_change_to] = value_record;
+        					}
+        				}
+        			}
+        		}
 		        this.data_table = temp_r;
+		        ;
         		
 	        },
 
@@ -441,6 +497,7 @@
 		},
 		mounted(){
 			this.get_data();
+			
 		},
 		
 	}

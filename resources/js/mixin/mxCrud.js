@@ -43,8 +43,6 @@ export default {
         },
         fill_filter_by_user_ref(arr)
         {
-            // console.log('sampe fill filter by user ref');
-            // console.log(arr);
             this.filter_by_user_ref = arr;
         },
         fill_filter_by_user_value(val)
@@ -68,6 +66,7 @@ export default {
                 this.list_state[name_component]['table_parent'] = table_parent;
                 this.list_state[name_component]['id_selected'] = id_selected;
             }
+            
             this.open_state = name_component;
 
             var idx_selected = -1;

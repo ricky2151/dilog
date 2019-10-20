@@ -441,6 +441,7 @@ export default
 					editable_edit : true,
 					editable_add : false,
 					count_step : 6,
+					validate_first_step : true,
 
 					actions:['Edit', 'Rack', 'SP', 'Supplier', 'Delete'],
 					button_on_index : ['Add Data'],
@@ -456,6 +457,10 @@ export default
 			                'free':[
 			                    {value:1,name:'True'},
 			                    {value:0,name:'False'},
+			                ],
+			                'activeornot':[
+			                    {value:1,name:'Active'},
+			                    {value:0,name:'Not Active'},
 			                ],
 						},
 						rule_update:'some',
@@ -475,20 +480,21 @@ export default
 			                { text: 'Inventory Value', value: 'inventory_value'},
 			                { text: 'Action', align:'left',sortable:false, width:'15%'},
 			            ],
-						form_single : [['name', 'code'], ['desc'],['status'], ['value', 'last_buy_pricelist'], ['barcode_master'], ['thumbnail'], ['avg_price_status'], ['avg_price', 'tax'], ['unit'], ['cogs'], ['margin']],
+						form_single : [['name'],['code'], ['desc'],['status'], ['value', 'last_buy_pricelist'], ['barcode_master'], ['thumbnail'], ['avg_price_status'], ['avg_price', 'tax'], ['unit'], ['cogs'], ['margin']],
 						single : 
 						{
 							'id' : { 
 								label : '', 
 							},
 							'name' : { 
-								label : 'Name', width:9, type:'tf', validation:'max_req',
+								label : 'Name', width:12, type:'tf', validation:'max_req',
 							},
 							'code' : { 
-								label : 'Code', width:3, type:'tf', validation:'max_req',
+								label : 'Code', width:12, type:'tf', validation:'max_req',
+								showOnlyWhenEdit:true,
 							},
 							'desc' : { 
-								label : 'Description', width:12, type:'ta', validation:'max',
+								label : 'Description', width:12, type:'ta', validation:'max_req',
 							},
 							'margin' : { 
 								label : 'Margin', width:12, type:'tf', validation:'numeric_req', prefix:'Rp. '
@@ -497,10 +503,15 @@ export default
 								label : 'Value', width:6, type:'tf', validation:'numeric_req',
 							},
 							'status' : { 
-								label : 'Status', width:12,  type:'tf', validation:'numeric_req',
+								//label : 'Status', width:12,  type:'tf', validation:'numeric_req', 
+								label : 'Status', width:12, type:'s',
+								itemText:'name', itemValue:'value', column:'status', table_ref:'activeornot', custom_table_ref:true,
+								format : ['activeornot'],
+								required : true,
+								validation : 'selectdata_req'
 							},
 							'last_buy_pricelist' : { 
-								label : 'Last Buy Pricelist', width:6,  type:'tf', validation:'numeric',
+								label : 'Last Buy Pricelist', width:6,  type:'tf', validation:'numeric_req', prefix:'Rp. '
 							},
 							'barcode_master' : { 
 								label : 'Barcode', width:12,  type:'tf', validation:'max',
@@ -510,10 +521,10 @@ export default
 								itemText:'name', itemValue:'value', column:'avg_price_status',table_ref:'avg_price_status'
 							},
 							'avg_price' : { 
-								label : 'Average Price', width:6, type:'tf', validation:'numeric', prefix : 'Rp. '
+								label : 'Average Price', width:6, type:'tf', validation:'numeric', prefix : 'Rp. ',validation:'selectdata_req', 
 							},
 							'tax' : { 
-								label : 'Tax', width:6, type:'tf', validation:'numeric', suffix:'%'
+								label : 'Tax', width:6, type:'tf', validation:'numeric', suffix:'%',validation:'numeric_req'
 							},
 							'unit' : { 
 								label : 'Unit', width:12, type:'s', validation:'selectdata_req', 
@@ -1838,7 +1849,7 @@ export default
 					
 
 
-					actions:['Edit', 'Make PO'],
+					actions:['Add Detail','Edit Detail', 'Make PO'],
 					conditional_action_button : ['status_name', '==', 'new'], //langsung tombolnya per row
 
 
@@ -1995,7 +2006,7 @@ export default
 								label : '',
 							},
 							'payment_date' : {
-								label : 'Payment Date', width:12, type:'date',
+								label : 'Payment Date', width:12, type:'date', validation:'max_req'
 								
 							},
 							'paid_off' : {
@@ -2017,6 +2028,279 @@ export default
 						
 					}
 				},
+
+
+				//19. crud-periodes
+				"periodes" : 
+				{
+					table_name : 'periodes',
+					title : 'Periode',
+					icon : 'access_time',
+
+					singular_name : 'periode',
+					plural_name : 'periodes',
+					column_desc : 'name', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
+
+					request_master_data : false,
+					data : 
+					{
+						custom_master_data : {
+			                'activeornot':[
+			                    {value:1,name:'Active'},
+			                    {value:0,name:'Not Active'},
+			                ],
+						},
+						rule_update:'send_all',
+						datatable:[
+							{
+								column : 'name',
+							},
+							{
+								column : 'from',
+							},
+							{
+								column : 'to',
+							},
+							{
+								column : 'code',
+							},
+							{
+								column : 'status',
+								format : ['activeornot'],
+							},
+						],
+						
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'From', value:'from'},
+                				{ text: 'To', value:'to'},
+                				{ text: 'Code', value:'code'},
+                				{ text: 'Status', value:'status'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						form_single : [['name'],['from'],['to'],['status']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'name' : {
+								label : 'Name', width:12, type:'tf', validation:'max_req',
+							},
+							'from' : {
+								label : 'From', width:12, type:'date', validation:'max_req',
+							},
+							'to' : {
+								label : 'To', width:12, type:'date', date_before_column : 'from',
+							},
+
+							'status' : {
+								label : 'Status', width:12, type:'s',
+								itemText:'name', itemValue:'value', column:'status', table_ref:'activeornot', custom_table_ref:true,
+								format : ['activeornot'],
+								required : true, validation:'selectdata_req'
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+
+				//19. crud-division
+				"divisions" : 
+				{
+					table_name : 'divisions',
+					title : 'Divison',
+					icon : 'people_alt',
+
+					singular_name : 'division',
+					plural_name : 'divisions',
+					column_desc : 'name', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					actions:['Edit', 'Delete'],
+					button_on_index : ['Add Data'],
+
+					request_master_data : false,
+					data : 
+					{
+						custom_master_data : {
+			                'mr_enable':[
+			                    {value:1,name:'Enable'},
+			                    {value:0,name:'Disable'},
+			                ],
+						},
+						rule_update:'send_all',
+						datatable:[
+							{
+								column : 'name',
+							},
+							{
+								column : 'mr_enable',
+								format : ['enableordisable'],
+							},
+						],
+						
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Name', value:'name'},
+                				{ text: 'MR Enable', value:'mr_enable'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						form_single : [['name'],['mr_enable']],
+						single : 
+						{
+							'id' : {
+								label : '',
+							},
+							'name' : {
+								label : 'Name', width:12, type:'tf', validation:'max_req',
+							},
+							'mr_enable' : {
+								label : 'MR Enable', width:12, type:'s',
+								itemText:'name', itemValue:'value', column:'mr_enable', table_ref:'mr_enable', custom_table_ref:true,
+								required : true, validation:'selectdata_req'
+							},
+
+						},
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+				//14. crud-purchase_request_details
+				"purchase_request_details" : 
+				{
+					table_name : 'purchase_request_details',
+					title : 'Purchase Request Detail',
+					icon : 'add_shopping_cart',
+
+					singular_name : 'purchase_request_detail',
+					plural_name : 'purchase_request_details',
+					column_desc : 'code', //untuk fk
+
+					widthForm : '750',
+					editable_edit:true,
+					editable_add:true,
+					count_step:1,
+
+					additional_param_index : 'purchase_request_id',
+					additional_param_create : 'purchase_request_id',
+
+					actions:['Edit', 'Delete'],
+					button_on_index : [],
+
+					format_additional_data : 
+					{
+						'Code' : 'code',
+					},
+					function_format_additional_data : 
+					{
+						
+					},
+
+					request_master_data : false,
+					data : 
+					{
+						custom_master_data : {
+							
+						},
+						rule_update:'some',
+						change_format_data : [
+							{
+								column : ['supplier', 'name_company'],
+								change_to : ['supplier_name'],
+							},
+							{
+								column : ['goods', 'name'],
+								change_to : ['goods_name'],
+							}
+						],
+						datatable:[
+							{
+								column : 'goods_name',
+							},
+							{
+								column : 'qty',
+							},
+							{
+								column : 'supplier_name',
+							},
+							{
+								column : 'price',
+								format : ['price'],
+							},
+							{
+								column : '',
+								format : ['price'],
+								value : ['qty', '*', 'price']
+							},
+						],
+						filter_by_user : {
+							
+						},
+
+						headers: [
+								{ text: 'No', value:'no'},
+                				{ text: 'Goods', value:'goods_name'},
+                				{ text: 'Quantity', value:'qty'},
+                				{ text: 'Supplier', value:'supplier_name'},
+                				{ text: 'Pricelist', value:'price'},
+                				{ text: 'Subtotal', value:'subtotal'},
+                				{ text: 'Action', value:'action',sortable:false, width:'15%'},
+						],
+
+						
+
+
+						
+						custom_single:{},
+						form_multiple : [],
+						multiple:{},
+						form_custom_component:[],
+						custom_component:{},
+						conditional_input:{
+							
+						}
+					},
+					get_data_detail : 
+					{
+						
+					}
+				},
+
+
 			}
 		}
 	},
