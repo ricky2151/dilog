@@ -1,8 +1,6 @@
-
-
 <template>
     <div class='bgwhite'>
-        
+
         <v-breadcrumbs divider=">" :items='computed_breadcrumbs' class='breadcrumbs'>
             </v-breadcrumbs-item>
             <v-breadcrumbs-item
@@ -17,7 +15,7 @@
             </v-breadcrumbs-item>
         </v-breadcrumbs>
 
-        <template v-if='open_state == "Goods"'>
+        <template v-if='open_state == "Periode"'>
             <!-- LIST POPUP DETAIL -->
             <cp-detail 
              
@@ -25,7 +23,7 @@
             v-for='(data_detail,key,index) in info_table.get_data_detail'
 
             :prop_title='"Detail " + data_detail.title' 
-            :prop_response_attribute='data_detail.table_name'
+            :prop_response_attribute='info_table.table_name'
             :prop_headers='data_detail.headers'
             :prop_columns='data_detail.single'
             :ref='"cpDetail"+ removeSpace(data_detail.title)'
@@ -33,16 +31,11 @@
 
             ></cp-detail>
             <!----------------------->
-            
-            
-            
 
             
 
-            
             <!-- POPUP CREATE EDIT -->
             <cp-form 
-
 
             :prop_countStep='info_table.count_step' 
             :prop_editableEdit='info_table.editable_edit'
@@ -52,20 +45,21 @@
             :prop_tableName='name_table'
             :prop_widthForm='info_table.widthForm'
             :prop_singularName='info_table.singular_name'
-            :prop_tempInput='generate_temp_input(info_table.plural_name)'
+            prop_onlyCustomMasterData=true
+            
             :prop_input='generate_input(info_table.plural_name)'
-            :prop_preview='generate_preview(info_table.plural_name)'
+            
             :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.plural_name, "create") : null'
-            :prop_validateFirstStep='info_table.validate_first_step'
-
+            
 
             v-on:done='refresh_table()'
             ref="cpForm"
 
             ></cp-form>
-            
 
             <!-- ================================ -->
+
+
 
             <!-- HEADER DATATABLE -->
            <cp-header
@@ -79,6 +73,8 @@
            </cp-header>
 
            <!-- ================================ -->
+
+
             
             <!-- DATATABLE -->
             
@@ -104,41 +100,34 @@
 </template>
 
 <script>
-import mxCrudChildForm from '../mixin/mxCrudChildForm';
-
-
+import mxCrudBasic from '../mixin/mxCrudBasic';
 
 export default {
-
     data () {
         return {
             info_table:{},
-
-            name_table:'goods',
-            
+            name_table:'periodes',
             search_data: null,
 
-            open_state : 'Goods',
+            open_state : 'Periode',
             list_state : 
             {
-                'Goods' : {},
+                'Periode' : {},
             },
             
             breadcrumbs:[
                 //level 1
                 {
-                    text: 'Goods',
+                    text: 'Periode',
                     disabled: false,
-                    cp : 'Goods',
+                    cp : 'Periode',
                     before : null,
                 },
                 //level 2
                 
             ],
-            
         }
     },
-    
     methods: {
         button_index_clicked(index)
         {
@@ -147,36 +136,24 @@ export default {
                 this.opendialog_createedit(-1);
             }
         },
-        action_change(id_datatable,idx_action, data_item)
+        action_change(id,idx_action)
         {
             if(idx_action == 0)
             {
-                this.opendialog_createedit(id_datatable);
-                
+                this.opendialog_createedit(id);
             }
             else if(idx_action == 1)
             {
-                
-                this.opendialog_detail(id_datatable, 'cpDetailRacks', 'racks');
-
+                this.delete_data(id);
             }
-            else if(idx_action == 2)
-            {
-                this.opendialog_detail(id_datatable, 'cpDetailPriceSellings', 'sellingPrices');
-            }
-            else if(idx_action == 3)
-            {
-                this.opendialog_detail(id_datatable, 'cpDetailPricelists', 'pricelists');
-            }
-            else if(idx_action == 4)
-            {
-                this.delete_data(id_datatable);
-            }
-        
         },
+
+    },
+    mounted(){      
+        this.info_table = this.database[this.name_table];
     },
     mixins:[
-        mxCrudChildForm,
+        mxCrudBasic
     ],
 }
 </script>

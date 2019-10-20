@@ -62,6 +62,21 @@ class PeriodeController extends Controller
         return formatResponse(false,(["periode"=>$periode]));
     }
 
+    /**
+     * Display the specified periode want to edit
+     *
+     * @param  $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function edit($id)
+    {
+        $this->periodeService->handleInvalidParameter($id);
+        $this->periodeService->handleModelNotFound($id);
+
+        $periode = $this->periode->find($id);
+        return formatResponse(false,(["periode"=>$periode]));
+    }
+
 
     /**
      * Update the specified periode in storage.

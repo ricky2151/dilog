@@ -104,6 +104,9 @@ Route::group([
         Route::get('purchaseRequests/{id}/purchaseRequestDetailsToPurchaseOrder', 'PurchaseRequestController@purchaseRequestDetailsToPurchaseOrder');
         Route::get('purchaseRequests/{id}/purchaseRequestDetails', 'PurchaseRequestController@purchaseRequestDetails');
         Route::post('purchaseRequests/{id}/purchaseOrders', 'PurchaseRequestController@storeToPurchaseOrders');
+
+        
+        Route::resource('purchaseRequestDetails', 'PurchaseRequestDetailController');
     });
 
     //PurchaseOrder

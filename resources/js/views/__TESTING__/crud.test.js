@@ -96,8 +96,6 @@ describe('Login', () => {
     				email:'tvon@example.org',
     				password:'password'
     			}).then(r => console.log(r));
-		console.log('masuk');
-		//cek html
 		
 		//expect(wrapper.html()).toContain('Halo')
 
