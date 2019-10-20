@@ -31,26 +31,30 @@
 					</v-text-field>
 	            </td>
 	            <td>
-	            	<v-select
-					label='Supplier'
-					:clearable='true'
-					v-model='input[props.index].selected_supplier'
-					:items='props.item.suppliers'
-					item-text='name_company'
-					return-object
-					>
-					</v-select>
+		            	<v-select
+		            	v-if='typeof input[props.index].selected_supplier !== "undefined"'
+						label='Supplier'
+						clearable
+						@click:clear='clear_input_select_supplier(props.index)'
+						v-model='input[props.index].selected_supplier'
+						:items='props.item.suppliers'
+						item-text='name_company'
+						return-object
+						>
+						</v-select>
 	            </td>
 	            <td>
-	            	<v-select
-					label='Pricelists'
-					:clearable='true'
-					v-model='input[props.index].selected_pricelist'
-					:items='input[props.index].selected_supplier.pricelists'
-					item-text='price_rupiah'
-					return-object
-					>
-					</v-select>
+		            	<v-select
+		            	v-if='typeof input[props.index].selected_supplier !== "undefined"'
+						label='Pricelists'
+						clearable
+						@click:clear='clear_input_select_pricelist(props.index)'
+						v-model='input[props.index].selected_pricelist'
+						:items='input[props.index].selected_supplier.pricelists'
+						item-text='price_rupiah'
+						return-object
+						>
+						</v-select>
 	            </td>
 	            <td>
 	            	<div v-if='input[props.index].selected_pricelist'>
@@ -75,6 +79,7 @@
         </v-layout>
         
         <!-- ================================ -->
+        
     </div>
     
 </template>
@@ -86,6 +91,7 @@
 		'prop_temp_data',
 		
 		],
+		
 		data () {
 			return {
 				data : [],
@@ -106,6 +112,31 @@
 		},
 		methods: 
 		{
+			clear_input_select_supplier(idx)
+			{
+				this.$nextTick(() => {
+					//this.input[idx] = {};
+					this.input[idx].selected_pricelist = [];
+					this.input[idx].selected_supplier = [];	
+					this.input[idx].selected_supplier.pricelists = [];	
+				});
+					
+				
+				
+			},
+			clear_input_select_pricelist(idx)
+			{
+				this.$nextTick(() => {
+					//this.input[idx] = {};
+					this.input[idx].selected_pricelist = [];
+					this.input[idx].selected_supplier = [];	
+					this.input[idx].selected_supplier.pricelists = [];		
+				});
+				
+					//print(this.input[idx]);
+				
+				
+			},
 			prepare_data()
 			{
 				const formData = new FormData();
@@ -158,6 +189,7 @@
 					// }
 					else
 					{
+						
 						if(this.input[i].amount_order != '0')
 						{
 							formData.append('purchase_request_details[' + idxformdata + '][goods_id]', this.input[i].goods_id);
@@ -167,7 +199,12 @@
 							formData.append('purchase_request_details[' + idxformdata + '][pricelist_id]', this.input[i].selected_pricelist.id);
 							idxformdata += 1;	
 						}
+
 						
+					}
+					if(idxformdata == 0)
+					{
+						data_false = true;
 					}
 					
 				}
