@@ -101,7 +101,7 @@
 </template>
 <script>
 	export default {
-		props : ['prop_icon', 'prop_title', 'prop_type_header', 'prop_search_data', 'prop_button_on_index','prop_information', 'prop_format_information', 'prop_filter_by_user_format', 'prop_filter_by_user_ref', 'prop_button_for_checklist', 'prop_function_format_information'],
+		props : ['prop_icon', 'prop_title', 'prop_button_on_index','prop_information', 'prop_format_information', 'prop_filter_by_user_format', 'prop_filter_by_user_ref', 'prop_button_for_checklist', 'prop_function_format_information'],
 		data () {
 			return {
 				search_data :null,

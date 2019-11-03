@@ -70,7 +70,7 @@
 </template>
 
 <script>
-import mxCrudBasic from '../../mixin/mxCrudBasic';
+import mxCrud from '../../mixin/mxCrud';
 import cpAddEditDetailPo from './cpAddEditDetailPo.vue'
 
 export default {
@@ -182,7 +182,7 @@ export default {
         
     },
     mixins:[
-        mxCrudBasic
+        mxCrud
     ],
 }
 </script>

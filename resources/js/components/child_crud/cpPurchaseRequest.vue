@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import mxCrudBasic from '../../mixin/mxCrudBasic';
+import mxCrud from '../../mixin/mxCrud';
 import cpPurchaseRequestAdd from './cpPurchaseRequestAdd.vue'
 import cpPurchaseRequestDetail from './cpPurchaseRequestDetail.vue'
 import cpMakePo from './cpMakePo.vue'
@@ -437,7 +437,7 @@ export default {
         this.$refs['cpHeader'].selected_filter = 0;
     },
     mixins:[
-        mxCrudBasic
+        mxCrud
     ],
     watch : 
     {

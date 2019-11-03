@@ -50,7 +50,6 @@
         'prop_response_attribute', 
         'prop_headers', 
         'prop_columns', 
-        'prop_read'
         ],
         data(){
             return{
