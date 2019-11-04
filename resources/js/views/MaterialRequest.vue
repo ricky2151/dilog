@@ -219,7 +219,7 @@ export default {
         },
         cancel_po_edit()
         {
-            this.$router.replace('/purchase-request');
+            this.$router.push('/purchase-request');
         },
         prepare_data_submit_recap()
         {
@@ -334,7 +334,7 @@ export default {
             else if(index == 2)
             {
                 //list pr
-                this.$router.replace('/purchase-request');
+                this.$router.push('/purchase-request');
             }
             else if(index == 3)
             {

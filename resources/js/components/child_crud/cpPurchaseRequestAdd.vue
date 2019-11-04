@@ -168,9 +168,9 @@
 // if(!(A))
 // 	...
 // else if(!B
-					if(!( ((fill_the_amount_correctly) && (all_fields_filled)) || (amount_is_zero) ))
+					if(!( (all_fields_filled) || (amount_is_zero) )) //jika masuk sini maka input salah
 					{
-						alert('masuk error');
+						
 						if(!amount_is_zero)
 						{
 							if(!all_fields_filled)
