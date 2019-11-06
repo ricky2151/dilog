@@ -138,7 +138,7 @@
 </template>
 
 <script>
-import mxCrudBasic from '../../mixin/mxCrudBasic';
+import mxCrud from '../../mixin/mxCrud';
 import cpPurchaseRequestAdd from './cpPurchaseRequestAdd.vue'
 import cpPurchaseRequestDetail from './cpPurchaseRequestDetail.vue'
 import cpMakePo from './cpMakePo.vue'
@@ -306,6 +306,7 @@ export default {
             let r = await this.get_data_mr();
             //difilter berdasarkan periode aktif
             var temp_r = JSON.parse(JSON.stringify(r.data.items.material_requests));
+            
             var result_r = [];
             for(var i = 0;i<temp_r.length;i++)
             {
@@ -314,6 +315,7 @@ export default {
             		result_r.push(temp_r[i]);
             	}
             }
+
             this.data_mr = JSON.parse(JSON.stringify(result_r));
 
             for(var i = 0;i<this.data_mr.length;i++)
@@ -437,7 +439,7 @@ export default {
         this.$refs['cpHeader'].selected_filter = 0;
     },
     mixins:[
-        mxCrudBasic
+        mxCrud
     ],
     watch : 
     {

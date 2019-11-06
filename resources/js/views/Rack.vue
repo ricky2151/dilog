@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import mxCrudBasic from '../mixin/mxCrudBasic';
+import mxCrud from '../mixin/mxCrud';
 import cpGoodsRack from './../components/child_crud/cpGoodsRack.vue'
 
 export default {
@@ -191,7 +191,7 @@ export default {
         this.info_table = this.database[this.name_table];
     },
     mixins:[
-        mxCrudBasic
+        mxCrud
     ],
 }
 </script>

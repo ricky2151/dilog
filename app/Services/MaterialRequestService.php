@@ -40,7 +40,7 @@ class MaterialRequestService
             $query->select('id','name');
         }))->get())->map(function($item){
             return ['id'=>$item['id'], 
-                'code'=>$item['code'], 
+                'code'=>$item['no_mr'], 
                 'user_name'=>$item['user']['name'], 
                 'division_name'=>$item['division']['name'],
                 'status' => $item->getStatusName(),

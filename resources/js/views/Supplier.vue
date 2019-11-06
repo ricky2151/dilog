@@ -102,7 +102,7 @@
 </template>
 
 <script>
-import mxCrudChildForm from '../mixin/mxCrudChildForm';
+import mxCrud from '../mixin/mxCrud';
 
 
 export default {
@@ -169,7 +169,7 @@ export default {
 
     },
     mixins:[
-        mxCrudChildForm,
+        mxCrud,
     ],
 }
 </script>

@@ -141,7 +141,11 @@
 			{
 				const formData = new FormData();
 				var idxformdata = 0;
-				var data_false = false;
+				var cond = 3;
+				//0 => ada data yang kosong
+				//1 => amount order yang dimasukan melebihi yang diminta oleh mr
+				//2 => tidak ada data yang dikirim
+				//3 => benar
 				for(var i = 0;i<this.input.length;i++)
 				{
 
@@ -153,44 +157,38 @@
 					//!e = this.input[i].selected_pricelist.id == null
 					//!f = this.input[i].selected_pricelist.supplier_id
 
-					//
-					if
-						(!(
-							(
-								(this.input[i].amount_order != '0' && this.input[i].amount_order && (parseInt(this.input[i].amount_order) + parseInt(this.data[i].total_already_po) <= (parseInt(this.data[i].total_required_by_mr)))) 
-								&& (
-								this.input[i].amount_order != null && this.input[i].selected_pricelist.price != null && this.input[i].selected_pricelist.id != null && this.input[i].selected_pricelist.supplier_id != null
-							)
-							)
-							|| this.input[i].amount_order == '0'
-							
-							
-							
-							
-							
-						))
+					//declare bool variable
+					var fill_the_amount_correctly = this.input[i].amount_order != '0' && this.input[i].amount_order && (parseInt(this.input[i].amount_order) + parseInt(this.data[i].total_already_po) <= (parseInt(this.data[i].total_required_by_mr))); //jika user mengisi amount order sesuai dengna yang diminta mr
+					var all_fields_filled = this.input[i].amount_order != null && this.input[i].selected_pricelist.price != null && this.input[i].selected_pricelist.id != null && this.input[i].selected_pricelist.supplier_id != null //jika semua field terisi 
+					var amount_is_zero = this.input[i].amount_order == '0'
+
+					//!((A & B) || C)
+// (!A || !B) && !C
+
+// if(!(A))
+// 	...
+// else if(!B
+					if(!( (all_fields_filled) || (amount_is_zero) )) //jika masuk sini maka input salah
 					{
-						data_false = true;
+						
+						if(!amount_is_zero)
+						{
+							if(!all_fields_filled)
+							{
+								cond = 0;
+							}
+							else if(!fill_the_amount_correctly)
+							{
+								cond = 1;
+							}
+						}
+						
 						break;
 					}
-
-					// if
-					// 	( 
-					// 		(!
-					// 			(this.input[i].goods_id && this.input[i].amount_order && this.input[i].selected_pricelist.price && this.input[i].selected_pricelist.supplier_id && this.input[i].selected_pricelist.id)
-					// 		) || 
-					// 		(
-					// 			(parseInt(this.input[i].amount_order) + parseInt(this.data[i].total_already_po)) > 
-					// 			(parseInt(this.data[i].total_required_by_mr) )
-					// 		)
-					// 	)
-					// {
-					// 	data_false = true;
-					// }
 					else
 					{
 						
-						if(this.input[i].amount_order != '0')
+						if(!amount_is_zero)
 						{
 							formData.append('purchase_request_details[' + idxformdata + '][goods_id]', this.input[i].goods_id);
 							formData.append('purchase_request_details[' + idxformdata + '][qty]', this.input[i].amount_order);
@@ -204,12 +202,24 @@
 					}
 					if(idxformdata == 0)
 					{
-						data_false = true;
+						cond = 2;
 					}
 					
 				}
-				if(data_false)
+				if(cond != 3)
 				{
+					if(cond == 0)
+					{
+						swal('Submit Failed !', 'Please input all field !', 'error');
+					}
+					else if(cond == 1)
+					{
+						swal('Submit Failed !', 'Please input the amount as requested by MR !', 'error');
+					}
+					else if(cond == 2)
+					{
+						swal('Submit Failed !', 'Cannot send empty input', 'error');
+					}
 					return false;
 				}
 				else
@@ -241,10 +251,10 @@
 		            });
 
 				}
-				else
-				{
-					swal('Submit Failed !', 'Please input correctly !', 'error');
-				}
+				// else
+				// {
+				// 	swal('Submit Failed !', 'Please input correctly !', 'error');
+				// }
 			},
 			save_to_localstorage()
 			{
