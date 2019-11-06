@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import mxCrudBasic from '../mixin/mxCrudBasic';
+import mxCrud from '../mixin/mxCrud';
 import cpPurchaseRequest from './../components/child_crud/cpPurchaseRequest.vue'
 import cpAddMaterialRequest from './../components/child_crud/cpAddMaterialRequest.vue'
 import cpPurchaseRequestAdd from './../components/child_crud/cpPurchaseRequestAdd.vue'
@@ -219,7 +219,7 @@ export default {
         },
         cancel_po_edit()
         {
-            this.$router.replace('/purchase-request');
+            this.$router.push('/purchase-request');
         },
         prepare_data_submit_recap()
         {
@@ -334,7 +334,7 @@ export default {
             else if(index == 2)
             {
                 //list pr
-                this.$router.replace('/purchase-request');
+                this.$router.push('/purchase-request');
             }
             else if(index == 3)
             {
@@ -369,7 +369,7 @@ export default {
         this.$refs['cpHeader'].selected_filter = 0;
     },
     mixins:[
-        mxCrudBasic
+        mxCrud
 
     ],
     watch : 

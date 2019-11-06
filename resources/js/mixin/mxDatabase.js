@@ -1652,8 +1652,8 @@ export default
 					// count_step:1,
 
 					actions:['Detail'],
-					button_on_index : ['Add Data', 'Mark Complete', 'List PR'],
-					button_for_checklist : ['Mark Complete'],
+					button_on_index : ['Add Data', 'Create PR', 'List PR'],
+					button_for_checklist : ['Create PR'],
 					conditional_checklist : ['status', '=', 'New'],
 
 					request_master_data : false,

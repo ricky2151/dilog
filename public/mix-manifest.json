@@ -1,4 +1,8 @@
 {
-    "/js/app.js": "/js/app.js?id=c24b0d24d864f7e26006",
+<<<<<<< Updated upstream
+    "/js/app.js": "/js/app.js?id=34360dd59cef7f92c8fd",
+=======
+    "/js/app.js": "/js/app.js?id=bf113475537013f71a67",
+>>>>>>> Stashed changes
     "/css/app.css": "/css/app.css?id=c1e001a36850e50a4771"
 }

@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import mxCrudBasic from '../../mixin/mxCrudBasic';
+import mxCrud from '../../mixin/mxCrud';
 
 export default {
     props: ['prop_list_filter'],
@@ -121,7 +121,7 @@ export default {
         
     },
     mixins:[
-        mxCrudBasic
+        mxCrud
     ],
 }
 </script>
