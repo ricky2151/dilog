@@ -106,14 +106,14 @@
             ></cp-add-material-request>
         </template>
 
-         <template v-if="open_state=='cpPurchaseRequestEdit'">
-            <cp-purchase-request-edit
-            :prop_list_filter='list_state["cpPurchaseRequestEdit"]'
+         <template v-if="open_state=='cpPurchaseRequestAdd'">
+            <cp-purchase-request-add
+            :prop_list_filter='list_state["cpPurchaseRequestAdd"]'
             :prop_data='data_edit'
-            ref='cpPurchaseRequestEdit'
+            ref='cpPurchaseRequestAdd'
             v-on:cancel='cancel_po_edit'
             v-on:done='done_po_edit'
-            ></cp-purchase-request-edit>
+            ></cp-purchase-request-add>
         </template>
 
         <template v-if="open_state=='cpMakePo'">
@@ -131,10 +131,10 @@
 </template>
 
 <script>
-import mxCrudBasic from '../mixin/mxCrudBasic';
+import mxCrud from '../mixin/mxCrud';
 import cpPurchaseRequest from './../components/child_crud/cpPurchaseRequest.vue'
 import cpAddMaterialRequest from './../components/child_crud/cpAddMaterialRequest.vue'
-import cpPurchaseRequestEdit from './../components/child_crud/cpPurchaseRequestEdit.vue'
+import cpPurchaseRequestAdd from './../components/child_crud/cpPurchaseRequestAdd.vue'
 import cpMakePo from './../components/child_crud/cpMakePo.vue'
 
 
@@ -142,7 +142,7 @@ export default {
     components : {
         cpPurchaseRequest,
         cpAddMaterialRequest,
-        cpPurchaseRequestEdit,
+        cpPurchaseRequestAdd,
         cpMakePo
     },
     data () {
@@ -161,7 +161,7 @@ export default {
                 'MaterialRequest' : {},
                 'cpPurchaseRequest' : {},
                 'cpAddMaterialRequest' : {},
-                'cpPurchaseRequestEdit' : {},
+                'cpPurchaseRequestAdd' : {},
             },
             
             breadcrumbs:[
@@ -188,7 +188,7 @@ export default {
                 {
                     text: 'Detail Purchase Request',
                     disabled: true,
-                    cp: 'cpPurchaseRequestEdit',
+                    cp: 'cpPurchaseRequestAdd',
                     before : 'MaterialRequest'
                 },
                 {
@@ -219,7 +219,7 @@ export default {
         },
         cancel_po_edit()
         {
-            this.$router.replace('/purchase-request');
+            this.$router.push('/purchase-request');
         },
         prepare_data_submit_recap()
         {
@@ -291,12 +291,12 @@ export default {
                     {
                         temp[i].no = i + 1;
                     }
-                    this.open_component('cpPurchaseRequestEdit', null, null, r.data.items.purchase_request.code);
+                    this.open_component('cpPurchaseRequestAdd', null, null, r.data.items.purchase_request.code);
                     this.$refs['cpDatatable'].clear_checklisted();
                     this.$refs['cpHeader'].set_check_listing(false);
                     this.$refs['cpDatatable'].convert_to_checklist(false);
                     this.$nextTick(() => {
-                        this.$refs['cpPurchaseRequestEdit'].fill_data(temp, r.data.items.purchase_request.id);
+                        this.$refs['cpPurchaseRequestAdd'].fill_data(temp, r.data.items.purchase_request.id);
                         
                         swal("Good job!", "Recap Successfully !", "success");
                     })
@@ -334,7 +334,7 @@ export default {
             else if(index == 2)
             {
                 //list pr
-                this.$router.replace('/purchase-request');
+                this.$router.push('/purchase-request');
             }
             else if(index == 3)
             {
@@ -369,7 +369,7 @@ export default {
         this.$refs['cpHeader'].selected_filter = 0;
     },
     mixins:[
-        mxCrudBasic
+        mxCrud
 
     ],
     watch : 

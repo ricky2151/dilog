@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import mxCrudBasic from '../../mixin/mxCrudBasic';
+import mxCrud from '../../mixin/mxCrud';
 
 export default {
     props: ['prop_list_filter', 'prop_format_additional_data', 'prop_additional_data'],
@@ -150,7 +150,7 @@ export default {
         this.info_table = this.database[this.name_table];
     },
     mixins:[
-        mxCrudBasic
+        mxCrud
     ],
 }
 </script>

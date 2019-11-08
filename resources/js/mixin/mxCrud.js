@@ -1,4 +1,4 @@
-import mxStringProcessing from '../mixin/mxStringProcessing'
+
 import mxDatabase from '../mixin/mxDatabase'
 import mxVariableProcess from '../mixin/mxVariableProcess'
 import cpDetail from './../components/popup/cpDetail.vue'
@@ -19,6 +19,66 @@ export default {
         }
     },
 	methods:{
+        firstUpper(str)
+        {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        },
+        strToPrice(angka,prefix)
+        {
+            //100000
+            //9.000
+            //11212
+            //11.212
+            angka = angka.toString();
+            var hasil = "";
+            var counter = 0;
+            for(var i = angka.length - 1;i>= 0;i--)
+            {
+                counter++;
+                if(counter % 3 == 0)
+                {
+                    if(i != 0)
+                        hasil = "." + angka.charAt(i) +  hasil;
+                    else
+                            hasil = angka.charAt(i) + hasil;
+                }
+                else
+                {
+                    hasil = angka.charAt(i) + hasil;
+                }
+            }
+            return prefix + hasil;
+        },
+        get_data_before_edit(id_edit) //nanti dihapus karena sudah ada di component
+        {
+            
+            axios.get('/api/' + this.name_table +'/' + id_edit + '/edit', {
+                params:{
+                    token: localStorage.getItem('token')
+                }
+            },{
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-type': 'application/json'
+                }
+            }).then(r=> {
+
+                this.opendialog_createedit(id_edit,r);
+            })
+            .catch(function (error)
+            {
+                console.log("error : ")
+                console.log(error)
+                if(error.response.status == 422)
+                {
+                    swal('Request Failed', 'Check your internet connection !', 'error');
+                }
+                else
+                {
+                    swal('Unkown Error', error.response.data , 'error');
+                }
+            });
+        },
         filter_finance()
         {
             if(JSON.parse(localStorage.getItem('user')).division_id != 1)
@@ -43,8 +103,6 @@ export default {
         },
         fill_filter_by_user_ref(arr)
         {
-            // console.log('sampe fill filter by user ref');
-            // console.log(arr);
             this.filter_by_user_ref = arr;
         },
         fill_filter_by_user_value(val)
@@ -68,6 +126,7 @@ export default {
                 this.list_state[name_component]['table_parent'] = table_parent;
                 this.list_state[name_component]['id_selected'] = id_selected;
             }
+            
             this.open_state = name_component;
 
             var idx_selected = -1;
@@ -307,7 +366,7 @@ export default {
         }
     },
 	mixins:[
-		mxStringProcessing,
+		
         mxDatabase,
         mxVariableProcess,
 	]

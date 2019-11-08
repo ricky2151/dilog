@@ -29,6 +29,10 @@ class PurchaseRequest extends Model
         return $this->belongsTo('App\Models\User','created_by_user_id','id');
     }
 
+    public function periode(){
+        return $this->belongsTo('App\Models\Periode','periode_id','id');
+    }
+
     public function purchaseRequestDetailsNotYetBePo(){
         return $this->purchaseRequestDetails->where('is_created_as_po',0);
     }
@@ -53,6 +57,24 @@ class PurchaseRequest extends Model
         }
     }
 
+    public function getMasterDataPurchaseOrderDetails(){
+        $goods = collect($this->load(['rekaps'])['rekaps'])->map(function($data){
+            return $data['goods_id'];
+        });
+        return ['goods' => Goods::whereIn('id',$goods)->get()->map(function($data){
+                // $data = collect($data);
+            $suppliers = $data['suppliers']->map(function($supplier) use($data){
+                $pricelists = $supplier['pricelists']->where('goods_id', $data['id'])->values();
+                $supplier = collect($supplier);
+                $supplier['pricelists'] = $pricelists;
+                return $supplier;
+            });
+            $data = collect($data);
+            $data['suppliers'] = $suppliers;
+            return $data;
+        })];
+    }
+
 
     public function getDataPurchaseRequestDetails(){
         return $this->purchaseRequestDetails->map(function($item){
@@ -67,6 +89,7 @@ class PurchaseRequest extends Model
                 'pricelist_id'=> $item['pricelist_id'],
                 'price'=> $item['price'],
                 'subtotal'=> $item['price']*$item['qty'],
+                'is_created_as_po'=> $item['is_created_as_po']
             ];
         });
     }

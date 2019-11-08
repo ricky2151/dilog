@@ -166,7 +166,16 @@ class PurchaseRequestController extends Controller
         $this->purchaseRequestService->handleModelNotFound($id);
         $purchaseRequest = $this->purchaseRequest->find($id);
 
-        return formatResponse(false,(["purchase_request_details"=>$purchaseRequest->getDataPurchaseRequestDetails()]));
+        return formatResponse(false,([
+            "purchase_request"=>collect($purchaseRequest->load([
+                'user',
+                'periode',
+                'purchaseRequestDetails.goods',
+                'purchaseRequestDetails.supplier',
+                'purchaseRequestDetails.pricelist'
+            ])),
+            'master_data'=>$purchaseRequest->getMasterDataPurchaseOrderDetails()
+        ]));
     }
 
     /**

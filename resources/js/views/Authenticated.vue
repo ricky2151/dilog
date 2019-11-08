@@ -277,6 +277,19 @@ export default {
                     },
 
                     {
+                        subicon:"access_time",
+                        subtitle:"Periode",
+                        subaction: "/master-data/periode"
+                    },
+
+                    {
+                        subicon:"supervisor_account",
+                        subtitle:"Division",
+                        subaction: "/master-data/division"
+                    },
+
+
+                    {
                         subicon:"person_pin",
                         subtitle:"Customers",
                         subaction: "/master-data/customer"

@@ -89,7 +89,7 @@
 							
 							<div v-if='(idxgoods + 1) >= (((page - 1) * 6) + 1) && (idxgoods + 1) <= (((page - 1) * 6) + 6) && goods[idxgoods]'>
 								<center class='addmr_goods'>
-									<img :src='goods[idxgoods].thumbnail' height="150"/>
+									<img :src='goods[idxgoods].thumbnail' height="150" @click='change_qty_goods(convert_to_idx_goods(idxrow,idxcolumn,page),1)'/>
 									<h3>{{goods[idxgoods].name}}</h3>
 									<h3>Rp. {{goods[idxgoods].avg_price}}</h3>
 									<v-btn color='rgb(0,0,0,0.1)' depressed dark v-if='goods[idxgoods].qty == 0' @click='change_qty_goods(convert_to_idx_goods(idxrow,idxcolumn,page),1)'><b>Add</b></v-btn>
@@ -467,7 +467,7 @@ import cpDetail from './../popup/cpDetail.vue'
 			},
 			submit_quantity()
 			{
-				this.change_qty_goods(this.idx_edit_qty_goods,null,this.input_quantity);
+				this.change_qty_goods(this.idx_edit_qty_goods,null,parseInt(this.input_quantity));
 				this.idx_edit_qty_goods = -1;
 				this.input_quantity = 0;
 				this.change_dialog_qty_goods(false);

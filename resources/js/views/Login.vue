@@ -4,7 +4,7 @@
             <v-container fluid fill-height>
                 <v-layout align-center justify-center>
                     <v-flex xs12 sm8 md4>
-                        <v-form @submit.prevent="req_login">
+                        <v-form @submit.prevent="">
                             <v-card class="elevation-12">
                                 <v-toolbar dark color="primary">
                                     <v-toolbar-title>Login form</v-toolbar-title>
@@ -46,14 +46,19 @@
     	},
     	methods:
     	{
-    		async req_login(){
+    		req_login(){
+
                 var r;
                 try
                 {
-        			r = await axios.post('/api/auth/login',{
+        			axios.post('/api/auth/login',{
         				email:this.in_email,
         				password:this.in_password
-        			});
+        		  	}).then((r) => {
+                        this.saveToken(r);    
+                    });
+                    
+
 
                 }
                 catch (error)
@@ -61,8 +66,8 @@
                     swal("Login Failed", "Email/password doesn't match. Please try again", "error");
                 }
 
-               
-                this.saveToken(r);
+                
+                
     		},
 
     		saveToken(r){

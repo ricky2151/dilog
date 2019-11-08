@@ -42,27 +42,30 @@
 									:xs12='objColumn.width == 12'
 									>
 									<template v-if='objColumn.type=="tf"'><!--  -->
+										<template v-if='(!objColumn.showOnlyWhenEdit) || (objColumn.showOnlyWhenEdit && id_edit != -1)'>
+											<template v-if='(!objColumn.vif) || (input[conditional_input[column][0]] && input[conditional_input[column][0]][conditional_input[column][1]] == 1)'>
+												
+												<v-text-field
+												:rules='$list_validation[objColumn.validation]'
+												:label='objColumn.label'
+												v-model='input[column]'
+												:disabled='objColumn.disabled'
+												:prefix='objColumn.prefix ? objColumn.prefix : ""'
+												:suffix='objColumn.suffix ? objColumn.suffix : ""'
 
-										<template v-if='(!objColumn.vif) || (input[conditional_input[column][0]] && input[conditional_input[column][0]][conditional_input[column][1]] == 1)'>
-											
-											<v-text-field
-											:rules='$list_validation[objColumn.validation]'
-											:label='objColumn.label'
-											v-model='input[column]'
-											:disabled='objColumn.disabled'
-
-											class="pa-2"
-											>
-											</v-text-field>
-											
+												class="pa-2"
+												>
+												</v-text-field>
+												
+											</template>
 										</template>
 									</template>
 									
 									<template v-if='objColumn.type=="date"'><!--  -->
 
 										<v-menu
-			                              ref="menu_date"
-			                              v-model="menu_date"
+			                              ref="menu_date[column]"
+			                              v-model="menu_date[column]"
 			                              :close-on-content-click="false"
 			                              :nudge-right="40"
 			                              lazy
@@ -74,16 +77,20 @@
 			                            >
 			                              <template v-slot:activator="{ on }">
 			                                <v-text-field
+			                                  :rules='prop_dataInfo.single[column].date_before_column ? [
+			                                  	compare_date_validation(input[prop_dataInfo.single[column].date_before_column],input[column], ">"), $list_validation.max_req[0]
+			                                  	] : $list_validation[prop_dataInfo.single[column].validation]'
 			                                  v-model="input[column]"
-			                                  label="Date"
+			                                  :label="prop_dataInfo.single[column].label"
 			                                  hint="YYYY/MM/DD format"
 			                                  persistent-hint
 			                                  prepend-icon="event"
 			                                  @blur="date = input[column]"
 			                                  v-on="on"
+
 			                                ></v-text-field>
 			                              </template>
-			                              <v-date-picker v-model="input[column]" no-title @input="menu_date = false"></v-date-picker>
+			                              <v-date-picker v-model="input[column]" no-title @input="menu_date[column] = false"></v-date-picker>
 			                            </v-menu>
 											
 										
@@ -115,7 +122,8 @@
 											:label='objColumn.label'
 											v-model='input[column]'
 											:disabled='objColumn.disabled'
-
+											:prefix='objColumn.prefix ? objColumn.prefix : ""'
+											:suffix='objColumn.suffix ? objColumn.suffix : ""'
 											class="pa-2"
 											>
 											</v-text-field>
@@ -127,11 +135,12 @@
 										:label='objColumn.label'
 										v-model='input[column]'
 										:disabled='objColumn.disabled'
-
+										:prefix='objColumn.prefix ? objColumn.prefix : ""'
+										:suffix='objColumn.suffix ? objColumn.suffix : ""'
 										class="pa-2"
 										>
 										</v-textarea>
-
+										
 										<template v-if='objColumn.type == "s"'>
 											<v-select
 											v-if='!objColumn.child_of'
@@ -194,16 +203,17 @@
 											label='Select Image'
 											v-model='input[objColumn.fileNameVariable]'
 											:disabled='objColumn.disabled'
-
+											:prefix='objColumn.prefix ? objColumn.prefix : ""'
+											:suffix='objColumn.suffix ? objColumn.suffix : ""'
 											class="pa-2"
 											>
 											</v-text-field>
 											<input
-	                                        :id='column'
+	                                        :id='JSON.parse(JSON.stringify(column))'
 	                                        type="file"
 	                                        style="display: none"
 	                                        accept="image/*"
-	                                        v-on:change='changeImage($event)'
+	                                        v-on:change='changeImage($event, column)'
 
 	                                        class="pa-2"
 	                                    	>
@@ -281,13 +291,16 @@
 											:xs12='objColumn.width == 12'
 											>
 
-											{{testlog(temp_input)}}
+											
 												<v-text-field
 												v-if='objColumn.type=="tf" && temp_input[table_name]'
 												:rules='$list_validation[objColumn.validation]'
 												:label='objColumn.label'
 												v-model='temp_input[table_name][column]'
 												:disabled='objColumn.disabled'
+												:prefix='objColumn.prefix ? objColumn.prefix : ""'
+												:suffix='objColumn.suffix ? objColumn.suffix : ""'
+												value='0'
 												>
 												</v-text-field>
 
@@ -296,6 +309,8 @@
 												:rules='$list_validation[objColumn.validation]'
 												:label='objColumn.label'
 												v-model='temp_input[table_name][column]'
+												:prefix='objColumn.prefix ? objColumn.prefix : ""'
+												:suffix='objColumn.suffix ? objColumn.suffix : ""'
 												:disabled='objColumn.disabled'
 												>
 												</v-textarea>
@@ -311,6 +326,8 @@
 												:items='ref_input[objColumn.table_ref]'
 												:item-text='objColumn.itemText'
 												return-object
+												:prefix='objColumn.prefix ? objColumn.prefix : ""'
+												:suffix='objColumn.suffix ? objColumn.suffix : ""'
 												:disabled='objColumn.disabled'
 												>
 												</v-select>
@@ -322,6 +339,8 @@
 												:items='ref_input[objColumn.table_ref]'
 												:item-text='objColumn.itemText'
 												return-object
+												:prefix='objColumn.prefix ? objColumn.prefix : ""'
+												:suffix='objColumn.suffix ? objColumn.suffix : ""'
 												:disabled='objColumn.disabled'
 
 										        
@@ -377,7 +396,17 @@
 
 			                                <template v-slot:items="props">
 			                                    <td>{{ props.index + 1 }}</td>
-			                                    <td v-for='obj in prop_dataInfo.multiple[table_name].datatable'>{{obj.column.length == 1 ? props.item[obj.column[0]] : props.item[obj.column[0]][obj.column[1]]}}</td>
+			                                    <td v-for='obj in prop_dataInfo.multiple[table_name].datatable'>
+			                                    	{{obj.column.length == 1 ? 
+			                                    		obj.format ? 
+			                                    		format_data(props.item[obj.column[0]], obj.format) : 
+			                                    		props.item[obj.column[0]]
+			                                    		:
+			                                    	obj.format ?
+			                                    	format_data(props.item[obj.column[0]][obj.column[1]], obj.format) : 
+			                                    	props.item[obj.column[0]][obj.column[1]]
+			                                    }}
+			                                	</td>
 			                                    <td>
 			                                        <v-btn class='button-action' v-on:click='tableShowData(props.index,table_name)' color="primary" fab depressed small dark>
 			                                            <v-icon small>edit</v-icon>
@@ -461,12 +490,14 @@
 		'prop_custom_formData',
 		'prop_preview',
 		'prop_urlGetMasterData',
+		'prop_onlyCustomMasterData',
 		'prop_urlMOCC',
 		'prop_additional_param_create_key',
 		'prop_additional_param_create_value',
 		'prop_send_parent_table_key',
 		'prop_send_parent_table_value',
 		'prop_idEditTable',
+		'prop_validateFirstStep'
 
 		],
 		data() {
@@ -476,7 +507,7 @@
 				valid:null,
 				stepNow:null,
 				id_edit:-1,
-				menu_date:null,
+				menu_date:[],
 
 				//for data
 				input : [],
@@ -514,10 +545,61 @@
 		},
 		methods:
 		{
-			
-			testlog(obj)
+			compare_date_validation(date1, date2, compare_string)
 			{
-				
+		        if (typeof date1 !== 'undefined' && typeof date2 !== 'undefined')
+		        {
+		        	if(date1 && date2)
+		        	{
+		        		var dt_before = parseInt(date1.substring(8,10));
+			            var mt_before = parseInt(date1.substring(5,7));
+			            var yr_before = parseInt(date1.substring(0,4));
+
+			            var dt_after = parseInt(date2.substring(8,10));
+			            var mt_after = parseInt(date2.substring(5,7));
+			            var yr_after = parseInt(date2.substring(0,4)); 
+
+			            var temp_date_before = new Date(yr_before, mt_before-1, dt_before);
+			            var temp_date_after = new Date(yr_after, mt_after-1, dt_after);
+			            if(compare_string == '>')
+			            {
+			            	if(temp_date_after < temp_date_before)
+			            	{
+			            		return "Second date must greather than first date";
+			            	}
+			            	else
+			            	{
+			            		return true;
+			            	}
+			            }
+			            else if(compare_string == '<')
+			            {
+			            	if(temp_date_after < temp_date_before)
+			            	{
+			            		return "Second date must smaller than first date";
+			            	}
+			            	else
+			            	{
+			            		return true;
+			            	}
+			            }
+			            else
+			            {
+			            	return true;
+			            }
+			            
+		        	}
+		        	else
+		        	{
+		        		return true;
+		        	}
+		          	
+				}
+				else
+				{
+					return true;
+				}
+
 			},
 			//for other component
 			
@@ -626,11 +708,16 @@
 
 		            	this.fill_select_master_data(r);
 		            }
+		            else if(this.prop_onlyCustomMasterData)
+		            {
+		            	this.fill_select_master_data(null, true);
+		            }
 
 		            
 		        }
 		        else //sedang add
 		        {
+
 		        	this.id_edit = -1;
 		        	if(this.prop_urlGetMasterData != null)
 		        	{
@@ -644,6 +731,12 @@
 
 		        		}
 		        	}
+		        	else if(this.prop_onlyCustomMasterData)
+		            {
+		            	
+		            	this.fill_select_master_data(null, true);
+		            }
+
 		        	if(this.prop_idEditTable)
 		        	{
 		        		var temp_name_column = this.prop_idEditTable[0];
@@ -671,7 +764,31 @@
 			},
 			next_step()
 			{
-				this.stepNow = parseInt(this.stepNow) + 1;
+
+				if(this.prop_validateFirstStep)
+				{
+					if(this.stepNow == 1)
+					{
+						if(this.valid)
+						{
+							this.stepNow = parseInt(this.stepNow) + 1;
+						}
+						else
+						{
+							this.$refs['form'].validate();
+						}
+						
+					}
+					else
+					{
+						this.stepNow = parseInt(this.stepNow) + 1;
+					}
+				}
+				else
+				{
+					this.stepNow = parseInt(this.stepNow) + 1;	
+				}
+				
 
 			},
 			prev_step()
@@ -683,10 +800,11 @@
 			{
 				
 			},
-			changeImage(e){
+			changeImage(e, id){
 
 				
-				var id = e.explicitOriginalTarget.id //penyelamat :) ini sama saja dengan nama kolom
+				
+				
 				var fileNameVariable = this.prop_dataInfo.single[id].fileNameVariable;
 				var previewVariable = this.prop_dataInfo.single[id].previewVariable;
 				var fileVariable = this.prop_dataInfo.single[id].fileVariable;
@@ -713,7 +831,7 @@
 	                else
 	                {
 	                    
-	                    swal("File is to Big", "Pleas uload file with size < 2 MB !", "error");
+	                    swal("File is to Big", "Please upload file with size < 2 MB !", "error");
 	                }
 	            } else {
 	                swal("Your file is empty !", "Please Upload Your File !", "error");
@@ -722,7 +840,6 @@
 	        },
 
 			pickFile (idElement) {
-				//console.log(idElement);
 	            var el = document.getElementById(idElement).click();
 	        },
 
@@ -751,7 +868,7 @@
 	                    }
 	                    else
 	                    {
-	                        this.input[key] = "";
+	                        this.input[key] = null;
 	                    }
 	                    
 	                    
@@ -885,8 +1002,16 @@
 				    	}
 				    	else
 				    	{
-
-							this.input[nameColumn] = temp_r[nameColumn];
+				    		if(objColumn.custom_table_ref)
+				    		{
+				    			this.input[nameColumn] = {};
+				    			this.input[nameColumn][objColumn.itemValue] = temp_r[nameColumn];
+				    		}
+				    		else
+				    		{
+				    			this.input[nameColumn] = temp_r[nameColumn];
+				    		}
+							
 				    	}
 	        		}
 	        	}
@@ -963,24 +1088,26 @@
 				this.input_before_edit = JSON.parse(JSON.stringify(this.input));
 	        },
 
-	        fill_select_master_data(r)
+	        fill_select_master_data(r, only_custom_master_data)
 	        {
-	        	
 	        	var self = this;
 	        	var temp_r;
-
-	        	if(this.id_edit == -1) //jika sedang add, maka kan dia manggilnya yang /create jadi langsung aja
+	        	if(!only_custom_master_data)
 	        	{
-	        		temp_r = r.data.items;
-	        	}
-	        	else //jika sedang edit, maka kan dia dapet datanya sekalian waktu manggil /edit, nah jadi pembungkus arraynya adalah 'master_data'
-	        	{
-	        		temp_r = r.data.items.master_data;
-	        	}
+		        	if(this.id_edit == -1) //jika sedang add, maka kan dia manggilnya yang /create jadi langsung aja
+		        	{
+		        		temp_r = r.data.items;
+		        	}
+		        	else //jika sedang edit, maka kan dia dapet datanya sekalian waktu manggil /edit, nah jadi pembungkus arraynya adalah 'master_data'
+		        	{
+		        		temp_r = r.data.items.master_data;
+		        	}
 
-	            for(var index in temp_r) { 
-				   this.ref_input[index] = temp_r[index];
-				}
+		            for(var index in temp_r) { 
+					   this.ref_input[index] = temp_r[index];
+					}
+
+	        	}
 				
 				//cek custom master data
 				Object.keys(this.prop_dataInfo.custom_master_data).map(function(key, index) {
@@ -988,7 +1115,6 @@
 					
 				    self.ref_input[key] = obj;
 				});
-
 
 	        },
 
@@ -1035,37 +1161,63 @@
             tableSave(table_name){ //bisa edit / add
 
             	
+				var temp = JSON.parse(JSON.stringify(this.temp_input[table_name]));
+				var cansave = true;
+				for(var i = 0;i<this.prop_dataInfo.multiple[table_name].form_single.length;i++)
+				{
+					var tempkey = JSON.parse(JSON.stringify(this.prop_dataInfo.multiple[table_name].form_single[i][0]));
+					if(this.prop_dataInfo.multiple[table_name].single[tempkey].required == true)
+					{
+						
+						if(temp[tempkey] == null || (temp[tempkey] == '' && !this.isNumeric(temp[tempkey])))
+						{
+
+							cansave = false;
+							break;
+						}
+					}
+				}
+				
+
+				if(cansave)
+				{
+	                var idx_edit = JSON.parse(JSON.stringify(this.temp_input[table_name].idx_edit));
+	                if(idx_edit == -1)
+	                {
+	                    
+	                	delete temp.idx_edit;
+	                    this.input[table_name].push(temp);
+	                    
+	                }
+	                else
+	                {
+	                	
+	                	delete temp.idx_edit;
+
+	                	//seharusnya bisa seperti ini : 
+	                    //this.input[table_name][idx_edit] = temp;
+	                    //tapi karena bug tidak tau kenapa pokoknya harus di for per key nya, menjadi seperti ini :
+	                    for (var key in temp)
+	                    {
+		                    this.input[table_name][idx_edit][key] = temp[key];
+
+	                    }
+	                    //===================
+	                    this.temp_input[table_name].idx_edit = -1;
+	                    //untuk mengtrigger datatable yang isinya this.input[table_name] biar berubah
+	                }
+	                this.tableClearTempInput(table_name);
+				}
+				else
+				{
+					swal('Cannot Save', 'Please fill all input !', 'error');
+				}
                 
+                    
+
+
                 
-                var idx_edit = JSON.parse(JSON.stringify(this.temp_input[table_name].idx_edit));
-                if(idx_edit == -1)
-                {
-                    var temp = JSON.parse(JSON.stringify(this.temp_input[table_name]));
-                	delete temp.idx_edit;
-                    this.input[table_name].push(temp);
-                    
-                }
-                else
-                {
-                	var temp = JSON.parse(JSON.stringify(this.temp_input[table_name]));
-                	delete temp.idx_edit;
-
-                	//seharusnya bisa seperti ini : 
-                    //this.input[table_name][idx_edit] = temp;
-                    //tapi karena bug tidak tau kenapa pokoknya harus di for per key nya, menjadi seperti ini :
-                    for (var key in temp)
-                    {
-	                    this.input[table_name][idx_edit][key] = temp[key];
-
-                    }
-                    //===================
-                    this.temp_input[table_name].idx_edit = -1;
-                    //untuk mengtrigger datatable yang isinya this.input[table_name] biar berubah
-                    
-
-
-                }
-               this.tableClearTempInput(table_name);
+               
 
             },
             tableCanceledit(table_name){
@@ -1083,199 +1235,160 @@
 	        prepare_data_form()
 	        {
 	            const formData = new FormData();
-
-	            if(this.prop_dataInfo.rule_update == 'send_all')
+	            if(this.valid)
 	            {
-	            	this.clear_input_before_edit();
-	            }
+		            if(this.prop_dataInfo.rule_update == 'send_all')
+		            {
+		            	this.clear_input_before_edit();
+		            }
 
 
 
-	            //custom formData
-	            if(this.prop_custom_formData)
-	            {
+		            //custom formData
+		            if(this.prop_custom_formData)
+		            {
 
-	            	for(var i = 0 ;i<this.prop_custom_formData.length;i++)
-	            	{
-		            	if(this.prop_custom_formData[i].when_id_edit == 'all')
+		            	for(var i = 0 ;i<this.prop_custom_formData.length;i++)
 		            	{
-		            		formData.append(this.prop_custom_formData[i].key, this.prop_custom_formData[i].value);
+			            	if(this.prop_custom_formData[i].when_id_edit == 'all')
+			            	{
+			            		formData.append(this.prop_custom_formData[i].key, this.prop_custom_formData[i].value);
+			            	}
+			            	else if(this.prop_custom_formData[i].when_id_edit == this.id_edit)
+			            	{
+			            		formData.append(this.prop_custom_formData[i].key, this.prop_custom_formData[i].value);
+			            	}
+
 		            	}
-		            	else if(this.prop_custom_formData[i].when_id_edit == this.id_edit)
-		            	{
-		            		formData.append(this.prop_custom_formData[i].key, this.prop_custom_formData[i].value);
-		            	}
+		            }
 
-	            	}
-	            }
+		            //send parent table
+		            if(this.prop_send_parent_table_key)
+		            {
 
-	            //send parent table
-	            if(this.prop_send_parent_table_key)
-	            {
+		            	formData.append(this.prop_send_parent_table_key, this.prop_send_parent_table_value);
+		            }
 
-	            	formData.append(this.prop_send_parent_table_key, this.prop_send_parent_table_value);
-	            }
-
-	            //
+		            //
 
 
-	            //prepare form_single (sudah menghandle saat edit maupun store)
-	            for(var i = 0;i<this.prop_dataInfo.form_single.length;i++)
-	        	{
-	        		for(var j =0;j<this.prop_dataInfo.form_single[i].length;j++)
-	        		{
-	        			var nameColumn = this.prop_dataInfo.form_single[i][j];
-	        			var objColumn = this.prop_dataInfo.single[nameColumn];
+		            //prepare form_single (sudah menghandle saat edit maupun store)
+		            for(var i = 0;i<this.prop_dataInfo.form_single.length;i++)
+		        	{
+		        		for(var j =0;j<this.prop_dataInfo.form_single[i].length;j++)
+		        		{
+		        			var nameColumn = this.prop_dataInfo.form_single[i][j];
+		        			var objColumn = this.prop_dataInfo.single[nameColumn];
 
-	        			if(objColumn.type == 'img')
-				    	{
-				    		this.header_api['Content-type'] = 'multipart/form-data';
-				    		var temp_fileVariable = objColumn.fileVariable;
-				    		var is_image_delete = '0';
-				    		if(this.input[temp_fileVariable])
-				    		{
-					    		if((this.input[temp_fileVariable] != this.input_before_edit[temp_fileVariable]) || this.id_edit == -1)
+		        			if(objColumn.type == 'img')
+					    	{
+					    		this.header_api['Content-type'] = 'multipart/form-data';
+					    		var temp_fileVariable = objColumn.fileVariable;
+					    		var is_image_delete = '0';
+					    		if(this.input[temp_fileVariable])
 					    		{
-					    			formData.append(nameColumn, this.input[temp_fileVariable]);
+						    		if((this.input[temp_fileVariable] != this.input_before_edit[temp_fileVariable]) || this.id_edit == -1)
+						    		{
+						    			formData.append(nameColumn, this.input[temp_fileVariable]);
+						    		}
+						    		is_image_delete = '0';
 					    		}
-					    		is_image_delete = '0';
-				    		}
-				    		else
-				    		{
-				    			is_image_delete = '1';
-				    		}
-				    		formData.append('is_image_delete', is_image_delete);
-				    	}
-				    	else if(objColumn.type == 's' || objColumn.type == 's2')
-				    	{
-				    		if(!this.same_object(this.input[nameColumn],this.input_before_edit[nameColumn]) || this.id_edit == -1)
-				    			formData.append(objColumn.column, this.input[nameColumn][objColumn.itemValue]);
-				    	}
-				    	else //tf
-				    	{
-				    		if((this.input[nameColumn] != this.input_before_edit[nameColumn]) || this.id_edit == -1)
-				    		{
-				    			var convert_null_to_empty_string = false;
-				    			if(this.prop_dataInfo.conditional_input)
-				    			{
-				    				if(this.prop_dataInfo.conditional_input[nameColumn] && !this.input[nameColumn])
-				    				{
-				    					convert_null_to_empty_string = true;
-				    				}
-				    			}
-				    			if(convert_null_to_empty_string)
-				    			{
-				    				formData.append(nameColumn, '');
-				    			}
-				    			else
-				    			{
-				    				formData.append(nameColumn, this.input[nameColumn]);
-				    			}
-				    			
-				    			
-				    			
-				    		}
-				    	}
-	        		}
-	        	}
+					    		else
+					    		{
+					    			is_image_delete = '1';
+					    		}
+					    		formData.append('is_image_delete', is_image_delete);
+					    	}
+					    	else if(objColumn.type == 's' || objColumn.type == 's2')
+					    	{
+					    		if(!this.same_object(this.input[nameColumn],this.input_before_edit[nameColumn]) || this.id_edit == -1)
+					    			formData.append(objColumn.column, this.input[nameColumn][objColumn.itemValue]);
+					    	}
+					    	else //tf
+					    	{
+					    		if((this.input[nameColumn] != this.input_before_edit[nameColumn]) || this.id_edit == -1)
+					    		{
+					    			var convert_null_to_empty_string = false;
+					    			if(this.prop_dataInfo.conditional_input)
+					    			{
+					    				if(this.prop_dataInfo.conditional_input[nameColumn] && !this.input[nameColumn])
+					    				{
+					    					convert_null_to_empty_string = true;
+					    				}
+					    			}
+					    			if(convert_null_to_empty_string)
+					    			{
+					    				formData.append(nameColumn, '');
+					    			}
+					    			else
+					    			{
+					    				formData.append(nameColumn, this.input[nameColumn]);
+					    			}
+					    			
+					    			
+					    			
+					    		}
+					    	}
+		        		}
+		        	}
 
 
-	        	//prepare form_multiple (sudah menghandle saat edit maupun store)
-	            for(var i = 0;i<this.prop_dataInfo.form_multiple.length;i++) //cek disetiap table
-	        	{
-	        		
-	        		var nameTable = this.prop_dataInfo.form_multiple[i];
-	        		var objTable = this.prop_dataInfo.multiple[nameTable];
+		        	//prepare form_multiple (sudah menghandle saat edit maupun store)
+		            for(var i = 0;i<this.prop_dataInfo.form_multiple.length;i++) //cek disetiap table
+		        	{
+		        		
+		        		var nameTable = this.prop_dataInfo.form_multiple[i];
+		        		var objTable = this.prop_dataInfo.multiple[nameTable];
 
-	        		if(objTable.send_type =='1') //langsung
-	        		{
-	        			if(objTable.type == 'chips')
-	        			{
-	        				for(var j = 0;j<this.input[nameTable].length;j++) //disetiap data yang ingin dipost/update di input. 
-	        				{
-	        					
-	        					formData.append(nameTable + '[' + j + '][' + objTable.column +']',this.input[nameTable][j]['id']);	
-	        				}
-	        				
-	        			}
-	        			else if(objTable.type == 'table')
-	        			{
-	        				for(var j = 0;j<this.input[nameTable].length;j++) //disetiap data yang ingin dipost/update di input. 
-	        				{
-	        					var self = this;
-			                	Object.keys(objTable.single).map(function(key, index) //disetiap single pada multiple (contoh id, attribute, value)
-			                	{ 
-			                		var objColumnChildTable = objTable.single[key];
-			                		if(objColumnChildTable.column) //cek jika dia benar akan dikirim ke server
-			                		{
-			                			if(objColumnChildTable.type == 's' || objColumnChildTable.type == 's2') //cek jika dia merupakan select, maka kita ambil value dari attribute 'itemValue'
-			                			{
-				                			formData.append(nameTable + '[' + j + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key][objColumnChildTable.itemValue]);		
-			                			}
-			                			else if(objColumnChildTable.type == 'tf') //cek jika dia merupakan textfield, maka kita ambil langsung
-			                			{
-			                				formData.append(nameTable + '[' + j + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key]);
-			                			}
-			                		}
-			                	})
-
-	        				}
-	        			}
-	        		}
-	        		else if(objTable.send_type=='2')
-	        		{
-	        			//selama ini belum ada tipe send 2 dengan chips, pasti pake table
-	        			if(objTable.type == 'table')
-	        			{
-	        				var counteridx = 0;
-	        				for(var j = 0;j<this.input[nameTable].length;j++)
-	        				{
-	        					var temp = this.input[nameTable][j];
-	        					if(temp.id == null) //jika form ini untuk add data (id_edit = -1)
-	        					{
-	        						var self = this;
-	        						Object.keys(objTable.single).map(function(key, index) //disetiap single pada multiple (contoh id, attribute, value)
+		        		if(objTable.send_type =='1') //langsung
+		        		{
+		        			if(objTable.type == 'chips')
+		        			{
+		        				for(var j = 0;j<this.input[nameTable].length;j++) //disetiap data yang ingin dipost/update di input. 
+		        				{
+		        					
+		        					formData.append(nameTable + '[' + j + '][' + objTable.column +']',this.input[nameTable][j]['id']);	
+		        				}
+		        				
+		        			}
+		        			else if(objTable.type == 'table')
+		        			{
+		        				for(var j = 0;j<this.input[nameTable].length;j++) //disetiap data yang ingin dipost/update di input. 
+		        				{
+		        					var self = this;
+				                	Object.keys(objTable.single).map(function(key, index) //disetiap single pada multiple (contoh id, attribute, value)
 				                	{ 
 				                		var objColumnChildTable = objTable.single[key];
 				                		if(objColumnChildTable.column) //cek jika dia benar akan dikirim ke server
 				                		{
 				                			if(objColumnChildTable.type == 's' || objColumnChildTable.type == 's2') //cek jika dia merupakan select, maka kita ambil value dari attribute 'itemValue'
 				                			{
-					                			formData.append(nameTable + '[' + counteridx + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key][objColumnChildTable.itemValue]);		
+					                			formData.append(nameTable + '[' + j + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key][objColumnChildTable.itemValue]);		
 				                			}
 				                			else if(objColumnChildTable.type == 'tf') //cek jika dia merupakan textfield, maka kita ambil langsung
 				                			{
-				                				formData.append(nameTable + '[' + counteridx + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key]);
+				                				formData.append(nameTable + '[' + j + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key]);
 				                			}
-				                			
-				                			
 				                		}
 				                	})
-				                	formData.append(nameTable + '[' + counteridx + '][type]','1'); //artinya data ini sedang di add (bukan edit ataupun delete)
-				                	counteridx++;
-	        					}
-	        					else
-	        					{
-	        						//cocokan dengan input_before_edit karena ini mungkin sudah ada(dibiarkan) atau diupdate
-	        						var edittrue = false;
-			                        for(var k = 0;k<this.input_before_edit[nameTable].length;k++)
-			                        {
-			                            var temp2 = this.input_before_edit[nameTable][k];
 
-			                            if(temp.id == temp2.id) //id nya sama, saatnya cek isinya beda ato enggak.
-			                            {
-			                            	if(!this.same_object(temp, temp2)) //jika input akhir dan input awal
-			                            	{
-			                            		edittrue = true;
-			                            	}
-			                                break;
-			                            }
-			                        }
+		        				}
+		        			}
+		        		}
+		        		else if(objTable.send_type=='2')
+		        		{
 
-			                        if(edittrue) //kirimkan hasil akhir ke server dengan keterangan type = 0 artinya diedit
-			                        {
-			                        	var self = this;
-			                        	Object.keys(objTable.single).map(function(key, index) //disetiap single pada multiple (contoh id, attribute, value)
+		        			//selama ini belum ada tipe send 2 dengan chips, pasti pake table
+		        			if(objTable.type == 'table')
+		        			{
+		        				var counteridx = 0;
+		        				for(var j = 0;j<this.input[nameTable].length;j++)
+		        				{
+		        					var temp = this.input[nameTable][j];
+		        					if(temp.id == null) //jika form ini untuk add data (id_edit = -1)
+		        					{
+		        						var self = this;
+		        						Object.keys(objTable.single).map(function(key, index) //disetiap single pada multiple (contoh id, attribute, value)
 					                	{ 
 					                		var objColumnChildTable = objTable.single[key];
 					                		if(objColumnChildTable.column) //cek jika dia benar akan dikirim ke server
@@ -1289,157 +1402,279 @@
 					                				formData.append(nameTable + '[' + counteridx + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key]);
 					                			}
 					                			
-					                			formData.append(nameTable + '[' + counteridx + '][id]',temp.id); 
 					                			
 					                		}
 					                	})
-					                	formData.append(nameTable + '[' + counteridx + '][type]','0'); //artinya data ini sedang di diedit 
+					                	formData.append(nameTable + '[' + counteridx + '][type]','1'); //artinya data ini sedang di add (bukan edit ataupun delete)
 					                	counteridx++;
-			                        }
-	        					}
-	        				}
-
-	        				//cek di input_before_edit cocokin dengan input
-			                //1. jika ada data dengan id yang tidak ada di data input, berarti data tersebut pasti dihapus
-			                if(this.input_before_edit.hasOwnProperty(nameTable))
-			                {
-				                for(var j = 0;j<this.input_before_edit[nameTable].length;j++)
-				                {
-				                    var deletetrue = true;
-				                    for(var k=0;k<this.input[nameTable].length;k++)
-				                    {
-				                        if(this.input[nameTable][k].id == this.input_before_edit[nameTable][j].id)
+		        					}
+		        					else
+		        					{
+		        						//cocokan dengan input_before_edit karena ini mungkin sudah ada(dibiarkan) atau diupdate
+		        						var edittrue = false;
+				                        for(var k = 0;k<this.input_before_edit[nameTable].length;k++)
 				                        {
-				                            deletetrue = false;
-				                            break;
+				                            var temp2 = this.input_before_edit[nameTable][k];
+
+				                            if(temp.id == temp2.id) //id nya sama, saatnya cek isinya beda ato enggak.
+				                            {
+				                            	if(!this.same_object(temp, temp2)) //jika input akhir dan input awal
+				                            	{
+				                            		edittrue = true;
+				                            	}
+				                                break;
+				                            }
 				                        }
-				                    }
 
-				                    if(deletetrue)
-				                    {
-				                    	formData.append(nameTable + '[' + counteridx + '][id]',this.input_before_edit[nameTable][j].id);
-				                    	formData.append(nameTable + '[' + counteridx + '][type]','-1'); //artinya data ini sedang di didelete 
+				                        if(edittrue) //kirimkan hasil akhir ke server dengan keterangan type = 0 artinya diedit
+				                        {
+				                        	var self = this;
+				                        	Object.keys(objTable.single).map(function(key, index) //disetiap single pada multiple (contoh id, attribute, value)
+						                	{ 
+						                		var objColumnChildTable = objTable.single[key];
+						                		if(objColumnChildTable.column) //cek jika dia benar akan dikirim ke server
+						                		{
+						                			if(objColumnChildTable.type == 's' || objColumnChildTable.type == 's2') //cek jika dia merupakan select, maka kita ambil value dari attribute 'itemValue'
+						                			{
+							                			formData.append(nameTable + '[' + counteridx + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key][objColumnChildTable.itemValue]);		
+						                			}
+						                			else if(objColumnChildTable.type == 'tf') //cek jika dia merupakan textfield, maka kita ambil langsung
+						                			{
+						                				formData.append(nameTable + '[' + counteridx + '][' + objColumnChildTable.column +']',self.input[nameTable][j][key]);
+						                			}
+						                			
+						                			formData.append(nameTable + '[' + counteridx + '][id]',temp.id); 
+						                			
+						                		}
+						                	})
+						                	formData.append(nameTable + '[' + counteridx + '][type]','0'); //artinya data ini sedang di diedit 
+						                	counteridx++;
+				                        }
+		        					}
+		        				}
 
-				                        
-				                        counteridx++;
-				                    }
-				                }
+		        				if(this.id_edit != -1)
+		        				{
+			        				//cek di input_before_edit cocokin dengan input
+					                //1. jika ada data dengan id yang tidak ada di data input, berarti data tersebut pasti dihapus
+					                if(this.input_before_edit.hasOwnProperty(nameTable))
+					                {
+						                for(var j = 0;j<this.input_before_edit[nameTable].length;j++)
+						                {
+						                    var deletetrue = true;
+						                    for(var k=0;k<this.input[nameTable].length;k++)
+						                    {
+						                        if(this.input[nameTable][k].id == this.input_before_edit[nameTable][j].id)
+						                        {
+						                            deletetrue = false;
+						                            break;
+						                        }
+						                    }
 
-			                }
-	        			}
-	        		}
+						                    if(deletetrue)
+						                    {
+						                    	formData.append(nameTable + '[' + counteridx + '][id]',this.input_before_edit[nameTable][j].id);
+						                    	formData.append(nameTable + '[' + counteridx + '][type]','-1'); //artinya data ini sedang di didelete 
 
-	        	}
+						                        
+						                        counteridx++;
+						                    }
+						                }
 
+					                }
+		        					
+		        				}
+		        			}
+		        		}
 
-	        	//prepare form_custom_component
-	        	//1. cpMakeOrCopyChild
-	        	if(this.$refs['cpMakeOrCopyChild'] && this.id_edit == -1)
-	        	{
-	        		var data_cpmocc = this.$refs['cpMakeOrCopyChild'][0];
-	        		var table_name_child = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].child.table_name;
-	        		var table_name_grandchild = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].grandchild.table_name;
-	        		if(data_cpmocc.interaction.create.method == 0) //langsung
-	        		{
-	        			formData.append('store_type', '2');
-	        			for(var i = 0;i<data_cpmocc.input.new.length;i++)
-	        			{
-	        				formData.append(table_name_child + '[' + i + '][name]', data_cpmocc.input.new[i]);
-	        			}
-	        		}
-	        		else //menggunakan copy
-	        		{
-	        			formData.append('store_type', '1');
-	        			formData.append('warehouse_id', data_cpmocc.interaction.create.selected_parent.id);
-	        			var idxcopychild = -1;
-	        			for(var i = 0;i<data_cpmocc.interaction.create.selected_parent[table_name_child].length;i++)
-	        			{
-	        				var tempobj_child = data_cpmocc.interaction.create.selected_parent[table_name_child][i];
-	        				if(tempobj_child.copy_child)
-	        				{
-	        					idxcopychild += 1;
-	        					formData.append('copy_' + table_name_child + '[' + idxcopychild + '][id]', tempobj_child.id);
-	        					if(tempobj_child.copy_grand_child)
-	        					{
-	        						formData.append('copy_' + table_name_child + '[' + idxcopychild + '][is_with_' + table_name_grandchild + ']', 1);
-	        					}
-	        					else
-	        					{
-	        						formData.append('copy_' + table_name_child + '[' + idxcopychild + '][is_with_' + table_name_grandchild + ']', 0);	
-	        					}
-	        				}
-	        			}
-	        		}
-	        	}
-	        		
-	        	
+		        	}
 
 
-	            if(this.id_edit != -1) //jika edit data
-	            {
-	            	formData.append('_method','patch');
+		        	//prepare form_custom_component
+		        	//1. cpMakeOrCopyChild
+		        	if(this.$refs['cpMakeOrCopyChild'] && this.id_edit == -1)
+		        	{
+		        		var data_cpmocc = this.$refs['cpMakeOrCopyChild'][0];
+		        		var table_name_child = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].child.table_name;
+		        		var table_name_grandchild = this.prop_dataInfo.custom_component['cpMakeOrCopyChild'].grandchild.table_name;
+		        		if(data_cpmocc.interaction.create.method == 0) //langsung
+		        		{
+		        			formData.append('store_type', '2');
+		        			for(var i = 0;i<data_cpmocc.input.new.length;i++)
+		        			{
+		        				formData.append(table_name_child + '[' + i + '][name]', data_cpmocc.input.new[i]);
+		        			}
+		        		}
+		        		else //menggunakan copy
+		        		{
+		        			formData.append('store_type', '1');
+		        			formData.append('warehouse_id', data_cpmocc.interaction.create.selected_parent.id);
+		        			var idxcopychild = -1;
+		        			for(var i = 0;i<data_cpmocc.interaction.create.selected_parent[table_name_child].length;i++)
+		        			{
+		        				var tempobj_child = data_cpmocc.interaction.create.selected_parent[table_name_child][i];
+		        				if(tempobj_child.copy_child)
+		        				{
+		        					idxcopychild += 1;
+		        					formData.append('copy_' + table_name_child + '[' + idxcopychild + '][id]', tempobj_child.id);
+		        					if(tempobj_child.copy_grand_child)
+		        					{
+		        						formData.append('copy_' + table_name_child + '[' + idxcopychild + '][is_with_' + table_name_grandchild + ']', 1);
+		        					}
+		        					else
+		        					{
+		        						formData.append('copy_' + table_name_child + '[' + idxcopychild + '][is_with_' + table_name_grandchild + ']', 0);	
+		        					}
+		        				}
+		        			}
+		        		}
+		        	}
+		        		
+		        	
+
+
+		            if(this.id_edit != -1) //jika edit data
+		            {
+		            	formData.append('_method','patch');
+		            }
+		            formData.append('token', localStorage.getItem('token'));
+		            return formData;
+
 	            }
-	            formData.append('token', localStorage.getItem('token'));
-	            return formData;
+	            else
+	            {
+	            	this.$refs['form'].validate();
+	            	return false;
+	            }
 	        },
 
 	        save_data()
 	        {
-	        	if(this.id_edit != -1) //jika sedang diedit
-	            {
-	                
-	                axios.post(
-	                	this.url_update,
-	                	this.prepare_data_form(),
-	                	this.header_api).then((r) => {
-	                	this.clear_input();
-	                    this.close_dialog();
-	                    this.id_edit = -1;
-	                    this.$emit('done');
-	                    swal("Good job!", "Data saved !", "success");
-	                    
-	                    
-	                    
-	                }).catch(function (error)
-	                {
-	                    
-	                    if(error.response.status == 422)
-	                    {
-	                        swal('Request Failed', 'Check your internet connection !', 'error');
-	                    }
-	                    else
-	                    {
-	                        swal('Unkown Error', error.response.data , 'error');
-	                    }
-	                });
-	                
-	            }
-	            else //jika sedang tambah data
-	            {
-	            	
-	                axios.post(
-	                	this.url_store,
-	                	this.prepare_data_form(),
-	                	this.header_api).then((r)=> {
-	                    this.clear_input();
-	                    this.close_dialog();
-	                    this.$emit('done');
-	                    swal("Good job!", "Data saved !", "success");
-	                }).catch(function (error)
-	                {
-	                    
-	                    if(error.response.status == 422)
-	                    {
-	                        swal('Request Failed', 'Check your input !', 'error');
-	                    }
-	                    else
-	                    {
-	                        swal('Unkown Error', error.response.data , 'error');
-	                    }
-	                });
-	            }
-	        },
+	        	const formData = this.prepare_data_form();
+	        	if(formData != false)
+	        	{
+		        	if(this.id_edit != -1) //jika sedang diedit
+		            {
+		                
+		                axios.post(
+		                	this.url_update,
+		                	formData,
+		                	this.header_api).then((r) => {
+		                	this.clear_input();
+		                    this.close_dialog();
+		                    this.id_edit = -1;
+		                    this.$emit('done');
+		                    swal("Good job!", "Data saved !", "success");
+		                    
+		                    
+		                    
+		                }).catch(function (error)
+		                {
+		                    
+		                    if(error.response.status == 422)
+		                    {
+		                        swal('Request Failed', 'Check your internet connection !', 'error');
+		                    }
+		                    else
+		                    {
+		                        swal('Unkown Error', error.response.data , 'error');
+		                    }
+		                });
+		                
+		            }
+		            else //jika sedang tambah data
+		            {
+		            	
+		                axios.post(
+		                	this.url_store,
+		                	formData,
+		                	this.header_api).then((r)=> {
+		                    this.clear_input();
+		                    this.close_dialog();
+		                    this.$emit('done');
+		                    swal("Good job!", "Data saved !", "success");
+		                }).catch(function (error)
+		                {
+		                    
+		                    if(error.response.status == 422)
+		                    {
+		                        swal('Request Failed', 'Check your input !', 'error');
+		                    }
+		                    else
+		                    {
+		                        swal('Unkown Error', error.response.data , 'error');
+		                    }
+		                });
+		            }
 
+	        	}
+	        },
+	        strToPrice(angka,prefix)
+	        {
+	            //100000
+	            //9.000
+	            //11212
+	            //11.212
+	            angka = angka.toString();
+	            var hasil = "";
+	            var counter = 0;
+	            for(var i = angka.length - 1;i>= 0;i--)
+	            {
+	                counter++;
+	                if(counter % 3 == 0)
+	                {
+	                    if(i != 0)
+	                        hasil = "." + angka.charAt(i) +  hasil;
+	                    else
+	                            hasil = angka.charAt(i) + hasil;
+	                }
+	                else
+	                {
+	                    hasil = angka.charAt(i) + hasil;
+	                }
+	            }
+	            return prefix + hasil;
+	        },
+			format_data(value,types)
+			{
+				var result = value;
+				result = Math.ceil(result);
+				for(var i = 0;i<types.length;i++)
+				{
+					var type = types[i];
+					if(type == 'price')
+					{
+						result = this.strToPrice(result,"Rp. ");
+					}
+					else if(type == 'percent')
+					{
+						result = result + "%";
+					}
+					else if(type == 'approveornot')
+					{
+						if(result == 0)
+						{
+							result = 'New';
+						}
+						else
+						{
+							result = 'Approved';
+						}
+					}
+					else if(type == 'activeornot')
+					{
+						if(result == 0)
+						{
+							result = 'Not Active';
+						}
+						else
+						{
+							result = 'Active';
+						}
+					}
+				}
+				return result;
+			},
 	        calculate_custom_value(data, value, dataType)
 			{
 				//data adalah row dari database
@@ -1513,6 +1748,10 @@
 							result /= data[value[i + 1]];
 						}
 					}
+				}
+				if(dataType == 'int' && !result)
+				{
+					result = 0;
 				}
 				return result;
 
@@ -1590,7 +1829,7 @@
 					// }
 
 
-					//cek multiple
+					//cek multiple & cek default value
 					if(this.prop_dataInfo.form_multiple)
 					{
 						for(var i = 0;i<this.prop_dataInfo.form_multiple.length;i++)
@@ -1599,6 +1838,14 @@
 							if(!this.prop_dataInfo.multiple[temp].single) continue;
 							Object.keys(this.prop_dataInfo.multiple[temp].single).map(function(key, index) {
 								var obj = self.prop_dataInfo.multiple[temp].single[key];
+								var temp3 = JSON.parse(JSON.stringify(temp));
+								if(obj.defaultzero)
+								{
+									if(!self.temp_input[temp3][key])
+									{
+										self.temp_input[temp3][key] = 0;
+									}
+								}
 							    if(obj.value) //jika valuenya custom
 								{
 									var formula = obj.value;

@@ -105,6 +105,8 @@ class GoodsController extends Controller
             $name =  $data["name"].Str::random(10);
             $path = $this->goodsService->handleUploadImage($request->file("thumbnail"),$this->path,$name);
             $data["thumbnail"] = $path;
+            // generate code
+            $data["code"] = date('siHYmd');
 
             $attributeGoods = collect(Arr::pull($data,'attribute_goods'))->unique(function ($item) {
                 return $item['attribute_id'].$item['value'];
