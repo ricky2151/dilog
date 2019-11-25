@@ -31,7 +31,7 @@ class MaterialRequest extends Model
     public function getStatusName(){
         switch($this->status){
             case 0: return "New";
-            case 1: return "Approve";
+            case 1: return "Already Created";
         }
     }
 
