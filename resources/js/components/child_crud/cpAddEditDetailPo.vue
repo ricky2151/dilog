@@ -90,7 +90,7 @@
 						<v-layout row v-if='!use_rupiah'>
 							<v-flex xs12>
 								<v-text-field
-								:rules='$list_validation.numeric_req'
+								:rules='$list_validation.numeric'
 								label='Dicount Percent'
 								v-model='input.discount_percent'
 								class="pa-2"
@@ -103,7 +103,7 @@
 						<v-layout row v-if='use_rupiah'>
 							<v-flex xs12>
 								<v-text-field
-								:rules='$list_validation.numeric_req'
+								:rules='$list_validation.numeric'
 								label='Discount Rupiah'
 								v-model='input.discount_rupiah'
 								class="pa-2"

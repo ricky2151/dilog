@@ -112,13 +112,24 @@
 
         </template>
 
-        <template v-if="open_state=='cpPurchaseOrderDetails'">
-            <cp-purchase-order-details
-            :prop_list_filter='list_state["cpPurchaseOrderDetails"]'
-            ref='cpPurchaseOrderDetails'
-            
-            ></cp-purchase-order-details>
-        </template>
+        <div v-if='dialog_cpPurchaseOrderDetails'>
+            <v-dialog v-model='dialog_cpPurchaseOrderDetails' >
+                <v-card>
+                    <v-toolbar dark color='menu'>
+                        <v-btn icon dark v-on:click='closeDialog_cpPurchaseOrderDetails'>
+                            <v-icon>close</v-icon>
+                        </v-btn>
+                        <v-toolbar-title>Purchase Order Details</v-toolbar-title>
+                    </v-toolbar>
+
+                    <cp-purchase-order-details
+                    :prop_list_filter='list_state["cpPurchaseOrderDetails"]'
+                    ref='cpPurchaseOrderDetails'
+                    
+                    ></cp-purchase-order-details>
+                </v-card>
+            </v-dialog>
+        </div>
 
         <template v-if="open_state=='cpPayment'">
             <cp-payment
@@ -167,6 +178,7 @@ export default {
                 'cpPurchaseOrderDetails' : {},
                 'cpPayment' : {},
             },
+            dialog_cpPurchaseOrderDetails : false,
             
             breadcrumbs:[
                 //level 1
@@ -193,6 +205,12 @@ export default {
         }
     },
     methods: {
+
+        closeDialog_cpPurchaseOrderDetails()
+        {
+
+            this.dialog_cpPurchaseOrderDetails = false;
+        },
         done_submit_incoming()
         {
             swal("Good job!", "Data Saved !", "success");
@@ -251,7 +269,10 @@ export default {
             this.selected_data = data;
             if(idx_action == 0)
             {
-                 this.open_component('cpPurchaseOrderDetails', 'purchase_order', id, this.selected_data.no_po);
+                 // this.open_component('cpPurchaseOrderDetails', 'purchase_order', id, this.selected_data.no_po);
+                 this.list_state['cpPurchaseOrderDetails']['table_parent'] = 'purchase_order';
+                this.list_state['cpPurchaseOrderDetails']['id_selected'] = id;
+                 this.dialog_cpPurchaseOrderDetails = true;
             }
             else if(idx_action == 1)
             {
@@ -297,6 +318,14 @@ export default {
         filter_by_user_ref : function(val)
         {
             this.$refs['cpHeader'].selected_filter = 0;
+        },
+        dialog_cpPurchaseOrderDetails : function(val)
+        {
+            if(val == false)
+            {
+                //console.log('ini false');
+                this.refresh_table();
+            }
         }
     }
 
