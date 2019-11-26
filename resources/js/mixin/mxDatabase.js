@@ -1459,7 +1459,7 @@ export default
 							}
 						],
 
-						form_single : [['supplier'],['periode'],['payment_type'],['payment_terms'],['no_po']],
+						form_single : [['supplier'],['periode'],['payment_type'],['payment_terms']],
 						single : 
 						{
 							'id' : {
@@ -1482,9 +1482,9 @@ export default
 								label : 'Payment Terms', width:12, type:'tf', validation:'numeric_req',
 								vif:true,
 							},
-							'no_po' : {
-								label : 'No PO', width:12, type:'tf', validation:'max_req',
-							},
+							// 'no_po' : {
+							// 	label : 'No PO', width:12, type:'tf', validation:'max_req',
+							// },
 
 						},
 						custom_single:{},

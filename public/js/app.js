@@ -12471,7 +12471,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css?bdb9":
+/***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css":
 /*!***********************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--6-1!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vuetify/dist/vuetify.min.css ***!
   \***********************************************************************************************************************************/
@@ -12578,7 +12578,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.ml15\n{\n    margin-left: 15px !important;\n}\n.sub-menu a\n{\n    padding-left: 45px !important;\n}\n.ltc-icon\n{\n    min-width: 36px !important;\n    margin-left: 10px !important;\n}\n.color-text-sidebar\n{\n    color:#474747;\n    text-decoration: none;\n    font-size: 14px;\n}\n.active-menu\n{\n    color:red !important;\n}\n.icon-sidebar\n{\n    font-size: 20px !important;\n    color:#474747 !important;\n}\n.ff-text-sidebar\n{\n    font-family: 'Open Sans',sans-serif;\n}\n", ""]);
+exports.push([module.i, "\n.ml15\r\n{\r\n    margin-left: 15px !important;\n}\n.sub-menu a\r\n{\r\n    padding-left: 45px !important;\n}\n.ltc-icon\r\n{\r\n    min-width: 36px !important;\r\n    margin-left: 10px !important;\n}\n.color-text-sidebar\r\n{\r\n    color:#474747;\r\n    text-decoration: none;\r\n    font-size: 14px;\n}\n.active-menu\r\n{\r\n    color:red !important;\n}\n.icon-sidebar\r\n{\r\n    font-size: 20px !important;\r\n    color:#474747 !important;\n}\n.ff-text-sidebar\r\n{\r\n    font-family: 'Open Sans',sans-serif;\n}\r\n", ""]);
 
 // exports
 
@@ -21169,54 +21169,6 @@ var render = function() {
               }),
               _vm._v(" "),
               _c("v-spacer"),
-              _vm._v(" "),
-              _c(
-                "v-menu",
-                {
-                  attrs: { "open-on-click": "", "offset-y": "", "offset-x": "" }
-                },
-                [
-                  _c(
-                    "v-icon",
-                    {
-                      staticClass: "text-none ma-0",
-                      attrs: { slot: "activator", depressed: "", flat: "" },
-                      slot: "activator"
-                    },
-                    [_vm._v("notifications")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-list",
-                    _vm._l(_vm.notifications, function(item, index) {
-                      return _c(
-                        "v-list-tile",
-                        { key: index, attrs: { to: item.action } },
-                        [
-                          _c(
-                            "v-list-tile-action",
-                            [_c("v-icon", [_vm._v(_vm._s(item.icon))])],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-list-tile-content",
-                            [
-                              _c("v-list-tile-title", [
-                                _vm._v(_vm._s(item.title))
-                              ])
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      )
-                    }),
-                    1
-                  )
-                ],
-                1
-              ),
               _vm._v(" "),
               _c(
                 "v-tooltip",
@@ -68617,7 +68569,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_vue__;
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(/*! !../../css-loader??ref--6-1!../../postcss-loader/src??ref--6-2!./vuetify.min.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css?bdb9");
+var content = __webpack_require__(/*! !../../css-loader??ref--6-1!../../postcss-loader/src??ref--6-2!./vuetify.min.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -72366,7 +72318,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               value: '1',
               when_id_edit: 'all'
             }],
-            form_single: [['supplier'], ['periode'], ['payment_type'], ['payment_terms'], ['no_po']],
+            form_single: [['supplier'], ['periode'], ['payment_type'], ['payment_terms']],
             single: {
               'id': {
                 label: ''
@@ -72407,13 +72359,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 type: 'tf',
                 validation: 'numeric_req',
                 vif: true
-              },
-              'no_po': {
-                label: 'No PO',
-                width: 12,
-                type: 'tf',
-                validation: 'max_req'
-              }
+              } // 'no_po' : {
+              // 	label : 'No PO', width:12, type:'tf', validation:'max_req',
+              // },
+
             },
             custom_single: {},
             form_multiple: [],
@@ -75547,8 +75496,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/nakama/Documents/Work/Tokopedia/outside/dilog/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Users/nakama/Documents/Work/Tokopedia/outside/dilog/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\xampp7\htdocs\dilog_last\dilog\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\xampp7\htdocs\dilog_last\dilog\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
