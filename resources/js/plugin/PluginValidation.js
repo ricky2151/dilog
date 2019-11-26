@@ -42,11 +42,14 @@ export default {
   		numeric_req : [
   			v => !!v || 'Please fill the blank !',
   			v =>  !isNaN(v) || 'Input must number !',
+        v => v>=0 || 'Input must positive number !',
 
   		],
 
+
   		numeric : [
   			v => !isNaN(v) || 'Input must number !',
+        v => v>=0 || 'Input must positive number !',
   		]
 
 
