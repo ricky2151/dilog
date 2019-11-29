@@ -1378,6 +1378,8 @@ export default
 						{}
 					], //berlaku per row
 
+					masterdata_object_to_array : ['periode_active'],
+
 					request_master_data : true,
 					data : 
 					{
@@ -1472,7 +1474,7 @@ export default
 							},
 							'periode' : {
 								label : 'Periode', width:12, type:'s', validation:'selectdata_req',
-								itemText:'name', itemValue:'id', column:'periode_id', table_ref:'periodes'
+								itemText:'name', itemValue:'id', column:'periode_id', table_ref:'periode_active'
 							},
 							'payment_type' : {
 								label : 'Payment Type', width:12, type:'s', validation:'selectdata_req',

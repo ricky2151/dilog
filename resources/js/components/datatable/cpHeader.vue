@@ -57,7 +57,7 @@
 
         <v-layout row>
         	<v-flex xs8 class='marginleft30'>
-
+                
         		<v-select
 				v-if='prop_filter_by_user_format && prop_filter_by_user_ref'
 				:label='prop_filter_by_user_format.title'
