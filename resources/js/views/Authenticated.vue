@@ -8,7 +8,7 @@
                 <v-spacer></v-spacer>
 
                 <!-- notification button -->
-                <v-menu open-on-click  offset-y offset-x>
+               <!--  <v-menu open-on-click  offset-y offset-x>
 
                         <v-icon class="text-none ma-0" slot="activator" depressed flat>notifications</v-icon>
 
@@ -28,7 +28,7 @@
                             </v-list-tile-content>
                         </v-list-tile>
                     </v-list>
-                </v-menu>
+                </v-menu> -->
 
                 <!-- fullscreen button -->
                 <v-tooltip bottom>

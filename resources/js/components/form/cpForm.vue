@@ -497,7 +497,8 @@
 		'prop_send_parent_table_key',
 		'prop_send_parent_table_value',
 		'prop_idEditTable',
-		'prop_validateFirstStep'
+		'prop_validateFirstStep',
+		'prop_masterdata_object_to_array'
 
 		],
 		data() {
@@ -1104,8 +1105,30 @@
 		        	}
 
 		            for(var index in temp_r) { 
-					   this.ref_input[index] = temp_r[index];
+		            	var isobjecttoarray = false;
+		            	if(this.prop_masterdata_object_to_array)
+		            	{
+		            		for(var i = 0;i<this.prop_masterdata_object_to_array.length;i++)
+		            		{
+		            			if(index == this.prop_masterdata_object_to_array[i])
+		            			{
+		            				isobjecttoarray = true;
+		            			}
+		            		}
+		            	}
+		            	if(isobjecttoarray)
+		            	{
+		            		this.ref_input[index] = [];
+		            		this.ref_input[index][0] = temp_r[index];
+		            	}	
+		            	else
+		            	{
+		            		this.ref_input[index] = temp_r[index];
+		            	}
+					   
 					}
+					
+					
 
 	        	}
 				

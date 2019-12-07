@@ -595,7 +595,8 @@ import cpDetail from './../popup/cpDetail.vue'
 					this.goods[i].subtotal = 0;
 					this.goods[i].thumbnail = 'storage/' + this.goods[i].thumbnail;
 				}
-				this.periode = r_goods.periodes;
+				this.periode = []
+				this.periode[0] = (r_goods.periode_active);
 				this.periode_selected = this.periode[this.periode.length - 1];
 
 				//halaman profile

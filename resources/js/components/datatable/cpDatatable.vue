@@ -394,6 +394,7 @@
 	            	
 
 	            	this.showTable(r);
+	            	
 	            	if(this.prop_format_filter_by_user)
 	            	{
 	            		this.send_filter_by_user_ref(r);
@@ -415,6 +416,7 @@
 	            		this.$emit('data_refreshed', r.data.items);
 	            	}
 
+	            	
 
 	            })
 	        },
