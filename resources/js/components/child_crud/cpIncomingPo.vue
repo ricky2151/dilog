@@ -70,6 +70,13 @@
 				        	</v-flex>
 				        </v-layout>
 
+				        <v-layout v-if='(!input.warehouse || !input.delivery_order)' row style='font-size: 16px;margin: 10px 4px'>
+				        	<v-flex class='marginleft30' style='padding-top: 20px'>
+				        		<b style='color:red'>You must fill warehouse & delivery order first ! </b>
+				        	</v-flex>
+				        	
+				        </v-layout>
+
 				        <v-data-table
 				        	
 				            disable-initial-sort
@@ -89,6 +96,7 @@
 							        	<v-text-field
 											label='Incoming'
 											v-model='input.goods[props.index].incoming'
+											:rules='$list_validation.numeric_req'
 											class="pa-2"
 											>
 										</v-text-field>
@@ -174,12 +182,12 @@
 				dialog:false,
 				
 				headers_goods: [
-					{ text: 'No', value:'no'},
-    				{ text: 'Goods', value:'goods_name'},
-    				{ text: 'Order QTY', value:'order_quantity'},
-    				{ text: 'Have Arrived', value:'have_arrived'},
-    				{ text: 'Incoming', value:'incoming'},
-    				{ text: 'Target Rack', value:'target_rack'},
+					{ text: 'No', value:'no', sortable:false},
+    				{ text: 'Goods', value:'goods_name', sortable:false},
+    				{ text: 'Order QTY', value:'order_quantity', sortable:false},
+    				{ text: 'Have Arrived', value:'have_arrived', sortable:false},
+    				{ text: 'Incoming', value:'incoming', sortable:false},
+    				{ text: 'Target Rack', value:'target_rack', sortable:false},
     				
 				],
 
@@ -329,12 +337,25 @@
 			'input.goods' : {
 				handler : function(newVal,oldVal){
 					//cek input incoming dari user, benar atau salah
+
 					for(var i = 0;i<this.input.goods.length;i++)
 					{
-						if(parseInt(this.input.goods[i].incoming) + parseInt(this.input.goods[i].have_arrived)  > parseInt(this.input.goods[i].order_quantity))
-						{
+						console.log('cek ke ' + i);
 
+						console.log(JSON.stringify(this.input.goods[i].incoming));
+						if(parseInt(this.input.goods[i].incoming) == 0)
+						{
+							console.log('masuk ke if ini');
+							this.input.goods[i].incoming = '0';							
+						}
+						else if(parseInt(this.input.goods[i].incoming) + parseInt(this.input.goods[i].have_arrived)  > parseInt(this.input.goods[i].order_quantity))
+						{
+							console.log('if lama');
 							this.input.goods[i].incoming = 0;
+						}
+						else
+						{
+							console.log('kok gak masuk')
 						}
 					}
 

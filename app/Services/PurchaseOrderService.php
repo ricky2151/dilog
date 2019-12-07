@@ -104,6 +104,7 @@ class PurchaseOrderService
     }
 
     public function handleStore($data){
+        $data = Arr::Add($data, 'no_po', 'PO-'.date('isHYmd'));
         $data = Arr::Add($data, 'periode_id',Periode::getPeriodeActive()['id']);
         $data = $this->handlePaymentType($data);
         $data = $this->handleType($data);
