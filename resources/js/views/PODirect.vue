@@ -53,6 +53,7 @@
             
             :prop_urlGetMasterData='info_table.request_master_data ? generate_url(info_table.plural_name, "create") : null'
             :prop_custom_formData='info_table.data.custom_formData'
+            :prop_masterdata_object_to_array='info_table.masterdata_object_to_array'
             
 
             v-on:done='refresh_table()'
@@ -103,9 +104,11 @@
             :prop_format_filter_by_user='info_table.data.filter_by_user'
             :prop_filter_by_user_value='filter_by_user_value'
             :prop_conditional_action='info_table.conditional_action'
+            
 
             v-on:response_filter_by_user_ref='fill_filter_by_user_ref'
             v-on:action_clicked='action_change'
+            
             ref="cpDatatable"
 
             ></cp-datatable>
@@ -164,6 +167,7 @@ export default {
    
     data () {
         return {
+            
             info_table:{},
             name_table:'purchase_orders',
             search_data: null,
@@ -205,7 +209,12 @@ export default {
         }
     },
     methods: {
-
+       
+        fill_all_data_po(data)
+        {
+            console.log('masuk isni');
+            this.all_data_po = data;
+        },
         closeDialog_cpPurchaseOrderDetails()
         {
 

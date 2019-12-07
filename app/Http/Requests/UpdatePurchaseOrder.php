@@ -26,7 +26,6 @@ class UpdatePurchaseOrder extends FormRequest
     public function rules()
     {
         return [
-            'no_po' => "filled|string|unique:purchase_orders,no_po",
             'supplier_id' => "filled|integer|exists:suppliers,id",
             'payment_type' => "filled|in:1,2", //1 untuk tempo, 2 untuk tunai
             'type' => "filled|in:1,2,3", //1 untuk PO langsung, 2 untuk PO PR, 3 untuk PO min

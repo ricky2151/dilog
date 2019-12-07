@@ -47,7 +47,7 @@ class PurchaseRequestService
         DB::beginTransaction();
         try {
             $purchaseOrder = $purchaseRequest->purchaseOrders()->create([
-                "no_po"=> "PO-PR-".$id."-".($purchaseRequest->purchaseOrders->count()+1),
+                "no_po"=> 'POPR-'.date('isHYmd'),
                 "created_by_user_id" => $this->user['id'], 
                 "supplier_id"=>$supplierId,
                 "payment_type" => 2,

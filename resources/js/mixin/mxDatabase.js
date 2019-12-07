@@ -1378,6 +1378,8 @@ export default
 						{}
 					], //berlaku per row
 
+					masterdata_object_to_array : ['periode_active'],
+
 					request_master_data : true,
 					data : 
 					{
@@ -1459,7 +1461,7 @@ export default
 							}
 						],
 
-						form_single : [['supplier'],['periode'],['payment_type'],['payment_terms'],['no_po']],
+						form_single : [['supplier'],['periode'],['payment_type'],['payment_terms']],
 						single : 
 						{
 							'id' : {
@@ -1472,7 +1474,7 @@ export default
 							},
 							'periode' : {
 								label : 'Periode', width:12, type:'s', validation:'selectdata_req',
-								itemText:'name', itemValue:'id', column:'periode_id', table_ref:'periodes'
+								itemText:'name', itemValue:'id', column:'periode_id', table_ref:'periode_active'
 							},
 							'payment_type' : {
 								label : 'Payment Type', width:12, type:'s', validation:'selectdata_req',
@@ -1482,9 +1484,9 @@ export default
 								label : 'Payment Terms', width:12, type:'tf', validation:'numeric_req',
 								vif:true,
 							},
-							'no_po' : {
-								label : 'No PO', width:12, type:'tf', validation:'max_req',
-							},
+							// 'no_po' : {
+							// 	label : 'No PO', width:12, type:'tf', validation:'max_req',
+							// },
 
 						},
 						custom_single:{},

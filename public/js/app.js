@@ -3787,6 +3787,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -3794,22 +3802,28 @@ __webpack_require__.r(__webpack_exports__);
       dialog: false,
       headers_goods: [{
         text: 'No',
-        value: 'no'
+        value: 'no',
+        sortable: false
       }, {
         text: 'Goods',
-        value: 'goods_name'
+        value: 'goods_name',
+        sortable: false
       }, {
         text: 'Order QTY',
-        value: 'order_quantity'
+        value: 'order_quantity',
+        sortable: false
       }, {
         text: 'Have Arrived',
-        value: 'have_arrived'
+        value: 'have_arrived',
+        sortable: false
       }, {
         text: 'Incoming',
-        value: 'incoming'
+        value: 'incoming',
+        sortable: false
       }, {
         text: 'Target Rack',
-        value: 'target_rack'
+        value: 'target_rack',
+        sortable: false
       }],
       headers_history: [{
         text: 'No',
@@ -3936,8 +3950,17 @@ __webpack_require__.r(__webpack_exports__);
       handler: function handler(newVal, oldVal) {
         //cek input incoming dari user, benar atau salah
         for (var i = 0; i < this.input.goods.length; i++) {
-          if (parseInt(this.input.goods[i].incoming) + parseInt(this.input.goods[i].have_arrived) > parseInt(this.input.goods[i].order_quantity)) {
+          console.log('cek ke ' + i);
+          console.log(JSON.stringify(this.input.goods[i].incoming));
+
+          if (parseInt(this.input.goods[i].incoming) == 0) {
+            console.log('masuk ke if ini');
+            this.input.goods[i].incoming = '0';
+          } else if (parseInt(this.input.goods[i].incoming) + parseInt(this.input.goods[i].have_arrived) > parseInt(this.input.goods[i].order_quantity)) {
+            console.log('if lama');
             this.input.goods[i].incoming = 0;
+          } else {
+            console.log('kok gak masuk');
           }
         } //set nilai % arrival before submit
 
@@ -10711,6 +10734,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -10734,6 +10768,7 @@ __webpack_require__.r(__webpack_exports__);
         'cpPurchaseOrderDetails': {},
         'cpPayment': {}
       },
+      dialog_cpPurchaseOrderDetails: false,
       breadcrumbs: [//level 1
       {
         text: 'PO Direct',
@@ -10755,6 +10790,9 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   methods: {
+    closeDialog_cpPurchaseOrderDetails: function closeDialog_cpPurchaseOrderDetails() {
+      this.dialog_cpPurchaseOrderDetails = false;
+    },
     done_submit_incoming: function done_submit_incoming() {
       swal("Good job!", "Data Saved !", "success");
       this.refresh_table();
@@ -10796,7 +10834,10 @@ __webpack_require__.r(__webpack_exports__);
       this.selected_data = data;
 
       if (idx_action == 0) {
-        this.open_component('cpPurchaseOrderDetails', 'purchase_order', id, this.selected_data.no_po);
+        // this.open_component('cpPurchaseOrderDetails', 'purchase_order', id, this.selected_data.no_po);
+        this.list_state['cpPurchaseOrderDetails']['table_parent'] = 'purchase_order';
+        this.list_state['cpPurchaseOrderDetails']['id_selected'] = id;
+        this.dialog_cpPurchaseOrderDetails = true;
       } else if (idx_action == 1) {
         this.approve_po(id);
       } else if (idx_action == 2) {
@@ -10820,6 +10861,12 @@ __webpack_require__.r(__webpack_exports__);
   watch: {
     filter_by_user_ref: function filter_by_user_ref(val) {
       this.$refs['cpHeader'].selected_filter = 0;
+    },
+    dialog_cpPurchaseOrderDetails: function dialog_cpPurchaseOrderDetails(val) {
+      if (val == false) {
+        //console.log('ini false');
+        this.refresh_table();
+      }
     }
   }
 });
@@ -12424,7 +12471,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css?bdb9":
+/***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css":
 /*!***********************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--6-1!./node_modules/postcss-loader/src??ref--6-2!./node_modules/vuetify/dist/vuetify.min.css ***!
   \***********************************************************************************************************************************/
@@ -12531,7 +12578,7 @@ exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loa
 
 
 // module
-exports.push([module.i, "\n.ml15\n{\n    margin-left: 15px !important;\n}\n.sub-menu a\n{\n    padding-left: 45px !important;\n}\n.ltc-icon\n{\n    min-width: 36px !important;\n    margin-left: 10px !important;\n}\n.color-text-sidebar\n{\n    color:#474747;\n    text-decoration: none;\n    font-size: 14px;\n}\n.active-menu\n{\n    color:red !important;\n}\n.icon-sidebar\n{\n    font-size: 20px !important;\n    color:#474747 !important;\n}\n.ff-text-sidebar\n{\n    font-family: 'Open Sans',sans-serif;\n}\n", ""]);
+exports.push([module.i, "\n.ml15\r\n{\r\n    margin-left: 15px !important;\n}\n.sub-menu a\r\n{\r\n    padding-left: 45px !important;\n}\n.ltc-icon\r\n{\r\n    min-width: 36px !important;\r\n    margin-left: 10px !important;\n}\n.color-text-sidebar\r\n{\r\n    color:#474747;\r\n    text-decoration: none;\r\n    font-size: 14px;\n}\n.active-menu\r\n{\r\n    color:red !important;\n}\n.icon-sidebar\r\n{\r\n    font-size: 20px !important;\r\n    color:#474747 !important;\n}\n.ff-text-sidebar\r\n{\r\n    font-family: 'Open Sans',sans-serif;\n}\r\n", ""]);
 
 // exports
 
@@ -14980,7 +15027,7 @@ var render = function() {
                                   _c("v-text-field", {
                                     staticClass: "pa-2",
                                     attrs: {
-                                      rules: _vm.$list_validation.numeric_req,
+                                      rules: _vm.$list_validation.numeric,
                                       label: "Dicount Percent"
                                     },
                                     model: {
@@ -15015,7 +15062,7 @@ var render = function() {
                                   _c("v-text-field", {
                                     staticClass: "pa-2",
                                     attrs: {
-                                      rules: _vm.$list_validation.numeric_req,
+                                      rules: _vm.$list_validation.numeric,
                                       label: "Discount Rupiah"
                                     },
                                     model: {
@@ -16585,6 +16632,40 @@ var render = function() {
                               1
                             ),
                             _vm._v(" "),
+                            !_vm.input.warehouse || !_vm.input.delivery_order
+                              ? _c(
+                                  "v-layout",
+                                  {
+                                    staticStyle: {
+                                      "font-size": "16px",
+                                      margin: "10px 4px"
+                                    },
+                                    attrs: { row: "" }
+                                  },
+                                  [
+                                    _c(
+                                      "v-flex",
+                                      {
+                                        staticClass: "marginleft30",
+                                        staticStyle: { "padding-top": "20px" }
+                                      },
+                                      [
+                                        _c(
+                                          "b",
+                                          { staticStyle: { color: "red" } },
+                                          [
+                                            _vm._v(
+                                              "You must fill warehouse & delivery order first ! "
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  ],
+                                  1
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
                             _c("v-data-table", {
                               staticClass: "datatable",
                               attrs: {
@@ -16623,7 +16704,12 @@ var render = function() {
                                           [
                                             _c("v-text-field", {
                                               staticClass: "pa-2",
-                                              attrs: { label: "Incoming" },
+                                              attrs: {
+                                                label: "Incoming",
+                                                rules:
+                                                  _vm.$list_validation
+                                                    .numeric_req
+                                              },
                                               model: {
                                                 value:
                                                   _vm.input.goods[props.index]
@@ -16686,7 +16772,7 @@ var render = function() {
                                 ],
                                 null,
                                 false,
-                                1927817099
+                                3102121646
                               )
                             }),
                             _vm._v(" "),
@@ -21085,54 +21171,6 @@ var render = function() {
               _c("v-spacer"),
               _vm._v(" "),
               _c(
-                "v-menu",
-                {
-                  attrs: { "open-on-click": "", "offset-y": "", "offset-x": "" }
-                },
-                [
-                  _c(
-                    "v-icon",
-                    {
-                      staticClass: "text-none ma-0",
-                      attrs: { slot: "activator", depressed: "", flat: "" },
-                      slot: "activator"
-                    },
-                    [_vm._v("notifications")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-list",
-                    _vm._l(_vm.notifications, function(item, index) {
-                      return _c(
-                        "v-list-tile",
-                        { key: index, attrs: { to: item.action } },
-                        [
-                          _c(
-                            "v-list-tile-action",
-                            [_c("v-icon", [_vm._v(_vm._s(item.icon))])],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-list-tile-content",
-                            [
-                              _c("v-list-tile-title", [
-                                _vm._v(_vm._s(item.title))
-                              ])
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      )
-                    }),
-                    1
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
                 "v-tooltip",
                 { attrs: { bottom: "" } },
                 [
@@ -22954,15 +22992,64 @@ var render = function() {
           ]
         : _vm._e(),
       _vm._v(" "),
-      _vm.open_state == "cpPurchaseOrderDetails"
-        ? [
-            _c("cp-purchase-order-details", {
-              ref: "cpPurchaseOrderDetails",
-              attrs: {
-                prop_list_filter: _vm.list_state["cpPurchaseOrderDetails"]
-              }
-            })
-          ]
+      _vm.dialog_cpPurchaseOrderDetails
+        ? _c(
+            "div",
+            [
+              _c(
+                "v-dialog",
+                {
+                  model: {
+                    value: _vm.dialog_cpPurchaseOrderDetails,
+                    callback: function($$v) {
+                      _vm.dialog_cpPurchaseOrderDetails = $$v
+                    },
+                    expression: "dialog_cpPurchaseOrderDetails"
+                  }
+                },
+                [
+                  _c(
+                    "v-card",
+                    [
+                      _c(
+                        "v-toolbar",
+                        { attrs: { dark: "", color: "menu" } },
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { icon: "", dark: "" },
+                              on: {
+                                click: _vm.closeDialog_cpPurchaseOrderDetails
+                              }
+                            },
+                            [_c("v-icon", [_vm._v("close")])],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("v-toolbar-title", [
+                            _vm._v("Purchase Order Details")
+                          ])
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("cp-purchase-order-details", {
+                        ref: "cpPurchaseOrderDetails",
+                        attrs: {
+                          prop_list_filter:
+                            _vm.list_state["cpPurchaseOrderDetails"]
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
         : _vm._e(),
       _vm._v(" "),
       _vm.open_state == "cpPayment"
@@ -68482,7 +68569,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_vue__;
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(/*! !../../css-loader??ref--6-1!../../postcss-loader/src??ref--6-2!./vuetify.min.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css?bdb9");
+var content = __webpack_require__(/*! !../../css-loader??ref--6-1!../../postcss-loader/src??ref--6-2!./vuetify.min.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -72231,7 +72318,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               value: '1',
               when_id_edit: 'all'
             }],
-            form_single: [['supplier'], ['periode'], ['payment_type'], ['payment_terms'], ['no_po']],
+            form_single: [['supplier'], ['periode'], ['payment_type'], ['payment_terms']],
             single: {
               'id': {
                 label: ''
@@ -72272,13 +72359,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
                 type: 'tf',
                 validation: 'numeric_req',
                 vif: true
-              },
-              'no_po': {
-                label: 'No PO',
-                width: 12,
-                type: 'tf',
-                validation: 'max_req'
-              }
+              } // 'no_po' : {
+              // 	label : 'No PO', width:12, type:'tf', validation:'max_req',
+              // },
+
             },
             custom_single: {},
             form_multiple: [],
@@ -73292,9 +73376,13 @@ __webpack_require__.r(__webpack_exports__);
         return !!v || 'Please fill the blank !';
       }, function (v) {
         return !isNaN(v) || 'Input must number !';
+      }, function (v) {
+        return v >= 0 || 'Input must positive number !';
       }],
       numeric: [function (v) {
         return !isNaN(v) || 'Input must number !';
+      }, function (v) {
+        return v >= 0 || 'Input must positive number !';
       }]
     };
   }
@@ -75408,8 +75496,8 @@ __webpack_require__.r(__webpack_exports__);
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/nakama/Documents/Work/Tokopedia/outside/dilog/resources/js/app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! /Users/nakama/Documents/Work/Tokopedia/outside/dilog/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\xampp7\htdocs\dilog_last\dilog\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! D:\xampp7\htdocs\dilog_last\dilog\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
